@@ -14,9 +14,17 @@ app.use(express.static(path.join(__dirname, "dist")));
 
 // SSL Forwarding
 app.use((req, res, next) => {
-   if (req.header("x-forwarded-proto") !== "https") {
-      return res.redirect(`https://${req.header("host")}${req.url}`);
+   const host = req.header("host");
+   const proto = req.header("x-forwarded-proto");
+
+   if (host.startsWith("localhost") || host.startsWith("127.0.0.1")) {
+      return next();
    }
+
+   if (proto !== "https" || host === "www.shadowform.net") {
+      return res.redirect(302, `https://shadowform.net${req.url}`);
+   }
+
    return next();
 });
 
