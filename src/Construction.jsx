@@ -8,7 +8,7 @@ const Construction = () => {
             <hr/>
             <span>under</span>
         </div>
-        <div className="absolute font-8bit text-white text-3xl mix-blend-difference lg:text-xs"><span>&gt; shadowform.net &lt;</span></div>
+        <div className="absolute font-8bit text-white text-4xl mix-blend-difference lg:text-xs"><span>&gt; shadowform.net &lt;</span></div>
         <div className="flex flex-col h-full w-full bg-white justify-center items-center lg:w-1/2">
             <span>construction</span>
             <hr/>
