@@ -22,6 +22,12 @@
    --font-alkhemikal: "Alkhemikal", monospace;
 }
 
+@layer components {
+   .white-hard-border {
+      filter: drop-shadow(1px 1px 0px white) drop-shadow(-1px 1px 0px white) drop-shadow(-1px -1px 0px white) drop-shadow(1px -1px 0px white);
+   }
+}
+
 body { margin: 0; }
 
 hr {
