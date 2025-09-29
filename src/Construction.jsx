@@ -2,15 +2,17 @@ import React from "react";
 
 const Construction = () => {
   return (
-      <div id="main-content">
-        <div id="left">
+      <div className="flex h-screen w-screen items-center justify-center w-screen">
+        <div className="flex flex-col h-screen w-1/2 bg-black text-shadowform-grey justify-center items-center font-alkhemikal">
+            <img src="/cherry_blossom.png" className="w-10 mb-[14px]"/>
             <hr/>
-            under
+            <span>under</span>
         </div>
-        <div id="center-text">&gt; shadowform.net &lt;</div>
-        <div id="right">
-            construction
+        <div className="absolute font-8bit text-white text-xs mix-blend-difference">&gt; shadowform.net &lt;</div>
+        <div className="flex flex-col h-screen w-1/2 bg-white text-shadowform-grey justify-center items-center font-alkhemikal">
+            <span>construction</span>
             <hr/>
+            <img src="/cherry_blossom.png" className="w-10 mt-[14px]"/>
         </div>
       </div>
   )

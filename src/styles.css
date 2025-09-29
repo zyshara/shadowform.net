@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "8-BIT-WONDER";
+  src: url("./fonts/8-BIT-WONDER.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Alagard";
+  src: url("./fonts/Alagard.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Alkhemikal";
+  src: url("./fonts/Alkhemikal.ttf") format("truetype");
+}
+
+@theme {
+   --color-shadowform-grey: #707070;
+   --font-8bit: "8-BIT-WONDER", monospace;
+   --font-alagard: "Alagard", monospace;
+   --font-alkhemikal: "Alkhemikal", monospace;
+}
+
+body { margin: 0; }
+
+hr {
+   border-style: solid;
+   width: 50px;
+}
