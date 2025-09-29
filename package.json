@@ -1,23 +1,34 @@
 {
-  "name": "shadowform.net",
-  "version": "1.0.0",
-  "description": "Website for shadowform.net",
-  "homepage": "https://github.com/zyshara/shadowform.net#readme",
-  "bugs": {
-    "url": "https://github.com/zyshara/shadowform.net/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/zyshara/shadowform.net.git"
-  },
-  "license": "ISC",
-  "author": "Jennifer Decker (@zyshara)",
-  "type": "module",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
-  },
-  "dependencies": {
-    "express": "^5.1.0"
-  }
+   "name": "shadowform.net",
+   "version": "1.0.0",
+   "description": "Website for shadowform.net",
+   "homepage": "https://github.com/zyshara/shadowform.net#readme",
+   "bugs": {
+      "url": "https://github.com/zyshara/shadowform.net/issues"
+   },
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/zyshara/shadowform.net.git"
+   },
+   "license": "ISC",
+   "author": "Jennifer Decker (@zyshara)",
+   "type": "module",
+   "main": "index.js",
+   "scripts": {
+      "build": "webpack --config webpack.config.js --mode production",
+      "start": "node server.js"
+   },
+   "dependencies": {
+      "express": "^5.1.0",
+      "react": "^19.1.1",
+      "react-dom": "^19.1.1"
+   },
+   "devDependencies": {
+      "@babel/core": "^7.28.4",
+      "@babel/preset-env": "^7.28.3",
+      "@babel/preset-react": "^7.27.1",
+      "babel-loader": "^10.0.0",
+      "webpack": "^5.101.3",
+      "webpack-cli": "^6.0.1"
+   }
 }
