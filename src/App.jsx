@@ -1,7 +1,10 @@
 import React from "react";
+import Construction from "./Construction.jsx";
 
 const App = () => {
-  return <h1>Under Construction 🌸</h1>
+  return (
+    <Construction/>
+  )
 };
 
 export default App;
