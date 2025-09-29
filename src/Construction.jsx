@@ -12,7 +12,7 @@ const Construction = () => {
         <div className="flex flex-col h-full w-full bg-white justify-center items-center lg:w-1/2">
             <span>construction</span>
             <hr/>
-            <img src="/cherry_blossom.png" className="w-30 lg:w-10 mt-[14px]"/>
+            <img src="/cherry_blossom.png" className="w-30 lg:w-10 mt-[14px] grayscale"/>
         </div>
       </div>
   )

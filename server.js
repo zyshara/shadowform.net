@@ -13,14 +13,12 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "dist")));
 
 // SSL Forwarding
-if (process.env.NODE_ENV === "production") {
-   app.use((req, res, next) => {
-      if (req.header("x-forwarded-proto") !== "https") {
-         return res.redirect(`https://${req.header("host")}${req.url}`);
-      }
-      return next();
-   });
-}
+app.use((req, res, next) => {
+   if (req.header("x-forwarded-proto") !== "https") {
+      return res.redirect(`https://${req.header("host")}${req.url}`);
+   }
+   return next();
+});
 
 // Redirect all requests to 
 app.use((req, res, next) => {
