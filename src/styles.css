@@ -24,7 +24,7 @@
 
 @layer components {
    .white-hard-border {
-      filter: drop-shadow(1px 1px 0px white) drop-shadow(-1px 1px 0px white) drop-shadow(-1px -1px 0px white) drop-shadow(1px -1px 0px white);
+      filter: drop-shadow(1px 1px 0px white) drop-shadow(-1px 1px 0px white) drop-shadow(-1px -1px 0px white) drop-shadow(1px -1px 0px white) grayscale(100%);
    }
 }
 
