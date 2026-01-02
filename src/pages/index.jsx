@@ -1,0 +1,9 @@
+export { default as About } from "./About";
+export { default as Contact } from "./Contact";
+export { default as Creative } from "./Creative";
+export { default as Development } from "./Development";
+export { default as Enter } from "./Enter";
+export { default as NotFound } from "./NotFound";
+export { default as Resume } from "./Resume";
+export { default as Shop } from "./Shop";
+export { default as UnderConstruction } from "./UnderConstruction";
