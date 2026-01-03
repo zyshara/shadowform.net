@@ -8,8 +8,8 @@ const UnderConstruction = () => {
   return (
     <div className="w-full min-h-full flex flex-col justify-center items-center">
       <DotDivider variant="alagard" />
-      <span className="font-alkhemikal lg:text-lg">Under Construction</span>
-      <img src={caution} className="w-[12vw] max-w-[50px] lg:w-10" />
+      <span className="font-alkhemikal md:text-[24px]">Under Construction</span>
+      <img src={caution} className="w-[45px] md:w-[54px]" />
       <DotDivider variant="alagard" />
     </div>
   );

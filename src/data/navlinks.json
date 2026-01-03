@@ -1,8 +1,0 @@
-[
-  { "id": "about", "url": "/about", "text": "About" },
-  { "id": "resume", "url": "/resume", "text": "Resume" },
-  { "id": "development", "url": "/development", "text": "Development" },
-  { "id": "creative", "url": "/creative", "text": "Creative" },
-  { "id": "shop", "url": "/shop", "text": "Shop" },
-  { "id": "contact", "url": "/contact", "text": "Contact" }
-]

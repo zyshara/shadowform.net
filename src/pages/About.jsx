@@ -5,11 +5,11 @@ import DotDivider from "../components/DotDivider.jsx";
 const About = () => {
   return (
     <div className="w-full min-h-full flex flex-col justify-center items-center">
-      <span className="font-alkhemikal lowercase text-[min(8vw,26px)] md:text-lg">
+      <span className="font-alkhemikal lowercase text-[min(8vw,26px)] md:text-[24px]">
         Welcome to Shadowform
       </span>
       <DotDivider variant="alagard" />
-      <div className="font-alagard max-w-[320px] text-center text-[min(3.5vw,16px)] md:text-[12px]">
+      <div className="font-alagard max-w-[320px] text-center text-[min(3.5vw,16px)] md:text-[14px]">
         hi im jen, a 31 year old software developer living in los angeles
         currently working at <span>Blizzard Entertainment</span> on the front
         end web team. I've been on the internet since the days of Zyzz and

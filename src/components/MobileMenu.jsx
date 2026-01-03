@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 import { AnimatePresence, motion } from "framer-motion";
 
-import DotDivider from "@/components/DotDivider";
-import navlinks from "@/data/navlinks.json";
+import { DotDivider } from "@/components";
+import navlinks from "@/data/navlinks";
 
 const backdrop = {
   hidden: { opacity: 0 },
