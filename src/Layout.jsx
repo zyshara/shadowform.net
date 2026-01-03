@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router";
-import { Outlet } from "react-router-dom";
+import { Outlet, NavLink } from "react-router-dom";
 
 import { Navbar, Footer, MobileMenu } from "@/components";
 

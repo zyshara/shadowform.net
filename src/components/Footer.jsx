@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, useLocation } from "react-router";
+import { NavLink, useLocation } from "react-router-dom";
 
 import navlinks from "@/data/navlinks";
 import socials from "@/data/socials.json";
@@ -34,7 +34,7 @@ const Footer = () => {
           {socials.map((link, idx) => {
             return (
               <>
-                <a href={link.url} key={link.id}>
+                <a href={link.url} key={link.id} target="_blank">
                   <img
                     className="h-[min(12vw,40px)] mx-[5px]"
                     src={iconMap[link.id]}
