@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 
 import DotDivider from "@/components/DotDivider";
 
-import cherry_blossom from "@/assets/images/cherry_blossom.png";
+import cherry_blossom from "@shared/assets/images/cherry_blossom.png";
 
 import navlinks from "@/data/navlinks";
 

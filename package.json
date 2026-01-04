@@ -15,10 +15,14 @@
    "type": "module",
    "main": "index.js",
    "scripts": {
-      "build": "webpack --config webpack.config.js --mode production",
+      "build": "npm run build-main && npm run build-swatchbook",
+      "build-main": "webpack --config webpack.config.main.js --mode production",
+      "build-swatchbook": "webpack --config webpack.config.swatchbook.js --mode production",
       "start": "node server.js",
       "dev": "concurrently \"npm run watch\" \"npm run serve-dev\"",
-      "watch": "webpack --config webpack.config.js --watch --mode development",
+      "watch": "npm run watch-main && npm run watch-swatchbook",
+      "watch-main": "webpack --config webpack.config.main.js --watch --mode development",
+      "watch-swatchbook": "webpack --config webpack.config.swatchbook.js --watch --mode development",
       "serve-dev": "nodemon server.js"
    },
    "dependencies": {

@@ -2,17 +2,17 @@
 
 @font-face {
   font-family: "8-BIT-WONDER";
-  src: url("@/assets/fonts/8-BIT-WONDER.ttf") format("truetype");
+  src: url("@shared/assets/fonts/8-BIT-WONDER.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Alagard";
-  src: url("@/assets/fonts/Alagard.ttf") format("truetype");
+  src: url("@shared/assets/fonts/Alagard.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "Alkhemikal";
-  src: url("@/assets/fonts/Alkhemikal.ttf") format("truetype");
+  src: url("@shared/assets/fonts/Alkhemikal.ttf") format("truetype");
 }
 
 @theme {
@@ -33,37 +33,4 @@ body,
 #root {
   width: 100%;
   min-height: 100%;
-}
-
-@keyframes hue-rotate-text {
-  0% {
-    color: red;
-  }
-  16% {
-    color: orange;
-  }
-  32% {
-    color: yellow;
-  }
-  48% {
-    color: green;
-  }
-  64% {
-    color: blue;
-  }
-  80% {
-    color: purple;
-  }
-  100% {
-    color: magenta;
-  }
-}
-
-@keyframes pink-rotate-text {
-  0% {
-    color: white;
-  }
-  100% {
-    color: #f495bf;
-  }
 }

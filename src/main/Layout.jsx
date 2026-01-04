@@ -3,7 +3,7 @@ import { Outlet, NavLink } from "react-router-dom";
 
 import { Navbar, Footer, MobileMenu } from "@/components";
 
-import cherry_blossom from "@/assets/images/cherry_blossom.png";
+import cherry_blossom from "@shared/assets/images/cherry_blossom.png";
 
 const Layout = () => {
   const [menuOpen, setMenuOpen] = useState(false);

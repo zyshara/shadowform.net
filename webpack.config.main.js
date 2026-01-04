@@ -1,15 +1,17 @@
 import path from "path";
 import { fileURLToPath } from "url";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default {
-  entry: "./src/index.js",
+  entry: "./src/main/index.js",
   output: {
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "dist/main"),
     filename: "bundle.js",
     publicPath: "/",
+    clean: true,
   },
   module: {
     rules: [
@@ -41,9 +43,16 @@ export default {
     ],
   },
   resolve: {
-    extensions: [".js", ".jsx", ".json", ".css"],
+    extensions: [".js", ".jsx"],
     alias: {
-      "@": path.resolve(__dirname, "src"),
+      "@": path.resolve(__dirname, "src/main"),
+      "@shared": path.resolve(__dirname, "src/shared"),
     },
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: "./public/main/index.html",
+      filename: "index.html",
+    }),
+  ],
 };

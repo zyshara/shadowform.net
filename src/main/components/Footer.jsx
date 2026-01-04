@@ -3,7 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 
 import navlinks from "@/data/navlinks";
 import socials from "@/data/socials.json";
-import { iconMap } from "@/assets/icons";
+import { iconMap } from "@shared/assets/icons";
 
 const Footer = () => {
   const location = useLocation();

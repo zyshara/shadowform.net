@@ -1,6 +1,6 @@
 import React from "react";
 
-import DotDivider from "../components/DotDivider.jsx";
+import DotDivider from "@/components/DotDivider.jsx";
 
 const About = () => {
   return (

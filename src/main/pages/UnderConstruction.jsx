@@ -2,7 +2,7 @@ import React from "react";
 
 import DotDivider from "@/components/DotDivider";
 
-import caution from "@/assets/images/caution.png";
+import caution from "@shared/assets/images/caution.png";
 
 const UnderConstruction = () => {
   return (

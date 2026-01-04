@@ -2,7 +2,9 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
-import DotDivider from "../components/DotDivider.jsx";
+import DotDivider from "@/components/DotDivider";
+
+import cherry_blossom from "@shared/assets/images/cherry_blossom.png";
 
 const Enter = () => {
   const navigate = useNavigate();
@@ -19,7 +21,7 @@ const Enter = () => {
       <span>SHADOWFORM DOT NET</span>
       <DotDivider />
       <img
-        src="/cherry_blossom.png"
+        src={cherry_blossom}
         className="w-[25vw] sm:w-30 lg:w-10 mt-[14px] white-hard-border"
       />
       <span className="opacity-75 mt-[10vw] sm:mt-[75px] [animation:hue-rotate-text_100ms_linear_infinite] md:[animation:none] md:hover:[animation:hue-rotate-text_100ms_linear_infinite]">
