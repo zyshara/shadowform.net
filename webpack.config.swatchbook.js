@@ -51,9 +51,12 @@ export default {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./public/swatchbook/index.html",
+      template: "./public/shared/index.html",
       filename: "index.html",
+      templateParameters: {
+        title: "🖤 swatchbook - 𝔰𝔥𝔞𝔡𝔬𝔴𝔣𝔬𝔯𝔪 . 𝔫𝔢𝔱 🩷",
+        description: "welcome to shadowform~",
+      },
     }),
   ],
 };
-

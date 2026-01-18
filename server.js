@@ -51,6 +51,12 @@ app.use((req, res, next) => {
   next();
 });
 
+// Shared static assets (served at root)
+app.use(
+  "/shared",
+  express.static(path.join(__dirname, "public/shared"))
+);
+
 /* ───────────────────────────────────────────────
    SWATCHBOOK (isolated SPA)
 ─────────────────────────────────────────────── */
