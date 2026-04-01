@@ -22,9 +22,9 @@ const Layout = () => {
         </NavLink>
       </div>
 
-      <div className="flex w-full lg:w-[800px] md:w-[80vw] min-h-dvh h-dvh bg-white flex-col">
+      <div className="flex w-full lg:w-[600px] md:w-[80vw] min-h-dvh h-dvh bg-white flex-col">
         <Navbar onMenuOpen={() => setMenuOpen(true)} />
-        <main className="flex-1 min-h-0 overflow-y-auto px-4">
+        <main className="flex-1 min-h-0 overflow-y-auto px-4 py-4">
           <Outlet />
         </main>
         <Footer />

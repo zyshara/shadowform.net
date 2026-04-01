@@ -1,12 +1,13 @@
 import {
-  Enter,
   About,
-  Resume,
-  Development,
-  Creative,
-  Shop,
   Contact,
+  Creative,
+  Development,
+  Enter,
+  Management,
   NotFound,
+  Resume,
+  Shop,
   UnderConstruction,
 } from "@/pages";
 
@@ -18,10 +19,10 @@ const navlinks = [
     component: About,
   },
   {
-    id: "resume",
-    url: "/resume",
-    text: "Resume",
-    component: UnderConstruction,
+    id: "management",
+    url: "/management",
+    text: "Management",
+    component: Management,
   },
   {
     id: "development",

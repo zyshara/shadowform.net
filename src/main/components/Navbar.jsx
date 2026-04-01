@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import DotDivider from "@/components/DotDivider";
 
 import cherry_blossom from "@shared/assets/images/cherry_blossom.png";
+import hamburg from "@shared/assets/icons/hamburg.png";
 
 import navlinks from "@/data/navlinks";
 
@@ -17,7 +18,7 @@ const Navbar = ({ onMenuOpen }) => {
         </div>
       </NavLink>
       <img
-        src="hamburg.png"
+        src={hamburg}
         className="absolute w-[45px] h-[45px] md:hidden right-0 cursor-pointer z-2"
         onClick={onMenuOpen}
       />
@@ -35,7 +36,7 @@ const Navbar = ({ onMenuOpen }) => {
             >
               <NavLink
                 to={navlink.url}
-                className={`mix-blend-difference hover:mix-blend-normal ${isActive && "md:mix-blend-normal"} z-[1] text-[25px]`}
+                className={`mix-blend-difference hover:mix-blend-normal ${isActive && "md:mix-blend-normal"} z-[1] text-[25px] md:text-[20px]`}
               >
                 {navlink.text}
               </NavLink>
