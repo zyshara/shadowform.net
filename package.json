@@ -15,14 +15,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "build": "npm run build-main && npm run build-swatchbook",
-    "build-main": "webpack --config webpack.config.main.js --mode production",
-    "build-swatchbook": "webpack --config webpack.config.swatchbook.js --mode production",
+    "build": "webpack --config webpack.config.js --mode production",
     "start": "node server.js",
-    "dev": "concurrently -k \"npm run watch-main\" \"npm run watch-swatchbook\" \"npm run serve-dev\"",
-    "watch-main": "webpack --config webpack.config.main.js --watch --mode development",
-    "watch-swatchbook": "webpack --config webpack.config.swatchbook.js --watch --mode development",
-    "serve-dev": "nodemon server.js"
+    "dev": "concurrently -k \"webpack --config webpack.config.js --watch --mode development\" \"nodemon server.js\""
   },
   "dependencies": {
     "@tanstack/react-table": "^8.21.3",
