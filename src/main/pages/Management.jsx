@@ -10,7 +10,7 @@ const Management = ({ artSrc, logoSrc }) => {
   return (
     <div className="relative flex flex-col items-center w-full grayscale place-self-start">
 
-      <div>
+      <div className="cursor-pointer">
         <FlowerDivider variant="top" />
         <PixelArt src={red_spear_graphic_logo} className="w-[220px] object-cover grayscale" />
         <FlowerDivider variant="bottom" />

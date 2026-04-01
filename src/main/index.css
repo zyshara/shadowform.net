@@ -16,9 +16,9 @@
 }
 
 @theme {
-  --font-8bit: "8-BIT-WONDER", monospace;
-  --font-alagard: "Alagard", monospace;
-  --font-alkhemikal: "Alkhemikal", monospace;
+  --font-8bit: "8-BIT-WONDER";
+  --font-alagard: "Alagard";
+  --font-alkhemikal: "Alkhemikal";
 }
 
 @layer components {
