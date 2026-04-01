@@ -1,54 +1,57 @@
 {
-   "name": "shadowform.net",
-   "version": "1.0.0",
-   "description": "Website for shadowform.net",
-   "homepage": "https://github.com/zyshara/shadowform.net#readme",
-   "bugs": {
-      "url": "https://github.com/zyshara/shadowform.net/issues"
-   },
-   "repository": {
-      "type": "git",
-      "url": "git+https://github.com/zyshara/shadowform.net.git"
-   },
-   "license": "ISC",
-   "author": "Jennifer Decker (@zyshara)",
-   "type": "module",
-   "main": "index.js",
-   "scripts": {
-      "build": "npm run build-main && npm run build-swatchbook",
-      "build-main": "webpack --config webpack.config.main.js --mode production",
-      "build-swatchbook": "webpack --config webpack.config.swatchbook.js --mode production",
-      "start": "node server.js",
-      "dev": "concurrently \"npm run watch\" \"npm run serve-dev\"",
-      "watch": "npm run watch-main && npm run watch-swatchbook",
-      "watch-main": "webpack --config webpack.config.main.js --watch --mode development",
-      "watch-swatchbook": "webpack --config webpack.config.swatchbook.js --watch --mode development",
-      "serve-dev": "nodemon server.js"
-   },
-   "dependencies": {
-      "connect-history-api-fallback": "^2.0.0",
-      "express": "^5.1.0",
-      "framer-motion": "^12.23.26",
-      "react": "^19.1.1",
-      "react-dom": "^19.1.1",
-      "react-router-dom": "^7.9.4"
-   },
-   "devDependencies": {
-      "@babel/core": "^7.28.4",
-      "@babel/preset-env": "^7.28.3",
-      "@babel/preset-react": "^7.27.1",
-      "@tailwindcss/postcss": "^4.1.13",
-      "autoprefixer": "^10.4.21",
-      "babel-loader": "^10.0.0",
-      "concurrently": "^9.2.1",
-      "css-loader": "^7.1.2",
-      "html-webpack-plugin": "^5.6.4",
-      "nodemon": "^3.1.10",
-      "postcss": "^8.5.6",
-      "postcss-loader": "^8.2.0",
-      "style-loader": "^4.0.0",
-      "tailwindcss": "^4.1.13",
-      "webpack": "^5.101.3",
-      "webpack-cli": "^6.0.1"
-   }
+  "name": "shadowform.net",
+  "version": "1.0.0",
+  "description": "Website for shadowform.net",
+  "homepage": "https://github.com/zyshara/shadowform.net#readme",
+  "bugs": {
+    "url": "https://github.com/zyshara/shadowform.net/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zyshara/shadowform.net.git"
+  },
+  "license": "ISC",
+  "author": "Jennifer Decker (@zyshara)",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run build-main && npm run build-swatchbook",
+    "build-main": "webpack --config webpack.config.main.js --mode production",
+    "build-swatchbook": "webpack --config webpack.config.swatchbook.js --mode production",
+    "start": "node server.js",
+    "dev": "concurrently -k \"npm run watch-main\" \"npm run watch-swatchbook\" \"npm run serve-dev\"",
+    "watch-main": "webpack --config webpack.config.main.js --watch --mode development",
+    "watch-swatchbook": "webpack --config webpack.config.swatchbook.js --watch --mode development",
+    "serve-dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "@tanstack/react-table": "^8.21.3",
+    "connect-history-api-fallback": "^2.0.0",
+    "express": "^5.1.0",
+    "framer-motion": "^12.23.26",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^7.9.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "@babel/preset-react": "^7.27.1",
+    "@tailwindcss/postcss": "^4.1.13",
+    "autoprefixer": "^10.4.21",
+    "babel-loader": "^10.0.0",
+    "concurrently": "^9.2.1",
+    "connect-livereload": "^0.6.1",
+    "css-loader": "^7.1.2",
+    "dotenv": "^17.2.3",
+    "html-webpack-plugin": "^5.6.4",
+    "livereload": "^0.10.3",
+    "nodemon": "^3.1.10",
+    "postcss": "^8.5.6",
+    "postcss-loader": "^8.2.0",
+    "style-loader": "^4.0.0",
+    "tailwindcss": "^4.1.13",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1"
+  }
 }

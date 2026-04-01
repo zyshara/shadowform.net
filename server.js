@@ -2,11 +2,32 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 
+import livereload from "livereload";
+import connectLiveReload from "connect-livereload";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+const isDev = process.env.NODE_ENV !== "production";
+
+/* ───────────────────────────────────────────────
+   Live reload in dev mode
+─────────────────────────────────────────────── */
+if (isDev) {
+  const liveReloadServer = livereload.createServer();
+  liveReloadServer.watch(path.join(__dirname, "dist"));
+
+  app.use(connectLiveReload());
+
+  liveReloadServer.server.once("connection", () => {
+    setTimeout(() => {
+      liveReloadServer.refresh("/");
+    }, 100);
+  });
+}
 
 /* ───────────────────────────────────────────────
    SSL redirect (safe)
@@ -52,10 +73,7 @@ app.use((req, res, next) => {
 });
 
 // Shared static assets (served at root)
-app.use(
-  "/shared",
-  express.static(path.join(__dirname, "public/shared"))
-);
+app.use("/shared", express.static(path.join(__dirname, "public/shared")));
 
 /* ───────────────────────────────────────────────
    SWATCHBOOK (isolated SPA)

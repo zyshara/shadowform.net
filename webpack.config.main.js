@@ -1,6 +1,10 @@
-import path from "path";
-import { fileURLToPath } from "url";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import dotenv from "dotenv";
+import path from "path";
+import webpack from "webpack";
+import { fileURLToPath } from "url";
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,7 +25,10 @@ export default {
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-env", "@babel/preset-react"],
+            presets: [
+              "@babel/preset-env",
+              ["@babel/preset-react", { runtime: "automatic" }],
+            ],
           },
         },
       },
@@ -50,6 +57,12 @@ export default {
     },
   },
   plugins: [
+    new webpack.DefinePlugin({
+      "process.env.STRAPI_API_TOKEN": JSON.stringify(
+        process.env.STRAPI_API_TOKEN,
+      ),
+      "process.env.STRAPI_API_URL": JSON.stringify(process.env.STRAPI_API_URL),
+    }),
     new HtmlWebpackPlugin({
       template: "./public/shared/index.html",
       filename: "index.html",

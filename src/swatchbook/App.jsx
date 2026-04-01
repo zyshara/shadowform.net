@@ -1,9 +1,8 @@
-import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-
 import { AnimatePresence } from "framer-motion";
 
 import Layout from "@/Layout";
+import SwatchBook from "@/SwatchBook";
 
 const App = () => {
   const location = useLocation();
@@ -11,7 +10,9 @@ const App = () => {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Layout />} />
+        <Route path="/" element={<Layout />}>
+          <Route index element={<SwatchBook />} />
+        </Route>
       </Routes>
     </AnimatePresence>
   );
