@@ -2,9 +2,6 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 
-import livereload from "livereload";
-import connectLiveReload from "connect-livereload";
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -17,11 +14,12 @@ const isDev = process.env.NODE_ENV !== "production";
    Live reload in dev mode
 ─────────────────────────────────────────────── */
 if (isDev) {
+  const { default: livereload } = await import("livereload");
+  const { default: connectLiveReload } = await import("connect-livereload");
+  
   const liveReloadServer = livereload.createServer();
   liveReloadServer.watch(path.join(__dirname, "dist"));
-
   app.use(connectLiveReload());
-
   liveReloadServer.server.once("connection", () => {
     setTimeout(() => {
       liveReloadServer.refresh("/");
