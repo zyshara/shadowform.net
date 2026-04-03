@@ -24,7 +24,6 @@ const Footer = () => {
 
   return (
     <footer className="relative shrink-0 h-[56px]">
-      <div className="flex w-full bg-black h-[13px]" />
       <div className="grid grid-cols-[1fr_auto_1fr] items-center justify-center px-4 font-alkhemikal text-[20px] lowercase">
         <NavLink className="text-[min(4.1vw,20px)]" to={prev.url}>
           &lt; {prev.text}

@@ -1,0 +1,46 @@
+{
+  "artist": {
+    "name": "VELOUR",
+    "tagline": "Electronic Press Kit",
+    "genre": "Melodic techno · Berlin / Los Angeles · Est. 2021",
+    "location": "Los Angeles, CA — travels",
+    "bio": {
+      "short": "VELOUR is a Los Angeles-based melodic techno and progressive house producer crafting dense, emotional club music since 2021. Drawing from post-punk and ambient influences, her sets move between hypnotic percussion and soaring synth atmospheres.",
+      "long": "Following a debut EP on Berlin's Subtext Collective, VELOUR has played b2b sets at Avalon Hollywood, Club Bizarre, and Berlin's OHM. Her track \"Dawnbreak\" was featured on Spotify's Electronic Rising playlist."
+    }
+  },
+  "stats": [
+    { "value": "48K", "label": "Spotify monthly" },
+    { "value": "12K", "label": "Instagram" },
+    { "value": "3",   "label": "Releases" },
+    { "value": "14",  "label": "Shows played" },
+    { "value": "2",   "label": "Labels" },
+    { "value": "6",   "label": "Playlist feat." }
+  ],
+  "tracks": [
+    { "num": "01", "title": "Dawnbreak",              "label": "Subtext Collective", "year": 2024, "duration": "6:22" },
+    { "num": "02", "title": "Glass Ratio",            "label": "Self-released",      "year": 2023, "duration": "7:44" },
+    { "num": "03", "title": "Held Under (feat. Mira)","label": "Subtext Collective", "year": 2024, "duration": "5:58" }
+  ],
+  "photos": [
+    { "label": "Press photo 1", "file": null },
+    { "label": "Live shot",     "file": null },
+    { "label": "Studio / logo", "file": null }
+  ],
+  "press": [
+    { "quote": "A future-focused sound that balances raw energy with genuine emotional depth.", "source": "XLR8R Magazine" },
+    { "quote": "VELOUR's Dawnbreak is one of the most assured debut singles of the year.",      "source": "Resident Advisor" }
+  ],
+  "contact": {
+    "booking": "booking@velour.dj",
+    "phone": "+1 (213) 555-0194"
+  },
+  "links": [
+    { "label": "Spotify",       "url": "#" },
+    { "label": "SoundCloud",    "url": "#" },
+    { "label": "Instagram",     "url": "#" },
+    { "label": "Bandcamp",      "url": "#" },
+    { "label": "RA profile",    "url": "#" },
+    { "label": "Tech rider",    "url": "#" }
+  ]
+}

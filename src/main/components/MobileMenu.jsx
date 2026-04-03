@@ -25,7 +25,7 @@ const MobileMenu = ({ open, onClose }) => {
       className={`fixed inset-0 bg-black/80 z-40 backdrop-blur-sm md:hidden transition-opacity duration-300 ${open ? "opacity-100 pointer-events-all" : "opacity-0 pointer-events-none"}`}
     >
       <div className="absolute h-full w-full p-6 flex flex-col justify-center items-center font-alagard text-white opacity-70 text-center">
-        <button className="absolute top-0 right-0 p-6" onClick={onClose}>
+        <button className="absolute top-[18px] right-[18px] text-[22px]" onClick={onClose}>
           X
         </button>
 

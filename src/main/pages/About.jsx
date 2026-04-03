@@ -12,7 +12,7 @@ const About = () => {
       <div className="font-alagard max-w-[320px] text-center text-[min(3.5vw,16px)] md:text-[14px]">
         hi im jen, a 31 year old software developer living in los angeles
         currently working at <span>Blizzard Entertainment</span> on the front
-        end web team. I've been on the internet since the days of Zyzz and
+        end web team. i've been on the internet since the days of Zyzz and
         Albino Black Sheep, and making websites since the dawn of
         &lt;marquee&gt; and Dreamweaver. i'm a raver, a gamer, and a mom to
         three wonderful cats.
