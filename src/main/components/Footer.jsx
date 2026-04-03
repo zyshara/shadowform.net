@@ -1,53 +1,56 @@
+// src/main/components/Footer.jsx
+// Design 1 BW footer — prev/next nav + social icons
+
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
-
 import navlinks from "@/data/navlinks";
-import socials from "@/data/socials.json";
-import { iconMap } from "@shared/assets/icons";
+import kofi from "@shared/assets/icons/kofi.png";
+import instagram from "@shared/assets/icons/instagram.png";
+import steam from "@shared/assets/icons/steam.png";
 
 const Footer = () => {
   const location = useLocation();
-
-  const curIndex = navlinks.findIndex(
-    (navlink) => navlink.url === location.pathname,
-  );
-
-  const prev =
-    curIndex !== -1
-      ? navlinks[(curIndex - 1 + navlinks.length) % navlinks.length]
-      : null;
-
-  const next =
-    curIndex !== -1 ? navlinks[(curIndex + 1) % navlinks.length] : null;
-
-  const divider = <div className="w-[1px] h-[20px] bg-black" />;
+  const currentIndex = navlinks.findIndex((n) => location.pathname === n.url);
+  const prev = navlinks[currentIndex - 1] ?? null;
+  const next = navlinks[currentIndex + 1] ?? null;
 
   return (
-    <footer className="relative shrink-0 h-[56px]">
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center justify-center px-4 font-alkhemikal text-[20px] lowercase">
-        <NavLink className="text-[min(4.1vw,20px)]" to={prev.url}>
-          &lt; {prev.text}
-        </NavLink>
+    <footer className="border-t border-[#1a1a1a] bg-[#0d0d0d] px-7 py-[14px] flex items-center justify-between shrink-0">
+      {/* prev */}
+      <div className="font-alkhemikal text-[10px] tracking-[0.12em] uppercase text-[#444] min-w-[80px]">
+        {prev ? (
+          <NavLink to={prev.url} className="hover:text-[#666] transition-colors">
+            &lt; <span className="text-[#666]">{prev.text}</span>
+          </NavLink>
+        ) : (
+          <span className="opacity-0">·</span>
+        )}
+      </div>
 
-        <div className="flex items-center justify-center">
-          {socials.map((link, idx) => {
-            return (
-              <>
-                <a href={link.url} key={link.id} target="_blank">
-                  <img
-                    className="h-[min(12vw,40px)] mx-[5px]"
-                    src={iconMap[link.id]}
-                  />
-                </a>
-                {idx < socials.length - 1 ? divider : null}
-              </>
-            );
-          })}
-        </div>
+      {/* social icons */}
+      <div className="flex items-center gap-3">
+        <a href="https://ko-fi.com" target="_blank" rel="noreferrer" className="opacity-25 hover:opacity-50 transition-opacity">
+          <img src={kofi} className="w-[16px] h-[16px]" />
+        </a>
+        <span className="text-[#2a2a2a] text-[10px]">|</span>
+        <a href="https://instagram.com" target="_blank" rel="noreferrer" className="opacity-25 hover:opacity-50 transition-opacity">
+          <img src={instagram} className="w-[16px] h-[16px]" />
+        </a>
+        <span className="text-[#2a2a2a] text-[10px]">|</span>
+        <a href="https://store.steampowered.com" target="_blank" rel="noreferrer" className="opacity-25 hover:opacity-50 transition-opacity">
+          <img src={steam} className="w-[16px] h-[16px]" />
+        </a>
+      </div>
 
-        <NavLink className="text-right text-[min(4.1vw,20px)]" to={next.url}>
-          {next.text} &gt;
-        </NavLink>
+      {/* next */}
+      <div className="font-alkhemikal text-[10px] tracking-[0.12em] uppercase text-[#444] min-w-[80px] text-right">
+        {next ? (
+          <NavLink to={next.url} className="hover:text-[#666] transition-colors">
+            <span className="text-[#666]">{next.text}</span> &gt;
+          </NavLink>
+        ) : (
+          <span className="opacity-0">·</span>
+        )}
       </div>
     </footer>
   );

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap');
+
 @import "tailwindcss";
 
 @font-face {
@@ -19,6 +21,7 @@
   --font-8bit: "8-BIT-WONDER";
   --font-alagard: "Alagard";
   --font-alkhemikal: "Alkhemikal";
+  --font-fell: "IM Fell English"
 }
 
 @layer components {

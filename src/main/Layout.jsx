@@ -1,42 +1,41 @@
+// src/main/Layout.jsx
+// Design 1 BW — sidebar layout, black surround, white content panel
+ 
 import React, { useState } from "react";
 import { Outlet, NavLink } from "react-router-dom";
-
-import { DesktopNavbar, MobileNavbar, Footer, MobileMenu } from "@/components";
-
-import cherry_blossom from "@shared/assets/images/cherry_blossom.png";
-
+import { DesktopNavbar, MobileNavbar } from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import MobileMenu from "@/components/MobileMenu";
+ 
 const Layout = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-
+ 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] min-h-dvh w-full items-center justify-center bg-black">
-      <div className="hidden w-full h-full lg:block">
-        <NavLink
-          to="/"
-          className="flex flex-col asbolute right-0 items-end m-[11px]"
-        >
-          <img src={cherry_blossom} className="w-[40px] white-hard-border" />
-          <div className="whitespace-pre-line [writing-mode:vertical-rl] text-white font-alagard text-[30px] tracking-[5px] mt-[14px] mr-[-3px] mb-[15px]">
-            shadowform.net
-          </div>
-          <DesktopNavbar onMenuOpen={() => setMenuOpen(true)} />
-        </NavLink>
-      </div>
-
-      <div className="flex w-full lg:w-[600px] min-h-dvh h-dvh bg-white flex-col">
-        <div className="flex lg:hidden w-full bg-black h-[13px]"/>
+    <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr] min-h-dvh w-full bg-[#0d0d0d]">
+ 
+      {/* ── Sidebar (desktop only) ─────────────────────────── */}
+      <aside className="hidden lg:flex flex-col bg-[#0a0a0a] border-r border-[#222] pt-7 pb-5 items-center">
+        <DesktopNavbar />
+      </aside>
+ 
+      {/* ── Main column ───────────────────────────────────── */}
+      <div className="flex flex-col min-h-dvh bg-[#111]">
+ 
+        {/* mobile top bar */}
         <MobileNavbar onMenuOpen={() => setMenuOpen(true)} />
-        <main className="flex-1 min-h-0 overflow-y-auto px-4 py-4">
+ 
+        {/* page content */}
+        <main className="flex-1 min-h-0 overflow-y-auto">
           <Outlet />
         </main>
+ 
         <Footer />
-        <div className="flex lg:hidden w-full bg-black h-[13px]"/>
-        <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
       </div>
-
-      <div className="hidden lg:block" />
+ 
+      {/* mobile slide-over menu */}
+      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
     </div>
   );
 };
-
+ 
 export default Layout;
