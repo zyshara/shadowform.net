@@ -1,0 +1,53 @@
+:root {
+  --bg:                #111111;
+  --bg-ticker:         #0d0d0d;
+  --bg-footer:         #0d0d0d;
+  --bg-sidebar:        #0a0a0a;
+  --bg-mobile-nav:     #0a0a0a;
+  --bg-mobile-ticker:  #0d0d0d;
+  --bg-menu:           #0a0a0a;
+
+  --border:            #222222;
+  --border-soft:       #1e1e1e;
+  --border-footer:     #1a1a1a;
+  --border-menu-item:  #111111;
+  --border-menu-header:#1a1a1a;
+
+  --ornament-line:     #2a2a2a;
+  --ornament-glyph:    #333333;
+  --divider:           #333333;
+
+  --text-heading:      #f0f0f0;
+  --text-body:         #aaaaaa;
+  --text-quote:        #2e2e2e;
+  --text-nav-active:   #ffffff;
+  --text-nav-inactive: #888888;
+  --text-nav-hover:    #cccccc;
+  --text-ticker:       #444444;
+  --text-footer:       #444444;
+  --text-footer-accent:#666666;
+  --text-site-name:    #ffffff;
+  --text-menu-active:  #ffffff;
+  --text-menu-inactive:#333333;
+  --text-menu-hover:   #888888;
+  --text-close-btn:    #444444;
+  --text-mobile-name:  #ffffff;
+  --text-page-indicator: #f4a7c3;
+  --text-hamburger:    #888888;
+  --text-separator:    #2a2a2a;
+
+  --pink-text:         #f4a7c3;
+  --pink-border:       #4a1f38;
+  --pink-bg:           #1a0d14;
+  --pink-glow:         #f4a7c344;
+
+  --tag-lit-text:      #f4a7c3;
+  --tag-lit-border:    #4a1f38;
+  --tag-lit-bg:        #1a0d14;
+  --tag-dim-text:      #555555;
+  --tag-dim-border:    #222222;
+  --tag-dim-bg:        transparent;
+
+  --nav-active-underline: #f4a7c344;
+  --border-close-btn:  #222222;
+}

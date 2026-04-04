@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "eyebrow": "shadowform management",
+    "title": "the roster",
+    "blurb": "shadowform supports a small collective of electronic artists across subgenres — from ambient and techno to experimental club music. we believe in artist-first management and long-term vision."
+  },
+  "artists": [
+    {
+      "id": "artist-one",
+      "name": "artist one",
+      "genre": "melodic techno · berlin",
+      "location": "berlin / los angeles",
+      "bio": "crafting dense, emotional club music since 2021. debut EP out on Subtext Collective. featured on Spotify's Electronic Rising playlist.",
+      "status": "active",
+      "image": null,
+      "links": [
+        { "label": "spotify",    "url": "#" },
+        { "label": "soundcloud", "url": "#" },
+        { "label": "bandcamp",   "url": "#" }
+      ],
+      "tags": ["melodic techno", "progressive house"]
+    },
+    {
+      "id": "artist-two",
+      "name": "artist two",
+      "genre": "ambient · experimental",
+      "location": "los angeles",
+      "bio": "textural soundscapes and slow-moving frequency work. latest release on IIKKI. ongoing collaboration with visual artists.",
+      "status": "active",
+      "image": null,
+      "links": [
+        { "label": "spotify",  "url": "#" },
+        { "label": "bandcamp", "url": "#" }
+      ],
+      "tags": ["ambient", "experimental"]
+    }
+  ]
+}

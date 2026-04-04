@@ -4,6 +4,7 @@ import {
   Creative,
   Development,
   Enter,
+  Guestbook,
   Management,
   NotFound,
   Resume,
@@ -46,6 +47,12 @@ const navlinks = [
     id: "contact",
     url: "/contact",
     text: "Contact",
+    component: UnderConstruction,
+  },
+  {
+    id: "guestbook",
+    url: "/guestbook",
+    text: "Guestbook",
     component: UnderConstruction,
   },
 ];

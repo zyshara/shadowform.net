@@ -5,8 +5,10 @@ import { AnimatePresence } from "framer-motion";
 
 import Layout from "@/Layout";
 import { PageTransition } from "@/components";
-import { Enter } from "@/pages";
+import { Enter, NotFound } from "@/pages";
 import navlinks from "@/data/navlinks";
+
+import { EPK } from "@/components";
 
 const App = () => {
   const location = useLocation();
@@ -16,6 +18,7 @@ const App = () => {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Enter />} />
         <Route element={<Layout />}>
+          <Route path="*" element={<NotFound />} />
           {navlinks.map(({ id, url, component: Page }) => (
             <Route
               key={id}
@@ -28,6 +31,7 @@ const App = () => {
             />
           ))}
         </Route>
+        <Route path="/management/lowpoly/epk" element={<EPK/>} />
       </Routes>
     </AnimatePresence>
   );

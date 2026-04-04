@@ -1,23 +1,220 @@
-import React from "react";
-import FlowerDivider from "@/components/FlowerDivider.jsx";
+// src/main/pages/Management.jsx
 
-import red_spear_text_logo from "@shared/assets/images/red_spear_text_logo.png";
-import red_spear_graphic_logo from "@shared/assets/images/red_spear_graphic_logo.png";
+import { useState, useEffect } from "react";
+import Ornament from "@/components/Ornament";
+import Tag from "@/components/Tag";
+import Spinner from "@/components/Spinner";
+import Header from "@/components/Header";
 
-import PixelArt from "./PixelArt";
+const MIN_LOAD_MS = 500; // minimum time the spinner shows
+const FADE_MS     = 400;  // how long the fade-out takes
 
-const Management = ({ artSrc, logoSrc }) => {
+// ── Artist Card ──────────────────────────────────────────────────────────────
+const ArtistCard = ({ artist }) => {
   return (
-    <div className="relative flex flex-col items-center w-full grayscale place-self-start">
-
-      <div className="cursor-pointer">
-        <FlowerDivider variant="top" />
-        <PixelArt src={red_spear_graphic_logo} className="w-[220px] object-cover grayscale" />
-        <FlowerDivider variant="bottom" />
+    <div
+      className="flex items-start gap-4 p-4 border rounded-[2px]"
+      style={{
+        background:   "var(--bg-ticker)",
+        borderColor:  "var(--border-soft)",
+      }}
+    >
+      {/* image / placeholder */}
+      <div
+        className="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-[2px] border"
+        style={{
+          background:  "var(--bg-sidebar)",
+          borderColor: "var(--border)",
+        }}
+      >
+        {artist.icon ? (
+          <img
+            src={artist.icon}
+            alt={artist.name}
+            className="w-full h-full object-cover rounded-[2px]"
+          />
+        ) : (
+          <span
+            className="font-alagard text-[18px]"
+            style={{ color: "var(--ornament-glyph)" }}
+          >
+            ✿
+          </span>
+        )}
       </div>
 
-      <div className="absolute -bottom-[24px] h-10 flex items-center justify-center">
-        <img src={red_spear_text_logo} className="h-20" />
+      {/* info */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-2 mb-1">
+          <h3
+            className="font-alagard text-[16px] tracking-[1px] leading-tight lowercase"
+            style={{ color: "var(--text-heading)" }}
+          >
+            {artist.name}
+          </h3>
+          <span
+            className="font-alagard text-[18px]"
+            style={{ color: "var(--ornament-glyph)" }}
+           >✿</span>
+        </div>
+
+        <p
+          className="font-alkhemikal text-[9px] tracking-[0.14em] uppercase mb-2"
+          style={{ color: "var(--text-nav-inactive)" }}
+        >
+          {`${artist.primary_genre} · ${artist.location}`}
+        </p>
+
+        <p
+          className="font-fell italic text-[12px] leading-[1.75] mb-3"
+          style={{ color: "var(--text-body)" }}
+        >
+          {artist.blurb}
+        </p>
+
+        {/* genres */}
+        {artist.genres?.length > 0 && (
+          <div className="flex gap-1 flex-wrap mb-3">
+            {artist.genres.map((genre) => (
+              <Tag key={genre} variant="lit">{genre}</Tag>
+            ))}
+          </div>
+        )}
+
+        {/* links */}
+        {artist.links?.length > 0 && (
+          <div className="flex gap-2 flex-wrap">
+            {artist.links.map((link) => (
+              <a
+                key={link.label}
+                href={link.url}
+                target="_blank"
+                rel="noreferrer"
+                className="font-alkhemikal text-[10px] tracking-[0.1em] uppercase px-2 py-1 rounded-[2px] border transition-colors duration-150"
+                style={{
+                  color:       "var(--text-footer)",
+                  borderColor: "var(--border)",
+                  background:  "transparent",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "var(--text-footer-accent)";
+                  e.currentTarget.style.borderColor = "var(--ornament-glyph)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "var(--text-footer)";
+                  e.currentTarget.style.borderColor = "var(--border)";
+                }}
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ── Management Page ──────────────────────────────────────────────────────────
+const Management = () => {
+  const [artists, setArtists]   = useState([]);
+  const [meta] = useState({
+    eyebrow: "Artist Management",
+    title:   "The Roster",
+    blurb:   "shadowform is a small collective supporting electronic artists across multiple genres. we strive to empower artists & their projects so they can reach their creative goals.",
+  });
+  const [error,     setError]     = useState(null);
+  // loading = data not ready OR minimum time not elapsed
+  const [loading,   setLoading]   = useState(true);
+  // fading = data ready, minimum time elapsed, now playing fade-out
+  const [fading,    setFading]    = useState(false);
+ 
+  useEffect(() => {
+    const start = Date.now();
+ 
+    fetch("/api/artists")
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then(({ artists }) => {
+        setArtists(artists);
+ 
+        // wait for whichever is longer: the fetch or the minimum display time
+        const elapsed   = Date.now() - start;
+        const remaining = Math.max(0, MIN_LOAD_MS - elapsed);
+ 
+        setTimeout(() => {
+          // kick off the fade-out
+          setFading(true);
+          // after fade completes, hide the loader
+          setTimeout(() => setLoading(false), FADE_MS);
+        }, remaining);
+      })
+      .catch((e) => {
+        setError(e.message);
+        setLoading(false);
+      });
+  }, []);
+
+  // ── loading / fading overlay ─────────────────────────────────────────────
+  if (loading) return (
+    <div className="flex flex-col min-h-full" style={{ background: "var(--bg)" }}>
+      <div
+        className="flex-1 flex items-center justify-center"
+        style={{
+          opacity:    fading ? 0 : 1,
+          transition: `opacity ${FADE_MS}ms ease-out`,
+        }}
+      >
+        <Spinner />
+      </div>
+    </div>
+  );
+
+  // ── error ─────────────────────────────────────────────────────────────────
+  if (error) return (
+    <div className="flex flex-col min-h-full" style={{ background: "var(--bg)" }}>
+      <div className="flex-1 flex items-center justify-center">
+        <p className="font-fell italic text-[13px]" style={{ color: "var(--text-nav-inactive)" }}>
+          something went wrong — {error}
+        </p>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="flex flex-col min-h-full" style={{ background: "var(--bg)" }}>
+      <div className="flex-1 flex flex-col px-10 py-8 max-w-[600px] w-full mx-auto justify-center">
+        {/* header */}
+        <Header
+          eyebrow={meta.eyebrow}
+          title={meta.title}
+          description={meta.blurb}
+        />
+
+        {/* roster label */}
+        <div className="flex items-center gap-3 mb-4 mt-6">
+          <span
+            className="font-alkhemikal text-[9px] tracking-[0.2em] uppercase"
+            style={{ color: "var(--ornament-glyph)" }}
+          >
+            ✦ &nbsp; artists
+          </span>
+          <div
+            className="flex-1 h-px"
+            style={{ background: `linear-gradient(to right, var(--ornament-line), transparent)` }}
+          />
+        </div>
+
+        {/* artist cards */}
+        <div className="flex flex-col gap-3">
+          {artists.map((artist) => (
+            <ArtistCard key={artist.id} artist={artist} />
+          ))}
+        </div>
+
+        <Ornament className="mt-8 self-center" />
       </div>
     </div>
   );

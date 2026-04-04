@@ -1,14 +1,22 @@
 // src/main/components/Ticker.jsx
-// Scrolling marquee that shows the current page name
 
 const Ticker = ({ text = "shadowform" }) => {
   const repeated = Array(16).fill(`✦ ${text}`).join(" ");
 
   return (
-    <div className="bg-[#0d0d0d] border-b border-[#1e1e1e] py-[7px] px-5 overflow-hidden whitespace-nowrap">
+    <div
+      className="border-b py-[7px] px-5 overflow-hidden whitespace-nowrap"
+      style={{
+        background:   "var(--bg-ticker)",
+        borderColor:  "var(--border-soft)",
+      }}
+    >
       <span
-        className="inline-block font-alkhemikal text-[10px] text-[#444] tracking-[0.15em] whitespace-nowrap"
-        style={{ animation: "marquee 18s linear infinite" }}
+        className="inline-block font-alkhemikal text-[10px] tracking-[0.15em] whitespace-nowrap"
+        style={{
+          color:     "var(--text-ticker)",
+          animation: "marquee 18s linear infinite",
+        }}
       >
         {repeated}
       </span>

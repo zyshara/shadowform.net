@@ -1,14 +1,30 @@
 // src/main/components/Ornament.jsx
-// The ✦·✦·✦ decorative divider used between content sections
 
-const Ornament = ({ className = "" }) => {
+const Ornament = ({ variant = "diamond", className = "" }) => {
+  const divider = "✦·✦·✦";
+
+  if (variant === "dot") divider = "•• ━━━━━ ••●•• ━━━━━ ••";
+
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <div className="h-px w-14 bg-gradient-to-l from-[#2a2a2a] to-transparent" />
-      <span className="font-alkhemikal text-[10px] text-[#333] tracking-[0.2em]">
-        ✦·✦·✦
+      <div
+        className="h-px w-14"
+        style={{
+          background: `linear-gradient(to left, var(--ornament-line), transparent)`,
+        }}
+      />
+      <span
+        className="font-alkhemikal text-[10px] tracking-[0.2em]"
+        style={{ color: "var(--ornament-glyph)" }}
+      >
+        {divider}
       </span>
-      <div className="h-px w-14 bg-gradient-to-r from-[#2a2a2a] to-transparent" />
+      <div
+        className="h-px w-14"
+        style={{
+          background: `linear-gradient(to right, var(--ornament-line), transparent)`,
+        }}
+      />
     </div>
   );
 };

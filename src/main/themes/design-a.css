@@ -1,0 +1,57 @@
+/* ── Design A: Pink ──────────────────────────────────────────────────────────
+   Deep plum-black background, stark white body text, soft pink accents
+   Original "Design A" from the early explorations
+────────────────────────────────────────────────────────────────────────────── */
+:root {
+  --bg:                #100c14;
+  --bg-ticker:         #0a0810;
+  --bg-footer:         #09060c;
+  --bg-sidebar:        #080608;
+  --bg-mobile-nav:     #080608;
+  --bg-mobile-ticker:  #0a0810;
+  --bg-menu:           #080608;
+ 
+  --border:            #1f1520;
+  --border-soft:       #1e1520;
+  --border-footer:     #1a0f18;
+  --border-menu-item:  #1a0f18;
+  --border-menu-header:#1a0f18;
+ 
+  --ornament-line:     #3d1f2e;
+  --ornament-glyph:    #5a2e42;
+  --divider:           #3d1f2e;
+ 
+  --text-heading:      #f0a0c0;
+  --text-body:         #e8e0ec;
+  --text-quote:        #2a1520;
+  --text-nav-active:   #f0a0c0;
+  --text-nav-inactive: #4a3040;
+  --text-nav-hover:    #c084a0;
+  --text-ticker:       #3d1f2e;
+  --text-footer:       #3a1f2e;
+  --text-footer-accent:#c070a0;
+  --text-site-name:    #e8e0ec;
+  --text-menu-active:  #f0a0c0;
+  --text-menu-inactive:#2a1020;
+  --text-menu-hover:   #6a3050;
+  --text-close-btn:    #3a1f2e;
+  --text-mobile-name:  #e8e0ec;
+  --text-page-indicator: #f0a0c0;
+  --text-hamburger:    #4a3040;
+  --text-separator:    #2a1020;
+ 
+  --pink-text:         #f0a0c0;
+  --pink-border:       #4a1f38;
+  --pink-bg:           #120810;
+  --pink-glow:         #e0609088;
+ 
+  --tag-lit-text:      #e080b8;
+  --tag-lit-border:    #4a1f38;
+  --tag-lit-bg:        #120810;
+  --tag-dim-text:      #3a2030;
+  --tag-dim-border:    #221018;
+  --tag-dim-bg:        transparent;
+ 
+  --nav-active-underline: #f0a0c044;
+  --border-close-btn:  #1f1520;
+}

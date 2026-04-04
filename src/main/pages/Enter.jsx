@@ -24,7 +24,7 @@ const Enter = () => {
         src={cherry_blossom}
         className="w-[25vw] sm:w-30 lg:w-10 mt-[14px] white-hard-border"
       />
-      <span className="opacity-75 mt-[10vw] sm:mt-[75px] [animation:hue-rotate-text_100ms_linear_infinite] md:[animation:none] md:hover:[animation:hue-rotate-text_100ms_linear_infinite]">
+      <span className="opacity-75 mt-[10vw] sm:mt-[75px] [animation:pink-rotate-text_100ms_linear_infinite] md:[animation:none] md:hover:[animation:pink-rotate-text_100ms_linear_infinite]">
         &gt; click to enter &lt;
       </span>
     </motion.div>

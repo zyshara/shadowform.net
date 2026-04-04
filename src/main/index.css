@@ -1,11 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
 
 @import "tailwindcss";
 
-@font-face {
-  font-family: "8-BIT-WONDER";
-  src: url("@shared/assets/fonts/8-BIT-WONDER.ttf") format("truetype");
-}
+@import "./themes/design-a.css";
 
 @font-face {
   font-family: "Alagard";
@@ -18,10 +16,10 @@
 }
 
 @theme {
-  --font-8bit: "8-BIT-WONDER";
   --font-alagard: "Alagard";
   --font-alkhemikal: "Alkhemikal";
-  --font-fell: "IM Fell English"
+  --font-fell: "IM Fell English";
+  --font-spectral: "Spectral"
 }
 
 @layer components {
@@ -41,6 +39,15 @@ body,
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-100%); }
+}
+
+@keyframes pink-rotate-text {
+  0% {
+    color: #e8e0ec;
+  }
+  100% {
+    color: #f0a0c0;
+  }
 }
 
 @keyframes hue-rotate-text {

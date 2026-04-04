@@ -1,6 +1,9 @@
+import "dotenv/config";
+
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import { strapiGet, normalizeArtist } from "./api/strapi.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -72,6 +75,25 @@ app.use((req, res, next) => {
 
 // Shared static assets (served at root)
 app.use("/shared", express.static(path.join(__dirname, "public/shared")));
+
+// ── Strapi proxy ─────────────────────────────────────────────────────────────
+app.get("/api/artists", async (req, res) => {
+  try {
+    const data = await strapiGet("/api/artists", {
+      "populate": "*",
+      "pagination[pageSize]": "100",
+    });
+    const artists = (data.data ?? []).map(normalizeArtist);
+    res.json({ artists });
+  } catch (err) {
+    console.error("Strapi fetch failed:", err.message, err.body ?? "");
+    res.status(502).json({ error: err.message });
+  }
+});
+
+app.get("/api/guestbook", async (req, res) => {
+  res.json({ entries: [] });
+});
 
 /* ───────────────────────────────────────────────
    SWATCHBOOK (isolated SPA)

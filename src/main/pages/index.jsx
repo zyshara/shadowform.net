@@ -8,3 +8,4 @@ export { default as NotFound } from "./NotFound";
 export { default as Resume } from "./Resume";
 export { default as Shop } from "./Shop";
 export { default as UnderConstruction } from "./UnderConstruction";
+export { default as Guestbook } from "./Guestbook";

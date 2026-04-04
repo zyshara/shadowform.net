@@ -1,0 +1,57 @@
+/* ── Void Rose A ─────────────────────────────────────────────────────────────
+   Deep purple-black base, brighter fuchsia-rose accent
+   Darker and more electric than the original Void Rose
+────────────────────────────────────────────────────────────────────────────── */
+:root.void-rose {
+  --bg:                #0a0614;
+  --bg-ticker:         #060410;
+  --bg-footer:         #060410;
+  --bg-sidebar:        #060410;
+  --bg-mobile-nav:     #0a0614;
+  --bg-mobile-ticker:  #060410;
+  --bg-menu:           #060410;
+ 
+  --border:            #180e28;
+  --border-soft:       #180e28;
+  --border-footer:     #180e28;
+  --border-menu-item:  #180e28;
+  --border-menu-header:#180e28;
+ 
+  --ornament-line:     #200c38;
+  --ornament-glyph:    #200c38;
+  --divider:           #401060;
+ 
+  --text-heading:      #f080c0;
+  --text-body:         #b8a0d0;
+  --text-quote:        #180e28;
+  --text-nav-active:   #f080c0;
+  --text-nav-inactive: #200c38;
+  --text-nav-hover:    #9040b0;
+  --text-ticker:       #200c38;
+  --text-footer:       #200c38;
+  --text-footer-accent:#e060a8;
+  --text-site-name:    #e060a8;
+  --text-menu-active:  #f080c0;
+  --text-menu-inactive:#200c38;
+  --text-menu-hover:   #6020a0;
+  --text-close-btn:    #200c38;
+  --text-mobile-name:  #e060a8;
+  --text-page-indicator: #f080c0;
+  --text-hamburger:    #401060;
+  --text-separator:    #180e28;
+ 
+  --pink-text:         #f080c0;
+  --pink-border:       #601080;
+  --pink-bg:           #1c0828;
+  --pink-glow:         #e060a844;
+ 
+  --tag-lit-text:      #f080c0;
+  --tag-lit-border:    #601080;
+  --tag-lit-bg:        #1c0828;
+  --tag-dim-text:      #301050;
+  --tag-dim-border:    #180e28;
+  --tag-dim-bg:        transparent;
+ 
+  --nav-active-underline: #f080c044;
+  --border-close-btn:  #180e28;
+}
