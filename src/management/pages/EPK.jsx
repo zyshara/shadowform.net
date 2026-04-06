@@ -1,5 +1,7 @@
-import { useState, useEffect, useRef } from "react";
-import data from "./epk-data.json";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+import data from "@/data/epk-data.json";
 
 // ── Waveform bars (decorative) ────────────────────────────────────────────────
 const WAVE_SEEDS = [
@@ -134,13 +136,13 @@ function Hero({ artist }) {
       }} />
       <div style={{ position:"relative", zIndex:2 }}>
         <p style={{ ...css.mono, fontSize:11, color: PURPLE, letterSpacing:"0.15em", textTransform:"uppercase", marginBottom:8 }}>
-          // {artist.tagline}
+          // Artist Press Kit
         </p>
         <h1 style={{ fontFamily:"'Syne', sans-serif", fontSize:52, fontWeight:800, color:"#fff", lineHeight:1, margin:"0 0 8px", letterSpacing:-1 }}>
           {artist.name}
         </h1>
         <p style={{ fontSize:14, color:"rgba(255,255,255,0.5)", margin:0 }}>
-          {artist.genre}
+          {`${artist.primary_genre} · ${artist.location}`}
         </p>
       </div>
     </div>
@@ -153,28 +155,30 @@ function BioSection({ artist, stats }) {
     <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1.5rem", marginBottom:"2rem" }}>
       <div style={css.card}>
         <p style={css.label}>// About</p>
-        <p style={{ fontSize:14, lineHeight:1.75, color:"var(--text-muted)", margin:"0 0 1rem" }}>
-          {artist.bio.short}
-        </p>
-        <p style={{ fontSize:14, lineHeight:1.75, color:"var(--text-muted)", margin:0 }}>
-          {artist.bio.long}
+        <p style={{ fontSize:14, lineHeight:1.75, color:"var(--text-muted)", margin:"0 0 1rem", whiteSpace: "pre-wrap" }}>
+          {artist.biography}
         </p>
       </div>
       <div>
         <p style={css.label}>// Stats</p>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:10 }}>
-          {stats.map(s => (
+          {artist.stats.map(s => (
             <div key={s.label} style={{
               background:"var(--surface)",
               border:"0.5px solid var(--border)",
               borderRadius:8,
               padding:"0.875rem",
               textAlign:"center",
+              display: "flex",
+              flexFlow: "column",
+              height: "103px",
+              justifyContent: "center",
+              alignItems: "center",
             }}>
               <span style={{ display:"block", fontFamily:"'Syne', sans-serif", fontSize:22, fontWeight:700, color:"var(--text)", lineHeight:1, marginBottom:4 }}>
                 {s.value}
               </span>
-              <span style={{ ...css.mono, fontSize:10, color:"var(--text-muted)", textTransform:"uppercase", letterSpacing:"0.1em" }}>
+              <span style={{ ...css.mono, fontSize:10, color:"var(--text-muted)", textTransform:"uppercase", letterSpacing:"0.1em", marginTop: "5px", wordSpacing: "100vw", }}>
                 {s.label}
               </span>
             </div>
@@ -348,8 +352,8 @@ function LinksRow({ links }) {
 }
 
 // ── Section router ────────────────────────────────────────────────────────────
-function SectionContent({ active, data }) {
-  const { artist, stats, tracks, photos, press, contact, links } = data;
+function SectionContent({ active, artist, data }) {
+  const { stats, tracks, photos, press, contact, links } = data;
 
   switch (active) {
     case "Bio":
@@ -419,7 +423,22 @@ function SectionContent({ active, data }) {
 
 // ── Root ──────────────────────────────────────────────────────────────────────
 export default function EPK() {
+
   const [active, setActive] = useState("Bio");
+  const { slug } = useParams();
+  const [artist, setArtist] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`/api/artists/${slug}`)
+      .then((r) => r.json())
+      .then(({ artist }) => setArtist(artist ?? null))
+      .catch(() => setArtist(null))
+      .finally(() => setLoading(false));
+  }, [slug]);
+
+  if (loading) return <div/>;
+  if (!artist) return <div/>
 
   return (
     <>
@@ -455,9 +474,9 @@ export default function EPK() {
       `}</style>
 
       <div style={{ maxWidth:860, margin:"0 auto", padding:"2rem 1.5rem" }}>
-        <Hero artist={data.artist} />
+        <Hero artist={artist} />
         <Nav active={active} setActive={setActive} />
-        <SectionContent active={active} data={data} />
+        <SectionContent active={active} artist={artist} data={data} />
 
         {/* always show links + full overview on Bio tab */}
         {active === "Bio" && (

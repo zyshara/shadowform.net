@@ -8,8 +8,6 @@ import { PageTransition } from "@/components";
 import { Enter, NotFound } from "@/pages";
 import navlinks from "@/data/navlinks";
 
-import { EPK } from "@/components";
-
 const App = () => {
   const location = useLocation();
 
@@ -31,7 +29,6 @@ const App = () => {
             />
           ))}
         </Route>
-        <Route path="/management/lowpoly/epk" element={<EPK/>} />
       </Routes>
     </AnimatePresence>
   );
