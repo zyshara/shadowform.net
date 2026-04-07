@@ -249,7 +249,7 @@ const EntryCard = ({ entry }) => {
             <h3 className="font-alagard text-[16px] tracking-[1px] leading-tight lowercase" style={{ color:"var(--text-heading)" }}>
               {entry.name}
             </h3>
-            <span className="font-alkhemikal text-[9px] tracking-[.1em] uppercase flex-shrink-0" style={{ color:"var(--text-nav-inactive)" }}>
+            <span className="font-alkhemikal text-[10px] tracking-[.1em] uppercase flex-shrink-0" style={{ color:"var(--text-nav-inactive)" }}>
               {entry.date}
             </span>
           </div>
@@ -257,7 +257,7 @@ const EntryCard = ({ entry }) => {
           {/* website */}
           {entry.website && (
             <a href={entry.website} target="_blank" rel="noreferrer"
-              className="font-alkhemikal text-[9px] tracking-[.1em] uppercase mb-1"
+              className="font-alkhemikal text-[10px] tracking-[.1em] uppercase mb-1"
               style={{ color:"var(--text-nav-inactive)" }}>{entry.website}</a>
           )}
 
@@ -389,7 +389,7 @@ const Guestbook = () => {
                 { label:"website", value:website, set:setWebsite, placeholder:"optional" },
               ].map(({ label, value, set, placeholder, required }) => (
                 <div key={label} className="flex flex-col gap-1">
-                  <label className="font-alkhemikal text-[9px] tracking-[.16em] uppercase" style={{ color:"var(--text-nav-inactive)" }}>
+                  <label className="font-alkhemikal text-[10px] tracking-[.16em] uppercase" style={{ color:"var(--text-nav-inactive)" }}>
                     {label}{required && <span style={{ color:"var(--pink-text)" }}> *</span>}
                   </label>
                   <input type="text" value={value} onChange={(e) => set(e.target.value)} placeholder={placeholder}
@@ -401,7 +401,7 @@ const Guestbook = () => {
 
             {/* message */}
             <div className="flex flex-col gap-1">
-              <label className="font-alkhemikal text-[9px] tracking-[.16em] uppercase" style={{ color:"var(--text-nav-inactive)" }}>message</label>
+              <label className="font-alkhemikal text-[10px] tracking-[.16em] uppercase" style={{ color:"var(--text-nav-inactive)" }}>message</label>
               <textarea value={message} onChange={(e) => setMessage(e.target.value)}
                 placeholder="say something..." rows={2}
                 className="font-fell text-[13px] bg-transparent border-b outline-none resize-none leading-[1.7] pb-[2px]"
@@ -411,7 +411,7 @@ const Guestbook = () => {
             {/* tags */}
             {availTags.length > 0 && (
               <div className="flex flex-col gap-2">
-                <label className="font-alkhemikal text-[9px] tracking-[.16em] uppercase" style={{ color:"var(--text-nav-inactive)" }}>tags</label>
+                <label className="font-alkhemikal text-[10px] tracking-[.16em] uppercase" style={{ color:"var(--text-nav-inactive)" }}>tags</label>
                 <div className="flex gap-2 flex-wrap">
                   {availTags.map((tag) => (
                     <Tag
@@ -429,7 +429,7 @@ const Guestbook = () => {
 
             {/* drawing */}
             <div className="flex flex-col gap-2">
-              <label className="font-alkhemikal text-[9px] tracking-[.16em] uppercase" style={{ color:"var(--text-nav-inactive)" }}>draw something</label>
+              <label className="font-alkhemikal text-[10px] tracking-[.16em] uppercase" style={{ color:"var(--text-nav-inactive)" }}>draw something</label>
               {drawing ? (
                 <div className="flex items-center gap-3">
                   <img src={drawing} alt="your drawing"
@@ -437,15 +437,15 @@ const Guestbook = () => {
                     style={{ borderColor:"var(--border-soft)", background:"var(--bg-sidebar)" }} />
                   <div className="flex flex-col gap-1">
                     <span className="font-fell text-[11px]" style={{ color:"var(--pink-text)" }}>drawing attached ✦</span>
-                    <button onClick={() => setShowDraw(true)} className="font-alkhemikal text-[9px] tracking-[.1em] uppercase"
+                    <button onClick={() => setShowDraw(true)} className="font-alkhemikal text-[10px] tracking-[.1em] uppercase"
                       style={{ color:"var(--pink-text)", background:"none", border:"none", cursor:"pointer", textAlign:"left" }}>redraw</button>
-                    <button onClick={() => setDrawing(null)} className="font-alkhemikal text-[9px] tracking-[.1em] uppercase"
+                    <button onClick={() => setDrawing(null)} className="font-alkhemikal text-[10px] tracking-[.1em] uppercase"
                       style={{ color:"var(--text-nav-inactive)", background:"none", border:"none", cursor:"pointer", textAlign:"left" }}>remove</button>
                   </div>
                 </div>
               ) : (
                 <button onClick={() => setShowDraw(true)}
-                  className="font-alkhemikal text-[9px] tracking-[.1em] uppercase px-3 py-2 rounded-[2px] border self-start"
+                  className="font-alkhemikal text-[10px] tracking-[.1em] uppercase px-3 py-2 rounded-[2px] border self-start"
                   style={{ color:"var(--pink-text)", borderColor:"var(--pink-border)", background:"var(--pink-bg)", cursor:"pointer" }}>
                   ✦ open drawing pad
                 </button>
@@ -455,7 +455,7 @@ const Guestbook = () => {
             {/* submit */}
             <div className="flex items-center gap-4 pt-1">
               <button onClick={handleSubmit} disabled={submitting || !name.trim()}
-                className="font-alkhemikal text-[9px] tracking-[.12em] uppercase px-4 py-2 rounded-[2px] border"
+                className="font-alkhemikal text-[10px] tracking-[.12em] uppercase px-4 py-2 rounded-[2px] border"
                 style={{
                   color:"var(--pink-text)", borderColor:"var(--pink-border)", background:"var(--pink-bg)",
                   cursor: name.trim() ? "pointer" : "not-allowed",
@@ -470,7 +470,7 @@ const Guestbook = () => {
 
           {/* ── entries ── */}
           <div className="flex items-center gap-3 mb-4">
-            <span className="font-alkhemikal text-[9px] tracking-[.2em] uppercase" style={{ color:"var(--ornament-glyph)" }}>✦ &nbsp; entries</span>
+            <span className="font-alkhemikal text-[10px] tracking-[.2em] uppercase" style={{ color:"var(--ornament-glyph)" }}>✦ &nbsp; entries</span>
             <div className="flex-1 h-px" style={{ background:"linear-gradient(to right, var(--ornament-line), transparent)" }} />
           </div>
 
