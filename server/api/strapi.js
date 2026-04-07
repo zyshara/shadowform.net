@@ -1,4 +1,4 @@
-// src/shared/api/strapi.js
+// server/api/strapi.js
 
 const STRAPI_URL   = process.env.STRAPI_API_URL   || "https://strapi-shadowform-52c53315c615.herokuapp.com";
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN || "";
@@ -54,93 +54,81 @@ export async function strapiGet(path, params = {}, { ttl = CACHE_TTL_MS, noCache
   return data;
 }
 
-export async function getArtists(params = {}, opts = {}) {
-  return strapiGet("/api/artists", {
-    "populate[management_page_card_links][populate][label]": "*",
-    "populate[management_page_card_links][populate][url]":   "*",
-    "populate[icon][fields]": "*",
-    "populate[artist_statistics][fields]": "*",
-    "populate[primary_genre]": "*",
-    "populate[genres]": "*",
-    "populate[instagram]": "*",
-    "populate[spotify]":   "*",
-    "populate[songkick]":  "*",
-    "pagination[pageSize]": "100",
-    ...params,
-  }, opts);
-}
+export async function strapiPost(path, payload) {
+  const res = await fetch(`${STRAPI_URL}${path}`, {
+    method:  "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(STRAPI_TOKEN && { Authorization: `Bearer ${STRAPI_TOKEN}` }),
+    },
+    body: JSON.stringify(payload),
+  });
 
-export async function getArtistBySlug(slug, opts = {}) {
-  return getArtists({ "filters[slug][$eq]": slug }, opts);
+  if (!res.ok) {
+    const body = await res.text();
+    const err  = new Error(`Strapi ${res.status}: ${res.statusText}`);
+    err.body   = body;
+    throw err;
+  }
+  return res.json();
 }
 
 /**
- * Manually invalidate a cached entry (or the whole cache).
- * @param {string} [path] - if omitted, clears everything
- * @param {object} [params]
+ * Upload a file to Strapi's media library.
+ * @param {Buffer} buffer - file buffer
+ * @param {string} filename - e.g. "drawing-123.png"
+ * @param {string} mimeType - e.g. "image/png"
+ * @returns {object} uploaded file object from Strapi
  */
+export async function strapiUploadMedia(buffer, filename, mimeType = "image/png") {
+  const formData = new FormData();
+  formData.append("files", new Blob([buffer], { type: mimeType }), filename);
+
+  const res = await fetch(`${STRAPI_URL}/api/upload`, {
+    method:  "POST",
+    headers: { ...(STRAPI_TOKEN && { Authorization: `Bearer ${STRAPI_TOKEN}` }) },
+    // no Content-Type header — let fetch set the multipart boundary automatically
+    body:    formData,
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    const err  = new Error(`Strapi upload ${res.status}: ${res.statusText}`);
+    err.body   = body;
+    throw err;
+  }
+
+  const uploaded = await res.json();
+  return uploaded?.[0] ?? null;
+}
+
+export async function strapiPut(path, payload) {
+  const res = await fetch(`${STRAPI_URL}${path}`, {
+    method:  "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      ...(STRAPI_TOKEN && { Authorization: `Bearer ${STRAPI_TOKEN}` }),
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    const err  = new Error(`Strapi ${res.status}: ${res.statusText}`);
+    err.body   = body;
+    throw err;
+  }
+  return res.json();
+}
+
 export function invalidateCache(path, params = {}) {
   if (!path) {
     cache.clear();
     console.log("[strapi] cache cleared");
     return;
   }
-  const query    = new URLSearchParams(params).toString();
-  const fullUrl  = `${STRAPI_URL}${path}${query ? `?${query}` : ""}`;
+  const query   = new URLSearchParams(params).toString();
+  const fullUrl = `${STRAPI_URL}${path}${query ? `?${query}` : ""}`;
   cache.delete(fullUrl);
   console.log("[strapi] cache invalidated:", fullUrl);
-}
-
-function formatNumber(n) {
-  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
-  if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
-  return n.toString();
-}
-
-function createArtistStats(data) {
-  return [
-     {
-        label: "Spotify Monthly",
-        value: formatNumber(data?.spotify_monthly_listeners),
-     },
-     {
-        label: "Instagram Followers",
-        value: formatNumber(data?.instagram_followers),
-     },
-     {
-        label: "Upcoming Shows",
-        value: formatNumber(data?.upcoming_shows),
-     },
-     {
-        label: "Shows Played",
-        value: formatNumber(data?.shows_played),
-     },
-     {
-        label: "Total Releases",
-        value: formatNumber(data?.total_releases),
-     },
-  ];
-}
-
-/**
- * Map a raw Strapi artist entry → the shape Management.jsx expects.
- */
-export function normalizeArtist(entry) {
-  const a = entry.attributes ?? entry; // works with both Strapi v4 and v5
-
-   console.log(a.artist_statistics);
-
-  return {
-    id:            entry.id ?? a.id,
-    slug:          a.slug, 
-    name:          a.name,
-    primary_genre: a.primary_genre?.Name,
-    location:      a.location,
-    genres:        a.genres?.map((g) => g?.Name) ?? [],
-    blurb:         a.blurb_biography ?? "",
-    biography:     a.biography ?? "",
-    icon:          a.icon?.url,
-    links:         a.management_page_card_links?.map((l) => ({ label: l.label?.text, url: l.url?.url })) ?? [],
-    stats:         createArtistStats(a.artist_statistics),
-  };
 }

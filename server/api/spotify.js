@@ -1,3 +1,5 @@
+// server/api/spotify.js
+
 const SPOTIFY_CLIENT_ID     = process.env.SPOTIFY_CLIENT_ID;
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 
@@ -29,7 +31,13 @@ export async function spotifyGet(path) {
   const res   = await fetch(`https://api.spotify.com/v1${path}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!res.ok) throw new Error(`Spotify API error: ${res.status} ${res.statusText}`);
+  if (!res.ok) {
+    const body = await res.text();
+    const retryAfter = res.headers.get("retry-after");
+    console.error("[spotify] error body:", body);
+    console.error("[spotify] retry-after:", retryAfter);
+    throw new Error(`Spotify API error: ${res.status} ${res.statusText}`);
+  }
   return res.json();
 }
 

@@ -3,10 +3,9 @@ import "dotenv/config";
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import { getArtists, getArtistBySlug, normalizeArtist } from "./server/api/strapi.js";
+import { getArtists, getArtistBySlug, normalizeArtist } from "./server/api/artists.js";
 import { syncAllArtistStats } from "./server/cron/syncStats.js";
-
-syncAllArtistStats();
+import { registerGuestbookRoutes } from "./server/api/guestbook.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,7 +15,9 @@ const port = process.env.PORT || 3000;
 
 const isDev = process.env.NODE_ENV !== "production";
 
-syncAllArtistStats();
+//syncAllArtistStats();
+
+registerGuestbookRoutes(app, express);
 
 /* ───────────────────────────────────────────────
    Live reload in dev mode

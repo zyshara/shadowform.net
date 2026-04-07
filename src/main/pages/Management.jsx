@@ -85,28 +85,15 @@ const ArtistCard = ({ artist }) => {
         {artist.links?.length > 0 && (
           <div className="flex gap-2 flex-wrap">
             {artist.links.map((link) => (
-              <a
+              <Tag
                 key={link.label}
+                variant="link"
                 href={link.url}
                 target="_blank"
                 rel="noreferrer"
-                className="font-alkhemikal text-[10px] tracking-[0.1em] uppercase px-2 py-1 rounded-[2px] border transition-colors duration-150"
-                style={{
-                  color:       "var(--text-footer)",
-                  borderColor: "var(--border)",
-                  background:  "transparent",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = "var(--text-footer-accent)";
-                  e.currentTarget.style.borderColor = "var(--ornament-glyph)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = "var(--text-footer)";
-                  e.currentTarget.style.borderColor = "var(--border)";
-                }}
               >
                 {link.label}
-              </a>
+              </Tag>
             ))}
           </div>
         )}

@@ -4,6 +4,7 @@
 @import "tailwindcss";
 
 @import "./themes/design-a.css";
+@import "./tag-themes.css";
 
 @font-face {
   font-family: "Alagard";

@@ -1,0 +1,109 @@
+/* TagThemes.css
+   Import in index.css:
+   @import "./TagThemes.css";
+
+   Tag themes are applied via the `theme` field on GuestbookTag in Strapi.
+   The Tag component reads `entry.tagTheme` and renders the appropriate variant.
+
+   Available themes:
+     fire-glitch    — pixel flame per character
+     rainbow-party — cycling rainbow + float bob per character
+*/
+
+/* ── shared char base ─────────────────────────────────────────────────────── */
+.tag-theme-char {
+  display: inline-block;
+}
+
+/* ── fire-glitch ─────────────────────────────────────────────────────────────────── */
+.tag-theme--fire-glitch {
+  border-color: #4a1f38;
+  background:   #1a0d14;
+}
+
+.tag-theme--fire-glitch .tag-theme-char {
+  animation: tag-fire-glitch 0.12s steps(1) infinite alternate;
+  color: #ffe066;
+}
+
+.tag-theme--fire-glitch .tag-theme-char:nth-child(odd)  { animation-duration: 0.10s; animation-delay: 0ms;  }
+.tag-theme--fire-glitch .tag-theme-char:nth-child(even) { animation-duration: 0.14s; animation-delay: 60ms; }
+.tag-theme--fire-glitch .tag-theme-char:nth-child(3n)   { animation-duration: 0.08s; animation-delay: 30ms; }
+.tag-theme--fire-glitch .tag-theme-char:nth-child(4n)   { animation-duration: 0.16s; animation-delay: 90ms; }
+.tag-theme--fire-glitch .tag-theme-char:nth-child(5n)   { animation-duration: 0.09s; animation-delay: 45ms; }
+
+@keyframes tag-fire-glitch {
+  0% {
+    color: #ffffff;
+    text-shadow:
+      0px -1px 0px #ffffff,
+      0px -2px 0px #ffe066,
+      0px -3px 0px #ff9900;
+  }
+  25% {
+    color: #ffb833;
+    text-shadow:
+      -1px -1px 0px #ffe066,
+       0px -2px 0px #ffb833,
+       1px -3px 0px #ff9900,
+       0px -3px 0px #ff6600;
+  }
+  50% {
+    color: #ff9900;
+    text-shadow:
+       0px -1px 0px #ffb833,
+      -1px -2px 0px #ff9900,
+       1px -2px 0px #ff6600,
+       0px -3px 0px #cc2200;
+  }
+  75% {
+    color: #ffe066;
+    text-shadow:
+       1px -1px 0px #ffffff,
+      -1px -1px 0px #ffe066,
+       0px -2px 0px #ff9900,
+       1px -3px 0px #ff6600;
+  }
+  100% {
+    color: #ff6600;
+    text-shadow:
+       0px -1px 0px #ffb833,
+       1px -1px 0px #ff9900,
+      -1px -2px 0px #ff6600,
+       0px -3px 0px #cc2200;
+  }
+}
+
+/* ── rainbow-party ──────────────────────────────────────────────────────────────── */
+.tag-theme--rainbow-party {
+  border-color: #2e1a28;
+  background:   transparent;
+}
+
+.tag-theme--rainbow-party .tag-theme-char {
+  animation:
+    tag-rainbow-party-color 1.8s steps(1) infinite,
+    tag-rainbow-party-float 1.4s ease-in-out infinite alternate;
+}
+
+/* stagger per character position — JS sets --char-i on each span */
+.tag-theme--rainbow-party .tag-theme-char {
+  animation-delay:
+    calc(var(--char-i, 0) * 120ms),
+    calc(var(--char-i, 0) * 80ms);
+}
+
+@keyframes tag-rainbow-party-color {
+  0%   { color: #ff4466; }
+  16%  { color: #ff9900; }
+  33%  { color: #ffe066; }
+  50%  { color: #44ff88; }
+  66%  { color: #44ccff; }
+  83%  { color: #cc66ff; }
+  100% { color: #ff4466; }
+}
+
+@keyframes tag-rainbow-party-float {
+  0%   { transform: translateY(0px);  }
+  100% { transform: translateY(-3px); }
+}

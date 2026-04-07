@@ -53,7 +53,7 @@ const navlinks = [
     id: "guestbook",
     url: "/guestbook",
     text: "Guestbook",
-    component: UnderConstruction,
+    component: Guestbook,
   },
 ];
 

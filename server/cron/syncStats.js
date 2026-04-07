@@ -1,4 +1,4 @@
-import { getArtists } from "../api/strapi.js";
+import { getArtists } from "../api/artists.js";
 import { scrapeSpotifyStats } from "./scrapers/spotify.js";
 import { scrapeSpotifyMonthlyListeners } from "./scrapers/spotifyMonthly.js";
 import { scrapeInstagramFollowers } from "./scrapers/instagram.js";
@@ -40,16 +40,26 @@ export async function syncAllArtistStats() {
 
     console.log(`[syncStats] syncing ${artist.name}...`);
 
-    const [spotify, monthly, instagram, songkick] = await Promise.allSettled([
-      scrapeSpotifyStats(artist),
-      scrapeSpotifyMonthlyListeners(artist),
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+
+    const monthly      = await scrapeSpotifyMonthlyListeners(artist).catch(e => null);
+    const spotifyStats = await scrapeSpotifyStats(artist).catch(e => {
+      console.error("[syncStats] spotifyStats error:", e.message);
+      return null;
+    });
+    
+    const [instagram, songkick] = await Promise.allSettled([
       scrapeInstagramFollowers(artist),
       scrapeSongkickShows(artist),
     ]);
 
+    console.log("[syncStats] monthly result:", monthly);
+    console.log("[syncStats] spotifyStats result:", spotifyStats);
+
     const stats = {
-      ...(spotify.status   === "fulfilled" && spotify.value   ? spotify.value   : {}),
-      ...(monthly.status   === "fulfilled" && monthly.value   ? monthly.value   : {}),
+      ...(monthly      ? monthly      : {}),
+      ...(spotifyStats ? spotifyStats : {}),
       ...(instagram.status === "fulfilled" && instagram.value ? instagram.value : {}),
       ...(songkick.status  === "fulfilled" && songkick.value  ? songkick.value  : {}),
     };
