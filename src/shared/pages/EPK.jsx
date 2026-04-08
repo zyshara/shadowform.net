@@ -104,7 +104,7 @@ function Hero({ artist }) {
       }} />
       <div style={{ position:"relative", zIndex:2 }}>
         <p style={{ ...css.mono, fontSize:11, color: "var(--accent)", letterSpacing:"0.15em", textTransform:"uppercase", marginBottom:8 }}>
-          // Artist Press Kit
+          // Artist Press Kit - 2026
         </p>
         <h1 className="epk-hero-title" style={{ fontFamily:"'Syne', sans-serif", fontWeight:800, color:"#fff", lineHeight:1, margin:"0 0 8px" }}>
           {artist.name}
@@ -122,7 +122,7 @@ function BioSection({ artist, stats }) {
   return (
     <div className="epk-bio-grid">
       <div style={css.card}>
-        <p style={css.label}>// About</p>
+        <p style={css.label}>// Biography</p>
         <p style={{ fontSize:14, lineHeight:1.75, color:"var(--text-muted)", margin:"0 0 1rem", whiteSpace: "pre-wrap" }}>
           {artist.biography}
         </p>
@@ -238,23 +238,29 @@ function PhotosSection({ photos }) {
 function PressAndContact({ press, artist }) {
   return (
     <div className="epk-press-grid">
-      <div style={css.card}>
-        <p style={css.label}>// Press</p>
-        {press.map((p, i) => (
-          <div key={i} style={{
-            borderLeft:`2px solid ${"var(--accent)"}`,
-            paddingLeft:"1rem",
-            marginBottom: i < press.length - 1 ? "1rem" : 0,
-          }}>
-            <p style={{ fontSize:13, fontStyle:"italic", color:"var(--text-muted)", lineHeight:1.6, margin:"0 0 4px" }}>
-              "{p.quote}"
-            </p>
-            <p style={{ ...css.mono, fontSize:10, color:"var(--text-muted)", textTransform:"uppercase", letterSpacing:"0.1em", margin:0 }}>
-              — {p.source}
-            </p>
-          </div>
-        ))}
-      </div>
+      {artist?.press?.length > 0 && (
+        <div style={css.card}>
+          <p style={css.label}>// Press</p>
+          {press.map((p, i) => (
+            <div key={i} style={{
+              borderLeft:`2px solid ${"var(--accent)"}`,
+              paddingLeft:"1rem",
+              marginBottom: i < press.length - 1 ? "1rem" : 0,
+            }}>
+              <p style={{ fontSize:13, fontStyle:"italic", color:"var(--text-muted)", lineHeight:1.6, margin:"0 0 4px" }}>
+                "{p.quote}"
+              </p>
+              <p style={{ ...css.mono, fontSize:10, color:"var(--text-muted)", textTransform:"uppercase", letterSpacing:"0.1em", margin:0 }}>
+                —{" "}
+                {p.url
+                  ? <a href={p.url} target="_blank" rel="noreferrer" className="epk-press-link">{p.source}</a>
+                  : p.source
+                }
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div style={css.card}>
         <p style={css.label}>// Booking & contact</p>
@@ -351,6 +357,8 @@ export default function EPK({ slug: slugProp }) {
         button { font-family: inherit; }
         .epk-link { color: var(--text-muted); border: 0.5px solid var(--border-strong); transition: border-color 350ms, color 350ms; }
         .epk-link:hover { border-color: var(--accent); color: var(--accent); }
+        .epk-press-link { color: inherit; text-decoration: none; transition: color 350ms; }
+        .epk-press-link:hover { color: var(--accent); }
         .epk-hero-title { font-size: 52px; letter-spacing: -1px; }
         .epk-bio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
         .epk-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
@@ -372,7 +380,7 @@ export default function EPK({ slug: slugProp }) {
         <BioSection artist={artist} />
         <MusicSection tracks={data.tracks} />
         <PhotosSection photos={data.photos} />
-        <PressAndContact press={data.press} contact={data.contact} artist={artist} />
+        <PressAndContact press={data.press} artist={artist} />
       </div>
     </>
   );

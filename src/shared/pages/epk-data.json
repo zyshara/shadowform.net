@@ -28,8 +28,8 @@
     { "label": "Studio / logo", "file": null }
   ],
   "press": [
-    { "quote": "A future-focused sound that balances raw energy with genuine emotional depth.", "source": "XLR8R Magazine" },
-    { "quote": "VELOUR's Dawnbreak is one of the most assured debut singles of the year.",      "source": "Resident Advisor" }
+    { "quote": "A future-focused sound that balances raw energy with genuine emotional depth.", "source": "XLR8R Magazine", "url": "https://xlr8r.com" },
+    { "quote": "VELOUR's Dawnbreak is one of the most assured debut singles of the year.",      "source": "Resident Advisor", "url": "https://ra.co" }
   ],
   "contact": {
     "booking": "booking@velour.dj",
