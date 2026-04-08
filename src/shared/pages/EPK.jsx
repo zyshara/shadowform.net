@@ -29,19 +29,19 @@ const PlayIcon = () => (
 );
 
 const EmailIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="#7c4dff">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--accent)">
     <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
   </svg>
 );
 
 const PhoneIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="#7c4dff">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--accent)">
     <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
   </svg>
 );
 
 const PinIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="#7c4dff">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--accent)">
     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
   </svg>
 );
@@ -53,8 +53,6 @@ const ImageIcon = () => (
 );
 
 // ── Shared style tokens ───────────────────────────────────────────────────────
-const PURPLE = "#7c4dff";
-
 const css = {
   mono: { fontFamily: "'Space Mono', monospace" },
   label: {
@@ -62,7 +60,7 @@ const css = {
     fontSize: 10,
     letterSpacing: "0.18em",
     textTransform: "uppercase",
-    color: PURPLE,
+    color: "var(--accent)",
     marginBottom: 12,
   },
   card: {
@@ -88,8 +86,8 @@ function Nav({ active, setActive }) {
             fontSize: 11,
             padding: "6px 14px",
             borderRadius: 100,
-            border: `0.5px solid ${active === item ? PURPLE : "var(--border-strong)"}`,
-            background: active === item ? PURPLE : "transparent",
+            border: `0.5px solid ${active === item ? "var(--accent)" : "var(--border-strong)"}`,
+            background: active === item ? "var(--accent)" : "transparent",
             color: active === item ? "#fff" : "var(--text-muted)",
             cursor: "pointer",
             letterSpacing: "0.08em",
@@ -110,7 +108,7 @@ function Hero({ artist }) {
     <div style={{
       position: "relative",
       minHeight: 340,
-      background: "#0a0a0f",
+      background: "var(--hero-bg)",
       borderRadius: 12,
       overflow: "hidden",
       display: "flex",
@@ -122,7 +120,7 @@ function Hero({ artist }) {
       <div style={{
         position: "absolute", inset: 0,
         backgroundImage:
-          "linear-gradient(rgba(120,80,255,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(120,80,255,0.15) 1px, transparent 1px)",
+          "linear-gradient(var(--hero-grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--hero-grid-line) 1px, transparent 1px)",
         backgroundSize: "40px 40px",
       }} />
       {/* glow */}
@@ -130,12 +128,12 @@ function Hero({ artist }) {
         position: "absolute",
         width: 400, height: 400,
         borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(100,60,255,0.35) 0%, transparent 70%)",
+        background: "radial-gradient(circle, var(--hero-glow) 0%, transparent 70%)",
         top: -100, right: -80,
         pointerEvents: "none",
       }} />
       <div style={{ position:"relative", zIndex:2 }}>
-        <p style={{ ...css.mono, fontSize:11, color: PURPLE, letterSpacing:"0.15em", textTransform:"uppercase", marginBottom:8 }}>
+        <p style={{ ...css.mono, fontSize:11, color: "var(--accent)", letterSpacing:"0.15em", textTransform:"uppercase", marginBottom:8 }}>
           // Artist Press Kit
         </p>
         <h1 style={{ fontFamily:"'Syne', sans-serif", fontSize:52, fontWeight:800, color:"#fff", lineHeight:1, margin:"0 0 8px", letterSpacing:-1 }}>
@@ -207,7 +205,7 @@ function MusicSection({ tracks }) {
               {t.num}
             </span>
             <button style={{
-              width:28, height:28, borderRadius:"50%", background:PURPLE,
+              width:28, height:28, borderRadius:"50%", background:"var(--accent)",
               display:"flex", alignItems:"center", justifyContent:"center",
               flexShrink:0, cursor:"pointer", border:"none", padding:0,
               paddingLeft:2,
@@ -274,7 +272,7 @@ function PressAndContact({ press, contact, artist }) {
         <p style={css.label}>// Press</p>
         {press.map((p, i) => (
           <div key={i} style={{
-            borderLeft:`2px solid ${PURPLE}`,
+            borderLeft:`2px solid ${"var(--accent)"}`,
             paddingLeft:"1rem",
             marginBottom: i < press.length - 1 ? "1rem" : 0,
           }}>
@@ -302,7 +300,7 @@ function PressAndContact({ press, contact, artist }) {
           }}>
             <div style={{
               width:28, height:28, borderRadius:6,
-              background:"rgba(124,77,255,0.12)",
+              background:"var(--accent-dim)",
               display:"flex", alignItems:"center", justifyContent:"center",
               flexShrink:0,
             }}>
@@ -343,7 +341,7 @@ function LinksRow({ links }) {
             textDecoration:"none",
           }}
         >
-          <span style={{ width:6, height:6, borderRadius:"50%", background:PURPLE, flexShrink:0, display:"inline-block" }} />
+          <span style={{ width:6, height:6, borderRadius:"50%", background:"var(--accent)", flexShrink:0, display:"inline-block" }} />
           {link.label}
         </a>
       ))}
@@ -368,7 +366,7 @@ function SectionContent({ active, artist, data }) {
           <p style={css.label}>// Press</p>
           {press.map((p, i) => (
             <div key={i} style={{
-              borderLeft:`2px solid ${PURPLE}`,
+              borderLeft:`2px solid ${"var(--accent)"}`,
               paddingLeft:"1rem",
               marginBottom: i < press.length - 1 ? "1.5rem" : 0,
             }}>
@@ -398,7 +396,7 @@ function SectionContent({ active, artist, data }) {
             }}>
               <div style={{
                 width:32, height:32, borderRadius:8,
-                background:"rgba(124,77,255,0.12)",
+                background:"var(--accent-dim)",
                 display:"flex", alignItems:"center", justifyContent:"center",
                 flexShrink:0,
               }}>
@@ -445,25 +443,6 @@ export default function EPK({ slug: slugProp }) {
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;700;800&display=swap');
-
-        :root {
-          --text:       #0f0f10;
-          --text-muted: #6b6b72;
-          --surface:    #f5f4f2;
-          --border:     rgba(0,0,0,0.08);
-          --border-strong: rgba(0,0,0,0.18);
-          --bg:         #eeecea;
-        }
-        @media (prefers-color-scheme: dark) {
-          :root {
-            --text:       #f0eff0;
-            --text-muted: #8a8a96;
-            --surface:    #1a1a22;
-            --border:     rgba(255,255,255,0.08);
-            --border-strong: rgba(255,255,255,0.18);
-            --bg:         #111118;
-          }
-        }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
           background: var(--bg);

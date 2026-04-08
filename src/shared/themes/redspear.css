@@ -1,0 +1,13 @@
+:root {
+  --accent:          #c8262a;
+  --accent-dim:      rgba(200, 38, 42, 0.12);
+  --hero-bg:         #060608;
+  --hero-grid-line:  rgba(200, 38, 42, 0.14);
+  --hero-glow:       rgba(180, 20, 24, 0.32);
+  --bg:              #0d0d10;
+  --text:            #f5f0f0;
+  --text-muted:      #7a7a82;
+  --surface:         #161619;
+  --border:          rgba(255, 255, 255, 0.07);
+  --border-strong:   rgba(255, 255, 255, 0.14);
+}

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../shared/themes/default.css";
 
 html,
 body,
