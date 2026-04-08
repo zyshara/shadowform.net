@@ -75,6 +75,16 @@ const makeConfig = ({ entry, outputPath, publicPath, title, alias }) => ({
 
 export default [
   makeConfig({
+    entry: "./src/redspear/index.js",
+    outputPath: "dist/redspear",
+    publicPath: "/",
+    title: "redspear",
+    alias: {
+      "@": path.resolve(__dirname, "src/redspear"),
+      "@shared": path.resolve(__dirname, "src/shared"),
+    },
+  }),
+  makeConfig({
     entry: "./src/lowpoly/index.js",
     outputPath: "dist/lowpoly",
     publicPath: "/",

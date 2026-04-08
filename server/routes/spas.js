@@ -10,6 +10,16 @@ export function registerSpaRoutes(app) {
   // Shared static assets (served at root)
   app.use("/shared", express.static(path.join(root, "public/shared")));
 
+  /* ── Redspear SPA (subdomain) ── */
+  const redspearStatic = express.static(path.join(root, "dist/redspear"));
+  app.use((req, res, next) => {
+    const host = req.header("host") || "";
+    if (!host.split(":")[0].startsWith("redspear.")) return next();
+    redspearStatic(req, res, () => {
+      res.sendFile(path.join(root, "dist/redspear/index.html"));
+    });
+  });
+
   /* ── Lowpoly SPA (subdomain) ── */
   const lowpolyStatic = express.static(path.join(root, "dist/lowpoly"));
   app.use((req, res, next) => {
