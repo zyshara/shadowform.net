@@ -114,14 +114,4 @@ export default [
       "@shared": path.resolve(__dirname, "src/shared"),
     },
   }),
-  makeConfig({
-    entry: "./src/management/index.js",
-    outputPath: "dist/management",
-    publicPath: "/management/",
-    title: "🖤 management - 𝔰𝔥𝔞𝔡𝔬𝔴𝔣𝔬𝔯𝔪 . 𝔫𝔢𝔱 🩷",
-    alias: {
-      "@": path.resolve(__dirname, "src/management"),
-      "@shared": path.resolve(__dirname, "src/shared"),
-    },
-  }),
 ];

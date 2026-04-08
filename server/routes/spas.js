@@ -37,17 +37,6 @@ export function registerSpaRoutes(app) {
     res.sendFile(path.join(root, "dist/swatchbook/index.html"));
   });
 
-  /* ── Management SPA ── */
-  app.use(
-    "/management",
-    express.static(path.join(root, "dist/management"), { index: false }),
-  );
-  app.use("/management", (req, res, next) => {
-    if (req.path === "/" || req.path === "") return next();
-    if (req.path.includes(".")) return next();
-    res.sendFile(path.join(root, "dist/management/index.html"));
-  });
-
   /* ── Main SPA (catch-all) ── */
   app.use(express.static(path.join(root, "dist/main")));
   app.use((req, res) => {
