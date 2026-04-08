@@ -1,4 +1,4 @@
-import { spotifyGet, parseSpotifyArtistId } from "../../api/spotify.js";
+import { spotifyGet, parseSpotifyArtistId } from "../../lib/spotify.js";
 
 export async function scrapeSpotifyStats(artist) {
   const artistId = parseSpotifyArtistId(artist.spotify?.url);

@@ -1,4 +1,4 @@
-// server/api/strapi.js
+// server/lib/strapi.js
 
 const STRAPI_URL   = process.env.STRAPI_API_URL   || "https://strapi-shadowform-52c53315c615.herokuapp.com";
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN || "";

@@ -1,25 +1,12 @@
 // server/api/guestbook.js
 
-import { strapiGet, strapiPost, strapiUploadMedia, strapiPut, invalidateCache } from "./strapi.js";
+import { strapiGet, strapiPost, strapiUploadMedia, strapiPut, invalidateCache } from "../lib/strapi.js";
+import { normalizeEntry, normalizeGuestbook } from "../models/guestbook.js";
 
 // ── config ────────────────────────────────────────────────────────────────────
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
 const RATE_LIMIT_MAX       = 3;               // posts per IP per window
 const TAG_CACHE_TTL        = 5 * 60 * 1000;  // 5 minutes
-
-// ── word blacklist ────────────────────────────────────────────────────────────
-const BLACKLIST = [
-  // add words here — redacted with █ on display, stored raw in strapi
-];
-
-const BLACKLIST_RE = BLACKLIST.length
-  ? new RegExp(`\\b(${BLACKLIST.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})\\b`, "gi")
-  : null;
-
-function redact(str) {
-  if (!str || !BLACKLIST_RE) return str;
-  return str.replace(BLACKLIST_RE, (m) => "█".repeat(m.length));
-}
 
 // ── IP rate limiter ───────────────────────────────────────────────────────────
 const rateLimitStore = new Map();
@@ -68,35 +55,6 @@ async function getValidTags() {
     console.error("[guestbook] getValidTags failed:", err.message);
     return cachedTags ?? [];
   }
-}
-
-// ── normalise a Guestbook from Strapi → client shape ─────────────────────
-function normalizeGuestbook(raw) {
-  return {
-    allowed_tags: (raw.allowed_guestbook_tags ?? []).map((a) => a.label),
-    guestbook_entries: (raw.guestbook_entries ?? [])
-      .map((a) => normalizeEntry(a))
-      .filter(Boolean)
-      .sort((a, b) => new Date(b._ts) - new Date(a._ts)),
-  };
-}
-
-// ── normalise a GuestbookEntry from Strapi → client shape ─────────────────────
-function normalizeEntry(raw) {
-  if (!raw.id || !raw.name || !raw.date_posted) {
-     return null;
-  }
-
-  return {
-    id:      raw.id,
-    name:    redact(raw.name ?? ""),
-    website: raw.website ?? null,
-    message: redact(raw.message ?? ""),
-    drawing: raw.drawing?.url ?? null,
-    _ts:     new Date(raw.date_posted).getTime(), // raw timestamp for sorting
-    date:    raw.date_posted ? new Date(raw.date_posted).toLocaleDateString("en-CA").replace(/-/g, ".") : null,
-    tags:    raw.guestbook_tags?.map(a => ({ label: a.label, theme: a.theme })),
-  };
 }
 
 // ── register routes ───────────────────────────────────────────────────────────

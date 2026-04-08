@@ -1,6 +1,32 @@
 // server/api/artists.js
 
-import { strapiGet } from "./strapi.js";
+import { strapiGet } from "../lib/strapi.js";
+import { normalizeArtist } from "../models/artist.js";
+
+export function registerArtistRoutes(app) {
+  app.get("/api/artists/:slug", async (req, res) => {
+    try {
+      const data = await getArtistBySlug(req.params.slug);
+      const artists = (data.data ?? []).map(normalizeArtist);
+      if (!artists.length) return res.status(404).json({ error: "Artist not found" });
+      res.json({ artist: artists[0] });
+    } catch (err) {
+      console.error("Strapi fetch failed:", err.message, err.body ?? "");
+      res.status(502).json({ error: err.message });
+    }
+  });
+
+  app.get("/api/artists", async (req, res) => {
+    try {
+      const data = await getArtists();
+      const artists = (data.data ?? []).map(normalizeArtist);
+      res.json({ artists });
+    } catch (err) {
+      console.error("Strapi fetch failed:", err.message, err.body ?? "");
+      res.status(502).json({ error: err.message });
+    }
+  });
+}
 
 export async function getArtists(params = {}, opts = {}) {
   return strapiGet("/api/artists", {
@@ -20,56 +46,4 @@ export async function getArtists(params = {}, opts = {}) {
 
 export async function getArtistBySlug(slug, opts = {}) {
   return getArtists({ "filters[slug][$eq]": slug }, opts);
-}
-
-function formatNumber(n) {
-  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
-  if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
-  return n.toString();
-}
-
-function createArtistStats(data) {
-  return [
-     {
-        label: "Spotify Monthly",
-        value: formatNumber(data?.spotify_monthly_listeners),
-     },
-     {
-        label: "Instagram Followers",
-        value: formatNumber(data?.instagram_followers),
-     },
-     {
-        label: "Upcoming Shows",
-        value: formatNumber(data?.upcoming_shows),
-     },
-     {
-        label: "Shows Played",
-        value: formatNumber(data?.shows_played),
-     },
-     {
-        label: "Total Releases",
-        value: formatNumber(data?.total_releases),
-     },
-  ];
-}
-
-/**
- * Map a raw Strapi artist entry → the shape Management.jsx expects.
- */
-export function normalizeArtist(entry) {
-  const a = entry.attributes ?? entry; // works with both Strapi v4 and v5
-
-  return {
-    id:            entry.id ?? a.id,
-    slug:          a.slug, 
-    name:          a.name,
-    primary_genre: a.primary_genre?.Name,
-    location:      a.location,
-    genres:        a.genres?.map((g) => g?.Name) ?? [],
-    blurb:         a.blurb_biography ?? "",
-    biography:     a.biography ?? "",
-    icon:          a.icon?.url,
-    links:         a.management_page_card_links?.map((l) => ({ label: l.label?.text, url: l.url?.url })) ?? [],
-    stats:         createArtistStats(a.artist_statistics),
-  };
 }
