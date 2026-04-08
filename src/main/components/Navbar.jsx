@@ -35,7 +35,7 @@ export const DesktopNavbar = () => {
       {/* nav links */}
       <ol className="flex flex-col items-end w-full px-5 gap-[2px]">
         {navlinks.map((navlink) => {
-          const isActive = location.pathname === navlink.url;
+          const isActive = location.pathname.replace(/\/+$/, '') === navlink.url.replace(/\/+$/, '');
           return (
             <li key={navlink.id}>
               <NavLink

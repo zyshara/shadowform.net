@@ -15,7 +15,7 @@ const port = process.env.PORT || 3000;
 
 const isDev = process.env.NODE_ENV !== "production";
 
-//syncAllArtistStats();
+syncAllArtistStats();
 
 registerGuestbookRoutes(app, express);
 

@@ -28,15 +28,18 @@ export async function getSpotifyToken() {
 
 export async function spotifyGet(path) {
   const token = await getSpotifyToken();
-  const res   = await fetch(`https://api.spotify.com/v1${path}`, {
+  const fullUrl = `https://api.spotify.com/v1${path}`;
+  console.log("[spotify] full url:", fullUrl);
+  const res = await fetch(fullUrl, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) {
     const body = await res.text();
     const retryAfter = res.headers.get("retry-after");
+    const allHeaders = Object.fromEntries(res.headers.entries());
+    console.error("[spotify] error headers:", allHeaders);
     console.error("[spotify] error body:", body);
-    console.error("[spotify] retry-after:", retryAfter);
-    throw new Error(`Spotify API error: ${res.status} ${res.statusText}`);
+    throw new Error(`Spotify API error: ${res.status} ${body}`);
   }
   return res.json();
 }
