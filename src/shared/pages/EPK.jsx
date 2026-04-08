@@ -28,6 +28,13 @@ const PlayIcon = () => (
   </svg>
 );
 
+const DownloadIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 16l-6-6h4V4h4v6h4l-6 6zm-7 4v-2h14v2H5z"/>
+  </svg>
+);
+
+
 const EmailIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--accent)">
     <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
@@ -189,7 +196,25 @@ function MusicSection({ tracks }) {
               </p>
             </div>
             <Waveform index={i} />
-            <span style={{ ...css.mono, fontSize:11, color:"var(--text-muted)" }}>{t.duration}</span>
+            <span className="epk-track-duration" style={{ ...css.mono, fontSize:11, color:"var(--text-muted)" }}>{t.duration}</span>
+            <a
+              href={t.url || undefined}
+              download
+              className="epk-dl-btn"
+              style={{
+                ...css.mono,
+                fontSize:10, padding:"5px 10px",
+                borderRadius:6, border:"0.5px solid var(--border-strong)",
+                color:"var(--text-muted)",
+                background:"transparent", textTransform:"uppercase",
+                letterSpacing:"0.08em", textDecoration:"none", flexShrink:0,
+                opacity: t.url ? 1 : 0.3,
+                pointerEvents: t.url ? "auto" : "none",
+              }}
+            >
+              <span className="epk-dl-label">Download</span>
+              <span className="epk-dl-icon"><DownloadIcon /></span>
+            </a>
           </div>
         ))}
       </div>
@@ -201,7 +226,7 @@ function MusicSection({ tracks }) {
 function PhotosSection({ photos }) {
   return (
     <div style={{ marginBottom:"2rem" }}>
-      <p style={css.label}>// Press photos</p>
+      <p style={css.label}>// Photos & Media</p>
       <div className="epk-photos-grid">
         {photos.map(photo => (
           <div key={photo.label} style={{
@@ -217,7 +242,7 @@ function PhotosSection({ photos }) {
             <span style={{ ...css.mono, fontSize:9, textTransform:"uppercase", letterSpacing:"0.1em", opacity:0.6 }}>
               {photo.label}
             </span>
-            <button style={{
+            <button className="epk-dl-btn" style={{
               ...css.mono,
               fontSize:10, padding:"5px 10px",
               borderRadius:6, border:"0.5px solid var(--border-strong)",
@@ -225,7 +250,8 @@ function PhotosSection({ photos }) {
               background:"transparent", textTransform:"uppercase",
               letterSpacing:"0.08em", marginTop:4,
             }}>
-              Download
+              <span className="epk-dl-label">Download</span>
+              <span className="epk-dl-icon"><DownloadIcon /></span>
             </button>
           </div>
         ))}
@@ -238,8 +264,8 @@ function PhotosSection({ photos }) {
 function PressAndContact({ press, artist }) {
   return (
     <div className="epk-press-grid">
-      {artist?.press?.length > 0 && (
-        <div style={css.card}>
+      {press?.length > 0 && (
+        <div style={{ ...css.card, gridColumn:"1 / -1" }}>
           <p style={css.label}>// Press</p>
           {press.map((p, i) => (
             <div key={i} style={{
@@ -261,6 +287,35 @@ function PressAndContact({ press, artist }) {
           ))}
         </div>
       )}
+
+      <div style={{ ...css.card, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", textAlign:"center", gap:"1rem" }}>
+        <p style={css.label}>// Rider</p>
+        <p style={{ fontSize:15, fontWeight:600, color:"var(--text)", margin:0, lineHeight:1.3 }}>
+          Hospitality &amp; Technical Rider
+        </p>
+        <p style={{ ...css.mono, fontSize:11, color:"var(--text-muted)", margin:0 }}>
+          Stage plot, tech spec &amp; hospitality requirements
+        </p>
+        <a
+          href="/rider"
+          target="_blank"
+          rel="noreferrer"
+          style={{
+            ...css.mono,
+            marginTop:"0.25rem",
+            fontSize:10, padding:"5px 10px",
+            borderRadius:6,
+            border:"0.5px solid var(--border-strong)",
+            background:"transparent",
+            color:"var(--text-muted)",
+            textTransform:"uppercase", letterSpacing:"0.08em",
+            textDecoration:"none",
+            display:"inline-flex", alignItems:"center", gap:6,
+          }}
+        >
+          Open ↗
+        </a>
+      </div>
 
       <div style={css.card}>
         <p style={css.label}>// Booking & contact</p>
@@ -297,27 +352,27 @@ function PressAndContact({ press, artist }) {
   );
 }
 
-// ── Links row ─────────────────────────────────────────────────────────────────
+// ── Links card ────────────────────────────────────────────────────────────────
 function LinksRow({ links }) {
   return (
-    <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:"2rem" }}>
-      {links.map(link => (
+    <div style={{ ...css.card, marginBottom:"2rem" }}>
+      <p style={css.label}>// Links</p>
+      {links.map((link, i) => (
         <a
           key={link.label}
           href={link.url}
-          className="epk-link"
-          style={{
-            ...css.mono,
-            fontSize:11, padding:"6px 14px",
-            borderRadius:100,
-            background:"transparent",
-            textTransform:"uppercase", letterSpacing:"0.08em",
-            textDecoration:"none",
-            display:"flex", alignItems:"center", gap:6,
-          }}
+          target="_blank"
+          rel="noreferrer"
+          className="epk-social-link"
+          style={{ borderBottom: i < links.length - 1 ? "0.5px solid var(--border)" : "none" }}
         >
           <span style={{ width:6, height:6, borderRadius:"50%", background:"var(--accent)", flexShrink:0, display:"inline-block" }} />
-          {link.label}
+          <span style={{ fontSize:14, fontWeight:500, textTransform:"uppercase", letterSpacing:"0.06em" }}>
+            {link.label}
+          </span>
+          <span className="epk-social-url" style={{ ...css.mono, fontSize:11, color:"var(--text-muted)", marginLeft:"auto", transition:"color 350ms" }}>
+            {link.url}
+          </span>
         </a>
       ))}
     </div>
@@ -359,28 +414,38 @@ export default function EPK({ slug: slugProp }) {
         .epk-link:hover { border-color: var(--accent); color: var(--accent); }
         .epk-press-link { color: inherit; text-decoration: none; transition: color 350ms; }
         .epk-press-link:hover { color: var(--accent); }
+
+        .epk-social-link { display:flex; align-items:center; gap:10px; padding:10px 0; text-decoration:none; color:var(--text); transition:color 350ms; }
+        .epk-social-link:hover { color: var(--accent); }
+        .epk-social-link:hover .epk-social-url { color: var(--accent); }
         .epk-hero-title { font-size: 52px; letter-spacing: -1px; }
         .epk-bio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
         .epk-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .epk-photos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .epk-press-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
         .epk-waveform { display: flex; }
+        .epk-dl-btn { display: inline-flex; align-items: center; justify-content: center; }
+        .epk-dl-icon { display: none; align-items: center; justify-content: center; }
         @media (max-width: 600px) {
           .epk-hero-title { font-size: 36px; letter-spacing: -0.5px; }
           .epk-bio-grid { grid-template-columns: 1fr; }
           .epk-photos-grid { grid-template-columns: repeat(2, 1fr); }
           .epk-press-grid { grid-template-columns: 1fr; }
           .epk-waveform { display: none; }
+          .epk-track-duration { display: none; }
+          .epk-dl-label { display: none; }
+          .epk-dl-icon { display: flex; }
+          .epk-dl-btn { padding: 5px !important; }
         }
       `}</style>
 
       <div style={{ maxWidth:860, margin:"0 auto", padding:"2rem 1.5rem" }}>
         <Hero artist={artist} />
-        <LinksRow links={data.links} />
         <BioSection artist={artist} />
         <MusicSection tracks={data.tracks} />
         <PhotosSection photos={data.photos} />
         <PressAndContact press={data.press} artist={artist} />
+        <LinksRow links={data.links} />
       </div>
     </>
   );
