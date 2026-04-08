@@ -10,6 +10,16 @@ export function registerSpaRoutes(app) {
   // Shared static assets (served at root)
   app.use("/shared", express.static(path.join(root, "public/shared")));
 
+  /* ── Lowpoly SPA (subdomain) ── */
+  const lowpolyStatic = express.static(path.join(root, "dist/lowpoly"));
+  app.use((req, res, next) => {
+    const host = req.header("host") || "";
+    if (!host.split(":")[0].startsWith("lowpoly.")) return next();
+    lowpolyStatic(req, res, () => {
+      res.sendFile(path.join(root, "dist/lowpoly/index.html"));
+    });
+  });
+
   /* ── Swatchbook SPA ── */
   app.use("/creative/swatchbook", express.static(path.join(root, "dist/swatchbook")));
   app.use("/creative/swatchbook", (req, res, next) => {

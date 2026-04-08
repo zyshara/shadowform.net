@@ -40,6 +40,7 @@ export async function getArtists(params = {}, opts = {}) {
     "populate[instagram]": "*",
     "populate[spotify]":   "*",
     "populate[songkick]":  "*",
+    "populate[featured_tracks]": "*",
     "pagination[pageSize]": "100",
     ...params,
   }, opts);

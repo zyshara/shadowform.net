@@ -12,7 +12,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const isDev = process.env.NODE_ENV !== "production";
 
-syncAllArtistStats();
+//syncAllArtistStats();
 
 if (isDev) await setupLiveReload(app);
 

@@ -3,13 +3,14 @@
 ─────────────────────────────────────────────── */
 export function sslRedirect(req, res, next) {
   const host = req.header("host") || "";
+  const hostname = host.split(":")[0];
   const proto = req.header("x-forwarded-proto");
 
-  if (host.startsWith("localhost") || host.startsWith("127.0.0.1")) {
+  if (hostname === "localhost" || hostname === "127.0.0.1" || hostname.endsWith(".localhost")) {
     return next();
   }
 
-  if (proto !== "https" || host === "www.shadowform.net") {
+  if (proto !== "https" || hostname === "www.shadowform.net") {
     return res.redirect(302, `https://shadowform.net${req.url}`);
   }
 

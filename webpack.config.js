@@ -75,6 +75,16 @@ const makeConfig = ({ entry, outputPath, publicPath, title, alias }) => ({
 
 export default [
   makeConfig({
+    entry: "./src/lowpoly/index.js",
+    outputPath: "dist/lowpoly",
+    publicPath: "/",
+    title: "lowpoly",
+    alias: {
+      "@": path.resolve(__dirname, "src/lowpoly"),
+      "@shared": path.resolve(__dirname, "src/shared"),
+    },
+  }),
+  makeConfig({
     entry: "./src/main/index.js",
     outputPath: "dist/main",
     publicPath: "/",
