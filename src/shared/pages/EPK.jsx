@@ -84,6 +84,7 @@ function Hero({ artist }) {
       alignItems: "flex-end",
       padding: "2rem",
       marginBottom: "2rem",
+      border: "0.5px solid var(--border)",
     }}>
       {/* grid */}
       <div style={{
