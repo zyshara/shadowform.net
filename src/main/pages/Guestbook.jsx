@@ -4,10 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Ornament from "@/components/Ornament";
 import Header from "@/components/Header";
 import Tag from "@/components/Tag";
-import Spinner from "@/components/Spinner";
-
-const MIN_LOAD_MS = 1500;
-const FADE_MS     = 400;
+import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
 
 // ── Drawing Modal ─────────────────────────────────────────────────────────────
 // ── Drawing Modal ─────────────────────────────────────────────────────────────
@@ -294,10 +291,16 @@ const EntryCard = ({ entry }) => {
 
 // ── Guestbook Page ────────────────────────────────────────────────────────────
 const Guestbook = () => {
+  const { data, error, loading, fading } = usePageLoad(
+    () => Promise.all([
+      fetch("/api/guestbook").then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
+      fetch("/api/guestbook/tags").then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
+    ]).then(([gbData, tagData]) => ({ entries: gbData.guestbook?.guestbook_entries ?? [], tags: tagData.tags ?? [] })),
+    { minLoadMs: 1500 },
+  );
+
   const [entries,    setEntries]    = useState([]);
   const [availTags,  setAvailTags]  = useState([]);
-  const [loading,    setLoading]    = useState(true);
-  const [fading,     setFading]     = useState(false);
   const [submitErr,  setSubmitErr]  = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted,  setSubmitted]  = useState(false);
@@ -309,21 +312,12 @@ const Guestbook = () => {
   const [selTags,  setSelTags]  = useState([]);
   const [drawing,  setDrawing]  = useState(null);
 
-  // ── fetch ─────────────────────────────────────────────────────────────────
+  // Seed entries + tags once data arrives
   useEffect(() => {
-    const start = Date.now();
-    Promise.all([
-      fetch("/api/guestbook").then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
-      fetch("/api/guestbook/tags").then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
-    ])
-      .then(([gbData, tagData]) => {
-        setEntries(gbData.guestbook?.guestbook_entries ?? []);
-        setAvailTags(tagData.tags ?? []);
-        const remaining = Math.max(0, MIN_LOAD_MS - (Date.now() - start));
-        setTimeout(() => { setFading(true); setTimeout(() => setLoading(false), FADE_MS); }, remaining);
-      })
-      .catch(() => setLoading(false));
-  }, []);
+    if (!data) return;
+    setEntries(data.entries);
+    setAvailTags(data.tags);
+  }, [data]);
 
   const toggleTag = (tag) =>
     setSelTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]);
@@ -353,12 +347,14 @@ const Guestbook = () => {
     }
   };
 
-  // ── loading ───────────────────────────────────────────────────────────────
-  if (loading) return (
-    <div className="flex flex-col min-h-full" style={{ background:"var(--bg)" }}>
-      <div className="flex-1 flex items-center justify-center"
-        style={{ opacity: fading ? 0 : 1, transition: `opacity ${FADE_MS}ms ease-out` }}>
-        <Spinner />
+  if (loading) return <LoadingScreen fading={fading} />;
+
+  if (error) return (
+    <div className="flex flex-col min-h-full" style={{ background: "var(--bg)" }}>
+      <div className="flex-1 flex items-center justify-center">
+        <p className="font-fell italic text-[13px]" style={{ color: "var(--text-nav-inactive)" }}>
+          something went wrong — {error}
+        </p>
       </div>
     </div>
   );
@@ -372,7 +368,7 @@ const Guestbook = () => {
         />
       )}
 
-      <div className="flex flex-col max-w-600 w-full min-h-full" style={{ background:"var(--bg)" }}>
+      <FadeIn className="flex flex-col max-w-600 w-full min-h-full" style={{ background:"var(--bg)" }}>
         <div className="flex-1 flex flex-col px-10 py-8 max-w-[640px] w-full mx-auto">
 
           <Header eyebrow="guestbook" title="sign the book"
@@ -481,7 +477,7 @@ const Guestbook = () => {
 
           <Ornament className="mt-8 self-center" />
         </div>
-      </div>
+      </FadeIn>
     </>
   );
 };
