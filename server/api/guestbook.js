@@ -2,6 +2,7 @@
 
 import { strapiGet, strapiPost, strapiUploadMedia, strapiPut, invalidateCache } from "../lib/strapi.js";
 import { normalizeEntry, normalizeGuestbook } from "../models/guestbook.js";
+import { logger } from "../lib/logger.js";
 
 // ── config ────────────────────────────────────────────────────────────────────
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
@@ -52,7 +53,7 @@ async function getValidTags() {
     cachedTagsExpiry = Date.now() + TAG_CACHE_TTL;
     return cachedTags;
   } catch (err) {
-    console.error("[guestbook] getValidTags failed:", err.message);
+    logger.error("[guestbook] getValidTags failed:", err.message);
     return cachedTags ?? [];
   }
 }
@@ -71,8 +72,7 @@ export function registerGuestbookRoutes(app, express) {
       const guestbook = normalizeGuestbook(data.data);
       res.json({ guestbook });
     } catch (err) {
-      console.error("[guestbook] GET /api/guestbook failed:", err.message);
-      console.error("[guestbook] GET failed body:", err.body);
+      logger.error("[guestbook] GET /api/guestbook failed:", err.message, err.body ?? "");
       res.status(502).json({ error: err.message });
     }
   });
@@ -83,7 +83,7 @@ export function registerGuestbookRoutes(app, express) {
       const tags = await getValidTags();
       res.json({ tags });
     } catch (err) {
-      console.error("[guestbook] GET /api/guestbook/tags failed:", err.message);
+      logger.error("[guestbook] GET /api/guestbook/tags failed:", err.message);
       res.status(502).json({ error: err.message });
     }
   });
@@ -134,7 +134,7 @@ export function registerGuestbookRoutes(app, express) {
         const file   = await strapiUploadMedia(buffer, `drawing-${Date.now()}.png`);
         drawingMediaId = file?.id ?? null;
       } catch (uploadErr) {
-        console.warn("[guestbook] drawing upload failed:", uploadErr.message);
+        logger.warn("[guestbook] drawing upload failed:", uploadErr.message);
         // non-fatal — entry still posts without the drawing
       }
     }
@@ -174,7 +174,7 @@ export function registerGuestbookRoutes(app, express) {
 
       res.status(201).json({ entry: fullEntry });
     } catch (err) {
-      console.error("[guestbook] POST failed:", err.message, err.body ?? "");
+      logger.error("[guestbook] POST failed:", err.message, err.body ?? "");
       res.status(502).json({ error: "failed to save entry" });
     }
   });

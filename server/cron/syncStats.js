@@ -1,8 +1,8 @@
 import { getArtists } from "../api/artists.js";
-import { scrapeSpotifyStats } from "./scrapers/spotify.js";
-import { scrapeSpotifyMonthlyListeners } from "./scrapers/spotifyMonthly.js";
+import { scrapeSpotifyStats, scrapeSpotifyMonthlyListeners } from "./scrapers/spotify.js";
 import { scrapeInstagramFollowers } from "./scrapers/instagram.js";
 import { scrapeSongkickShows } from "./scrapers/songkick.js";
+import { logger } from "../lib/logger.js";
 
 const STRAPI_URL   = process.env.STRAPI_API_URL  || "https://strapi-shadowform-52c53315c615.herokuapp.com";
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN || "";
@@ -26,7 +26,7 @@ async function updateArtistStats(documentId, stats) {
 }
 
 export async function syncAllArtistStats() {
-  console.log("[syncStats] starting sync...");
+  logger.info("[syncStats] starting sync...");
 
   const data    = await getArtists();
   const artists = data.data ?? [];
@@ -34,28 +34,27 @@ export async function syncAllArtistStats() {
   for (const artist of artists) {
     const statsDocumentId = artist.artist_statistics?.documentId;
     if (!statsDocumentId) {
-      console.warn(`[syncStats] no artist_statistics relation for ${artist.name}, skipping`);
+      logger.warn(`[syncStats] ${artist.name}: no artist_statistics relation, skipping`);
       continue;
     }
 
-    console.log(`[syncStats] syncing ${artist.name}...`);
+    logger.info(`[syncStats] ${artist.name}: syncing...`);
 
     await new Promise(resolve => setTimeout(resolve, 3000));
 
-
     const monthly      = await scrapeSpotifyMonthlyListeners(artist).catch(e => null);
     const spotifyStats = await scrapeSpotifyStats(artist).catch(e => {
-      console.error("[syncStats] spotifyStats error:", e.message);
+      logger.error(`[syncStats] ${artist.name}: spotifyStats error:`, e.message);
       return null;
     });
-    
+
     const [instagram, songkick] = await Promise.allSettled([
       scrapeInstagramFollowers(artist),
       scrapeSongkickShows(artist),
     ]);
 
-    console.log("[syncStats] monthly result:", monthly);
-    console.log("[syncStats] spotifyStats result:", spotifyStats);
+    logger.debug(`[syncStats] ${artist.name}: monthly result:`, monthly);
+    logger.debug(`[syncStats] ${artist.name}: spotifyStats result:`, spotifyStats);
 
     const stats = {
       ...(monthly      ? monthly      : {}),
@@ -65,17 +64,17 @@ export async function syncAllArtistStats() {
     };
 
     if (!Object.keys(stats).length) {
-      console.warn(`[syncStats] no stats collected for ${artist.name}, skipping PUT`);
+      logger.warn(`[syncStats] ${artist.name}: no stats collected, skipping PUT`);
       continue;
     }
 
     try {
       await updateArtistStats(statsDocumentId, stats);
-      console.log(`[syncStats] updated ${artist.name}:`, stats);
+      logger.info(`[syncStats] ${artist.name}: updated:`, stats);
     } catch (err) {
-      console.error(`[syncStats] failed to update ${artist.name}:`, err.message);
+      logger.error(`[syncStats] ${artist.name}: update failed:`, err.message);
     }
   }
 
-  console.log("[syncStats] sync complete");
+  logger.info("[syncStats] sync complete");
 }

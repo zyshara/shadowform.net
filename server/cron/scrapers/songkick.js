@@ -1,3 +1,5 @@
+import { logger } from "../../lib/logger.js";
+
 export function parseSongkickUrl(url) {
   const match = url?.match(/songkick\.com\/artists\/([^/?]+)/);
   return match ? match[1] : null;
@@ -6,7 +8,7 @@ export function parseSongkickUrl(url) {
 export async function scrapeSongkickShows(artist) {
   const artistSlug = parseSongkickUrl(artist.songkick?.url);
   if (!artistSlug) {
-    console.warn(`[songkick] no URL for ${artist.name}, skipping`);
+    logger.warn(`[songkick] ${artist.name}: no URL, skipping`);
     return null;
   }
 
@@ -30,7 +32,7 @@ export async function scrapeSongkickShows(artist) {
   const shows_played   = pastMatch    ? parseInt(pastMatch[1], 10)    : null;
   const upcoming_shows = upcomingMatch ? parseInt(upcomingMatch[1], 10) : null;
 
-  console.log(`[songkick] ${artist.name}: ${shows_played} past, ${upcoming_shows} upcoming`);
+  logger.info(`[songkick] ${artist.name}: ${shows_played} past, ${upcoming_shows} upcoming`);
 
   return {
     ...(shows_played   !== null ? { shows_played }   : {}),

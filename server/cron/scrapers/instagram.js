@@ -1,3 +1,5 @@
+import { logger } from "../../lib/logger.js";
+
 export function parseInstagramHandle(url) {
   // https://www.instagram.com/lowpolysound/
   const match = url.match(/instagram\.com\/([^/?]+)/);
@@ -9,7 +11,7 @@ export async function scrapeInstagramFollowers(artist) {
   const token = process.env[envKey];
 
   if (!token) {
-    console.warn(`[instagram] no token found for ${artist.name} (looked for ${envKey}), skipping`);
+    logger.warn(`[instagram] ${artist.name}: no token (looked for ${envKey}), skipping`);
     return null;
   }
 
@@ -22,10 +24,10 @@ export async function scrapeInstagramFollowers(artist) {
   const data = await res.json();
 
   if (!data.followers_count) {
-    console.warn(`[instagram] no followers_count for ${artist.name}`);
+    logger.warn(`[instagram] ${artist.name}: no followers_count`);
     return null;
   }
 
-  console.log(`[instagram] ${artist.name}: ${data.followers_count} followers`);
+  logger.info(`[instagram] ${artist.name}: ${data.followers_count} followers`);
   return { instagram_followers: data.followers_count };
 }

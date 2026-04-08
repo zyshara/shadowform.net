@@ -1,6 +1,7 @@
 import "dotenv/config";
 
 import express from "express";
+import { logger } from "./server/lib/logger.js";
 import { syncAllArtistStats } from "./server/cron/syncStats.js";
 import { setupLiveReload } from "./server/dev.js";
 import { sslRedirect, noCacheHtml, stripTrailingSlash } from "./server/middleware/index.js";
@@ -23,5 +24,5 @@ registerApiRoutes(app, express);
 registerSpaRoutes(app);
 
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  logger.info(`[server] listening on http://localhost:${port}`);
 });

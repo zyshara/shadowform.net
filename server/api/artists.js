@@ -2,6 +2,7 @@
 
 import { strapiGet } from "../lib/strapi.js";
 import { normalizeArtist } from "../models/artist.js";
+import { logger } from "../lib/logger.js";
 
 export function registerArtistRoutes(app) {
   app.get("/api/artists/:slug", async (req, res) => {
@@ -11,7 +12,7 @@ export function registerArtistRoutes(app) {
       if (!artists.length) return res.status(404).json({ error: "Artist not found" });
       res.json({ artist: artists[0] });
     } catch (err) {
-      console.error("Strapi fetch failed:", err.message, err.body ?? "");
+      logger.error("[artists] Strapi fetch failed:", err.message, err.body ?? "");
       res.status(502).json({ error: err.message });
     }
   });
@@ -22,7 +23,7 @@ export function registerArtistRoutes(app) {
       const artists = (data.data ?? []).map(normalizeArtist);
       res.json({ artists });
     } catch (err) {
-      console.error("Strapi fetch failed:", err.message, err.body ?? "");
+      logger.error("[artists] Strapi fetch failed:", err.message, err.body ?? "");
       res.status(502).json({ error: err.message });
     }
   });

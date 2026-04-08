@@ -1,5 +1,7 @@
 // server/lib/strapi.js
 
+import { logger } from "./logger.js";
+
 const STRAPI_URL   = process.env.STRAPI_API_URL   || "https://strapi-shadowform-52c53315c615.herokuapp.com";
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN || "";
 
@@ -25,12 +27,12 @@ export async function strapiGet(path, params = {}, { ttl = CACHE_TTL_MS, noCache
   if (!noCache) {
     const cached = cache.get(cacheKey);
     if (cached && Date.now() < cached.expiresAt) {
-      console.log("[strapi] cache hit:", cacheKey);
+      logger.debug("[strapi] cache hit:", cacheKey);
       return cached.data;
     }
   }
 
-  console.log("[strapi] fetching:", fullUrl);
+  logger.debug("[strapi] fetching:", fullUrl);
 
   const res = await fetch(fullUrl, {
     headers: {
@@ -124,11 +126,11 @@ export async function strapiPut(path, payload) {
 export function invalidateCache(path, params = {}) {
   if (!path) {
     cache.clear();
-    console.log("[strapi] cache cleared");
+    logger.info("[strapi] cache cleared");
     return;
   }
   const query   = new URLSearchParams(params).toString();
   const fullUrl = `${STRAPI_URL}${path}${query ? `?${query}` : ""}`;
   cache.delete(fullUrl);
-  console.log("[strapi] cache invalidated:", fullUrl);
+  logger.info("[strapi] cache invalidated:", fullUrl);
 }

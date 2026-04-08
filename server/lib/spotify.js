@@ -1,5 +1,7 @@
 // server/lib/spotify.js
 
+import { logger } from "./logger.js";
+
 const SPOTIFY_CLIENT_ID     = process.env.SPOTIFY_CLIENT_ID;
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 
@@ -29,7 +31,7 @@ export async function getSpotifyToken() {
 export async function spotifyGet(path) {
   const token = await getSpotifyToken();
   const fullUrl = `https://api.spotify.com/v1${path}`;
-  console.log("[spotify] full url:", fullUrl);
+  logger.debug("[spotify] fetching:", fullUrl);
   const res = await fetch(fullUrl, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -37,8 +39,7 @@ export async function spotifyGet(path) {
     const body = await res.text();
     const retryAfter = res.headers.get("retry-after");
     const allHeaders = Object.fromEntries(res.headers.entries());
-    console.error("[spotify] error headers:", allHeaders);
-    console.error("[spotify] error body:", body);
+    logger.error("[spotify] request failed:", res.status, { headers: allHeaders, body });
     throw new Error(`Spotify API error: ${res.status} ${body}`);
   }
   return res.json();
