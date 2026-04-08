@@ -29,5 +29,7 @@ export function normalizeArtist(entry) {
     icon:          a.icon?.url,
     links:         a.management_page_card_links?.map((l) => ({ label: l.label?.text, url: l.url?.url })) ?? [],
     stats:         createArtistStats(a.artist_statistics),
+    bookings:      a.booking_email ?? "",
+    management:    a.management_email ?? "",
   };
 }

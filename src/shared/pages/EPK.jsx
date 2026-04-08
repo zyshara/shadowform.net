@@ -13,7 +13,7 @@ const WAVE_SEEDS = [
 function Waveform({ index }) {
   const bars = WAVE_SEEDS[index % WAVE_SEEDS.length];
   return (
-    <div style={{ display:"flex", alignItems:"center", gap:2, height:24, width:80 }}>
+    <div className="epk-waveform" style={{ alignItems:"center", gap:2, height:24, width:80 }}>
       {bars.map((h, i) => (
         <div key={i} style={{ flex:1, height:h, background:"var(--border)", borderRadius:2 }} />
       ))}
@@ -105,7 +105,7 @@ function Hero({ artist }) {
         <p style={{ ...css.mono, fontSize:11, color: "var(--accent)", letterSpacing:"0.15em", textTransform:"uppercase", marginBottom:8 }}>
           // Artist Press Kit
         </p>
-        <h1 style={{ fontFamily:"'Syne', sans-serif", fontSize:52, fontWeight:800, color:"#fff", lineHeight:1, margin:"0 0 8px", letterSpacing:-1 }}>
+        <h1 className="epk-hero-title" style={{ fontFamily:"'Syne', sans-serif", fontWeight:800, color:"#fff", lineHeight:1, margin:"0 0 8px" }}>
           {artist.name}
         </h1>
         <p style={{ fontSize:14, color:"rgba(255,255,255,0.5)", margin:0 }}>
@@ -119,7 +119,7 @@ function Hero({ artist }) {
 // ── Bio + Stats ───────────────────────────────────────────────────────────────
 function BioSection({ artist, stats }) {
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1.5rem", marginBottom:"2rem" }}>
+    <div className="epk-bio-grid">
       <div style={css.card}>
         <p style={css.label}>// About</p>
         <p style={{ fontSize:14, lineHeight:1.75, color:"var(--text-muted)", margin:"0 0 1rem", whiteSpace: "pre-wrap" }}>
@@ -128,7 +128,7 @@ function BioSection({ artist, stats }) {
       </div>
       <div>
         <p style={css.label}>// Stats</p>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:10 }}>
+        <div className="epk-stats-grid">
           {artist.stats.map(s => (
             <div key={s.label} style={{
               background:"var(--surface)",
@@ -201,7 +201,7 @@ function PhotosSection({ photos }) {
   return (
     <div style={{ marginBottom:"2rem" }}>
       <p style={css.label}>// Press photos</p>
-      <div style={{ display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:10 }}>
+      <div className="epk-photos-grid">
         {photos.map(photo => (
           <div key={photo.label} style={{
             aspectRatio:"1",
@@ -234,9 +234,9 @@ function PhotosSection({ photos }) {
 }
 
 // ── Press + Contact ───────────────────────────────────────────────────────────
-function PressAndContact({ press, contact, artist }) {
+function PressAndContact({ press, artist }) {
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1.5rem", marginBottom:"2rem" }}>
+    <div className="epk-press-grid">
       <div style={css.card}>
         <p style={css.label}>// Press</p>
         {press.map((p, i) => (
@@ -258,8 +258,8 @@ function PressAndContact({ press, contact, artist }) {
       <div style={css.card}>
         <p style={css.label}>// Booking & contact</p>
         {[
-          { icon:<EmailIcon />, label:"Booking",    value: contact.booking },
-          { icon:<PhoneIcon />, label:"Management", value: contact.phone },
+          { icon:<EmailIcon />, label:"Booking",    value: artist.bookings },
+          { icon:<PhoneIcon />, label:"Management", value: artist.management },
           { icon:<PinIcon />,   label:"Location",   value: artist.location },
         ].map((row, i, arr) => (
           <div key={row.label} style={{
@@ -348,8 +348,21 @@ export default function EPK({ slug: slugProp }) {
           min-height: 100vh;
         }
         button { font-family: inherit; }
-        .epk-link { color: var(--text-muted); border: 0.5px solid var(--border-strong); transition: border-color 0.15s, color 0.15s; }
+        .epk-link { color: var(--text-muted); border: 0.5px solid var(--border-strong); transition: border-color 350ms, color 350ms; }
         .epk-link:hover { border-color: var(--accent); color: var(--accent); }
+        .epk-hero-title { font-size: 52px; letter-spacing: -1px; }
+        .epk-bio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+        .epk-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .epk-photos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .epk-press-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+        .epk-waveform { display: flex; }
+        @media (max-width: 600px) {
+          .epk-hero-title { font-size: 36px; letter-spacing: -0.5px; }
+          .epk-bio-grid { grid-template-columns: 1fr; }
+          .epk-photos-grid { grid-template-columns: repeat(2, 1fr); }
+          .epk-press-grid { grid-template-columns: 1fr; }
+          .epk-waveform { display: none; }
+        }
       `}</style>
 
       <div style={{ maxWidth:860, margin:"0 auto", padding:"2rem 1.5rem" }}>
@@ -358,7 +371,7 @@ export default function EPK({ slug: slugProp }) {
         <BioSection artist={artist} />
         <MusicSection tracks={data.tracks} />
         <PhotosSection photos={data.photos} />
-        <PressAndContact press={data.press} contact={data.contact} artist={data.artist} />
+        <PressAndContact press={data.press} contact={data.contact} artist={artist} />
       </div>
     </>
   );
