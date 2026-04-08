@@ -71,37 +71,6 @@ const css = {
   },
 };
 
-// ── Nav ───────────────────────────────────────────────────────────────────────
-const NAV_ITEMS = ["Bio", "Music", "Photos", "Press", "Booking"];
-
-function Nav({ active, setActive }) {
-  return (
-    <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:"2rem" }}>
-      {NAV_ITEMS.map(item => (
-        <button
-          key={item}
-          onClick={() => setActive(item)}
-          style={{
-            fontFamily: "'Space Mono', monospace",
-            fontSize: 11,
-            padding: "6px 14px",
-            borderRadius: 100,
-            border: `0.5px solid ${active === item ? "var(--accent)" : "var(--border-strong)"}`,
-            background: active === item ? "var(--accent)" : "transparent",
-            color: active === item ? "#fff" : "var(--text-muted)",
-            cursor: "pointer",
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            transition: "all 0.15s",
-          }}
-        >
-          {item}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 // ── Hero ──────────────────────────────────────────────────────────────────────
 function Hero({ artist }) {
   return (
@@ -324,21 +293,20 @@ function PressAndContact({ press, contact, artist }) {
 // ── Links row ─────────────────────────────────────────────────────────────────
 function LinksRow({ links }) {
   return (
-    <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:"2rem" }}>
+    <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:"2rem" }}>
       {links.map(link => (
         <a
           key={link.label}
           href={link.url}
+          className="epk-link"
           style={{
             ...css.mono,
-            fontSize:11, padding:"8px 14px",
+            fontSize:11, padding:"6px 14px",
             borderRadius:100,
-            border:"0.5px solid var(--border-strong)",
-            color:"var(--text-muted)", cursor:"pointer",
             background:"transparent",
             textTransform:"uppercase", letterSpacing:"0.08em",
-            display:"flex", alignItems:"center", gap:6,
             textDecoration:"none",
+            display:"flex", alignItems:"center", gap:6,
           }}
         >
           <span style={{ width:6, height:6, borderRadius:"50%", background:"var(--accent)", flexShrink:0, display:"inline-block" }} />
@@ -349,80 +317,9 @@ function LinksRow({ links }) {
   );
 }
 
-// ── Section router ────────────────────────────────────────────────────────────
-function SectionContent({ active, artist, data }) {
-  const { stats, tracks, photos, press, contact, links } = data;
-
-  switch (active) {
-    case "Bio":
-      return <BioSection artist={artist} stats={stats} />;
-    case "Music":
-      return <MusicSection tracks={tracks} />;
-    case "Photos":
-      return <PhotosSection photos={photos} />;
-    case "Press":
-      return (
-        <div style={{ ...css.card, marginBottom:"2rem" }}>
-          <p style={css.label}>// Press</p>
-          {press.map((p, i) => (
-            <div key={i} style={{
-              borderLeft:`2px solid ${"var(--accent)"}`,
-              paddingLeft:"1rem",
-              marginBottom: i < press.length - 1 ? "1.5rem" : 0,
-            }}>
-              <p style={{ fontSize:14, fontStyle:"italic", color:"var(--text-muted)", lineHeight:1.7, margin:"0 0 6px" }}>
-                "{p.quote}"
-              </p>
-              <p style={{ ...css.mono, fontSize:10, color:"var(--text-muted)", textTransform:"uppercase", letterSpacing:"0.1em", margin:0 }}>
-                — {p.source}
-              </p>
-            </div>
-          ))}
-        </div>
-      );
-    case "Booking":
-      return (
-        <div style={{ ...css.card, marginBottom:"2rem" }}>
-          <p style={css.label}>// Booking & contact</p>
-          {[
-            { icon:<EmailIcon />, label:"Booking",    value: contact.booking },
-            { icon:<PhoneIcon />, label:"Management", value: contact.phone },
-            { icon:<PinIcon />,   label:"Location",   value: artist.location },
-          ].map((row, i, arr) => (
-            <div key={row.label} style={{
-              display:"flex", alignItems:"center", gap:12,
-              padding:"12px 0",
-              borderBottom: i < arr.length - 1 ? "0.5px solid var(--border)" : "none",
-            }}>
-              <div style={{
-                width:32, height:32, borderRadius:8,
-                background:"var(--accent-dim)",
-                display:"flex", alignItems:"center", justifyContent:"center",
-                flexShrink:0,
-              }}>
-                {row.icon}
-              </div>
-              <div>
-                <p style={{ ...css.mono, fontSize:10, color:"var(--text-muted)", textTransform:"uppercase", letterSpacing:"0.1em", margin:"0 0 3px" }}>
-                  {row.label}
-                </p>
-                <p style={{ fontSize:15, fontWeight:500, color:"var(--text)", margin:0 }}>
-                  {row.value}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    default:
-      return null;
-  }
-}
-
 // ── Root ──────────────────────────────────────────────────────────────────────
 export default function EPK({ slug: slugProp }) {
 
-  const [active, setActive] = useState("Bio");
   const params = useParams();
   const slug = slugProp ?? params.slug;
   const [artist, setArtist] = useState(null);
@@ -451,23 +348,17 @@ export default function EPK({ slug: slugProp }) {
           min-height: 100vh;
         }
         button { font-family: inherit; }
+        .epk-link { color: var(--text-muted); border: 0.5px solid var(--border-strong); transition: border-color 0.15s, color 0.15s; }
+        .epk-link:hover { border-color: var(--accent); color: var(--accent); }
       `}</style>
 
       <div style={{ maxWidth:860, margin:"0 auto", padding:"2rem 1.5rem" }}>
         <Hero artist={artist} />
-        <Nav active={active} setActive={setActive} />
-        <SectionContent active={active} artist={artist} data={data} />
-
-        {/* always show links + full overview on Bio tab */}
-        {active === "Bio" && (
-          <>
-            <MusicSection tracks={data.tracks} />
-            <PhotosSection photos={data.photos} />
-            <PressAndContact press={data.press} contact={data.contact} artist={data.artist} />
-          </>
-        )}
-
         <LinksRow links={data.links} />
+        <BioSection artist={artist} />
+        <MusicSection tracks={data.tracks} />
+        <PhotosSection photos={data.photos} />
+        <PressAndContact press={data.press} contact={data.contact} artist={data.artist} />
       </div>
     </>
   );
