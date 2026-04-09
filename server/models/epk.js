@@ -5,10 +5,11 @@ import { normalizeArtist } from "./artist.js";
 function normalizeFeaturedTrack(raw) {
   if (!raw) return null;
   return {
-    title:    raw.name         ?? "",
-    label:    raw.label        ?? "",
-    year:     raw.year         ?? "",
-    file_url: raw.file?.url    ?? null,
+    title:        raw.name         ?? "",
+    label:        raw.label        ?? "",
+    year:         raw.year         ?? "",
+    file_url:     raw.file?.url    ?? null,
+    download_url: raw.download     ?? null,
   };
 }
 

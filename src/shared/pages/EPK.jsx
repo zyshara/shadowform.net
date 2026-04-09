@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFavicon } from "@shared/hooks/useFavicon";
 
 // ── Waveform bars (decorative) ────────────────────────────────────────────────
@@ -24,6 +24,13 @@ function Waveform({ index }) {
 const PlayIcon = () => (
   <svg width="10" height="12" viewBox="0 0 10 12" fill="white">
     <polygon points="0,0 10,6 0,12" />
+  </svg>
+);
+
+const PauseIcon = () => (
+  <svg width="10" height="12" viewBox="0 0 10 12" fill="white">
+    <rect x="0" y="0" width="3.5" height="12" />
+    <rect x="6.5" y="0" width="3.5" height="12" />
   </svg>
 );
 
@@ -162,60 +169,90 @@ function BioSection({ artist }) {
 
 // ── Music ─────────────────────────────────────────────────────────────────────
 function MusicSection({ tracks }) {
+  const [playingIndex, setPlayingIndex] = useState(null);
+  const audioRef = useRef(null);
+
+  const togglePlay = (t, i) => {
+    if (!t.file_url) return;
+
+    if (playingIndex === i) {
+      audioRef.current?.pause();
+      setPlayingIndex(null);
+    } else {
+      if (audioRef.current) audioRef.current.pause();
+      audioRef.current = new Audio(t.file_url);
+      audioRef.current.play();
+      audioRef.current.onended = () => setPlayingIndex(null);
+      setPlayingIndex(i);
+    }
+  };
+
+  // clean up on unmount
+  useEffect(() => () => audioRef.current?.pause(), []);
+
   return (
     <div style={{ marginBottom:"2rem" }}>
       <p style={css.label}>// Featured tracks</p>
       <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-        {tracks.map((t, i) => (
-          <div key={i} style={{
-            display:"flex", alignItems:"center", gap:"1rem",
-            background:"var(--surface)",
-            border:"0.5px solid var(--border)",
-            borderRadius:8,
-            padding:"0.75rem 1rem",
-          }}>
-            <span style={{ ...css.mono, fontSize:11, color:"var(--text-muted)", width:18, textAlign:"right", flexShrink:0 }}>
-              {String(i + 1).padStart(2, "0")}
-            </span>
-            <button style={{
-              width:28, height:28, borderRadius:"50%", background:"var(--accent)",
-              display:"flex", alignItems:"center", justifyContent:"center",
-              flexShrink:0, cursor:"pointer", border:"none", padding:0, paddingLeft:2,
+        {tracks.map((t, i) => {
+          const isPlaying = playingIndex === i;
+          return (
+            <div key={i} style={{
+              display:"flex", alignItems:"center", gap:"1rem",
+              background:"var(--surface)",
+              border:"0.5px solid var(--border)",
+              borderRadius:8,
+              padding:"0.75rem 1rem",
             }}>
-              <PlayIcon />
-            </button>
-            <div style={{ flex:1 }}>
-              <p style={{ fontSize:14, fontWeight:500, color:"var(--text)", margin:"0 0 2px" }}>{t.title}</p>
-              <p style={{ ...css.mono, fontSize:10, color:"var(--text-muted)", margin:0 }}>
-                {t.label} · {t.year}
-              </p>
-            </div>
-            <Waveform index={i} />
-            {t.duration && (
-              <span className="epk-track-duration" style={{ ...css.mono, fontSize:11, color:"var(--text-muted)" }}>
-                {t.duration}
+              <span style={{ ...css.mono, fontSize:11, color:"var(--text-muted)", width:18, textAlign:"right", flexShrink:0 }}>
+                {String(i + 1).padStart(2, "0")}
               </span>
-            )}
-            <a
-              href={t.file_url || undefined}
-              download
-              className="epk-dl-btn"
-              style={{
-                ...css.mono,
-                fontSize:10, padding:"5px 10px",
-                borderRadius:6, border:"0.5px solid var(--border-strong)",
-                color:"var(--text-muted)",
-                background:"transparent", textTransform:"uppercase",
-                letterSpacing:"0.08em", textDecoration:"none", flexShrink:0,
-                opacity: t.file_url ? 1 : 0.3,
-                pointerEvents: t.file_url ? "auto" : "none",
-              }}
-            >
-              <span className="epk-dl-label">Download</span>
-              <span className="epk-dl-icon"><DownloadIcon /></span>
-            </a>
-          </div>
-        ))}
+              <button
+                onClick={() => togglePlay(t, i)}
+                style={{
+                  width:28, height:28, borderRadius:"50%", background:"var(--accent)",
+                  display:"flex", alignItems:"center", justifyContent:"center",
+                  flexShrink:0, border:"none", padding:0, paddingLeft: isPlaying ? 0 : 2,
+                  cursor: t.file_url ? "pointer" : "default",
+                  opacity: t.file_url ? 1 : 0.4,
+                }}
+              >
+                {isPlaying ? <PauseIcon /> : <PlayIcon />}
+              </button>
+              <div style={{ flex:1 }}>
+                <p style={{ fontSize:14, fontWeight:500, color:"var(--text)", margin:"0 0 2px" }}>{t.title}</p>
+                <p style={{ ...css.mono, fontSize:10, color:"var(--text-muted)", margin:0 }}>
+                  {t.label} · {t.year}
+                </p>
+              </div>
+              <Waveform index={i} />
+              {t.duration && (
+                <span className="epk-track-duration" style={{ ...css.mono, fontSize:11, color:"var(--text-muted)" }}>
+                  {t.duration}
+                </span>
+              )}
+              <a
+                href={t.download_url || undefined}
+                target="_blank"
+                rel="noreferrer"
+                className="epk-dl-btn"
+                style={{
+                  ...css.mono,
+                  fontSize:10, padding:"5px 10px",
+                  borderRadius:6, border:"0.5px solid var(--border-strong)",
+                  color:"var(--text-muted)",
+                  background:"transparent", textTransform:"uppercase",
+                  letterSpacing:"0.08em", textDecoration:"none", flexShrink:0,
+                  opacity: t.download_url ? 1 : 0.3,
+                  pointerEvents: t.download_url ? "auto" : "none",
+                }}
+              >
+                <span className="epk-dl-label">Download</span>
+                <span className="epk-dl-icon"><DownloadIcon /></span>
+              </a>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -444,7 +481,8 @@ export default function EPK({ slug: slugProp }) {
         .epk-photos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .epk-press-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
         .epk-waveform { display: flex; }
-        .epk-dl-btn { display: inline-flex; align-items: center; justify-content: center; }
+        .epk-dl-btn { display: inline-flex; align-items: center; justify-content: center; transition: border-color 350ms, color 350ms; }
+        .epk-dl-btn:hover { border-color: var(--accent) !important; color: var(--accent); }
         .epk-dl-icon { display: none; align-items: center; justify-content: center; }
         @media (max-width: 600px) {
           .epk-hero-title { font-size: 36px; letter-spacing: -0.5px; }
