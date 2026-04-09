@@ -46,7 +46,7 @@ const sharedPlugins = [
 
 const isProd = process.env.NODE_ENV === "production";
 
-const makeConfig = ({ entry, outputPath, publicPath, title, alias }) => ({
+const makeConfig = ({ entry, outputPath, publicPath, title, alias, umamiId = null }) => ({
   entry,
   output: {
     path: path.resolve(__dirname, outputPath),
@@ -68,6 +68,7 @@ const makeConfig = ({ entry, outputPath, publicPath, title, alias }) => ({
         title,
         description: "welcome to shadowform~",
         isProd,
+        umamiId,
       },
     }),
   ],
@@ -79,6 +80,7 @@ export default [
     outputPath: "dist/redspear",
     publicPath: "/",
     title: "redspear",
+    umamiId: "0bf57e1c-2c3f-4f39-80f6-31a7cf393705",
     alias: {
       "@": path.resolve(__dirname, "src/redspear"),
       "@shared": path.resolve(__dirname, "src/shared"),
@@ -89,6 +91,7 @@ export default [
     outputPath: "dist/low-poly",
     publicPath: "/",
     title: "Low Poly",
+    umamiId: "47f76d43-46c9-46aa-9343-d5599838342e",
     alias: {
       "@": path.resolve(__dirname, "src/low-poly"),
       "@shared": path.resolve(__dirname, "src/shared"),
@@ -99,6 +102,7 @@ export default [
     outputPath: "dist/main",
     publicPath: "/",
     title: "🖤 𝔰𝔥𝔞𝔡𝔬𝔴𝔣𝔬𝔯𝔪 . 𝔫𝔢𝔱 🩷",
+    umamiId: "cdea5119-53fc-4bbe-9c3a-4dc923b3489e",
     alias: {
       "@": path.resolve(__dirname, "src/main"),
       "@shared": path.resolve(__dirname, "src/shared"),
