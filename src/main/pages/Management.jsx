@@ -65,7 +65,7 @@ const ArtistCard = ({ artist }) => (
 // ── Management Page ──────────────────────────────────────────────────────────
 const Management = () => {
   const { data, error, loading, fading } = usePageLoad(
-    () => fetch("/api/artists").then((r) => {
+    () => fetch("/api/management").then((r) => {
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       return r.json();
     }),
@@ -84,15 +84,15 @@ const Management = () => {
     </div>
   );
 
-  const artists = data?.artists ?? [];
+  const { header, artist_cards: artists = [] } = data?.data ?? {};
 
   return (
     <FadeIn className="flex flex-col min-h-full" style={{ background: "var(--bg)" }}>
       <div className="flex-1 flex flex-col px-10 py-8 max-w-[600px] w-full mx-auto justify-center">
         <Header
-          eyebrow="Artist Management"
-          title="The Roster"
-          description="shadowform is a small collective supporting electronic artists across multiple genres. we strive to empower artists & their projects so they can reach their creative goals."
+          eyebrow={header?.eyebrow}
+          title={header?.heading}
+          description={header?.description}
         />
 
         <div className="flex items-center gap-3 mb-4 mt-6">
@@ -103,7 +103,7 @@ const Management = () => {
         </div>
 
         <div className="flex flex-col gap-3">
-          {artists.map((artist) => <ArtistCard key={artist.id} artist={artist} />)}
+          {artists.map((artist) => <ArtistCard key={artist.name} artist={artist} />)}
         </div>
 
         <Ornament className="mt-8 self-center" />
