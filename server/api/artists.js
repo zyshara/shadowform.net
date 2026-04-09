@@ -3,6 +3,7 @@
 import { strapiGet } from "../lib/strapi.js";
 import { normalizeArtist } from "../models/artist.js";
 import { logger } from "../lib/logger.js";
+import { artistPopulate } from "../lib/populate.js";
 
 export function registerArtistRoutes(app) {
   app.get("/api/artists/:slug", async (req, res) => {
@@ -31,17 +32,7 @@ export function registerArtistRoutes(app) {
 
 export async function getArtists(params = {}, opts = {}) {
   return strapiGet("/api/artists", {
-    "populate[management_page_card_links][populate][label]": "*",
-    "populate[management_page_card_links][populate][url]":   "*",
-    "populate[icon][fields]": "*",
-    "populate[artist_statistics][fields]": "*",
-    "populate[primary_genre]": "*",
-    "populate[genres]": "*",
-    "populate[instagram]": "*",
-    "populate[spotify]":   "*",
-    "populate[songkick]":  "*",
-    "populate[featured_tracks]": "*",
-    "pagination[pageSize]": "100",
+    ...artistPopulate(),
     ...params,
   }, opts);
 }

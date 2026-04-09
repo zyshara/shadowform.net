@@ -14,22 +14,21 @@ function createArtistStats(data) {
  * Maps a raw Strapi artist entry → the shape the client expects.
  * Compatible with both Strapi v4 (entry.attributes) and v5 (flat entry).
  */
-export function normalizeArtist(entry) {
-  const a = entry.attributes ?? entry;
+export function normalizeArtist(raw) {
+  if (!raw || !raw.id || !raw.name || !raw.slug) return null;
 
   return {
-    id:            entry.id ?? a.id,
-    slug:          a.slug,
-    name:          a.name,
-    primary_genre: a.primary_genre?.Name,
-    location:      a.location,
-    genres:        a.genres?.map((g) => g?.Name) ?? [],
-    blurb:         a.blurb_biography ?? "",
-    biography:     a.biography ?? "",
-    icon:          a.icon?.url,
-    links:         a.management_page_card_links?.map((l) => ({ label: l.label?.text, url: l.url?.url })) ?? [],
-    stats:         createArtistStats(a.artist_statistics),
-    bookings:      a.booking_email ?? "",
-    management:    a.management_email ?? "",
+    id:            raw.id,
+    slug:          raw.slug,
+    name:          raw.name,
+    primary_genre: raw.primary_genre?.Name,
+    location:      raw.location,
+    genres:        raw.genres?.map((g) => g?.Name) ?? [],
+    blurb:         raw.blurb_biography ?? "",
+    biography:     raw.biography ?? "",
+    icon:          raw.icon?.url,
+    stats:         createArtistStats(raw.artist_statistics),
+    bookings:      raw.booking_email ?? "",
+    management:    raw.management_email ?? "",
   };
 }

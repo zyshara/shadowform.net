@@ -5,7 +5,7 @@ import { logger } from "./logger.js";
 const STRAPI_URL   = process.env.STRAPI_API_URL   || "https://strapi-shadowform-52c53315c615.herokuapp.com";
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN || "";
 
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL_MS = process.env.STRAPI_CACHE_TTL_MS || 5 * 60 * 1000; // 5 minutes
 
 // simple in-memory cache: { [cacheKey]: { data, expiresAt } }
 const cache = new Map();
