@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-
-import data from "./epk-data.json";
+import { useFavicon } from "@shared/hooks/useFavicon";
 
 // ── Waveform bars (decorative) ────────────────────────────────────────────────
 const WAVE_SEEDS = [
@@ -33,7 +32,6 @@ const DownloadIcon = () => (
     <path d="M12 16l-6-6h4V4h4v6h4l-6 6zm-7 4v-2h14v2H5z"/>
   </svg>
 );
-
 
 const EmailIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--accent)">
@@ -93,14 +91,12 @@ function Hero({ artist }) {
       marginBottom: "2rem",
       border: "0.5px solid var(--border)",
     }}>
-      {/* grid */}
       <div style={{
         position: "absolute", inset: 0,
         backgroundImage:
           "linear-gradient(var(--hero-grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--hero-grid-line) 1px, transparent 1px)",
         backgroundSize: "40px 40px",
       }} />
-      {/* glow */}
       <div style={{
         position: "absolute",
         width: 400, height: 400,
@@ -125,7 +121,7 @@ function Hero({ artist }) {
 }
 
 // ── Bio + Stats ───────────────────────────────────────────────────────────────
-function BioSection({ artist, stats }) {
+function BioSection({ artist }) {
   return (
     <div className="epk-bio-grid">
       <div style={css.card}>
@@ -153,7 +149,7 @@ function BioSection({ artist, stats }) {
               <span style={{ display:"block", fontFamily:"'Syne', sans-serif", fontSize:22, fontWeight:700, color:"var(--text)", lineHeight:1, marginBottom:4 }}>
                 {s.value}
               </span>
-              <span style={{ ...css.mono, fontSize:10, color:"var(--text-muted)", textTransform:"uppercase", letterSpacing:"0.1em", marginTop: "5px", wordSpacing: "100vw", }}>
+              <span style={{ ...css.mono, fontSize:10, color:"var(--text-muted)", textTransform:"uppercase", letterSpacing:"0.1em", marginTop: "5px", wordSpacing: "100vw" }}>
                 {s.label}
               </span>
             </div>
@@ -171,7 +167,7 @@ function MusicSection({ tracks }) {
       <p style={css.label}>// Featured tracks</p>
       <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
         {tracks.map((t, i) => (
-          <div key={t.num} style={{
+          <div key={i} style={{
             display:"flex", alignItems:"center", gap:"1rem",
             background:"var(--surface)",
             border:"0.5px solid var(--border)",
@@ -179,13 +175,12 @@ function MusicSection({ tracks }) {
             padding:"0.75rem 1rem",
           }}>
             <span style={{ ...css.mono, fontSize:11, color:"var(--text-muted)", width:18, textAlign:"right", flexShrink:0 }}>
-              {t.num}
+              {String(i + 1).padStart(2, "0")}
             </span>
             <button style={{
               width:28, height:28, borderRadius:"50%", background:"var(--accent)",
               display:"flex", alignItems:"center", justifyContent:"center",
-              flexShrink:0, cursor:"pointer", border:"none", padding:0,
-              paddingLeft:2,
+              flexShrink:0, cursor:"pointer", border:"none", padding:0, paddingLeft:2,
             }}>
               <PlayIcon />
             </button>
@@ -196,9 +191,13 @@ function MusicSection({ tracks }) {
               </p>
             </div>
             <Waveform index={i} />
-            <span className="epk-track-duration" style={{ ...css.mono, fontSize:11, color:"var(--text-muted)" }}>{t.duration}</span>
+            {t.duration && (
+              <span className="epk-track-duration" style={{ ...css.mono, fontSize:11, color:"var(--text-muted)" }}>
+                {t.duration}
+              </span>
+            )}
             <a
-              href={t.url || undefined}
+              href={t.file_url || undefined}
               download
               className="epk-dl-btn"
               style={{
@@ -208,8 +207,8 @@ function MusicSection({ tracks }) {
                 color:"var(--text-muted)",
                 background:"transparent", textTransform:"uppercase",
                 letterSpacing:"0.08em", textDecoration:"none", flexShrink:0,
-                opacity: t.url ? 1 : 0.3,
-                pointerEvents: t.url ? "auto" : "none",
+                opacity: t.file_url ? 1 : 0.3,
+                pointerEvents: t.file_url ? "auto" : "none",
               }}
             >
               <span className="epk-dl-label">Download</span>
@@ -228,8 +227,8 @@ function PhotosSection({ photos }) {
     <div style={{ marginBottom:"2rem" }}>
       <p style={css.label}>// Photos & Media</p>
       <div className="epk-photos-grid">
-        {photos.map(photo => (
-          <div key={photo.label} style={{
+        {photos.map((photo, i) => (
+          <div key={i} style={{
             aspectRatio:"1",
             background:"var(--surface)",
             border:"0.5px solid var(--border)",
@@ -237,19 +236,35 @@ function PhotosSection({ photos }) {
             display:"flex", flexDirection:"column",
             alignItems:"center", justifyContent:"center",
             gap:6, color:"var(--text-muted)",
+            overflow: "hidden",
+            position: "relative",
           }}>
-            <ImageIcon />
-            <span style={{ ...css.mono, fontSize:9, textTransform:"uppercase", letterSpacing:"0.1em", opacity:0.6 }}>
-              {photo.label}
+            {photo.thumbnail_url ? (
+              <img
+                src={photo.thumbnail_url}
+                alt={photo.name}
+                style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover", opacity:0.7 }}
+              />
+            ) : (
+              <ImageIcon />
+            )}
+            <span style={{ ...css.mono, fontSize:9, textTransform:"uppercase", letterSpacing:"0.1em", opacity:0.6, position:"relative", zIndex:1 }}>
+              {photo.name}
             </span>
-            <button className="epk-dl-btn" style={{
-              ...css.mono,
-              fontSize:10, padding:"5px 10px",
-              borderRadius:6, border:"0.5px solid var(--border-strong)",
-              color:"var(--text-muted)", cursor:"pointer",
-              background:"transparent", textTransform:"uppercase",
-              letterSpacing:"0.08em", marginTop:4,
-            }}>
+            <button
+              className="epk-dl-btn"
+              style={{
+                ...css.mono,
+                fontSize:10, padding:"5px 10px",
+                borderRadius:6, border:"0.5px solid var(--border-strong)",
+                color:"var(--text-muted)", cursor: photo.file_url ? "pointer" : "default",
+                background:"transparent", textTransform:"uppercase",
+                letterSpacing:"0.08em", marginTop:4,
+                opacity: photo.file_url ? 1 : 0.3,
+                pointerEvents: photo.file_url ? "auto" : "none",
+                position: "relative", zIndex:1,
+              }}
+            >
               <span className="epk-dl-label">Download</span>
               <span className="epk-dl-icon"><DownloadIcon /></span>
             </button>
@@ -269,7 +284,7 @@ function PressAndContact({ press, artist }) {
           <p style={css.label}>// Press</p>
           {press.map((p, i) => (
             <div key={i} style={{
-              borderLeft:`2px solid ${"var(--accent)"}`,
+              borderLeft:`2px solid var(--accent)`,
               paddingLeft:"1rem",
               marginBottom: i < press.length - 1 ? "1rem" : 0,
             }}>
@@ -354,6 +369,7 @@ function PressAndContact({ press, artist }) {
 
 // ── Links card ────────────────────────────────────────────────────────────────
 function LinksRow({ links }) {
+  if (!links?.length) return null;
   return (
     <div style={{ ...css.card, marginBottom:"2rem" }}>
       <p style={css.label}>// Links</p>
@@ -381,22 +397,29 @@ function LinksRow({ links }) {
 
 // ── Root ──────────────────────────────────────────────────────────────────────
 export default function EPK({ slug: slugProp }) {
-
   const params = useParams();
   const slug = slugProp ?? params.slug;
-  const [artist, setArtist] = useState(null);
+  const [epk, setEpk] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/artists/${slug}`)
+    fetch(`/api/epk/${slug}`)
       .then((r) => r.json())
-      .then(({ artist }) => setArtist(artist ?? null))
-      .catch(() => setArtist(null))
+      .then(({ data }) => setEpk(data ?? null))
+      .catch(() => setEpk(null))
       .finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading) return <div/>;
-  if (!artist) return <div/>
+  useFavicon(epk?.artist?.icon ?? null);
+
+  useEffect(() => {
+    if (epk?.artist?.name) document.title = `EPK — ${epk.artist.name}`;
+  }, [epk?.artist?.name]);
+
+  if (loading) return <div />;
+  if (!epk)    return <div />;
+
+  const { artist, featured_tracks, photos_and_media, press, links } = epk;
 
   return (
     <>
@@ -410,11 +433,8 @@ export default function EPK({ slug: slugProp }) {
           min-height: 100vh;
         }
         button { font-family: inherit; }
-        .epk-link { color: var(--text-muted); border: 0.5px solid var(--border-strong); transition: border-color 350ms, color 350ms; }
-        .epk-link:hover { border-color: var(--accent); color: var(--accent); }
         .epk-press-link { color: inherit; text-decoration: none; transition: color 350ms; }
         .epk-press-link:hover { color: var(--accent); }
-
         .epk-social-link { display:flex; align-items:center; gap:10px; padding:10px 0; text-decoration:none; color:var(--text); transition:color 350ms; }
         .epk-social-link:hover { color: var(--accent); }
         .epk-social-link:hover .epk-social-url { color: var(--accent); }
@@ -442,10 +462,10 @@ export default function EPK({ slug: slugProp }) {
       <div style={{ maxWidth:860, margin:"0 auto", padding:"2rem 1.5rem" }}>
         <Hero artist={artist} />
         <BioSection artist={artist} />
-        <MusicSection tracks={data.tracks} />
-        <PhotosSection photos={data.photos} />
-        <PressAndContact press={data.press} artist={artist} />
-        <LinksRow links={data.links} />
+        <MusicSection tracks={featured_tracks} />
+        <PhotosSection photos={photos_and_media} />
+        <PressAndContact press={press} artist={artist} />
+        <LinksRow links={links} />
       </div>
     </>
   );

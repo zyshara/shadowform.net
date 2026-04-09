@@ -85,12 +85,12 @@ export default [
     },
   }),
   makeConfig({
-    entry: "./src/lowpoly/index.js",
-    outputPath: "dist/lowpoly",
+    entry: "./src/low-poly/index.js",
+    outputPath: "dist/low-poly",
     publicPath: "/",
-    title: "lowpoly",
+    title: "Low Poly",
     alias: {
-      "@": path.resolve(__dirname, "src/lowpoly"),
+      "@": path.resolve(__dirname, "src/low-poly"),
       "@shared": path.resolve(__dirname, "src/shared"),
     },
   }),

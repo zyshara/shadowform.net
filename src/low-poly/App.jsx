@@ -9,7 +9,7 @@ const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/epk" element={<EPK slug="lowpoly" />} />
+      <Route path="/epk" element={<EPK slug="low-poly" />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

@@ -21,12 +21,12 @@ export function registerSpaRoutes(app) {
   });
 
   /* ── Lowpoly SPA (subdomain) ── */
-  const lowpolyStatic = express.static(path.join(root, "dist/lowpoly"));
+  const lowpolyStatic = express.static(path.join(root, "dist/low-poly"));
   app.use((req, res, next) => {
     const host = req.header("host") || "";
-    if (!host.split(":")[0].startsWith("lowpoly.")) return next();
+    if (!host.split(":")[0].startsWith("low-poly.")) return next();
     lowpolyStatic(req, res, () => {
-      res.sendFile(path.join(root, "dist/lowpoly/index.html"));
+      res.sendFile(path.join(root, "dist/low-poly/index.html"));
     });
   });
 
