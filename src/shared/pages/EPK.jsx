@@ -475,6 +475,10 @@ export default function EPK({ slug: slugProp }) {
         .epk-social-link { display:flex; align-items:center; gap:10px; padding:10px 0; text-decoration:none; color:var(--text); transition:color 350ms; }
         .epk-social-link:hover { color: var(--accent); }
         .epk-social-link:hover .epk-social-url { color: var(--accent); }
+        @media (max-width: 600px) {
+          .epk-social-link { flex-wrap: wrap; }
+          .epk-social-url { margin-left: 0 !important; width: 100%; padding-left: 16px; word-break: break-all; }
+        }
         .epk-hero-title { font-size: 52px; letter-spacing: -1px; }
         .epk-bio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
         .epk-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }

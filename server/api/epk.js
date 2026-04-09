@@ -21,6 +21,8 @@ async function getEpkBySlug(slug, opts = {}) {
     "populate[photos_and_media][populate][file][fields]":              "*",
     // press: all scalar (caption, source, url are plain text — no relations)
     "populate[press]": "*",
+    // links: label is text, url is a relation
+    "populate[links][populate][url]": "*",
   }, opts);
 }
 

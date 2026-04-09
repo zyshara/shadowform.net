@@ -40,6 +40,9 @@ export function normalizeEpk(entry) {
     featured_tracks:  (e.featured_tracks  ?? []).map(normalizeFeaturedTrack).filter(Boolean),
     photos_and_media: (e.photos_and_media ?? []).map(normalizePhotoMedia).filter(Boolean),
     press:            (e.press            ?? []).map(normalizePress).filter(Boolean),
-    links:           [],
+    links: (e.links ?? []).map((l) => ({
+      label: l.label    ?? "",
+      url:   l.url?.url ?? "",
+    })).filter((l) => l.url),
   };
 }
