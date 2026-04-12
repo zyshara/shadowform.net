@@ -18,7 +18,7 @@ function normalizePhotoMedia(raw) {
   return {
     name:          raw.name              ?? "",
     thumbnail_url: raw.thumbnail?.url    ?? null,
-    file_url:      raw.file?.url         ?? null,
+    download_url:  raw.url               ?? null,
   };
 }
 

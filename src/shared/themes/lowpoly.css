@@ -1,0 +1,18 @@
+:root {
+  /* palette: #42A3FF sky blue · #FFDD3B warm yellow · #6160AA muted purple */
+
+  --accent:          #42A3FF;                     /* blue as primary accent */
+  --accent-dim:      rgba(66, 163, 255, 0.16);
+
+  --hero-bg:         #0e0c1f;
+  --hero-grid-line:  rgba(66, 163, 255, 0.25);    /* blue grid */
+  --hero-glow:       rgba(255, 221, 59, 0.40);    /* strong yellow bloom */
+
+  --bg:              #0e0c1f;
+  --text:            #e8e6f5;
+  --text-muted:      #6160AA;                     /* purple as muted text */
+
+  --surface:         #17152e;                     /* deep purple-tinted surface */
+  --border:          rgba(66, 163, 255, 0.18);    /* blue-tinted borders */
+  --border-strong:   rgba(255, 221, 59, 0.35);    /* yellow strong borders */
+}

@@ -274,7 +274,7 @@ function PhotosSection({ photos }) {
             overflow:"hidden",
           }}>
             {/* image — fills available space above footer */}
-            <div style={{ flex:1, background:"var(--border)", display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden" }}>
+            <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden" }}>
               {photo.thumbnail_url
                 ? <img src={photo.thumbnail_url} alt={photo.name} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
                 : <ImageIcon />
@@ -292,15 +292,16 @@ function PhotosSection({ photos }) {
               </span>
               <button
                 className="epk-dl-btn"
+                onClick={() => photo.download_url && window.open(photo.download_url, "_blank")}
                 style={{
                   ...css.mono,
                   fontSize:10, padding:"5px 10px",
                   borderRadius:6, border:"0.5px solid var(--border-strong)",
-                  color:"var(--text-muted)", cursor: photo.file_url ? "pointer" : "default",
+                  color:"var(--text-muted)", cursor: photo.download_url ? "pointer" : "default",
                   background:"transparent", textTransform:"uppercase",
                   letterSpacing:"0.08em", flexShrink:0,
-                  opacity: photo.file_url ? 1 : 0.3,
-                  pointerEvents: photo.file_url ? "auto" : "none",
+                  opacity: photo.download_url ? 1 : 0.3,
+                  pointerEvents: photo.download_url ? "auto" : "none",
                 }}
               >
                 <span className="epk-dl-label">Download</span>

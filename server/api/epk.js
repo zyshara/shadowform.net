@@ -17,7 +17,6 @@ async function getEpkBySlug(slug, opts = {}) {
     // media fields: use explicit [fields] to avoid traversing upload plugin internals
     "populate[featured_tracks][populate][file][fields][0]":            "url",
     "populate[photos_and_media][populate][thumbnail][fields][0]":      "url",
-    "populate[photos_and_media][populate][file][fields][0]":           "url",
     // press: all scalar (caption, source, url are plain text — no relations)
     "populate[press]": "*",
     // links: label is text, url is a relation
