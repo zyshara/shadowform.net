@@ -14,11 +14,10 @@ async function getEpkBySlug(slug, opts = {}) {
     // artist relation
     "populate[artist][fields]":   "*",
     ...artistPopulate(ARTIST_PREFIX),
-    // featured_tracks: scalar fields + file media
-    "populate[featured_tracks][populate][file][fields]":               "*",
-    // photos_and_media: scalar fields + thumbnail + file media
-    "populate[photos_and_media][populate][thumbnail][fields]":         "*",
-    "populate[photos_and_media][populate][file][fields]":              "*",
+    // media fields: use explicit [fields] to avoid traversing upload plugin internals
+    "populate[featured_tracks][populate][file][fields][0]":            "url",
+    "populate[photos_and_media][populate][thumbnail][fields][0]":      "url",
+    "populate[photos_and_media][populate][file][fields][0]":           "url",
     // press: all scalar (caption, source, url are plain text — no relations)
     "populate[press]": "*",
     // links: label is text, url is a relation
