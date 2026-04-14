@@ -1,0 +1,52 @@
+{
+  "projects": [
+    {
+      "id": "blizzard",
+      "featured": true,
+      "eyebrow": "Front End Web",
+      "title": "Blizzard",
+      "description": "Diablo IV · Overwatch 2 · World of Warcraft. React component libraries, design systems, TypeScript.",
+      "type": "work",
+      "tags": ["React", "TypeScript", "Storybook", "CSS"],
+      "year": "2021 → present",
+      "icon": null,
+      "badge": null
+    },
+    {
+      "id": "shadowform",
+      "featured": false,
+      "eyebrow": null,
+      "title": "shadowform.net",
+      "description": "Personal site + artist mgmt. Strapi, Cloudinary, Heroku.",
+      "type": "personal",
+      "tags": ["Strapi", "Heroku", "React"],
+      "year": null,
+      "icon": null,
+      "badge": null
+    },
+    {
+      "id": "redspear",
+      "featured": false,
+      "eyebrow": null,
+      "title": "Red Spear",
+      "description": "Hard techno link page. Darkweb/ARG visual identity.",
+      "type": "personal",
+      "tags": ["CSS vars", "Identity"],
+      "year": null,
+      "icon": null,
+      "badge": null
+    },
+    {
+      "id": "lowpoly",
+      "featured": false,
+      "eyebrow": null,
+      "title": "Low Poly",
+      "description": "Artist link page · IDR-inspired · Barlow Condensed · numerical indexing · data readout",
+      "type": "personal",
+      "tags": ["Barlow", "Share Tech Mono"],
+      "year": null,
+      "icon": null,
+      "badge": "TDR"
+    }
+  ]
+}

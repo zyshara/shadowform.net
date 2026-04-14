@@ -29,7 +29,7 @@ const navlinks = [
     id: "development",
     url: "/development",
     text: "Development",
-    component: UnderConstruction,
+    component: Development,
   },
   {
     id: "creative",
