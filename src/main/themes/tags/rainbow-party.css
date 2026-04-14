@@ -1,0 +1,33 @@
+/* ── rainbow-party ──────────────────────────────────────────────────────────────── */
+.tag-theme--rainbow-party {
+  border-color: #2e1a28;
+  background:   transparent;
+}
+
+.tag-theme--rainbow-party .tag-theme-char {
+  animation:
+    tag-rainbow-party-color 1.8s steps(1) infinite,
+    tag-rainbow-party-float 1.4s ease-in-out infinite alternate;
+}
+
+/* stagger per character position — JS sets --char-i on each span */
+.tag-theme--rainbow-party .tag-theme-char {
+  animation-delay:
+    calc(var(--char-i, 0) * 120ms),
+    calc(var(--char-i, 0) * 80ms);
+}
+
+@keyframes tag-rainbow-party-color {
+  0%   { color: #ff4466; }
+  16%  { color: #ff9900; }
+  33%  { color: #ffe066; }
+  50%  { color: #44ff88; }
+  66%  { color: #44ccff; }
+  83%  { color: #cc66ff; }
+  100% { color: #ff4466; }
+}
+
+@keyframes tag-rainbow-party-float {
+  0%   { transform: translateY(0px);  }
+  100% { transform: translateY(-3px); }
+}

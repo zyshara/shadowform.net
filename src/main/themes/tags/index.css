@@ -1,0 +1,21 @@
+/* TagThemes.css
+   Import in index.css:
+   @import "./TagThemes.css";
+
+   Tag themes are applied via the `theme` field on GuestbookTag in Strapi.
+   The Tag component reads `entry.tagTheme` and renders the appropriate variant.
+
+   Available themes:
+     fire-glitch    — pixel flame per character
+     rainbow-party — cycling rainbow + float bob per character
+*/
+
+/* ── shared char base ─────────────────────────────────────────────────────── */
+.tag-theme-char {
+  display: inline-block;
+}
+
+@import "./rainbow-party.css";
+@import "./matrix-glitch.css";
+@import "./fire-glitch.css";
+@import "./blink-blue.css";

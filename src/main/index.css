@@ -3,8 +3,8 @@
 
 @import "tailwindcss";
 
-@import "./themes/design-a.css";
-@import "./tag-themes.css";
+@import "./themes/app/design-a.css";
+@import "./themes/tags/index.css";
 
 @font-face {
   font-family: "Alagard";

@@ -1,0 +1,13 @@
+/* ── blue-blink ────────────────────────────────────────────────────────────────── */
+.tag-theme--blue-blink {
+  border-color: #00ffff;
+  background:   #000033;
+  color:        #00ffff;
+  text-shadow:  0 0 6px #00ffff;
+  animation:    tag-blue-blink 1s steps(1) infinite;
+}
+
+@keyframes tag-blue-blink {
+  0%,  49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
