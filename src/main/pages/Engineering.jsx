@@ -156,8 +156,9 @@ const CtaCard = ({ label, cta, href, disabled = false }) => (
 
 const Engineering = () => {
   const { projects = [] } = data;
-  const featured = projects.find(p => p.featured);
-  const others   = projects.filter(p => !p.featured);
+  const featured   = projects.find(p => p.featured);
+  const lowpoly    = projects.find(p => p.id === "lowpoly");
+  const sideCards  = projects.filter(p => !p.featured && p.id !== "lowpoly");
 
   const { data: apiData, error, loading, fading } = usePageLoad(
     () => fetch("/api/engineering").then(r => {
@@ -175,7 +176,7 @@ const Engineering = () => {
     <FadeIn className="flex flex-col min-h-full" style={{ background: "var(--bg)" }}>
       <style>{`
         .dev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .dev-card-featured { grid-row: span ${others.length}; }
+        .dev-card-featured { grid-row: span ${sideCards.length + 1}; }
         @media (max-width: 640px) {
           .dev-grid { grid-template-columns: 1fr; }
           .dev-card-featured { grid-row: span 1; }
@@ -210,13 +211,29 @@ const Engineering = () => {
         </div>
 
         <div className="dev-grid">
-          {/* featured card — spans all right-column rows */}
+          {/* featured card — spans all side-column rows */}
           {featured && <FeaturedCard project={featured} />}
 
-          {/* standard project cards */}
-          {others.map(p => <ProjectCard key={p.id} project={p} />)}
+          {/* shadowform + redspear — right column */}
+          {sideCards.map(p => <ProjectCard key={p.id} project={p} />)}
 
-          {/* static CTA cards */}
+          {/* invisible spacer — preserves featured card height to match original 3-card span */}
+          {lowpoly && (
+            <div aria-hidden="true" style={{ visibility: "hidden" }}>
+              <ProjectCard project={lowpoly} />
+            </div>
+          )}
+        </div>
+
+        {/* low poly — full width */}
+        {lowpoly && (
+          <div className="mt-[10px]">
+            <ProjectCard project={lowpoly} />
+          </div>
+        )}
+
+        {/* static CTA cards */}
+        <div className="grid grid-cols-2 gap-[10px] mt-[10px]">
           <CtaCard
             label="full history<br />&amp; experience"
             cta="view résumé →"
