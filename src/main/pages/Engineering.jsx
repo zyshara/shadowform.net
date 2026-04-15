@@ -210,6 +210,12 @@ const Engineering = () => {
         .dev-card:hover h3 {
           filter: drop-shadow(0 0 4px var(--pink-glow)) drop-shadow(0 0 6px var(--pink-glow));
         }
+        .dev-card img {
+          transition: filter 150ms ease-out;
+        }
+        .dev-card:hover img {
+          filter: brightness(1.2);
+        }
       `}</style>
 
       <div
