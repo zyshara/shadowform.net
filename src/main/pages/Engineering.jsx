@@ -161,57 +161,63 @@ const WideCard = ({ project }) => (
   <CardLink
     href={project.link}
     className="dev-card flex flex-row rounded-[2px] border overflow-hidden"
-    style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)", height: 220 }}
+    style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)" }}
   >
-    {/* left: thumbnail fills ~55% */}
-    <div className="relative flex-shrink-0 overflow-hidden" style={{ width: "55%" }}>
+    {/* left: thumbnail — 42% on mobile, 55% on desktop */}
+    <div
+      className="dev-wide-divider relative flex-shrink-0 overflow-hidden border-r"
+      style={{ width: "42%", borderColor: "var(--border-soft)", minHeight: 180 }}
+    >
       {project.thumbnail && (
         <img
-          className="border-r"
           src={project.thumbnail}
           alt={project.title}
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", borderColor: "var(--border-soft)" }}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", position: "absolute", inset: 0 }}
         />
       )}
       <div className="absolute top-0 left-0 right-0 flex items-start justify-between p-3">
         <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
+      </div>
+    </div>
+
+    {/* right: text content */}
+    <div className="flex flex-col justify-between p-4 flex-1 min-w-0">
+      <div className="flex justify-end mb-2">
         {project.topTags?.length > 0 && (
           <div className="flex gap-1 flex-wrap justify-end">
             {project.topTags.map(t => <Tag key={t.label} theme={t.theme} variant="lit">{t.label}</Tag>)}
           </div>
         )}
       </div>
-    </div>
-
-    {/* right: text content */}
-    <div className="flex flex-col justify-end p-5 flex-1 min-w-0">
-      {(project.eyebrow || project.year) && (
-        <p
-          className="font-alkhemikal text-[9px] tracking-[0.18em] uppercase mb-1"
-          style={{ color: "var(--text-nav-inactive)" }}
+      <div className="flex flex-col gap-1 mt-auto">
+        {(project.eyebrow || project.year) && (
+          <p
+            className="font-alkhemikal text-[8px] tracking-[0.18em] uppercase"
+            style={{ color: "var(--text-nav-inactive)" }}
+          >
+            {project.eyebrow && project.year
+              ? `${project.eyebrow} ✦ ${project.year}`
+              : project.eyebrow || project.year}
+          </p>
+        )}
+        <h2
+          className="font-alagard tracking-[0.5px] leading-tight"
+          style={{ fontSize: 17, color: "var(--text-heading)" }}
         >
-          {project.eyebrow && project.year
-            ? `${project.eyebrow} ✦ ${project.year}`
-            : project.eyebrow || project.year}
+          {project.title}
+        </h2>
+        <p
+          className="font-fell italic text-[11px] leading-[1.65]"
+          style={{ color: "var(--text-body)" }}
+        >
+          {project.description}
         </p>
-      )}
-      <h2
-        className="font-alagard tracking-[0.5px] leading-tight mb-3"
-        style={{ fontSize: 20, color: "var(--text-heading)" }}
-      >
-        {project.title}
-      </h2>
-      <p
-        className="font-fell italic text-[12px] leading-[1.7] mb-3"
-        style={{ color: "var(--text-body)" }}
-      >
-        {project.description}
-      </p>
-      {project.tags?.length > 0 && (
-        <div className="flex gap-1 flex-wrap">
-          {project.tags.map(t => <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>)}
-        </div>
-      )}
+        {project.tags?.length > 0 && (
+          <div className="flex gap-1 flex-wrap mt-2">
+            {project.tags.map(t => <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>)}
+          </div>
+        )}
+      </div>
     </div>
   </CardLink>
 );
@@ -288,6 +294,12 @@ const Engineering = () => {
         .dev-card:hover img {
           filter: brightness(1.2);
         }
+        .dev-wide-divider {
+          transition: border-color 150ms ease-out;
+        }
+        .dev-card:hover .dev-wide-divider {
+          border-color: var(--tag-lit-border) !important;
+        }
       `}</style>
 
       <div
@@ -345,13 +357,13 @@ const Engineering = () => {
           <CtaCard
             label="full history<br />&amp; experience"
             cta="view résumé →"
-            href="/resume"
+            href="/engineering/resume"
             disabled
           />
           <CtaCard
             label="all projects,<br />concisely"
             cta="view archive →"
-            href="/archive"
+            href="/engineering/archive"
             disabled
           />
         </div>
