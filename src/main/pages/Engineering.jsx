@@ -46,14 +46,8 @@ const FeaturedCard = ({ project }) => (
     className="dev-card-featured flex flex-col h-full p-5 rounded-[2px] border"
     style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)" }}
   >
-    {/* top: icon + badge */}
-    <div className="flex items-start justify-between">
-      <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
-      <TypeBadge type={project.type} />
-    </div>
-
-    {/* middle: thumbnail fills space, text pinned to bottom */}
-    <div className="flex-1 min-h-0 mt-4 mb-4 rounded-[2px] overflow-hidden">
+    {/* thumbnail with icon + badge overlaid inside */}
+    <div className="flex-1 min-h-0 mb-4 rounded-[2px] overflow-hidden relative">
       {project.thumbnail && (
         <img
           className="rounded-[2px] border"
@@ -62,21 +56,27 @@ const FeaturedCard = ({ project }) => (
           style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", borderColor: "var(--border-soft)" }}
         />
       )}
+      <div className="absolute top-0 left-0 right-0 flex items-start justify-between p-3">
+        <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
+        <TypeBadge type={project.type} />
+      </div>
     </div>
 
     {/* text: eyebrow + title + description */}
     <div>
-      {project.eyebrow && (
+      {(project.eyebrow || project.year) && (
         <p
-          className="font-alkhemikal text-[9px] tracking-[0.18em] uppercase mb-1"
+          className="font-alkhemikal text-[10px] tracking-[0.18em] uppercase mb-1"
           style={{ color: "var(--text-nav-inactive)" }}
         >
-          {project.eyebrow}
+          {project.eyebrow && project.year
+            ? `${project.eyebrow} ✦ ${project.year}`
+            : project.eyebrow || project.year}
         </p>
       )}
       <h2
         className="font-alagard tracking-[0.5px] leading-tight mb-3"
-        style={{ fontSize: 38, color: "var(--text-heading)" }}
+        style={{ fontSize: 30, color: "var(--text-heading)" }}
       >
         {project.title}
       </h2>
@@ -95,14 +95,6 @@ const FeaturedCard = ({ project }) => (
           {project.tags.map(t => <Tag key={t} variant="dim">{t}</Tag>)}
         </div>
       )}
-      {project.year && (
-        <p
-          className="font-alkhemikal text-[9px] tracking-[0.14em] uppercase mt-1"
-          style={{ color: "var(--text-nav-inactive)" }}
-        >
-          {project.year}
-        </p>
-      )}
     </div>
   </div>
 );
@@ -114,13 +106,8 @@ const ProjectCard = ({ project }) => (
     className="flex flex-col h-full p-4 rounded-[2px] border"
     style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)" }}
   >
-    {/* top: icon + badge */}
-    <div className="flex items-start justify-between mb-3">
-      <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
-      <TypeBadge type={project.type} />
-    </div>
-
-    <div className="flex-1 min-h-0 mb-3 rounded-[2px] overflow-hidden">
+    {/* thumbnail with icon + badge overlaid inside */}
+    <div className="flex-1 min-h-0 mb-3 rounded-[2px] overflow-hidden relative">
       {project.thumbnail && (
         <img
           className="rounded-[2px] border"
@@ -129,6 +116,10 @@ const ProjectCard = ({ project }) => (
           style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", borderColor: "var(--border-soft)" }}
         />
       )}
+      <div className="absolute top-0 left-0 right-0 flex items-start justify-between p-3">
+        <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
+        <TypeBadge type={project.type} />
+      </div>
     </div>
 
     <h3
@@ -213,20 +204,13 @@ const Engineering = () => {
         className="flex-1 flex flex-col px-8 py-8 w-full mx-auto"
         style={{ maxWidth: 880 }}
       >
-        <div className="mb-6">
+        <div className="flex-1 flex flex-col max-w-[600px] w-full mx-auto justify-center">
           <Header
             eyebrow={header?.eyebrow}
             title={header?.heading}
+            description={header?.description}
             align="center"
-          >
-            {header?.description && (
-              <div
-                className="flex font-fell flex-col items-center gap-4 max-w-[540px] text-[15px] leading-[1.9]"
-                style={{ color: "var(--text-body)" }}
-                dangerouslySetInnerHTML={{ __html: header.description }}
-              />
-            )}
-          </Header>
+          />
         </div>
 
         <div className="flex items-center gap-3 mb-4 mt-6">

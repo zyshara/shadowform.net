@@ -14,32 +14,12 @@ const Footer = () => {
 
   return (
     <footer
-      className="px-7 py-[15.5px] flex items-center justify-between shrink-0 border-t"
+      className="px-7 py-[15.5px] flex items-center justify-center shrink-0 border-t"
       style={{
         background: "var(--bg-footer)",
         borderColor: "var(--border-footer)",
       }}
     >
-      {/* prev */}
-      <div
-        className="font-alkhemikal text-[10px] tracking-[0.12em] uppercase min-w-[80px]"
-        style={{ color: "var(--text-footer)" }}
-      >
-        {prev ? (
-          <NavLink
-            to={prev.url}
-            className="transition-colors"
-            style={{ color: "var(--text-footer)" }}
-            onMouseEnter={(e) => e.currentTarget.style.color = "var(--text-footer-accent)"}
-            onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-footer)"}
-          >
-            &lt; <span style={{ color: "var(--text-footer-accent)" }}>{prev.text}</span>
-          </NavLink>
-        ) : (
-          <span className="opacity-0">·</span>
-        )}
-      </div>
-
       {/* social icons */}
       <div className="flex items-center gap-3">
         <a href="https://ko-fi.com/zyshara" target="_blank" rel="noreferrer" className="opacity-25 hover:opacity-50 transition-opacity">
@@ -92,26 +72,6 @@ const Footer = () => {
             </g>
           </svg>
         </a>
-      </div>
-
-      {/* next */}
-      <div
-        className="font-alkhemikal text-[10px] tracking-[0.12em] uppercase min-w-[80px] text-right"
-        style={{ color: "var(--text-footer)" }}
-      >
-        {next ? (
-          <NavLink
-            to={next.url}
-            className="transition-colors"
-            style={{ color: "var(--text-footer)" }}
-            onMouseEnter={(e) => e.currentTarget.style.color = "var(--text-footer-accent)"}
-            onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-footer)"}
-          >
-            <span style={{ color: "var(--text-footer-accent)" }}>{next.text}</span> &gt;
-          </NavLink>
-        ) : (
-          <span className="opacity-0">·</span>
-        )}
       </div>
     </footer>
   );

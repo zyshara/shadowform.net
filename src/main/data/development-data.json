@@ -5,7 +5,7 @@
       "featured": true,
       "eyebrow": "Front End Web",
       "title": "Diablo IV Site",
-      "description": "Website for the video game Diablo IV, including support for season pages and expansion pages",
+      "description": "Official website for the video game Diablo IV, including support for season pages and expansion pages",
       "type": "work",
       "tags": ["React", "TypeScript", "Storybook", "CSS"],
       "year": "2021",

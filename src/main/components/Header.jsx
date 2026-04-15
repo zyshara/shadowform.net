@@ -53,9 +53,7 @@ const Header = ({
       )}
 
       {description && (
-        <p className={`font-fell ${sizeClass.description}`} style={{ color: "var(--text-body)" }}>
-          {description}
-        </p>
+        <p className={`font-fell ${sizeClass.description}`} style={{ color: "var(--text-body)" }} dangerouslySetInnerHTML={{ __html: description }}/>
       )}
 
       {children}
