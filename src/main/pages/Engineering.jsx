@@ -41,13 +41,18 @@ const CardIcon = ({ icon, badge, title }) => {
 
 // ── Featured card (large, left column) ───────────────────────────────────────
 
+const CardLink = ({ href, children, className, style }) => href
+  ? <a href={href} target="_blank" rel="noreferrer" className={className} style={{ ...style, textDecoration: "none" }}>{children}</a>
+  : <div className={className} style={style}>{children}</div>;
+
 const FeaturedCard = ({ project }) => (
-  <div
+  <CardLink
+    href={project.link}
     className="dev-card dev-card-featured flex flex-col h-full p-5 rounded-[2px] border"
     style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)" }}
   >
     {/* thumbnail with icon + badge overlaid inside */}
-    <div className="flex-1 min-h-0 mb-4 rounded-[2px] overflow-hidden relative">
+    <div className="mb-4 rounded-[2px] overflow-hidden relative" style={{ aspectRatio: "361 / 385" }}>
       {project.thumbnail && (
         <img
           className="rounded-[2px] border"
@@ -96,18 +101,19 @@ const FeaturedCard = ({ project }) => (
         </div>
       )}
     </div>
-  </div>
+  </CardLink>
 );
 
 // ── Standard project card ─────────────────────────────────────────────────────
 
 const ProjectCard = ({ project }) => (
-  <div
+  <CardLink
+    href={project.link}
     className="dev-card flex flex-col h-full p-4 rounded-[2px] border"
     style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)" }}
   >
     {/* thumbnail with icon + badge overlaid inside */}
-    <div className="flex-1 min-h-0 mb-3 rounded-[2px] overflow-hidden relative">
+    <div className="mb-3 rounded-[2px] overflow-hidden relative" style={{ aspectRatio: "369 / 195" }}>
       {project.thumbnail && (
         <img
           className="rounded-[2px] border"
@@ -121,6 +127,8 @@ const ProjectCard = ({ project }) => (
         <TypeBadge type={project.type} />
       </div>
     </div>
+
+    <div className="flex-1" />
 
     <h3
       className="font-alagard text-[20px] tracking-[0.5px] leading-tight mb-2"
@@ -141,7 +149,64 @@ const ProjectCard = ({ project }) => (
         {project.tags.map(t => <Tag key={t} variant="dim">{t}</Tag>)}
       </div>
     )}
-  </div>
+  </CardLink>
+);
+
+// ── Wide card (item 3 — full-width, horizontal) ───────────────────────────────
+
+const WideCard = ({ project }) => (
+  <CardLink
+    href={project.link}
+    className="dev-card flex flex-row rounded-[2px] border overflow-hidden"
+    style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)", height: 220 }}
+  >
+    {/* left: thumbnail fills ~55% */}
+    <div className="relative flex-shrink-0 overflow-hidden" style={{ width: "55%" }}>
+      {project.thumbnail && (
+        <img
+          className="border-r"
+          src={project.thumbnail}
+          alt={project.title}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", borderColor: "var(--border-soft)" }}
+        />
+      )}
+      <div className="absolute top-0 left-0 right-0 flex items-start justify-between p-3">
+        <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
+        <TypeBadge type={project.type} />
+      </div>
+    </div>
+
+    {/* right: text content */}
+    <div className="flex flex-col justify-end p-5 flex-1 min-w-0">
+      {(project.eyebrow || project.year) && (
+        <p
+          className="font-alkhemikal text-[9px] tracking-[0.18em] uppercase mb-1"
+          style={{ color: "var(--text-nav-inactive)" }}
+        >
+          {project.eyebrow && project.year
+            ? `${project.eyebrow} ✦ ${project.year}`
+            : project.eyebrow || project.year}
+        </p>
+      )}
+      <h2
+        className="font-alagard tracking-[0.5px] leading-tight mb-3"
+        style={{ fontSize: 30, color: "var(--text-heading)" }}
+      >
+        {project.title}
+      </h2>
+      <p
+        className="font-fell italic text-[12px] leading-[1.7] mb-3"
+        style={{ color: "var(--text-body)" }}
+      >
+        {project.description}
+      </p>
+      {project.tags?.length > 0 && (
+        <div className="flex gap-1 flex-wrap">
+          {project.tags.map(t => <Tag key={t} variant="dim">{t}</Tag>)}
+        </div>
+      )}
+    </div>
+  </CardLink>
 );
 
 // ── Static CTA cards ──────────────────────────────────────────────────────────
@@ -170,9 +235,10 @@ const CtaCard = ({ label, cta, href, disabled = false }) => (
 
 const Engineering = () => {
   const { projects = [] } = data;
-  const featured   = projects.find(p => p.featured);
-  const lowpoly    = projects.find(p => p.id === "lowpoly");
-  const sideCards  = projects.filter(p => !p.featured && p.id !== "lowpoly");
+  const hero      = projects[0];
+  const sideCards = projects.slice(1, 3);
+  const wideCard  = projects[3];
+  const gridCards = projects.slice(4);
 
   const { data: apiData, error, loading, fading } = usePageLoad(
     () => fetch("/api/engineering").then(r => {
@@ -191,7 +257,7 @@ const Engineering = () => {
       <style>{`
         .dev-top { display: flex; gap: 10px; }
         .dev-top-left { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-        .dev-card-featured { flex: 1; min-height: 460px; }
+        .dev-card-featured { flex: 1; }
         .dev-top-right { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
         .dev-top-right-card { flex: 1; display: flex; flex-direction: column; }
         @media (max-width: 640px) {
@@ -238,13 +304,11 @@ const Engineering = () => {
           <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, var(--ornament-line), transparent)" }} />
         </div>
 
+        {/* row 1: hero left + 2 side cards right */}
         <div className="dev-top">
-          {/* left: featured card */}
           <div className="dev-top-left">
-            {featured && <FeaturedCard project={featured} />}
+            {hero && <FeaturedCard project={hero} />}
           </div>
-
-          {/* right: shadowform + redspear — flex-1 each, fills height driven by left column */}
           <div className="dev-top-right">
             {sideCards.map(p => (
               <div key={p.id} className="dev-top-right-card">
@@ -254,10 +318,19 @@ const Engineering = () => {
           </div>
         </div>
 
-        {/* low poly — full width */}
-        {lowpoly && (
+        {/* row 2: wide full-width card */}
+        {wideCard && (
           <div className="mt-[10px]">
-            <ProjectCard project={lowpoly} />
+            <WideCard project={wideCard} />
+          </div>
+        )}
+
+        {/* row 3+: two-column grid for remaining cards */}
+        {gridCards.length > 0 && (
+          <div className="grid grid-cols-2 gap-[10px] mt-[10px]">
+            {gridCards.map(p => (
+              <ProjectCard key={p.id} project={p} />
+            ))}
           </div>
         )}
 

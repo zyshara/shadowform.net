@@ -1,47 +1,46 @@
 {
   "projects": [
     {
-      "id": "blizzard",
-      "featured": true,
+      "id": "diablo-iv",
       "eyebrow": "Front End Web",
       "title": "Diablo IV Site",
-      "description": "Official website for the video game Diablo IV, including support for season pages and expansion pages",
+      "description": "Official website for the video game Diablo IV, including support for season pages and expansion pages. I'm the primary engineer on this project, and work with a PM and designer to iterate on features and functionality as per our game team stakeholders requests.",
       "type": "work",
       "tags": ["React", "TypeScript", "Storybook", "CSS"],
-      "year": "2021",
+      "year": "2022 ➺ present",
       "icon": null,
       "badge": null,
+      "link": "https://diablo4.blizzard.com",
       "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhF1ER_m8evaRm7O5GGxnf1VCufFbux9_Qj03TeQw2rXA3-9BpFYoj9ziOB4FdDWO8HstBhOL9B3M3npXlmn5eOb9zrcgyYa-F4co2jP0wKpSeUFVVrWdnwtw0jO82Lf0nNBIFYfp6Lf8DyxAorOobQLndUyZkgImd6IK4Gdoge2jBn8pdxObkEwdee-w/s1200/imagem_2023-03-19_115816034.png"
     },
     {
-      "id": "shadowform",
-      "featured": false,
+      "id": "diablo-ii",
       "eyebrow": null,
-      "title": "shadowform.net",
-      "description": "Personal site + artist mgmt. Strapi, Cloudinary, Heroku.",
-      "type": "personal",
+      "title": "Diablo II: Resurrected Site",
+      "description": "Official website for the video game Diablo II: Resurrected",
+      "type": "work",
       "tags": ["Strapi", "Heroku", "React"],
       "year": null,
       "icon": null,
       "badge": null,
-      "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhF1ER_m8evaRm7O5GGxnf1VCufFbux9_Qj03TeQw2rXA3-9BpFYoj9ziOB4FdDWO8HstBhOL9B3M3npXlmn5eOb9zrcgyYa-F4co2jP0wKpSeUFVVrWdnwtw0jO82Lf0nNBIFYfp6Lf8DyxAorOobQLndUyZkgImd6IK4Gdoge2jBn8pdxObkEwdee-w/s1200/imagem_2023-03-19_115816034.png"
+      "link": "https://diablo2.blizzard.com",
+      "thumbnail": "https://blz-contentstack-images.akamaized.net/v3/assets/blt9c12f249ac15c7ec/blt0369ba66bc95ed71/698281f17c6e2cf2355e0a0d/rotw.png?imwidth=3840"
     },
     {
-      "id": "redspear",
-      "featured": false,
+      "id": "shadowform",
       "eyebrow": null,
-      "title": "Red Spear",
-      "description": "Hard techno link page. Darkweb/ARG visual identity.",
+      "title": "shadowform.net",
+      "description": "Personal website. You're looking at it right now!",
       "type": "personal",
       "tags": ["CSS vars", "Identity"],
       "year": null,
       "icon": null,
       "badge": null,
-      "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhF1ER_m8evaRm7O5GGxnf1VCufFbux9_Qj03TeQw2rXA3-9BpFYoj9ziOB4FdDWO8HstBhOL9B3M3npXlmn5eOb9zrcgyYa-F4co2jP0wKpSeUFVVrWdnwtw0jO82Lf0nNBIFYfp6Lf8DyxAorOobQLndUyZkgImd6IK4Gdoge2jBn8pdxObkEwdee-w/s1200/imagem_2023-03-19_115816034.png"
+      "link": "https://shadowform.net",
+      "thumbnail": "https://cdn.discordapp.com/attachments/705642193993465928/1494075962621558854/shadowform_thumb.png?ex=69e14a2c&is=69dff8ac&hm=522f6f9c690c14783fb7b04f33cdd791f9cc24de62a3be3406538a2c1a2a7ecb&"
     },
     {
       "id": "lowpoly",
-      "featured": false,
       "eyebrow": null,
       "title": "Low Poly",
       "description": "Artist link page · IDR-inspired · Barlow Condensed · numerical indexing · data readout",
@@ -50,6 +49,7 @@
       "year": null,
       "icon": null,
       "badge": "TDR",
+      "link": null,
       "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhF1ER_m8evaRm7O5GGxnf1VCufFbux9_Qj03TeQw2rXA3-9BpFYoj9ziOB4FdDWO8HstBhOL9B3M3npXlmn5eOb9zrcgyYa-F4co2jP0wKpSeUFVVrWdnwtw0jO82Lf0nNBIFYfp6Lf8DyxAorOobQLndUyZkgImd6IK4Gdoge2jBn8pdxObkEwdee-w/s1200/imagem_2023-03-19_115816034.png"
     }
   ]
