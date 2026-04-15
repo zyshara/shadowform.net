@@ -56,9 +56,10 @@ const FeaturedCard = ({ project }) => (
     <div className="flex-1 min-h-0 mt-4 mb-4 rounded-[2px] overflow-hidden">
       {project.thumbnail && (
         <img
+          className="rounded-[2px] border"
           src={project.thumbnail}
           alt={project.title}
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", borderColor: "var(--border-soft)" }}
         />
       )}
     </div>
@@ -122,9 +123,10 @@ const ProjectCard = ({ project }) => (
     <div className="flex-1 min-h-0 mb-3 rounded-[2px] overflow-hidden">
       {project.thumbnail && (
         <img
+          className="rounded-[2px] border"
           src={project.thumbnail}
           alt={project.title}
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", borderColor: "var(--border-soft)" }}
         />
       )}
     </div>
