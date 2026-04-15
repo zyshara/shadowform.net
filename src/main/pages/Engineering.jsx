@@ -10,7 +10,7 @@ import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
 
 const CardIcon = ({ icon, badge, title }) => {
   const base = {
-    width: 36, height: 36, flexShrink: 0,
+    width: 30, height: 30, flexShrink: 0,
     display: "flex", alignItems: "center", justifyContent: "center",
     borderRadius: 4, border: "1px solid var(--border)",
     background: "var(--bg-sidebar)",
@@ -56,7 +56,7 @@ const FeaturedCard = ({ project }) => (
           style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", borderColor: "var(--border-soft)" }}
         />
       )}
-      <div className="absolute top-0 left-0 right-0 flex items-start justify-between p-3">
+      <div className="dev-card-top-bar dev-card-top-bar--featured absolute top-0 left-0 right-0 flex items-center justify-between p-3">
         <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
         {project.topTags?.length > 0 && (
           <div className="flex gap-1 flex-wrap justify-end">
@@ -121,7 +121,7 @@ const ProjectCard = ({ project }) => (
           style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", borderColor: "var(--border-soft)" }}
         />
       )}
-      <div className="absolute top-0 left-0 right-0 flex items-start justify-between p-3">
+      <div className="dev-card-top-bar absolute top-0 left-0 right-0 flex items-center justify-between p-3">
         <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
         {project.topTags?.length > 0 && (
           <div className="flex gap-1 flex-wrap justify-end">
@@ -176,14 +176,12 @@ const WideCard = ({ project }) => (
           style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", position: "absolute", inset: 0 }}
         />
       )}
-      <div className="absolute top-0 left-0 right-0 flex items-start justify-between p-3">
-        <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
-      </div>
     </div>
 
     {/* right: text content */}
     <div className="flex flex-col justify-between p-4 flex-1 min-w-0">
-      <div className="flex justify-end mb-2">
+      <div className="dev-wide-top flex items-center justify-between gap-2">
+        <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
         {project.topTags?.length > 0 && (
           <div className="flex gap-1 flex-wrap justify-end">
             {project.topTags.map(t => <Tag key={t.label} theme={t.theme} variant="lit">{t.label}</Tag>)}
@@ -214,7 +212,7 @@ const WideCard = ({ project }) => (
           {project.description}
         </p>
         {project.tags?.length > 0 && (
-          <div className="flex gap-1 flex-wrap mt-2">
+          <div className="dev-wide-bottom-tags flex gap-1 flex-wrap mt-2">
             {project.tags.map(t => <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>)}
           </div>
         )}
@@ -303,6 +301,16 @@ const Engineering = () => {
         }
         @media (max-width: 640px) {
           .dev-img--warcraft-iii { object-position: 26% 50%; }
+          .dev-card-top-bar { zoom: 0.8; }
+          .dev-card-top-bar--featured { zoom: 0.9; }
+          .dev-wide-top {
+            zoom: 0.7;
+            margin-bottom: 30px;
+          }
+          .dev-wide-bottom-tags {
+            zoom: 0.8;
+            margin-top: 6px;
+          }
         }
       `}</style>
 
