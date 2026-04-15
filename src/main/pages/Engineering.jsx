@@ -50,7 +50,7 @@ const FeaturedCard = ({ project }) => (
     <div className="mb-4 rounded-[2px] overflow-hidden relative" style={{ aspectRatio: "361 / 385" }}>
       {project.thumbnail && (
         <img
-          className="rounded-[2px] border"
+          className={`rounded-[2px] border dev-img--${project.id}`}
           src={project.thumbnail}
           alt={project.title}
           style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", borderColor: "var(--border-soft)" }}
@@ -115,7 +115,7 @@ const ProjectCard = ({ project }) => (
     <div className="mb-3 rounded-[2px] overflow-hidden relative" style={{ aspectRatio: "369 / 195" }}>
       {project.thumbnail && (
         <img
-          className="rounded-[2px] border"
+          className={`rounded-[2px] border dev-img--${project.id}`}
           src={project.thumbnail}
           alt={project.title}
           style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", borderColor: "var(--border-soft)" }}
@@ -170,6 +170,7 @@ const WideCard = ({ project }) => (
     >
       {project.thumbnail && (
         <img
+          className={`dev-img--${project.id}`}
           src={project.thumbnail}
           alt={project.title}
           style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", position: "absolute", inset: 0 }}
@@ -299,6 +300,9 @@ const Engineering = () => {
         }
         .dev-card:hover .dev-wide-divider {
           border-color: var(--tag-lit-border) !important;
+        }
+        @media (max-width: 640px) {
+          .dev-img--warcraft-iii { object-position: 26% 50%; }
         }
       `}</style>
 
