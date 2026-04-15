@@ -1,6 +1,7 @@
 // src/main/pages/Engineering.jsx
 import React from "react";
 import Tag from "@/components/Tag";
+import Button from "@/components/Button";
 import Ornament from "@/components/Ornament";
 import Header from "@/components/Header";
 import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
@@ -145,22 +146,9 @@ const CtaCard = ({ label, cta, href, disabled = false }) => (
       style={{ color: "var(--text-body)" }}
       dangerouslySetInnerHTML={{ __html: label }}
     />
-    {disabled ? (
-      <span
-        className="font-alkhemikal text-[9px] tracking-[0.18em] uppercase px-[10px] py-[5px] rounded-[2px] border"
-        style={{
-          color: "var(--tag-lit-text)",
-          borderColor: "var(--tag-lit-border)",
-          background: "var(--tag-lit-bg)",
-          filter: "grayscale(1)",
-          cursor: "not-allowed",
-        }}
-      >
-        {cta}
-      </span>
-    ) : (
-      <Tag variant="lit" href={href}>{cta}</Tag>
-    )}
+    <Button variant="secondary" href={disabled ? undefined : href} disabled={disabled}>
+      {cta}
+    </Button>
   </div>
 );
 

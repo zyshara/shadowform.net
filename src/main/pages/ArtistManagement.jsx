@@ -2,6 +2,7 @@
 
 import Ornament from "@/components/Ornament";
 import Tag from "@/components/Tag";
+import Button from "@/components/Button";
 import Header from "@/components/Header";
 import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
 
@@ -35,7 +36,7 @@ const ArtistCard = ({ artist }) => (
         <span className="font-alagard text-[18px]" style={{ color: "var(--ornament-glyph)" }}>✿</span>
       </div>
 
-      <p className="font-alkhemikal text-[9px] tracking-[0.14em] uppercase mb-2" style={{ color: "var(--text-nav-inactive)" }}>
+      <p className="font-alkhemikal text-[10px] tracking-[0.14em] uppercase mb-2" style={{ color: "var(--text-nav-inactive)" }}>
         {`${artist.primary_genre} · ${artist.location}`}
       </p>
 
@@ -52,9 +53,9 @@ const ArtistCard = ({ artist }) => (
       {artist.links?.length > 0 && (
         <div className="flex gap-2 flex-wrap">
           {artist.links.map((link) => (
-            <Tag key={link.label} variant="link" href={link.url} target="_blank" rel="noreferrer">
+            <Button key={link.label} variant="secondary" href={link.url} target="_blank" rel="noreferrer">
               {link.label}
-            </Tag>
+            </Button>
           ))}
         </div>
       )}

@@ -1,3 +1,4 @@
+export { default as Button } from "@/components/Button";
 export { DesktopNavbar, MobileNavbar } from "@/components/Navbar";
 export { default as DotDivider } from "@/components/DotDivider";
 export { default as Footer } from "@/components/Footer";

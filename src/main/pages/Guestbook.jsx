@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Ornament from "@/components/Ornament";
 import Header from "@/components/Header";
 import Tag from "@/components/Tag";
+import Button from "@/components/Button";
 import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
 
 // ── Drawing Modal ─────────────────────────────────────────────────────────────
@@ -423,9 +424,10 @@ const Guestbook = () => {
               </div>
             )}
 
-            {/* drawing */}
+            {/* drawing + submit row */}
             <div className="flex flex-col gap-2">
               <label className="font-alkhemikal text-[10px] tracking-[.16em] uppercase" style={{ color:"var(--text-nav-inactive)" }}>draw something</label>
+
               {drawing ? (
                 <div className="flex items-center gap-3">
                   <img src={drawing} alt="your drawing"
@@ -440,27 +442,25 @@ const Guestbook = () => {
                   </div>
                 </div>
               ) : (
-                <button onClick={() => setShowDraw(true)}
-                  className="font-alkhemikal text-[10px] tracking-[.1em] uppercase px-3 py-2 rounded-[2px] border self-start"
-                  style={{ color:"var(--pink-text)", borderColor:"var(--pink-border)", background:"var(--pink-bg)", cursor:"pointer" }}>
-                  ✦ open drawing pad
-                </button>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <Button variant="secondary" accent="front" className="w-full sm:w-auto justify-center" onClick={() => setShowDraw(true)}>
+                    open drawing pad
+                  </Button>
+                  <div className="flex items-center gap-3 sm:flex-none">
+                    {submitted && <span className="font-fell italic text-[12px]" style={{ color:"var(--pink-text)" }}>✦ signed!</span>}
+                    {submitErr && <span className="font-fell italic text-[12px]" style={{ color:"var(--pink-text)" }}>{submitErr}</span>}
+                    <Button
+                      variant="secondary"
+                      accent="end"
+                      className="w-full sm:w-auto justify-center"
+                      onClick={handleSubmit}
+                      disabled={!name.trim()}
+                    >
+                      {submitting ? "signing..." : "sign"}
+                    </Button>
+                  </div>
+                </div>
               )}
-            </div>
-
-            {/* submit */}
-            <div className="flex items-center gap-4 pt-1">
-              <button onClick={handleSubmit} disabled={submitting || !name.trim()}
-                className="font-alkhemikal text-[10px] tracking-[.12em] uppercase px-4 py-2 rounded-[2px] border"
-                style={{
-                  color:"var(--pink-text)", borderColor:"var(--pink-border)", background:"var(--pink-bg)",
-                  cursor: name.trim() ? "pointer" : "not-allowed",
-                  opacity: name.trim() ? 1 : 0.4,
-                }}>
-                {submitting ? "signing..." : "sign ✦"}
-              </button>
-              {submitted  && <span className="font-fell italic text-[12px]" style={{ color:"var(--pink-text)" }}>✦ signed!</span>}
-              {submitErr  && <span className="font-fell italic text-[12px]" style={{ color:"var(--pink-text)" }}>{submitErr}</span>}
             </div>
           </div>
 

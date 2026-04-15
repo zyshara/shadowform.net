@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 import { AnimatePresence } from "framer-motion";
 
@@ -17,16 +17,20 @@ const App = () => {
         <Route path="/" element={<Enter />} />
         <Route element={<Layout />}>
           <Route path="*" element={<NotFound />} />
-          {navlinks.map(({ id, url, component: Page }) => (
-            <Route
-              key={id}
-              path={url}
-              element={
-                <PageTransition>
-                  <Page />
-                </PageTransition>
-              }
-            />
+          {navlinks.map(({ id, url, component: Page, redirects = [] }) => (
+            <React.Fragment key={id}>
+              <Route
+                path={url}
+                element={
+                  <PageTransition>
+                    <Page />
+                  </PageTransition>
+                }
+              />
+              {redirects.map((from) => (
+                <Route key={from} path={from} element={<Navigate to={url} replace />} />
+              ))}
+            </React.Fragment>
           ))}
         </Route>
       </Routes>
