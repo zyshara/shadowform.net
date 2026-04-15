@@ -4,13 +4,14 @@
       "id": "blizzard",
       "featured": true,
       "eyebrow": "Front End Web",
-      "title": "Blizzard",
-      "description": "Diablo IV · Overwatch 2 · World of Warcraft. React component libraries, design systems, TypeScript.",
+      "title": "Diablo IV Site",
+      "description": "Website for the video game Diablo IV, including support for season pages and expansion pages",
       "type": "work",
       "tags": ["React", "TypeScript", "Storybook", "CSS"],
-      "year": "2021 → present",
+      "year": "2021",
       "icon": null,
-      "badge": null
+      "badge": null,
+      "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhF1ER_m8evaRm7O5GGxnf1VCufFbux9_Qj03TeQw2rXA3-9BpFYoj9ziOB4FdDWO8HstBhOL9B3M3npXlmn5eOb9zrcgyYa-F4co2jP0wKpSeUFVVrWdnwtw0jO82Lf0nNBIFYfp6Lf8DyxAorOobQLndUyZkgImd6IK4Gdoge2jBn8pdxObkEwdee-w/s1200/imagem_2023-03-19_115816034.png"
     },
     {
       "id": "shadowform",
@@ -22,7 +23,8 @@
       "tags": ["Strapi", "Heroku", "React"],
       "year": null,
       "icon": null,
-      "badge": null
+      "badge": null,
+      "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhF1ER_m8evaRm7O5GGxnf1VCufFbux9_Qj03TeQw2rXA3-9BpFYoj9ziOB4FdDWO8HstBhOL9B3M3npXlmn5eOb9zrcgyYa-F4co2jP0wKpSeUFVVrWdnwtw0jO82Lf0nNBIFYfp6Lf8DyxAorOobQLndUyZkgImd6IK4Gdoge2jBn8pdxObkEwdee-w/s1200/imagem_2023-03-19_115816034.png"
     },
     {
       "id": "redspear",
@@ -34,7 +36,8 @@
       "tags": ["CSS vars", "Identity"],
       "year": null,
       "icon": null,
-      "badge": null
+      "badge": null,
+      "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhF1ER_m8evaRm7O5GGxnf1VCufFbux9_Qj03TeQw2rXA3-9BpFYoj9ziOB4FdDWO8HstBhOL9B3M3npXlmn5eOb9zrcgyYa-F4co2jP0wKpSeUFVVrWdnwtw0jO82Lf0nNBIFYfp6Lf8DyxAorOobQLndUyZkgImd6IK4Gdoge2jBn8pdxObkEwdee-w/s1200/imagem_2023-03-19_115816034.png"
     },
     {
       "id": "lowpoly",
@@ -46,7 +49,8 @@
       "tags": ["Barlow", "Share Tech Mono"],
       "year": null,
       "icon": null,
-      "badge": "TDR"
+      "badge": "TDR",
+      "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhF1ER_m8evaRm7O5GGxnf1VCufFbux9_Qj03TeQw2rXA3-9BpFYoj9ziOB4FdDWO8HstBhOL9B3M3npXlmn5eOb9zrcgyYa-F4co2jP0wKpSeUFVVrWdnwtw0jO82Lf0nNBIFYfp6Lf8DyxAorOobQLndUyZkgImd6IK4Gdoge2jBn8pdxObkEwdee-w/s1200/imagem_2023-03-19_115816034.png"
     }
   ]
 }

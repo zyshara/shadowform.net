@@ -43,7 +43,7 @@ const CardIcon = ({ icon, badge, title }) => {
 
 const FeaturedCard = ({ project }) => (
   <div
-    className="dev-card-featured flex flex-col h-full p-5 rounded-[12px] border"
+    className="dev-card-featured flex flex-col h-full p-5 rounded-[2px] border"
     style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)" }}
   >
     {/* top: icon + badge */}
@@ -52,8 +52,19 @@ const FeaturedCard = ({ project }) => (
       <TypeBadge type={project.type} />
     </div>
 
-    {/* middle: eyebrow + title + description */}
-    <div className="flex-1 flex flex-col justify-end mt-4">
+    {/* middle: thumbnail fills space, text pinned to bottom */}
+    <div className="flex-1 min-h-0 mt-4 mb-4 rounded-[2px] overflow-hidden">
+      {project.thumbnail && (
+        <img
+          src={project.thumbnail}
+          alt={project.title}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+        />
+      )}
+    </div>
+
+    {/* text: eyebrow + title + description */}
+    <div>
       {project.eyebrow && (
         <p
           className="font-alkhemikal text-[9px] tracking-[0.18em] uppercase mb-1"
@@ -99,13 +110,23 @@ const FeaturedCard = ({ project }) => (
 
 const ProjectCard = ({ project }) => (
   <div
-    className="flex flex-col p-4 rounded-[12px] border"
+    className="flex flex-col h-full p-4 rounded-[2px] border"
     style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)" }}
   >
     {/* top: icon + badge */}
     <div className="flex items-start justify-between mb-3">
       <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
       <TypeBadge type={project.type} />
+    </div>
+
+    <div className="flex-1 min-h-0 mb-3 rounded-[2px] overflow-hidden">
+      {project.thumbnail && (
+        <img
+          src={project.thumbnail}
+          alt={project.title}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+        />
+      )}
     </div>
 
     <h3
@@ -116,7 +137,7 @@ const ProjectCard = ({ project }) => (
     </h3>
 
     <p
-      className="font-fell italic text-[12px] leading-[1.7] flex-1 mb-3"
+      className="font-fell italic text-[12px] leading-[1.7] mb-3"
       style={{ color: "var(--text-body)" }}
     >
       {project.description}
@@ -134,7 +155,7 @@ const ProjectCard = ({ project }) => (
 
 const CtaCard = ({ label, cta, href, disabled = false }) => (
   <div
-    className="flex flex-col items-center justify-center p-5 rounded-[12px] border"
+    className="flex flex-col items-center justify-center p-5 rounded-[2px] border"
     style={{
       background: "var(--bg-ticker)",
       borderColor: "var(--border-soft)",
@@ -175,11 +196,14 @@ const Engineering = () => {
   return (
     <FadeIn className="flex flex-col min-h-full" style={{ background: "var(--bg)" }}>
       <style>{`
-        .dev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .dev-card-featured { grid-row: span ${sideCards.length + 1}; }
+        .dev-top { display: flex; gap: 10px; }
+        .dev-top-left { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+        .dev-card-featured { flex: 1; min-height: 460px; }
+        .dev-top-right { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+        .dev-top-right-card { flex: 1; display: flex; flex-direction: column; }
         @media (max-width: 640px) {
-          .dev-grid { grid-template-columns: 1fr; }
-          .dev-card-featured { grid-row: span 1; }
+          .dev-top { flex-direction: column; }
+          .dev-card-featured { min-height: unset; }
         }
       `}</style>
 
@@ -210,19 +234,20 @@ const Engineering = () => {
           <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, var(--ornament-line), transparent)" }} />
         </div>
 
-        <div className="dev-grid">
-          {/* featured card — spans all side-column rows */}
-          {featured && <FeaturedCard project={featured} />}
+        <div className="dev-top">
+          {/* left: featured card */}
+          <div className="dev-top-left">
+            {featured && <FeaturedCard project={featured} />}
+          </div>
 
-          {/* shadowform + redspear — right column */}
-          {sideCards.map(p => <ProjectCard key={p.id} project={p} />)}
-
-          {/* invisible spacer — preserves featured card height to match original 3-card span */}
-          {lowpoly && (
-            <div aria-hidden="true" style={{ visibility: "hidden" }}>
-              <ProjectCard project={lowpoly} />
-            </div>
-          )}
+          {/* right: shadowform + redspear — flex-1 each, fills height driven by left column */}
+          <div className="dev-top-right">
+            {sideCards.map(p => (
+              <div key={p.id} className="dev-top-right-card">
+                <ProjectCard project={p} />
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* low poly — full width */}
