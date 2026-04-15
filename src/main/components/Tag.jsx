@@ -71,23 +71,25 @@ const Tag = ({ children, variant = "lit", theme, onClick, href, target, rel }) =
 
   const { className, style } = variants[variant] ?? variants.lit;
 
-  // ── themed variants (fire / rainbow) ────────────────────────────────────────
+  // ── themed variants (fire / rainbow / blizzard) ─────────────────────────────
+  // Strip borderColor + background from inline style so the theme CSS controls them.
   if (theme === "fire-glitch" || theme === "rainbow-party" || theme === "blizzard") {
+    const { borderColor: _bc, background: _bg, ...themeStyle } = style;
     if (onClick) {
       return (
         <button onClick={onClick} style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}>
-          <ThemedTag theme={theme} className={className} style={style}>{children}</ThemedTag>
+          <ThemedTag theme={theme} className={className} style={themeStyle}>{children}</ThemedTag>
         </button>
       );
     }
     if (href) {
       return (
         <a href={href} target={target} rel={rel} style={{ textDecoration: "none" }}>
-          <ThemedTag theme={theme} className={className} style={style}>{children}</ThemedTag>
+          <ThemedTag theme={theme} className={className} style={themeStyle}>{children}</ThemedTag>
         </a>
       );
     }
-    return <ThemedTag theme={theme} className={className} style={style}>{children}</ThemedTag>;
+    return <ThemedTag theme={theme} className={className} style={themeStyle}>{children}</ThemedTag>;
   }
 
   // ── link variant ─────────────────────────────────────────────────────────────

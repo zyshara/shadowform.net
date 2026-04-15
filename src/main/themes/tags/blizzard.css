@@ -11,7 +11,7 @@
    glossy 3D depth via layered text-shadow + drop-shadow,
    animated shimmer sweep to mimic the glossy logo shine */
  
-.theme-blizzard {
+.tag-theme--blizzard {
   font-family: 'Cinzel', 'Folkard', serif;
   font-size: 10px;
   font-weight: 900;
@@ -19,7 +19,7 @@
   text-transform: uppercase;
   padding: 5px 12px;
   border-radius: 2px;
-  border: 1px solid #1a4a8a;
+  border: 1px solid #00B4FF;
   background: linear-gradient(180deg, #0a1628 0%, #050d1a 100%);
   display: inline-flex;
   position: relative;
@@ -33,7 +33,7 @@
 }
  
 /* shimmer sweep across the whole tag */
-.theme-blizzard::after {
+.tag-theme--blizzard::after {
   content: '';
   position: absolute;
   top: 0; left: -100%; width: 60%; height: 100%;
@@ -48,7 +48,7 @@
   100% { left: 130%; }
 }
  
-.theme-blizzard .gc-char {
+.tag-theme--blizzard .tag-theme-char {
   display: inline-block;
   /* blue gradient text */
   background: linear-gradient(
@@ -71,10 +71,10 @@
   background-size: 100% 200%;
 }
  
-.theme-blizzard .gc-char:nth-child(odd)  { animation-delay: 0ms;   }
-.theme-blizzard .gc-char:nth-child(even) { animation-delay: 500ms; }
-.theme-blizzard .gc-char:nth-child(3n)   { animation-delay: 1000ms;}
-.theme-blizzard .gc-char:nth-child(4n)   { animation-delay: 1500ms;}
+.tag-theme--blizzard .tag-theme-char:nth-child(odd)  { animation-delay: 0ms;   }
+.tag-theme--blizzard .tag-theme-char:nth-child(even) { animation-delay: 500ms; }
+.tag-theme--blizzard .tag-theme-char:nth-child(3n)   { animation-delay: 1000ms;}
+.tag-theme--blizzard .tag-theme-char:nth-child(4n)   { animation-delay: 1500ms;}
  
 @keyframes blizz-pulse {
   0%,100% {

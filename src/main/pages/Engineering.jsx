@@ -197,7 +197,7 @@ const WideCard = ({ project }) => (
       )}
       <h2
         className="font-alagard tracking-[0.5px] leading-tight mb-3"
-        style={{ fontSize: 30, color: "var(--text-heading)" }}
+        style={{ fontSize: 20, color: "var(--text-heading)" }}
       >
         {project.title}
       </h2>
