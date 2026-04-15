@@ -1,5 +1,5 @@
 // Flatten Strapi rich-text blocks → plain string
-function richTextToString(blocks = []) {
+export function richTextToString(blocks = []) {
   return (blocks ?? [])
     .flatMap((b) => b.children ?? [])
     .map((c) => c.text ?? "")

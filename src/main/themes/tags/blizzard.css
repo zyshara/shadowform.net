@@ -1,0 +1,96 @@
+@font-face {
+  font-family: 'Folkard';
+  src: url('https://dl.dafont.com/dl/?f=folkard') format('truetype');
+}
+ 
+/* Cinzel as reliable CDN fallback with similar medieval weight */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Space+Mono:wght@400;700&display=swap');
+ 
+/* ── BLIZZARD THEME ── */
+/* Strategy: Cinzel for the gothic serif feel, blue gradient text,
+   glossy 3D depth via layered text-shadow + drop-shadow,
+   animated shimmer sweep to mimic the glossy logo shine */
+ 
+.theme-blizzard {
+  font-family: 'Cinzel', 'Folkard', serif;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 2px;
+  border: 1px solid #1a4a8a;
+  background: linear-gradient(180deg, #0a1628 0%, #050d1a 100%);
+  display: inline-flex;
+  position: relative;
+  overflow: hidden;
+  /* outer blue glow */
+  box-shadow:
+    0 0 6px #0044aa44,
+    0 0 12px #0033aa22,
+    inset 0 1px 0 #1a5ac044,
+    inset 0 -1px 0 #00114422;
+}
+ 
+/* shimmer sweep across the whole tag */
+.theme-blizzard::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent 0%, #4499ff18 50%, transparent 100%);
+  animation: blizz-sweep 3s ease-in-out infinite;
+  pointer-events: none;
+}
+ 
+@keyframes blizz-sweep {
+  0%   { left: -80%; }
+  50%  { left: 130%; }
+  100% { left: 130%; }
+}
+ 
+.theme-blizzard .gc-char {
+  display: inline-block;
+  /* blue gradient text */
+  background: linear-gradient(
+    180deg,
+    #aaddff 0%,
+    #55aaff 20%,
+    #1166dd 50%,
+    #0044bb 72%,
+    #002288 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  /* 3D depth via drop-shadow stack */
+  filter:
+    drop-shadow(0px 1px 0px #001166)
+    drop-shadow(0px 2px 0px #000c44)
+    drop-shadow(0px 3px 2px #00081a);
+  animation: blizz-pulse 4s ease-in-out infinite;
+  background-size: 100% 200%;
+}
+ 
+.theme-blizzard .gc-char:nth-child(odd)  { animation-delay: 0ms;   }
+.theme-blizzard .gc-char:nth-child(even) { animation-delay: 500ms; }
+.theme-blizzard .gc-char:nth-child(3n)   { animation-delay: 1000ms;}
+.theme-blizzard .gc-char:nth-child(4n)   { animation-delay: 1500ms;}
+ 
+@keyframes blizz-pulse {
+  0%,100% {
+    background-position: 0% 0%;
+    filter: drop-shadow(0px 1px 0px #001166) drop-shadow(0px 2px 0px #000c44) drop-shadow(0px 3px 2px #00081a);
+  }
+  25% {
+    background-position: 0% 40%;
+    filter: drop-shadow(0px 1px 0px #0022aa) drop-shadow(0px 2px 0px #001166) drop-shadow(0px 3px 4px #0011441a);
+  }
+  50% {
+    background-position: 0% 80%;
+    filter: drop-shadow(0px 1px 0px #001166) drop-shadow(0px 2px 2px #000c44) drop-shadow(0px 4px 6px #00081a);
+  }
+  75% {
+    background-position: 0% 40%;
+    filter: drop-shadow(0px 1px 0px #0033cc) drop-shadow(0px 2px 0px #001188) drop-shadow(0px 3px 2px #000c44);
+  }
+}

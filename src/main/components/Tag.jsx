@@ -72,7 +72,7 @@ const Tag = ({ children, variant = "lit", theme, onClick, href, target, rel }) =
   const { className, style } = variants[variant] ?? variants.lit;
 
   // ── themed variants (fire / rainbow) ────────────────────────────────────────
-  if (theme === "fire-glitch" || theme === "rainbow-party") {
+  if (theme === "fire-glitch" || theme === "rainbow-party" || theme === "blizzard") {
     if (onClick) {
       return (
         <button onClick={onClick} style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}>

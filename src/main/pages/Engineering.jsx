@@ -5,13 +5,8 @@ import Button from "@/components/Button";
 import Ornament from "@/components/Ornament";
 import Header from "@/components/Header";
 import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
-import data from "@/data/development-data.json";
 
 // ── Shared sub-components ─────────────────────────────────────────────────────
-
-const TypeBadge = ({ type }) => (
-  <Tag variant={type === "work" ? "lit" : "dim"}>{type}</Tag>
-);
 
 const CardIcon = ({ icon, badge, title }) => {
   const base = {
@@ -63,7 +58,11 @@ const FeaturedCard = ({ project }) => (
       )}
       <div className="absolute top-0 left-0 right-0 flex items-start justify-between p-3">
         <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
-        <TypeBadge type={project.type} />
+        {project.topTags?.length > 0 && (
+          <div className="flex gap-1 flex-wrap justify-end">
+            {project.topTags.map(t => <Tag key={t.label} theme={t.theme} variant="lit">{t.label}</Tag>)}
+          </div>
+        )}
       </div>
     </div>
 
@@ -97,7 +96,7 @@ const FeaturedCard = ({ project }) => (
     <div className="mt-5 pt-4" style={{ borderTop: "1px solid var(--border)" }}>
       {project.tags?.length > 0 && (
         <div className="flex gap-1 flex-wrap mb-2">
-          {project.tags.map(t => <Tag key={t} variant="dim">{t}</Tag>)}
+          {project.tags.map(t => <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>)}
         </div>
       )}
     </div>
@@ -124,7 +123,11 @@ const ProjectCard = ({ project }) => (
       )}
       <div className="absolute top-0 left-0 right-0 flex items-start justify-between p-3">
         <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
-        <TypeBadge type={project.type} />
+        {project.topTags?.length > 0 && (
+          <div className="flex gap-1 flex-wrap justify-end">
+            {project.topTags.map(t => <Tag key={t.label} theme={t.theme} variant="lit">{t.label}</Tag>)}
+          </div>
+        )}
       </div>
     </div>
 
@@ -146,7 +149,7 @@ const ProjectCard = ({ project }) => (
 
     {project.tags?.length > 0 && (
       <div className="flex gap-1 flex-wrap">
-        {project.tags.map(t => <Tag key={t} variant="dim">{t}</Tag>)}
+        {project.tags.map(t => <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>)}
       </div>
     )}
   </CardLink>
@@ -172,7 +175,11 @@ const WideCard = ({ project }) => (
       )}
       <div className="absolute top-0 left-0 right-0 flex items-start justify-between p-3">
         <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
-        <TypeBadge type={project.type} />
+        {project.topTags?.length > 0 && (
+          <div className="flex gap-1 flex-wrap justify-end">
+            {project.topTags.map(t => <Tag key={t.label} theme={t.theme} variant="lit">{t.label}</Tag>)}
+          </div>
+        )}
       </div>
     </div>
 
@@ -202,7 +209,7 @@ const WideCard = ({ project }) => (
       </p>
       {project.tags?.length > 0 && (
         <div className="flex gap-1 flex-wrap">
-          {project.tags.map(t => <Tag key={t} variant="dim">{t}</Tag>)}
+          {project.tags.map(t => <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>)}
         </div>
       )}
     </div>
@@ -234,12 +241,6 @@ const CtaCard = ({ label, cta, href, disabled = false }) => (
 // ── Engineering page ──────────────────────────────────────────────────────────
 
 const Engineering = () => {
-  const { projects = [] } = data;
-  const hero      = projects[0];
-  const sideCards = projects.slice(1, 3);
-  const wideCard  = projects[3];
-  const gridCards = projects.slice(4);
-
   const { data: apiData, error, loading, fading } = usePageLoad(
     () => fetch("/api/engineering").then(r => {
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -250,7 +251,12 @@ const Engineering = () => {
 
   if (loading) return <LoadingScreen fading={fading} />;
 
-  const header = apiData?.data?.header;
+  const header    = apiData?.data?.header;
+  const projects  = apiData?.data?.projects ?? [];
+  const hero      = projects[0];
+  const sideCards = projects.slice(1, 3);
+  const wideCard  = projects[3];
+  const gridCards = projects.slice(4);
 
   return (
     <FadeIn className="flex flex-col min-h-full" style={{ background: "var(--bg)" }}>

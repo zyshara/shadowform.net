@@ -4,10 +4,19 @@ import { strapiGet } from "../lib/strapi.js";
 import { normalizeEngineeringPage } from "../models/engineering.js";
 import { logger } from "../lib/logger.js";
 
+const PROJ = "populate[projects][populate]";
+
 // ── Strapi fetch ──────────────────────────────────────────────────────────────
 async function getEngineeringPage(opts = {}) {
   return strapiGet("/api/engineering-page", {
-    "populate[header]": "*",
+    "populate[header]":                      "*",
+    [`${PROJ}[header]`]:                     "*",
+    [`${PROJ}[thumbnail][fields][0]`]:       "url",
+    [`${PROJ}[thumbnail][fields][1]`]:       "name",
+    [`${PROJ}[badge][fields][0]`]:           "url",
+    [`${PROJ}[badge][fields][1]`]:           "name",
+    [`${PROJ}[top_tags]`]:                   "*",
+    [`${PROJ}[bottom_tags]`]:               "*",
   }, opts);
 }
 
