@@ -1,7 +1,7 @@
 export { default as About } from "./About";
 export { default as Contact } from "./Contact";
 export { default as Creative } from "./Creative";
-export { default as Development } from "./Development";
+export { default as Engineering } from "./Engineering";
 export { default as Enter } from "./Enter";
 export { default as Guestbook } from "./Guestbook";
 export { default as ArtistManagement } from "./ArtistManagement";

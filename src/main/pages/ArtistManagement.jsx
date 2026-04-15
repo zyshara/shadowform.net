@@ -1,4 +1,4 @@
-// src/main/pages/Management.jsx
+// src/main/pages/ArtistManagement.jsx
 
 import Ornament from "@/components/Ornament";
 import Tag from "@/components/Tag";
@@ -62,8 +62,8 @@ const ArtistCard = ({ artist }) => (
   </div>
 );
 
-// ── Management Page ──────────────────────────────────────────────────────────
-const Management = () => {
+// ── ArtistManagement Page ──────────────────────────────────────────────────────────
+const ArtistManagement = () => {
   const { data, error, loading, fading } = usePageLoad(
     () => fetch("/api/management").then((r) => {
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -112,4 +112,4 @@ const Management = () => {
   );
 };
 
-export default Management;
+export default ArtistManagement;

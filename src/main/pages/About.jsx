@@ -21,8 +21,8 @@ const About = () => {
               and making websites since the dawn of &lt;marquee&gt; and Dreamweaver.
             </p>
             <p className="font-fell text-[15px] leading-[1.9] text-center" style={{ color: "var(--text-body)" }}>
-              i'm a raver, a gamer, and a mom to three wonderful cats. this site
-              contains a little piece of myself — enjoy your stay :-)
+              i'm a raver, a gamer, and a mom to three wonderful cats. this site.<br/>
+              enjoy your stay :-)
             </p>
           </div>
         </Header>

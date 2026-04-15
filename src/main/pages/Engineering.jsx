@@ -1,8 +1,9 @@
-// src/main/pages/Development.jsx
+// src/main/pages/Engineering.jsx
 import React from "react";
 import Tag from "@/components/Tag";
 import Ornament from "@/components/Ornament";
-import { FadeIn } from "@/components/LoadingScreen";
+import Header from "@/components/Header";
+import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
 import data from "@/data/development-data.json";
 
 // ── Shared sub-components ─────────────────────────────────────────────────────
@@ -130,7 +131,7 @@ const ProjectCard = ({ project }) => (
 
 // ── Static CTA cards ──────────────────────────────────────────────────────────
 
-const CtaCard = ({ label, cta, href }) => (
+const CtaCard = ({ label, cta, href, disabled = false }) => (
   <div
     className="flex flex-col items-center justify-center p-5 rounded-[12px] border"
     style={{
@@ -144,16 +145,43 @@ const CtaCard = ({ label, cta, href }) => (
       style={{ color: "var(--text-body)" }}
       dangerouslySetInnerHTML={{ __html: label }}
     />
-    <Tag variant="lit" href={href}>{cta}</Tag>
+    {disabled ? (
+      <span
+        className="font-alkhemikal text-[9px] tracking-[0.18em] uppercase px-[10px] py-[5px] rounded-[2px] border"
+        style={{
+          color: "var(--tag-lit-text)",
+          borderColor: "var(--tag-lit-border)",
+          background: "var(--tag-lit-bg)",
+          filter: "grayscale(1)",
+          cursor: "not-allowed",
+        }}
+      >
+        {cta}
+      </span>
+    ) : (
+      <Tag variant="lit" href={href}>{cta}</Tag>
+    )}
   </div>
 );
 
-// ── Development page ──────────────────────────────────────────────────────────
+// ── Engineering page ──────────────────────────────────────────────────────────
 
-const Development = () => {
+const Engineering = () => {
   const { projects = [] } = data;
   const featured = projects.find(p => p.featured);
   const others   = projects.filter(p => !p.featured);
+
+  const { data: apiData, error, loading, fading } = usePageLoad(
+    () => fetch("/api/engineering").then(r => {
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.json();
+    }),
+    { minLoadMs: 300 },
+  );
+
+  if (loading) return <LoadingScreen fading={fading} />;
+
+  const header = apiData?.data?.header;
 
   return (
     <FadeIn className="flex flex-col min-h-full" style={{ background: "var(--bg)" }}>
@@ -170,12 +198,28 @@ const Development = () => {
         className="flex-1 flex flex-col px-8 py-8 w-full mx-auto"
         style={{ maxWidth: 880 }}
       >
-        <p
-          className="font-alkhemikal text-[9px] tracking-[0.18em] uppercase mb-5"
-          style={{ color: "var(--pink-text)" }}
-        >
-          // development
-        </p>
+        <div className="mb-6">
+          <Header
+            eyebrow={header?.eyebrow}
+            title={header?.heading}
+            align="center"
+          >
+            {header?.description && (
+              <div
+                className="flex font-fell flex-col items-center gap-4 max-w-[540px] text-[15px] leading-[1.9]"
+                style={{ color: "var(--text-body)" }}
+                dangerouslySetInnerHTML={{ __html: header.description }}
+              />
+            )}
+          </Header>
+        </div>
+
+        <div className="flex items-center gap-3 mb-4 mt-6">
+          <span className="font-alkhemikal text-[9px] tracking-[0.2em] uppercase" style={{ color: "var(--ornament-glyph)" }}>
+            ✦ &nbsp; projects 
+          </span>
+          <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, var(--ornament-line), transparent)" }} />
+        </div>
 
         <div className="dev-grid">
           {/* featured card — spans all right-column rows */}
@@ -189,11 +233,13 @@ const Development = () => {
             label="full history<br />&amp; experience"
             cta="view résumé →"
             href="/resume"
+            disabled
           />
           <CtaCard
             label="all projects,<br />concisely"
             cta="view archive →"
             href="/archive"
+            disabled
           />
         </div>
 
@@ -203,4 +249,4 @@ const Development = () => {
   );
 };
 
-export default Development;
+export default Engineering;

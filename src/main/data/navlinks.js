@@ -2,7 +2,7 @@ import {
   About,
   Contact,
   Creative,
-  Development,
+  Engineering,
   Enter,
   Guestbook,
   ArtistManagement,
@@ -22,14 +22,14 @@ const navlinks = [
   {
     id: "artist-management",
     url: "/artist-management",
-    text: "Artist Mgmt",
+    text: "Artist Mgmt.",
     component: ArtistManagement,
   },
   {
-    id: "development",
-    url: "/development",
-    text: "Development",
-    component: Development,
+    id: "software-engineering",
+    url: "/software-engineering",
+    text: "Software Eng.",
+    component: Engineering,
   },
   {
     id: "creative",
