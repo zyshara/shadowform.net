@@ -4,7 +4,7 @@ export { default as Creative } from "./Creative";
 export { default as Development } from "./Development";
 export { default as Enter } from "./Enter";
 export { default as Guestbook } from "./Guestbook";
-export { default as Management } from "./Management";
+export { default as ArtistManagement } from "./ArtistManagement";
 export { default as NotFound } from "./NotFound";
 export { default as Resume } from "./Resume";
 export { default as Shop } from "./Shop";

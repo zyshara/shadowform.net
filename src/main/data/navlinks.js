@@ -5,7 +5,7 @@ import {
   Development,
   Enter,
   Guestbook,
-  Management,
+  ArtistManagement,
   NotFound,
   Resume,
   Shop,
@@ -20,10 +20,10 @@ const navlinks = [
     component: About,
   },
   {
-    id: "management",
-    url: "/management",
-    text: "Management",
-    component: Management,
+    id: "artist-management",
+    url: "/artist-management",
+    text: "Artist Mgmt",
+    component: ArtistManagement,
   },
   {
     id: "development",
