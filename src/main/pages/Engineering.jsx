@@ -43,7 +43,7 @@ const CardIcon = ({ icon, badge, title }) => {
 
 const FeaturedCard = ({ project }) => (
   <div
-    className="dev-card-featured flex flex-col h-full p-5 rounded-[2px] border"
+    className="dev-card dev-card-featured flex flex-col h-full p-5 rounded-[2px] border"
     style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)" }}
   >
     {/* thumbnail with icon + badge overlaid inside */}
@@ -103,7 +103,7 @@ const FeaturedCard = ({ project }) => (
 
 const ProjectCard = ({ project }) => (
   <div
-    className="flex flex-col h-full p-4 rounded-[2px] border"
+    className="dev-card flex flex-col h-full p-4 rounded-[2px] border"
     style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)" }}
   >
     {/* thumbnail with icon + badge overlaid inside */}
@@ -197,6 +197,18 @@ const Engineering = () => {
         @media (max-width: 640px) {
           .dev-top { flex-direction: column; }
           .dev-card-featured { min-height: unset; }
+        }
+
+        .dev-card {
+          transition: border-color 150ms ease-out;
+          cursor: pointer;
+        }
+        .dev-card:hover {
+          border-color: var(--tag-lit-border) !important;
+        }
+        .dev-card:hover h2,
+        .dev-card:hover h3 {
+          filter: drop-shadow(0 0 4px var(--pink-glow)) drop-shadow(0 0 6px var(--pink-glow));
         }
       `}</style>
 
