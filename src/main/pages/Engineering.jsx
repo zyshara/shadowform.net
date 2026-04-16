@@ -288,7 +288,7 @@ const WideCard = ({ project }) => {
 
 // ── Static CTA cards ──────────────────────────────────────────────────────────
 
-const CtaCard = ({ label, cta, href, disabled = false }) => (
+const CtaCard = ({ heading, label, cta, href, disabled = false }) => (
   <div
     className="flex flex-col items-center justify-center p-5 rounded-[2px] border"
     style={{
@@ -297,8 +297,16 @@ const CtaCard = ({ label, cta, href, disabled = false }) => (
       minHeight: 130,
     }}
   >
+    {heading && (
+      <h2
+        className="font-alagard tracking-[0.5px] text-center mb-2"
+        style={{ fontSize: 24, color: "var(--text-heading)" }}
+      >
+        {heading}
+      </h2>
+    )}
     <p
-      className="font-fell italic text-[15px] leading-[1.7] text-center mb-4"
+      className="font-fell italic text-[13px] leading-[1.7] text-center mb-4"
       style={{ color: "var(--text-body)" }}
       dangerouslySetInnerHTML={{ __html: label }}
     />
@@ -456,16 +464,17 @@ const Engineering = () => {
         {/* static CTA cards */}
         <div className="grid grid-cols-2 gap-[10px] mt-[10px]">
           <CtaCard
-            label="full history<br />&amp; experience"
+            heading="Résumé"
+            label="full history<br />&amp; work experience"
             cta="view résumé →"
             href="/engineering/resume"
             disabled
           />
           <CtaCard
-            label="all projects,<br />concisely"
+            heading="The Archive"
+            label="all projects,<br />live & decomissioned"
             cta="view archive →"
             href="/engineering/archive"
-            disabled
           />
         </div>
 

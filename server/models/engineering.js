@@ -43,17 +43,30 @@ function normalizeProject(entry) {
 
 // ── Page normalizer ───────────────────────────────────────────────────────────
 
-export function normalizeEngineeringPage(entry) {
-  const e   = entry?.attributes ?? entry;
+function normalizePageHeader(e) {
   const raw = e?.header;
+  return raw ? {
+    ...normalizeHeader(raw),
+    description: Array.isArray(raw.description)
+      ? richTextToHtml(raw.description)
+      : (raw.description ?? ""),
+  } : null;
+}
 
+export function normalizeEngineeringPage(entry) {
+  const e = entry?.attributes ?? entry;
   return {
-    header: raw ? {
-      ...normalizeHeader(raw),
-      description: Array.isArray(raw.description)
-        ? richTextToHtml(raw.description)
-        : (raw.description ?? ""),
-    } : null,
+    header:   normalizePageHeader(e),
     projects: (e?.projects ?? []).map(normalizeProject),
+  };
+}
+
+export function normalizeEngineeringArchive(entry) {
+  const e        = entry?.attributes ?? entry;
+  const projects = (e?.projects ?? []).map(normalizeProject);
+  const archive  = (e?.archive  ?? []).map(normalizeProject);
+  return {
+    header:  normalizePageHeader(e),
+    entries: [...projects, ...archive],
   };
 }
