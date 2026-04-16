@@ -103,7 +103,7 @@ const FeaturedCard = ({ project }) => {
     style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)" }}
   >
     {/* thumbnail with icon + badge overlaid inside */}
-    <div className="mb-4 rounded-[2px] overflow-hidden relative" style={{ aspectRatio: "361 / 385" }}>
+    <div className="mb-4 rounded-[2px] overflow-hidden relative" style={{ aspectRatio: "4 / 5" }}>
       {project.thumbnail && (
         <img
           className={`rounded-[2px] border dev-img--${project.id}`}
@@ -172,7 +172,7 @@ const ProjectCard = ({ project }) => {
     style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)" }}
   >
     {/* thumbnail with icon + badge overlaid inside */}
-    <div className="mb-3 rounded-[2px] overflow-hidden relative" style={{ aspectRatio: "369 / 195" }}>
+    <div className="mb-3 rounded-[2px] overflow-hidden relative" style={{ aspectRatio: "16 / 9" }}>
       {project.thumbnail && (
         <img
           className={`rounded-[2px] border dev-img--${project.id}`}
@@ -230,7 +230,7 @@ const WideCard = ({ project }) => {
     {/* left: thumbnail — 42% on mobile, 55% on desktop */}
     <div
       className="dev-wide-divider relative flex-shrink-0 overflow-hidden border-r"
-      style={{ width: "42%", borderColor: "var(--border-soft)", minHeight: 180 }}
+      style={{ width: "49%", borderColor: "var(--border-soft)", minHeight: 180 }}
     >
       {project.thumbnail && (
         <img
@@ -337,7 +337,7 @@ const Engineering = () => {
   const gridCards = projects.slice(4);
 
   return (
-    <FadeIn className="flex flex-col min-h-full" style={{ background: "var(--bg)" }}>
+    <FadeIn className="flex flex-col min-h-full max-w-[700px]" style={{ background: "var(--bg)" }}>
       <style>{`
         .dev-top { display: flex; gap: 10px; }
         .dev-top-left { flex: 1; min-width: 0; display: flex; flex-direction: column; }
@@ -415,14 +415,12 @@ const Engineering = () => {
         className="flex-1 flex flex-col px-8 py-8 w-full mx-auto"
         style={{ maxWidth: 880 }}
       >
-        <div className="flex-1 flex flex-col max-w-[600px] w-full mx-auto justify-center">
-          <Header
-            eyebrow={header?.eyebrow}
-            title={header?.heading}
-            description={header?.description}
-            align="center"
-          />
-        </div>
+        <Header
+          eyebrow={header?.eyebrow}
+          title={header?.heading}
+          description={header?.description}
+          align="left"
+        />
 
         <div className="flex items-center gap-3 mb-4 mt-6">
           <span className="font-alkhemikal text-[9px] tracking-[0.2em] uppercase" style={{ color: "var(--ornament-glyph)" }}>

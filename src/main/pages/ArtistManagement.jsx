@@ -89,7 +89,7 @@ const ArtistManagement = () => {
 
   return (
     <FadeIn className="flex flex-col min-h-full" style={{ background: "var(--bg)" }}>
-      <div className="flex-1 flex flex-col px-10 py-8 max-w-[600px] w-full mx-auto justify-center">
+      <div className="flex-1 flex flex-col px-10 py-8 max-w-[700px] w-full mx-auto justify-center">
         <Header
           eyebrow={header?.eyebrow}
           title={header?.heading}

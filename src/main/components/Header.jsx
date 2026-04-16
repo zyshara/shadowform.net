@@ -37,7 +37,7 @@ const Header = ({
 
   return (
     <div
-      className={`flex flex-col gap-2 ${alignClass}`}
+      className={`flex flex-col gap-2 ${alignClass} max-w-[600px]`}
       style={{ borderColor: "var(--border-soft)" }}
     >
       {eyebrow && (
