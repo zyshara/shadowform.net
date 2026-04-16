@@ -1,5 +1,5 @@
 // src/main/pages/Engineering.jsx
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Tag from "@/components/Tag";
 import Button from "@/components/Button";
 import Ornament from "@/components/Ornament";
@@ -34,16 +34,72 @@ const CardIcon = ({ icon, badge, title }) => {
   );
 };
 
+// ── Scroll-based card highlight (mobile only, one card active at a time) ──────
+
+const _cardRegistry = new Map(); // id -> { setActive, getEl }
+let _activeCardId = null;
+
+const _activateCard = (id) => {
+  if (_activeCardId === id) return;
+  if (_activeCardId !== null) _cardRegistry.get(_activeCardId)?.setActive(false);
+  _activeCardId = id;
+  _cardRegistry.get(id)?.setActive(true);
+};
+
+// Always picks the card whose top most recently passed the viewport center:
+// top <= centerY, and as close to centerY as possible (highest value).
+// This means no gaps — the moment card B's top passes center it takes over from A.
+const _checkScroll = () => {
+  if (!window.matchMedia("(max-width: 640px)").matches) return;
+  const centerY = window.innerHeight * 0.5;
+  let bestId = null;
+  let bestTop = -Infinity;
+  for (const [id, { getEl }] of _cardRegistry) {
+    const el = getEl();
+    if (!el) continue;
+    const { top } = el.getBoundingClientRect();
+    if (top <= centerY && top > bestTop) {
+      bestTop = top;
+      bestId = id;
+    }
+  }
+  if (bestId) _activateCard(bestId);
+};
+
+const useCardInView = (id) => {
+  const ref = useRef(null);
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    _cardRegistry.set(id, { setActive, getEl: () => ref.current });
+    // Same fn reference — addEventListener won't register duplicates
+    window.addEventListener("scroll", _checkScroll, { passive: true });
+    _checkScroll();
+    return () => {
+      _cardRegistry.delete(id);
+      if (_activeCardId === id) { _activeCardId = null; setActive(false); }
+      if (_cardRegistry.size === 0) window.removeEventListener("scroll", _checkScroll);
+    };
+  }, [id]);
+
+  return { ref, active };
+};
+
 // ── Featured card (large, left column) ───────────────────────────────────────
 
-const CardLink = ({ href, children, className, style }) => href
-  ? <a href={href} target="_blank" rel="noreferrer" className={className} style={{ ...style, textDecoration: "none" }}>{children}</a>
-  : <div className={className} style={style}>{children}</div>;
+const CardLink = React.forwardRef(({ href, children, className, style }, ref) =>
+  href
+    ? <a ref={ref} href={href} target="_blank" rel="noreferrer" className={className} style={{ ...style, textDecoration: "none" }}>{children}</a>
+    : <div ref={ref} className={className} style={style}>{children}</div>
+);
 
-const FeaturedCard = ({ project }) => (
+const FeaturedCard = ({ project }) => {
+  const { ref, active } = useCardInView(project.id);
+  return (
   <CardLink
+    ref={ref}
     href={project.link}
-    className="dev-card dev-card-featured flex flex-col h-full p-5 rounded-[2px] border"
+    className={`dev-card dev-card-featured flex flex-col h-full p-5 rounded-[2px] border${active ? " dev-card--active" : ""}`}
     style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)" }}
   >
     {/* thumbnail with icon + badge overlaid inside */}
@@ -92,23 +148,27 @@ const FeaturedCard = ({ project }) => (
       </p>
     </div>
 
-    {/* bottom: tags + year */}
+    {/* bottom: tags */}
     <div className="mt-5 pt-4" style={{ borderTop: "1px solid var(--border)" }}>
       {project.tags?.length > 0 && (
-        <div className="flex gap-1 flex-wrap mb-2">
-          {project.tags.map(t => <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>)}
+        <div className="dev-bottom-tags flex gap-1 flex-wrap mb-2">
+          {[...project.tags].sort((a, b) => a.label.localeCompare(b.label)).map(t => <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>)}
         </div>
       )}
     </div>
   </CardLink>
-);
+  );
+};
 
 // ── Standard project card ─────────────────────────────────────────────────────
 
-const ProjectCard = ({ project }) => (
+const ProjectCard = ({ project }) => {
+  const { ref, active } = useCardInView(project.id);
+  return (
   <CardLink
+    ref={ref}
     href={project.link}
-    className="dev-card flex flex-col h-full p-4 rounded-[2px] border"
+    className={`dev-card flex flex-col h-full p-4 rounded-[2px] border${active ? " dev-card--active" : ""}`}
     style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)" }}
   >
     {/* thumbnail with icon + badge overlaid inside */}
@@ -148,19 +208,23 @@ const ProjectCard = ({ project }) => (
     </p>
 
     {project.tags?.length > 0 && (
-      <div className="flex gap-1 flex-wrap">
-        {project.tags.map(t => <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>)}
+      <div className="dev-bottom-tags flex gap-1 flex-wrap">
+        {[...project.tags].sort((a, b) => a.label.localeCompare(b.label)).map(t => <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>)}
       </div>
     )}
   </CardLink>
-);
+  );
+};
 
 // ── Wide card (item 3 — full-width, horizontal) ───────────────────────────────
 
-const WideCard = ({ project }) => (
+const WideCard = ({ project }) => {
+  const { ref, active } = useCardInView(project.id);
+  return (
   <CardLink
+    ref={ref}
     href={project.link}
-    className="dev-card flex flex-row rounded-[2px] border overflow-hidden"
+    className={`dev-card dev-card-wide flex flex-row rounded-[2px] border overflow-hidden${active ? " dev-card--active" : ""}`}
     style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)" }}
   >
     {/* left: thumbnail — 42% on mobile, 55% on desktop */}
@@ -212,14 +276,15 @@ const WideCard = ({ project }) => (
           {project.description}
         </p>
         {project.tags?.length > 0 && (
-          <div className="dev-wide-bottom-tags flex gap-1 flex-wrap mt-2">
-            {project.tags.map(t => <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>)}
+          <div className="dev-bottom-tags dev-wide-bottom-tags flex gap-1 flex-wrap mt-2">
+            {[...project.tags].sort((a, b) => a.label.localeCompare(b.label)).map(t => <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>)}
           </div>
         )}
       </div>
     </div>
   </CardLink>
-);
+  );
+};
 
 // ── Static CTA cards ──────────────────────────────────────────────────────────
 
@@ -280,27 +345,51 @@ const Engineering = () => {
           transition: border-color 150ms ease-out;
           cursor: pointer;
         }
-        .dev-card:hover {
+        .dev-card:hover,
+        .dev-card--active {
           border-color: var(--tag-lit-border) !important;
         }
         .dev-card:hover h2,
-        .dev-card:hover h3 {
+        .dev-card:hover h3,
+        .dev-card--active h2,
+        .dev-card--active h3 {
           filter: drop-shadow(0 0 4px var(--pink-glow)) drop-shadow(0 0 6px var(--pink-glow));
         }
         .dev-card img {
           transition: filter 150ms ease-out;
         }
-        .dev-card:hover img {
+        .dev-card:hover img,
+        .dev-card--active img {
           filter: brightness(1.2);
+        }
+        .dev-bottom-tags span,
+        .dev-bottom-tags button {
+          transition: color 150ms ease-out, border-color 150ms ease-out, background 150ms ease-out;
+        }
+        .dev-card:hover .dev-bottom-tags span,
+        .dev-card:hover .dev-bottom-tags button,
+        .dev-card--active .dev-bottom-tags span,
+        .dev-card--active .dev-bottom-tags button {
+          color: var(--tag-lit-text) !important;
+          border-color: var(--tag-lit-border) !important;
+          background: var(--tag-lit-bg) !important;
+        }
+        .dev-card-wide {
+          min-height: 220px;
+        }
+        @media (max-width: 640px) {
+          .dev-card-wide { min-height: 180px; }
         }
         .dev-wide-divider {
           transition: border-color 150ms ease-out;
         }
-        .dev-card:hover .dev-wide-divider {
+        .dev-card:hover .dev-wide-divider,
+        .dev-card--active .dev-wide-divider {
           border-color: var(--tag-lit-border) !important;
         }
         @media (max-width: 640px) {
           .dev-img--warcraft-iii { object-position: 26% 50%; }
+          .dev-img--hots { object-position: 0% 0%; transform: scale(1.5); }
           .dev-card-top-bar { zoom: 0.8; }
           .dev-card-top-bar--featured { zoom: 0.9; }
           .dev-wide-top {
@@ -357,9 +446,9 @@ const Engineering = () => {
 
         {/* row 3+: two-column grid for remaining cards */}
         {gridCards.length > 0 && (
-          <div className="grid grid-cols-2 gap-[10px] mt-[10px]">
+          <div className="flex flex-col gap-[10px] mt-[10px]">
             {gridCards.map(p => (
-              <ProjectCard key={p.id} project={p} />
+              <WideCard key={p.id} project={p} />
             ))}
           </div>
         )}
