@@ -21,15 +21,15 @@ const About = () => {
               and making websites since the dawn of &lt;marquee&gt; and Dreamweaver.
             </p>
             <p className="font-fell text-[15px] leading-[1.9] text-center" style={{ color: "var(--text-body)" }}>
-              i'm a raver, a gamer, and a mom to three wonderful cats. this site.<br/>
+              i'm a raver, a gamer, and a mom to three wonderful cats.<br/>
               enjoy your stay :-)
             </p>
           </div>
         </Header>
 
         <div className="flex gap-2 flex-wrap justify-center mt-5">
-          <Tag variant="dim">los angeles</Tag>
-          <Tag variant="dim">blizzard entertainment</Tag>
+          <Tag variant="lit">los angeles</Tag>
+          <Tag variant="lit">blizzard entertainment</Tag>
         </div>
 
         <Ornament className="mt-7" />

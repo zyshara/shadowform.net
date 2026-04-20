@@ -139,6 +139,7 @@ const Button = ({
   size      = "xs",
   arrow     = "none",
   flower    = false,
+  corners   = false,
   disabled  = false,
   className = "",
   href,
@@ -185,12 +186,14 @@ const Button = ({
 
   const inner = (
     <>
-      <CornerTicks
-        color={colors.tickColor}
-        size={sizeTokens.tick}
-        offset={sizeTokens.offset}
-        hovered={isHovered}
-      />
+      { corners && (
+          <CornerTicks
+            color={colors.tickColor}
+            size={sizeTokens.tick}
+            offset={sizeTokens.offset}
+            hovered={isHovered}
+          />
+      )}
 
       {/* ✿ prefix */}
       { flower && (
