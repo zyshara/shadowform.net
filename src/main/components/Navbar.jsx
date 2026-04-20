@@ -3,13 +3,14 @@
 import { NavLink, useLocation } from "react-router-dom";
 import cherry_blossom from "@shared/assets/images/cherry_blossom.png";
 import navlinks from "@/data/navlinks";
+import SocialIcons from "@/components/SocialIcons";
 
 // ── Desktop: vertical sidebar nav ──────────────────────────────────────────
 export const DesktopNavbar = () => {
   const location = useLocation();
 
   return (
-    <nav className="flex flex-col items-end w-full">
+    <nav className="flex flex-col items-end w-full h-full">
       <NavLink to="/" className="flex flex-col items-center mb-4">
         <img
           src={cherry_blossom}
@@ -63,6 +64,8 @@ export const DesktopNavbar = () => {
           );
         })}
       </ol>
+
+      <SocialIcons className="mt-auto pt-6 pb-1" />
     </nav>
   );
 };

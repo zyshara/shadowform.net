@@ -37,6 +37,9 @@ export function registerSpaRoutes(app) {
     res.sendFile(path.join(root, "dist/swatchbook/index.html"));
   });
 
+  /* ── Preserved archived sites ── */
+  app.use("/preserved", express.static(path.join(root, "public/preserved")));
+
   /* ── Main SPA (catch-all) ── */
   app.use(express.static(path.join(root, "dist/main")));
   app.use((req, res) => {

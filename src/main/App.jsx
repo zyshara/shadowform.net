@@ -5,7 +5,7 @@ import { AnimatePresence } from "framer-motion";
 
 import Layout from "@/Layout";
 import { PageTransition } from "@/components";
-import { Enter, NotFound, EngineeringArchive } from "@/pages";
+import { Enter, NotFound, EngineeringArchive, EngineeringProject } from "@/pages";
 import navlinks from "@/data/navlinks";
 
 const App = () => {
@@ -20,6 +20,10 @@ const App = () => {
           <Route
             path="/engineering/archive"
             element={<PageTransition><EngineeringArchive /></PageTransition>}
+          />
+          <Route
+            path="/engineering/archive/:slug"
+            element={<PageTransition><EngineeringProject /></PageTransition>}
           />
           {navlinks.map(({ id, url, component: Page, redirects = [] }) => (
             <React.Fragment key={id}>

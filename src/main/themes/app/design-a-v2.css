@@ -1,0 +1,34 @@
+/* Design A (fixed) — Plum-black + warm pink */
+:root {
+  --bg: #100c14;
+  --bg-ticker: #0a0810;
+  --bg-footer: #09060c;
+  --bg-sidebar: #080608;
+  --border: #1f1520;
+  --border-soft: #1e1520;
+  --ornament-line: #3d1f2e;
+  --ornament-glyph: #5a2e42;
+  --divider: #3d1f2e;
+  --text-heading: #f0a0c0;
+  --text-body: #d8cee0;
+  --text-nav-active: #f4b8d0;
+  --text-nav-inactive: #4a3040;
+  --text-nav-hover: #c890b0;
+  --text-ticker: #5a3050;
+  --text-footer: #5a3050;
+  --text-footer-accent: #c070a0;
+  --text-site-name: #e8e0ec;
+  --text-page-indicator: #f4b8d0;
+  --text-hamburger: #8a6878;
+  --pink-text: #f4b8d0;
+  --pink-border: #5a2e42;
+  --pink-bg: #160a12;
+  --pink-glow: #e06090aa;
+  --tag-lit-text: #f4b8d0;
+  --tag-lit-border: #5a2e42;
+  --tag-lit-bg: #160a12;
+  --tag-dim-text: #8a6878;
+  --tag-dim-border: #2e1828;
+  --tag-dim-bg: transparent;
+  --nav-active-underline: #f4b8d066;
+}
