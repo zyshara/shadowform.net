@@ -36,7 +36,8 @@ export const DesktopNavbar = () => {
       {/* nav links */}
       <ol className="flex flex-col items-end w-full px-5 gap-[2px]">
         {navlinks.map((navlink) => {
-          const isActive = location.pathname.replace(/\/+$/, '') === navlink.url.replace(/\/+$/, '');
+          const bare = navlink.url.replace(/\/+$/, '');
+          const isActive = location.pathname === bare || location.pathname.startsWith(bare + '/');
           return (
             <li key={navlink.id}>
               <NavLink
@@ -73,7 +74,10 @@ export const DesktopNavbar = () => {
 // ── Mobile: top bar with hamburger ─────────────────────────────────────────
 export const MobileNavbar = ({ onMenuOpen }) => {
   const location = useLocation();
-  const currentPage = navlinks.find((n) => location.pathname === n.url);
+  const currentPage = navlinks.find((n) => {
+    const bare = n.url.replace(/\/+$/, '');
+    return location.pathname === bare || location.pathname.startsWith(bare + '/');
+  });
 
   return (
     <nav

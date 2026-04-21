@@ -158,13 +158,11 @@ const Button = ({
   const wrapperStyle = {
     border:         `1px solid ${colors.borderColor}`,
     background:     colors.background,
-    boxShadow:      isHovered
-                      ? "0 0 0 1px var(--pink-border), inset 0 0 8px var(--pink-glow)"
-                      : "none",
+    filter:         isHovered ? "drop-shadow(0 0 3px var(--pink-glow))" : "none",
     opacity:        disabled ? 0.5 : 1,
     cursor:         disabled ? "not-allowed" : "pointer",
     textDecoration: "none",
-    transition:     "border-color 150ms, box-shadow 150ms",
+    transition:     "border-color 150ms, filter 150ms",
   };
 
   const handlers = disabled ? {} : {
@@ -180,9 +178,7 @@ const Button = ({
     className,
   ].filter(Boolean).join(" ");
 
-  const glowStyle = isHovered
-    ? { textShadow: "0 0 8px var(--pink-glow), 0 0 16px var(--pink-glow)" }
-    : {};
+  const glowStyle = isHovered ? { filter: "drop-shadow(0 0 3px var(--pink-glow))" } : {};
 
   const inner = (
     <>
@@ -212,7 +208,7 @@ const Button = ({
 
       {/* label */}
       <span
-        className="ml-[6px] transition-colors duration-150"
+        className="transition-colors duration-150"
         style={{ color: colors.color, ...glowStyle }}
       >
         {children}
@@ -220,7 +216,7 @@ const Button = ({
 
       {/* optional SVG arrow */}
       {showArrow && (
-        <span className="ml-[3px] inline-flex items-center">
+        <span className="inline-flex items-center">
           <Arrow
             direction={arrow}
             size={sizeTokens.arrowSize}

@@ -13,11 +13,9 @@
  
 .tag-theme--blizzard {
   font-family: 'Cinzel', 'Folkard', serif;
-  font-size: 10px;
   font-weight: 900;
   letter-spacing: .22em;
   text-transform: uppercase;
-  padding: 5px 12px;
   border-radius: 2px;
   border: 1px solid #00B4FF;
   background: linear-gradient(180deg, #0a1628 0%, #050d1a 100%);

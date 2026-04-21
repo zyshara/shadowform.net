@@ -65,7 +65,7 @@ const ArchiveEntry = ({ project, index }) => {
 
       {/* bottom tags */}
       {sortedTags.length > 0 && (
-        <div className="flex gap-1 flex-wrap mt-2 pl-10">
+        <div className="dev-bottom-tags flex gap-1 flex-wrap mt-2 pl-10">
           {sortedTags.map(t => (
             <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>
           ))}
@@ -116,6 +116,16 @@ const EngineeringArchive = () => {
         }
         .dev-archive-entry:hover h2 {
           filter: drop-shadow(0 0 4px var(--pink-glow)) drop-shadow(0 0 6px var(--pink-glow));
+        }
+        .dev-archive-entry .dev-bottom-tags span,
+        .dev-archive-entry .dev-bottom-tags button {
+          transition: color 150ms ease-out, border-color 150ms ease-out, background 150ms ease-out;
+        }
+        .dev-archive-entry:hover .dev-bottom-tags span,
+        .dev-archive-entry:hover .dev-bottom-tags button {
+          color: var(--tag-lit-text) !important;
+          border-color: var(--tag-lit-border) !important;
+          background: var(--tag-lit-bg) !important;
         }
       `}</style>
 

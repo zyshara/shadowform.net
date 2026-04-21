@@ -34,6 +34,21 @@ const CardIcon = ({ icon, badge, title }) => {
   );
 };
 
+// ── Mobile breakpoint hook ────────────────────────────────────────────────────
+
+const useIsMobile = () => {
+  const [mobile, setMobile] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)");
+    const handler = (e) => setMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return mobile;
+};
+
 // ── Scroll-based card highlight (mobile only, one card active at a time) ──────
 
 const _cardRegistry = new Map(); // id -> { setActive, getEl }
@@ -95,6 +110,7 @@ const CardLink = React.forwardRef(({ href, children, className, style }, ref) =>
 
 const FeaturedCard = ({ project }) => {
   const { ref, active } = useCardInView(project.id);
+  const mobile = useIsMobile();
   return (
   <CardLink
     ref={ref}
@@ -116,7 +132,7 @@ const FeaturedCard = ({ project }) => {
         <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
         {project.topTags?.length > 0 && (
           <div className="flex gap-1 flex-wrap justify-end">
-            {project.topTags.map(t => <Tag key={t.label} theme={t.theme} variant="lit">{t.label}</Tag>)}
+            {project.topTags.map(t => <Tag key={t.label} size={mobile ? "sm" : "md"} theme={t.theme} variant="lit">{t.label}</Tag>)}
           </div>
         )}
       </div>
@@ -152,7 +168,7 @@ const FeaturedCard = ({ project }) => {
     <div className="mt-5 pt-4" style={{ borderTop: "1px solid var(--border)" }}>
       {project.tags?.length > 0 && (
         <div className="dev-bottom-tags flex gap-1 flex-wrap mb-2">
-          {[...project.tags].sort((a, b) => a.label.localeCompare(b.label)).map(t => <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>)}
+          {[...project.tags].sort((a, b) => a.label.localeCompare(b.label)).map(t => <Tag key={t.label} size="sm" theme={t.theme} variant="dim">{t.label}</Tag>)}
         </div>
       )}
     </div>
@@ -164,6 +180,7 @@ const FeaturedCard = ({ project }) => {
 
 const ProjectCard = ({ project }) => {
   const { ref, active } = useCardInView(project.id);
+  const mobile = useIsMobile();
   return (
   <CardLink
     ref={ref}
@@ -185,7 +202,7 @@ const ProjectCard = ({ project }) => {
         <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
         {project.topTags?.length > 0 && (
           <div className="flex gap-1 flex-wrap justify-end">
-            {project.topTags.map(t => <Tag key={t.label} theme={t.theme} variant="lit">{t.label}</Tag>)}
+            {project.topTags.map(t => <Tag key={t.label} size={mobile ? "xs" : "sm"} theme={t.theme} variant="lit">{t.label}</Tag>)}
           </div>
         )}
       </div>
@@ -209,7 +226,7 @@ const ProjectCard = ({ project }) => {
 
     {project.tags?.length > 0 && (
       <div className="dev-bottom-tags flex gap-1 flex-wrap">
-        {[...project.tags].sort((a, b) => a.label.localeCompare(b.label)).map(t => <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>)}
+        {[...project.tags].sort((a, b) => a.label.localeCompare(b.label)).map(t => <Tag key={t.label} size="sm" theme={t.theme} variant="dim">{t.label}</Tag>)}
       </div>
     )}
   </CardLink>
@@ -220,6 +237,7 @@ const ProjectCard = ({ project }) => {
 
 const WideCard = ({ project }) => {
   const { ref, active } = useCardInView(project.id);
+  const mobile = useIsMobile();
   return (
   <CardLink
     ref={ref}
@@ -248,7 +266,7 @@ const WideCard = ({ project }) => {
         <CardIcon icon={project.icon} badge={project.badge} title={project.title} />
         {project.topTags?.length > 0 && (
           <div className="flex gap-1 flex-wrap justify-end">
-            {project.topTags.map(t => <Tag key={t.label} theme={t.theme} variant="lit">{t.label}</Tag>)}
+            {project.topTags.map(t => <Tag key={t.label} size="xs" theme={t.theme} variant="lit">{t.label}</Tag>)}
           </div>
         )}
       </div>
@@ -277,7 +295,7 @@ const WideCard = ({ project }) => {
         </p>
         {project.tags?.length > 0 && (
           <div className="dev-bottom-tags dev-wide-bottom-tags flex gap-1 flex-wrap mt-2">
-            {[...project.tags].sort((a, b) => a.label.localeCompare(b.label)).map(t => <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>)}
+            {[...project.tags].sort((a, b) => a.label.localeCompare(b.label)).map(t => <Tag key={t.label} size={mobile ? "xs" : "sm"} theme={t.theme} variant="dim">{t.label}</Tag>)}
           </div>
         )}
       </div>
@@ -310,7 +328,7 @@ const CtaCard = ({ heading, label, cta, href, disabled = false }) => (
       style={{ color: "var(--text-body)" }}
       dangerouslySetInnerHTML={{ __html: label }}
     />
-    <Button variant="secondary" href={disabled ? undefined : href} disabled={disabled}>
+    <Button variant="secondary" size="sm" corners={true} href={disabled ? undefined : href} disabled={disabled}>
       {cta}
     </Button>
   </div>
@@ -398,16 +416,8 @@ const Engineering = () => {
         @media (max-width: 640px) {
           .dev-img--warcraft-iii { object-position: 26% 50%; }
           .dev-img--hots { object-position: 0% 0%; transform: scale(1.5); }
-          .dev-card-top-bar { zoom: 0.8; }
-          .dev-card-top-bar--featured { zoom: 0.9; }
-          .dev-wide-top {
-            zoom: 0.7;
-            margin-bottom: 30px;
-          }
-          .dev-wide-bottom-tags {
-            zoom: 0.8;
-            margin-top: 6px;
-          }
+          .dev-card-wide { min-height: unset; height: 310px; }
+          .dev-card-wide h2 { margin-top: 20px; }
         }
       `}</style>
 

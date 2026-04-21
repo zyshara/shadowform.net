@@ -46,14 +46,14 @@ const ArtistCard = ({ artist }) => (
 
       {artist.genres?.length > 0 && (
         <div className="flex gap-1 flex-wrap mb-3">
-          {artist.genres.map((genre) => <Tag key={genre} size="sm" variant="dim">{genre}</Tag>)}
+          {artist.genres.map((genre) => <Tag key={genre} size="xs" variant="dim">{genre}</Tag>)}
         </div>
       )}
 
       {artist.links?.length > 0 && (
-        <div className="flex gap-1 flex-wrap">
+        <div className="flex gap-2 flex-wrap">
           {artist.links.map((link) => (
-            <Button key={link.label} arrow="up-right" size="sm" variant="primary" href={link.url} target="_blank" rel="noreferrer">
+            <Button key={link.label} arrow="up-right" size="sm" variant="secondary" href={link.url} target="_blank" rel="noreferrer">
               {link.label}
             </Button>
           ))}

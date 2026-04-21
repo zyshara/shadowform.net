@@ -29,29 +29,17 @@ const SIZES = {
 
 const BASE_CLS = "tracking-[0.18em] uppercase rounded-[2px] border whitespace-nowrap select-none";
 
-// ── Themed char renderer ───────────────────────────────────────────────────────
-// Used for fire + rainbow — splits children into individual animated chars.
-const ThemedTag = ({ children, theme, className, style }) => {
-  const chars = String(children).split("");
-  return (
-    <span className={`${className} tag-theme--${theme}`} style={style}>
-      {chars.map((char, i) => (
-        <span key={i} className="tag-theme-char" style={{ "--char-i": i }}>
-          {char === " " ? "\u00A0" : char}
-        </span>
-      ))}
-    </span>
-  );
-};
-
 // ── Tag ───────────────────────────────────────────────────────────────────────
 //
 //  Props
-//    variant   "lit" | "dim"   default "lit"
-//    size      "xxs" | "xs" | "sm" | "md" | "lg" | "xl"   default "sm"
-//    theme     "fire-glitch" | "rainbow-party" | "blizzard"  — animated fun variant
-//    href      string — renders as <a>, dim at rest → lit on hover
-//    onClick   fn     — renders as <button>, dim at rest → lit on hover
+//    variant   "lit" | "dim"                                   default "lit"
+//    size      "xxs" | "xs" | "sm" | "md" | "lg" | "xl"       default "sm"
+//    theme     "fire-glitch" | "rainbow-party" | "blizzard"    — CSS-animated variant;
+//              theme class is applied directly to the rendered element so size
+//              and theme always stay in sync. Colors are handled entirely by
+//              TagThemes.css — no inline style overrides needed.
+//    href      string — renders as <a>; dim at rest → lit on hover (non-themed)
+//    onClick   fn     — renders as <button>; dim at rest → lit on hover (non-themed)
 //    target / rel     — forwarded to <a>
 //    children
 //
@@ -69,63 +57,48 @@ const Tag = ({
   const [hovered, setHovered] = useState(false);
 
   const isInteractive = !!(href || onClick);
-  // Interactive tags: dim at rest, lit on hover
+
+  // Themed tags: CSS class owns all color/border/bg — no inline style override.
+  // Plain tags: dim at rest when interactive, lit on hover; otherwise use `variant`.
   const colorKey = isInteractive ? (hovered ? "lit" : "dim") : (variant === "dim" ? "dim" : "lit");
-  const colors   = COLORS[colorKey];
-  const sizeCls  = SIZES[size] ?? SIZES.sm;
+  const style    = theme
+    ? {}
+    : { color: COLORS[colorKey].color, borderColor: COLORS[colorKey].borderColor, background: COLORS[colorKey].background };
 
-  const cls = [BASE_CLS, sizeCls, isInteractive && "transition-colors duration-150 cursor-pointer", extraCls]
-    .filter(Boolean).join(" ");
+  const cls = [
+    BASE_CLS,
+    SIZES[size] ?? SIZES.sm,
+    theme && `tag-theme--${theme}`,
+    isInteractive && "transition-colors duration-150 cursor-pointer",
+    extraCls,
+  ].filter(Boolean).join(" ");
 
-  const style = {
-    color:       colors.color,
-    borderColor: colors.borderColor,
-    background:  colors.background,
-  };
+  // Themed variants split text into per-character spans so CSS can animate each char.
+  const content = theme
+    ? String(children).split("").map((char, i) => (
+        <span key={i} className="tag-theme-char" style={{ "--char-i": i }}>
+          {char === " " ? "\u00A0" : char}
+        </span>
+      ))
+    : children;
 
-  const handlers = isInteractive ? {
-    onMouseEnter: () => setHovered(true),
-    onMouseLeave: () => setHovered(false),
-  } : {};
+  const handlers = isInteractive
+    ? { onMouseEnter: () => setHovered(true), onMouseLeave: () => setHovered(false) }
+    : {};
 
-  // ── themed variants (fire / rainbow / blizzard) ─────────────────────────────
-  if (theme === "fire-glitch" || theme === "rainbow-party" || theme === "blizzard") {
-    const { borderColor: _bc, background: _bg, ...themeStyle } = style;
-    const themedEl = <ThemedTag theme={theme} className={cls} style={themeStyle}>{children}</ThemedTag>;
-
-    if (onClick) return (
-      <button onClick={onClick} style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}>
-        {themedEl}
-      </button>
-    );
-    if (href) return (
-      <a href={href} target={target} rel={rel} style={{ textDecoration: "none" }}>
-        {themedEl}
-      </a>
-    );
-    return themedEl;
-  }
-
-  // ── link ──────────────────────────────────────────────────────────────────────
   if (href) return (
     <a href={href} target={target} rel={rel} className={cls} style={{ ...style, textDecoration: "none" }} {...handlers}>
-      {children}
+      {content}
     </a>
   );
 
-  // ── button ────────────────────────────────────────────────────────────────────
   if (onClick) return (
     <button type="button" onClick={onClick} className={cls} style={style} {...handlers}>
-      {children}
+      {content}
     </button>
   );
 
-  // ── static span ───────────────────────────────────────────────────────────────
-  return (
-    <span className={cls} style={style}>
-      {children}
-    </span>
-  );
+  return <span className={cls} style={style}>{content}</span>;
 };
 
 export default Tag;
