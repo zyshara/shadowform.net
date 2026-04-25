@@ -1,0 +1,565 @@
+@charset "UTF-8";
+/** This file is meant to be imported directly into the application's Sass File **/
+@import url('css/00743d09_openSans.css');
+.section,
+.subsection {
+  background-image: var(--bg-xs);
+}
+
+@media (min-width: 960px) {
+  .section,
+.subsection {
+    background-image: var(--bg-md, var(--bg-xs));
+  }
+}
+@media (min-width: 1200px) {
+  .section,
+.subsection {
+    background-image: var(--bg-lg, var(--bg-md, var(--bg-xs)));
+  }
+}
+.visually-hidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+@font-face {
+  font-family: "Quadrat Serial";
+  src: url('fonts/609f037f_quadrat_serial.woff2');
+}
+@font-face {
+  font-family: Nanum Gothic;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local("Nanum Gothic"), local("NanumGothic"), url('fonts/bc387a65_nanumgothic.1d98d61bb3f3c62920b0edcdbade3070.woff2') format("woff2"), url('fonts/9ba0c7e5_nanumgothic.5bb7da03f992f9107c674046378259d6.woff') format("woff");
+}
+@font-face {
+  font-family: Nanum Gothic;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local("Nanum Gothic Bold"), local("NanumGothic-Bold"), url('fonts/4f93b52b_nanumgothic-bold.60ccd866579bed370ea18836602a9330.woff2') format("woff2"), url('fonts/7a9a27da_nanumgothic-bold.fe20860171e099a80db4236ba0314d1a.woff') format("woff");
+}
+@font-face {
+  font-family: Futura Demi;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local("Futura Demi"), local("FuturaDemi"), url('fonts/9e830156_futurademi.woff2') format("woff2"), url('fonts/fcc0a0fd_futurademi.woff') format("woff");
+}
+:root {
+  --font-default: "Open Sans", Arial, Helvetica, sans-serif;
+  --font-default-weight: 400;
+  --font-accent: "Quadrat Serial", serif;
+}
+
+:root[lang=ko-kr] {
+  --font-accent: "Nanum Gothic", Arial, Helvetica, "맑은 고딕", "Malgun Gothic", 애플산돌고딕네오, AppleSDGothicNeo, 애플고딕, AppleGothic, 돋움, Dotum, sans-serif;
+}
+
+:root[lang=zh-cn],
+:root[lang=zh-tw] {
+  --font-accent: "Microsoft Yahei", sans-serif;
+}
+
+:root[lang=ru-ru] {
+  --font-accent: Futura Demi,Open Sans,Arial,Helvetica,sans-serif;
+}
+
+html {
+  scroll-behavior: auto !important;
+}
+
+@media (min-width: 960px) {
+  html {
+    scroll-behavior: smooth !important;
+  }
+}
+:root[lang=ko-kr] {
+  word-break: keep-all;
+}
+
+body {
+  color: #e2e3e3;
+  margin: 0;
+  background-color: #000;
+}
+
+h2,
+h3,
+h4,
+h5,
+blz-button span,
+.accordion-label {
+  letter-spacing: 0.02em;
+  line-height: 110%;
+}
+
+h3,
+h5 {
+  color: #88c9fb;
+}
+
+blz-macro-section h5 {
+  text-transform: uppercase;
+}
+
+blz-nav-footer {
+  position: relative;
+}
+
+#main a {
+  color: #f8b700;
+  will-change: filter;
+  transition: filter 0.2s;
+}
+#main a:hover, #main a:focus {
+  filter: brightness(1.25);
+}
+
+[data-slug=media] [slot=heading] {
+  color: #e2e3e3;
+}
+[data-slug=media] [slot=subheading] {
+  color: #88c9fb;
+}
+
+.main-content {
+  max-width: 2600px;
+  margin: 0 auto;
+  margin-top: 0;
+}
+@media (min-width: 960px) {
+  .main-content {
+    margin-top: 0ch;
+  }
+}
+
+blz-video[slot=background] {
+  width: 100%;
+}
+
+.section {
+  position: relative;
+  background-repeat: repeat-y;
+  background-size: 100% auto;
+  overflow: hidden;
+}
+
+.bg {
+  position: relative;
+  background-size: cover;
+  max-width: 2600px;
+  margin: auto;
+}
+
+.divider-container {
+  position: relative;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.divider {
+  width: 100%;
+  position: absolute;
+  background-repeat: no-repeat;
+}
+
+.divider-1 {
+  margin-top: -64px;
+}
+
+.divider-2 {
+  margin-top: -24px;
+}
+
+.additional-features blz-card:nth-of-type(1) blz-image::part(picture)::before,
+.media blz-lightbox-trigger:nth-of-type(9n + 1) blz-image::part(picture)::before,
+.media blz-lightbox-trigger:nth-of-type(9n + 4) blz-image::part(picture)::before,
+.media blz-lightbox-trigger:nth-of-type(9n + 6) blz-image::part(picture)::before {
+  background-image: url('images/bc82460c_frame_detail_bottom_left_small.png');
+  background-position: 4px calc(100% - 6px);
+}
+
+.additional-features blz-card:nth-of-type(3) blz-image::part(picture)::before,
+.media blz-lightbox-trigger:nth-of-type(9n + 2) blz-image::part(picture)::before,
+.media blz-lightbox-trigger:nth-of-type(9n + 5) blz-image::part(picture)::before,
+.media blz-lightbox-trigger:nth-of-type(9n + 7) blz-image::part(picture)::before {
+  background-image: url('images/5cd46875_frame_detail_bottom_small.png');
+  background-position: center calc(100% - 5px);
+}
+
+.additional-features blz-card:nth-of-type(2) blz-image::part(picture)::before,
+.media blz-lightbox-trigger:nth-of-type(9n + 3) blz-image::part(picture)::before,
+.media blz-lightbox-trigger:nth-of-type(9n + 8) blz-image::part(picture)::before {
+  background-image: url('images/f8e0a6b9_frame_detail_bottom_right_small.png');
+  background-position: calc(100% - 4px) calc(100% - 5px);
+}
+
+blz-nav {
+  --navbar-background-color: rgba(28, 43, 74, 0.8);
+  --navbar-background-color-no-blur: rgba(31, 53, 87, 0.95);
+  --navbar-menu-background-color: #132134;
+  --navbar-button-font-color: #220b0b;
+  --navbar-button-color-primary: #f8b700;
+  --navbar-button-color-primary-hover: #f8d300;
+}
+
+.mobile-site-logo {
+  width: 100%;
+  height: auto;
+  padding: 12px;
+}
+
+blz-card blz-image {
+  position: relative;
+  position: relative;
+}
+blz-card blz-image::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: 16px solid transparent;
+  border-image: url('images/45342b0d_frame.png');
+  border-image-slice: 14 16 fill;
+  pointer-events: none;
+}
+blz-card blz-image::part(picture) {
+  padding: 8px;
+}
+blz-card blz-image::part(picture)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  background-repeat: no-repeat;
+}
+blz-card blz-image::part(picture)::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  box-shadow: inset 0px 3px 16.8px 7.5px rgba(0, 0, 0, 0.65);
+  border-radius: 20px;
+}
+
+blz-lightbox-trigger blz-card {
+  cursor: pointer;
+  will-change: filter;
+  transition: filter 0.2s;
+}
+blz-lightbox-trigger blz-card:hover, blz-lightbox-trigger blz-card:focus {
+  filter: brightness(1.25);
+}
+
+blz-feature [slot=media] {
+  position: relative;
+  filter: drop-shadow(0px 3px 16.8px rgba(0, 0, 0, 0.65));
+  padding: 8px;
+}
+blz-feature [slot=media]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: 16px solid transparent;
+  border-image: url('images/45342b0d_frame.png');
+  border-image-slice: 14 16 fill;
+  pointer-events: none;
+}
+blz-feature [slot=media]::before {
+  content: "";
+  position: absolute;
+  top: -18px;
+  right: -18px;
+  bottom: -48px;
+  left: -18px;
+  z-index: 10;
+  background-image: url('images/aabd38d3_frame_detail_top_left.png'), url('images/963aae13_frame_detail_top_right.png'), url('images/c5fc611f_frame_detail_bottom_right.png'), url('images/ed7c7770_frame_detail_bottom_left.png');
+  background-position: left top, right top, calc(100% - 5px) calc(100% + 0px), 2px 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+blz-feature [slot=media] blz-image::part(picture)::before,
+blz-feature [slot=media] blz-video::part(overlay)::before {
+  will-change: filter;
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  box-shadow: inset 0px 3px 16.8px 7.5px rgba(0, 0, 0, 0.65);
+}
+blz-feature [slot=media] [slot=thumbnail-play] {
+  filter: drop-shadow(0 10px 30px #000000) drop-shadow(0 10px 30px #000000);
+  z-index: 2;
+}
+blz-feature [slot=media] blz-video::part(overlay) {
+  will-change: filter;
+  transition: filter 0.2s;
+}
+blz-feature [slot=media] blz-video::part(overlay):hover, blz-feature [slot=media] blz-video::part(overlay):focus {
+  filter: brightness(1.25);
+}
+blz-feature blz-list-item blz-image {
+  position: relative;
+}
+blz-feature blz-list-item blz-image::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: var(--icon-border-url);
+  background-size: cover;
+}
+blz-feature blz-list-item blz-image::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  bottom: 4px;
+  left: 4px;
+  box-shadow: inset 0px -4px 10px #000000, inset 0px 0px 10px #000000;
+  border-radius: 100%;
+  z-index: 2;
+}
+blz-feature blz-list-item blz-image::part(image) {
+  padding: 4px;
+  border-radius: 100%;
+  position: relative;
+  z-index: 1;
+}
+@media (min-width: 960px) {
+  blz-feature blz-list-item blz-image::before {
+    top: 10px;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+  }
+  blz-feature blz-list-item blz-image::part(image) {
+    padding: 10px;
+  }
+}
+
+/*
+We separate the styles as mixins so we can reuse it on the media gallery button,
+since the cta button there doesn't inherit global blz-button styles (uses ::part).
+*/
+blz-button {
+  position: relative;
+  color: #f8b700;
+  background-color: transparent;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.47) no-repeat;
+  background-size: 100% 100%;
+  background-position: center;
+  box-shadow: 0px 3px 16.8px 7.5px rgba(0, 0, 0, 0.65);
+  border-radius: 12px;
+  cursor: pointer;
+  border: 14px solid transparent;
+  line-height: 1;
+  will-change: filter;
+  transition: filter 0.2s;
+}
+blz-button:hover, blz-button:focus {
+  filter: brightness(1.25);
+}
+blz-button[type=primary] {
+  border-image: url('images/5e619ddd_gb_primary_button.png');
+  border-image-slice: 14 fill;
+  background-image: url('images/47b52778_button_texture_primary.png');
+}
+@media (min-width: 480px) {
+  blz-button[type=primary]::after {
+    content: "";
+    position: absolute;
+    z-index: 10;
+    pointer-events: none;
+  }
+  blz-button[type=primary]::after {
+    right: -14px;
+    bottom: -57px;
+    left: -14px;
+    height: 73px;
+    background: url('images/dc38b4d8_button_primary_detail_bottom_left.png') no-repeat, url('images/5d35c735_button_primary_detail_bottom_right.png') no-repeat;
+    background-position: 0 100%, 100% calc(100% - 4px);
+  }
+}
+blz-button[type=primary][size=medium]::after {
+  right: -10px;
+  bottom: -56px;
+}
+blz-button[type=default] {
+  border-image: url('images/ddcaa2d2_gb_button_default.png');
+  border-image-slice: 14 fill;
+  background-image: url('images/df203ebe_button_texture_secondary.png');
+  background-size: 100% 100%;
+}
+blz-button[size=medium] {
+  border-width: 10px;
+  border-radius: 4px;
+}
+
+blz-media-gallery::part(cta) {
+  position: relative;
+  color: #f8b700;
+  background-color: transparent;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.47) no-repeat;
+  background-size: 100% 100%;
+  background-position: center;
+  box-shadow: 0px 3px 16.8px 7.5px rgba(0, 0, 0, 0.65);
+  border-radius: 12px;
+  cursor: pointer;
+  border: 14px solid transparent;
+  line-height: 1;
+  will-change: filter;
+  transition: filter 0.2s;
+  border-image: url('images/ddcaa2d2_gb_button_default.png');
+  border-image-slice: 14 fill;
+  background-image: url('images/df203ebe_button_texture_secondary.png');
+  background-size: 100% 100%;
+}
+blz-media-gallery::part(cta):hover, blz-media-gallery::part(cta):focus {
+  filter: brightness(1.25);
+}
+
+blz-tab-control[variant*=icon]::part(icon) {
+  border-radius: 50%;
+  background-size: contain;
+}
+
+blz-optin::part(confirmation-text) {
+  max-width: 400px;
+}
+
+.jump-link {
+  display: block;
+  position: relative;
+  top: -48px;
+}
+
+@media (min-width: 960px) {
+  .jump-link {
+    top: calc(var(--nav-height) * -1);
+  }
+}
+.masthead {
+  background-position: 50%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  max-height: auto;
+}
+.masthead blz-video {
+  display: none;
+}
+@media (min-width: 1200px) {
+  .masthead blz-video {
+    display: block;
+  }
+}
+.masthead blz-header {
+  filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+.the-lich-king {
+  background-position: center top;
+  background-size: cover;
+}
+
+.the-lich-king::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: linear-gradient(176.28deg, rgba(7, 20, 30, 0) 56.51%, rgba(7, 20, 30, 0.8) 72.04%, #07141e 90.16%);
+}
+
+.getting-started::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: linear-gradient(180deg, rgba(14, 10, 21, 0.85) 4.91%, rgba(14, 10, 21, 0.65) 52.27%, rgba(14, 10, 21, 0) 81.51%);
+}
+
+@media (min-width: 960px) {
+  .getting-started::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    right: 40%;
+    background-image: linear-gradient(90deg, rgba(14, 10, 21, 0.85) 18.19%, rgba(14, 10, 21, 0.65) 58.5%, rgba(14, 10, 21, 0) 86.21%);
+  }
+}
+blz-list-item {
+  --image-size: var(--size-1000);
+}
+
+.beta blz-button {
+  min-width: 278px;
+}
+.beta blz-button::before {
+  background-position: 0;
+  background-size: cover;
+}
+
+.faq-social {
+  background-position: center bottom;
+  background-size: cover;
+}
+@media (min-width: 960px) {
+  .faq-social {
+    background-attachment: fixed;
+  }
+}
+.faq-social::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7) 100%, rgba(0, 0, 0, 0.7) 100%), linear-gradient(180deg, rgba(10, 1, 1, 0.6) 12.31%, rgba(0, 0, 0, 0) 53.23%);
+}
+.faq-social [slot=small] h3 {
+  color: #e2e3e3;
+}
+.faq-social [slot=icons] a {
+  color: #F8B700;
+}
+.faq-social blz-accordion::part(group-control) {
+  color: #f8b700;
+  will-change: filter;
+  transition: filter 0.2s;
+}
+.faq-social blz-accordion::part(group-control):hover, .faq-social blz-accordion::part(group-control):focus {
+  filter: brightness(1.25);
+}
+

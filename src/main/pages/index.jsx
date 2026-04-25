@@ -4,6 +4,7 @@ export { default as Creative } from "./Creative";
 export { default as Engineering } from "./Engineering";
 export { default as EngineeringArchive } from "./EngineeringArchive";
 export { default as EngineeringProject } from "./EngineeringProject";
+export { default as EngineeringProjectRaw } from "./EngineeringProjectRaw";
 export { default as Enter } from "./Enter";
 export { default as Guestbook } from "./Guestbook";
 export { default as ArtistManagement } from "./ArtistManagement";

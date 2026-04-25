@@ -183,7 +183,13 @@ const EngineeringArchive = () => {
           <ArchiveEntry key={project.id} project={project} index={i} />
         ))}
 
-        <Ornament className="mt-8 self-center" />
+        <div className="mt-8 flex justify-center">
+          <Button variant="secondary" size="sm" corners href="/engineering/resume">
+            view résumé
+          </Button>
+        </div>
+
+        <Ornament className="mt-6 self-center" />
       </div>
     </FadeIn>
   );

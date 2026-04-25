@@ -81,7 +81,7 @@ const SiteThumbnail = ({ project, onClick }) => {
 
 // ── Mock data (replace with API fetch once ready) ─────────────────────────────
 
-const MOCK_PROJECTS = {
+export const MOCK_PROJECTS = {
   "dragonflight": {
     id:          "dragonflight",
     eyebrow:     "software engineering ➺ the archive ➺ dragonflight",
@@ -90,6 +90,25 @@ const MOCK_PROJECTS = {
     link:        "https://worldofwarcraft.blizzard.com/dragonflight",
     previewSrc:  "/preserved/dragonflight/index.html",
     description: "Official promotional website for World of Warcraft: Dragonflight. Built season pages, expansion landing experiences, and feature showcases. Primary engineer on ongoing iteration cycles with PM and design stakeholders.",
+    role:        "Front End Engineer · primary engineer",
+    topTags:     [{ label: "Blizzard", theme: "blizzard" }],
+    tags:        [
+      { label: "Express",     theme: null },
+      { label: "Lit Element", theme: null },
+      { label: "Node.js",     theme: null },
+      { label: "Pug",         theme: null },
+      { label: "SCSS",        theme: null },
+    ],
+  },
+
+  "wotlk": {
+    id:          "wotlk",
+    eyebrow:     "software engineering ➺ the archive ➺ wrath of the lich king",
+    title:       "WoW Classic: Wrath of the Lich King",
+    year:        "2022",
+    link:        "https://wowclassic.blizzard.com/en-us/",
+    previewSrc:  "/preserved/wotlk/index.html",
+    description: "Promotional landing page for World of Warcraft Classic: Wrath of the Lich King. Built feature sections, media galleries, and edition comparison layouts. Worked directly with PM and design on launch timing and content iteration.",
     role:        "Front End Engineer · primary engineer",
     topTags:     [{ label: "Blizzard", theme: "blizzard" }],
     tags:        [
@@ -183,7 +202,12 @@ const ProjectDetailCard = ({ project }) => {
 
       {/* actions */}
       <div className="flex flex-col gap-2">
-        <Button variant="secondary" href="/engineering/archive">
+        {project.previewSrc && (
+          <Button size="sm" corners variant="primary" href={`/engineering/archive/${project.id}/raw`}>
+            ↗ Visit Full Site
+          </Button>
+        )}
+        <Button size="sm" corners={true} variant="secondary" href="/engineering/archive">
           ← Back to Archive
         </Button>
       </div>
