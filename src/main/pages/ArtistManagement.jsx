@@ -36,7 +36,7 @@ const ArtistCard = ({ artist }) => (
         <span className="font-alagard text-[18px]" style={{ color: "var(--ornament-glyph)" }}>✿</span>
       </div>
 
-      <p className="font-alkhemikal text-[10px] tracking-[0.14em] uppercase mb-2" style={{ color: "var(--text-nav-inactive)" }}>
+      <p className="font-alkhemikal text-[10px] tracking-[0.2em] uppercase mb-2" style={{ color: "var(--text-nav-inactive)" }}>
         {`${artist.primary_genre} · ${artist.location}`}
       </p>
 

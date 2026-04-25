@@ -76,7 +76,7 @@ const ProjectDetailCard = ({ project }) => {
       {project.role && (
         <div className="mb-4">
           <p
-            className="font-alkhemikal text-[8px] tracking-[0.2em] uppercase mb-1"
+            className="font-alkhemikal text-[10px] tracking-[0.2em] uppercase mb-1"
             style={{ color: "var(--text-nav-inactive)" }}
           >
             Role
@@ -94,14 +94,14 @@ const ProjectDetailCard = ({ project }) => {
       {sortedTags.length > 0 && (
         <div className="mb-6">
           <p
-            className="font-alkhemikal text-[8px] tracking-[0.2em] uppercase mb-2"
+            className="font-alkhemikal text-[10px] tracking-[0.2em] uppercase mb-2"
             style={{ color: "var(--text-nav-inactive)" }}
           >
             Stack
           </p>
           <div className="flex gap-1 flex-wrap">
             {sortedTags.map(t => (
-              <Tag key={t.label} theme={t.theme} size="xs" variant="dim">{t.label}</Tag>
+              <Tag key={t.label} theme={t.theme} size="xs" variant="lit">{t.label}</Tag>
             ))}
           </div>
         </div>

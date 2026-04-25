@@ -18,7 +18,7 @@ const CardIcon = ({ icon, badge, title }) => {
   };
   if (badge) return (
     <div style={base}>
-      <span className="font-alkhemikal text-[8px] tracking-[0.1em] uppercase" style={{ color: "var(--text-nav-inactive)" }}>
+      <span className="font-alkhemikal text-[8px] tracking-[0.2em] uppercase" style={{ color: "var(--text-nav-inactive)" }}>
         {badge}
       </span>
     </div>
@@ -53,9 +53,11 @@ const useIsMobile = () => {
 
 // ── Featured card (large, left column) ───────────────────────────────────────
 
+const isExternal = (href) => /^https?:\/\//.test(href);
+
 const CardLink = React.forwardRef(({ href, children, className, style }, ref) =>
   href
-    ? <a ref={ref} href={href} target="_blank" rel="noreferrer" className={className} style={{ ...style, textDecoration: "none" }}>{children}</a>
+    ? <a ref={ref} href={href} {...(isExternal(href) ? { target: "_blank", rel: "noreferrer" } : {})} className={className} style={{ ...style, textDecoration: "none" }}>{children}</a>
     : <div ref={ref} className={className} style={style}>{children}</div>
 );
 
@@ -93,7 +95,7 @@ const FeaturedCard = ({ project }) => {
     <div>
       {(project.eyebrow || project.year) && (
         <p
-          className="font-alkhemikal text-[10px] tracking-[0.18em] uppercase mb-1"
+          className="font-alkhemikal text-[10px] tracking-[0.2em] uppercase mb-1"
           style={{ color: "var(--text-nav-inactive)" }}
         >
           {project.eyebrow && project.year
@@ -224,7 +226,7 @@ const WideCard = ({ project }) => {
       <div className="flex flex-col gap-1 mt-auto">
         {(project.eyebrow || project.year) && (
           <p
-            className="font-alkhemikal text-[8px] tracking-[0.18em] uppercase"
+            className="font-alkhemikal text-[8px] tracking-[0.2em] uppercase"
             style={{ color: "var(--text-nav-inactive)" }}
           >
             {project.eyebrow && project.year

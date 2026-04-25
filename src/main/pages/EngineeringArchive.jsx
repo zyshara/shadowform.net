@@ -80,12 +80,13 @@ const ArchiveEntry = ({ project, index }) => {
     </div>
   );
 
+  const external = project.link && /^https?:\/\//.test(project.link);
+
   return project.link ? (
     <a
       ref={ref}
       href={project.link}
-      target="_blank"
-      rel="noreferrer"
+      {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
       className={`dev-archive-entry block${active ? " dev-archive-entry--active" : ""}`}
       style={{ textDecoration: "none" }}
     >
