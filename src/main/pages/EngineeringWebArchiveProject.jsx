@@ -1,4 +1,4 @@
-// src/main/pages/EngineeringProject.jsx
+// src/main/pages/EngineeringWebArchiveProject.jsx
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Tag from "@/components/Tag";
@@ -162,23 +162,6 @@ const ProjectDetailCard = ({ project }) => {
 
       <div style={{ borderTop: "1px solid var(--border)", marginBottom: 16 }} />
 
-      {/* role */}
-      {project.role && (
-        <div className="mb-4">
-          <p
-            className="font-alkhemikal text-[10px] tracking-[0.2em] uppercase mb-1"
-            style={{ color: "var(--text-nav-inactive)" }}
-          >
-            Role
-          </p>
-          <p
-            className="font-fell italic text-[13px] leading-[1.6]"
-            style={{ color: "var(--text-body)" }}
-          >
-            {project.role}
-          </p>
-        </div>
-      )}
 
       {/* stack */}
       {sortedTags.length > 0 && (
@@ -217,7 +200,7 @@ const ProjectDetailCard = ({ project }) => {
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
-const EngineeringProject = () => {
+const EngineeringWebArchiveProject = () => {
   const { slug }   = useParams();
   const project    = MOCK_PROJECTS[slug];
   const mobile     = useIsMobile();
@@ -311,4 +294,4 @@ const EngineeringProject = () => {
   );
 };
 
-export default EngineeringProject;
+export default EngineeringWebArchiveProject;

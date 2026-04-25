@@ -1,13 +1,13 @@
-// src/main/pages/EngineeringProjectRaw.jsx
+// src/main/pages/EngineeringWebArchiveProjectRaw.jsx
 // Full-screen preserved site viewer — no app chrome, just the site.
 // Route: /engineering/archive/:slug/raw
 
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import cherry_blossom from "@shared/assets/images/cherry_blossom.png";
-import { MOCK_PROJECTS } from "./EngineeringProject";
+import { MOCK_PROJECTS } from "./EngineeringWebArchiveProject";
 
-const EngineeringProjectRaw = () => {
+const EngineeringWebArchiveProjectRaw = () => {
   const { slug }        = useParams();
   const navigate        = useNavigate();
   const project         = MOCK_PROJECTS[slug];
@@ -136,4 +136,4 @@ const EngineeringProjectRaw = () => {
   );
 };
 
-export default EngineeringProjectRaw;
+export default EngineeringWebArchiveProjectRaw;

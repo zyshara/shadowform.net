@@ -1,7 +1,6 @@
 // src/main/pages/EngineeringArchive.jsx
 import React from "react";
 import Tag from "@/components/Tag";
-import Button from "@/components/Button";
 import Header from "@/components/Header";
 import Ornament from "@/components/Ornament";
 import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
@@ -182,12 +181,6 @@ const EngineeringArchive = () => {
         {entries.map((project, i) => (
           <ArchiveEntry key={project.id} project={project} index={i} />
         ))}
-
-        <div className="mt-8 flex justify-center">
-          <Button variant="secondary" size="sm" corners href="/engineering/resume">
-            view résumé
-          </Button>
-        </div>
 
         <Ornament className="mt-6 self-center" />
       </div>
