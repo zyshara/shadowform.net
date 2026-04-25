@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 
 const PageTransition = ({ children }) => {
   const { pathname } = useLocation();
-  const isLeftAligned = pathname === "/engineering" || pathname.startsWith("/engineering/") || pathname === "/guestbook";
+  const isLeftAligned = pathname === "/engineering" || pathname === "/engineering/archive" || pathname === "/guestbook";
 
   return (
     <motion.div

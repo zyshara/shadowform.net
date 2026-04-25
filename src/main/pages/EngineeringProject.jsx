@@ -3,6 +3,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import Tag from "@/components/Tag";
 import Button from "@/components/Button";
+import Header from "@/components/Header";
 import Ornament from "@/components/Ornament";
 import PreservedSite from "@/components/PreservedSite";
 import LoadingScreen, { FadeIn } from "@/components/LoadingScreen";
@@ -12,8 +13,8 @@ import LoadingScreen, { FadeIn } from "@/components/LoadingScreen";
 const MOCK_PROJECTS = {
   "dragonflight": {
     id:          "dragonflight",
-    eyebrow:     "Software Engineering",
-    title:       "Dragonflight Site",
+    eyebrow:     "software engineering ➺ the archive ➺ dragonflight",
+    title:       "World of Warcraft: Dragonflight Site",
     year:        "2022 ➺ 2024",
     link:        "https://worldofwarcraft.blizzard.com/dragonflight",
     previewSrc:  "/preserved/dragonflight/index.html",
@@ -43,30 +44,16 @@ const ProjectDetailCard = ({ project }) => {
       className="flex flex-col p-6 rounded-[2px] border h-full"
       style={{ background: "var(--bg-ticker)", borderColor: "var(--border-soft)" }}
     >
-      {/* eyebrow */}
-      <p
-        className="font-alkhemikal text-[9px] tracking-[0.2em] uppercase mb-2"
-        style={{ color: "var(--text-nav-inactive)" }}
-      >
-        // {project.eyebrow}
-      </p>
-
-      {/* title */}
-      <h1
-        className="font-alagard tracking-[0.5px] leading-tight mb-3"
-        style={{ fontSize: 30, color: "var(--text-heading)" }}
-      >
-        {project.title}
-      </h1>
-
       {/* top tags + year */}
-      <div className="flex items-center gap-2 flex-wrap mb-4">
-        {project.topTags?.map(t => (
-          <Tag key={t.label} theme={t.theme} variant="lit">{t.label}</Tag>
-        ))}
+      <div className="flex items-center justify-between gap-2 mb-4">
+        <div className="flex items-center gap-1 flex-wrap">
+          {project.topTags?.map(t => (
+            <Tag key={t.label} theme={t.theme} size="xxs" variant="lit">{t.label}</Tag>
+          ))}
+        </div>
         {project.year && (
           <span
-            className="font-alkhemikal text-[9px] tracking-[0.15em] uppercase"
+            className="font-alkhemikal text-[10px] tracking-[0.15em] uppercase flex-shrink-0"
             style={{ color: "var(--text-nav-inactive)" }}
           >
             {project.year}
@@ -74,15 +61,14 @@ const ProjectDetailCard = ({ project }) => {
         )}
       </div>
 
-      <div style={{ borderTop: "1px solid var(--border)", marginBottom: 16 }} />
-
-      {/* description */}
-      <p
-        className="font-fell italic text-[13px] leading-[1.75] mb-5"
-        style={{ color: "var(--text-body)" }}
-      >
-        {project.description}
-      </p>
+      {/* header */}
+      <div className="mb-5">
+        <Header
+          eyebrow={project.eyebrow}
+          title={project.title}
+          description={project.description}
+        />
+      </div>
 
       <div style={{ borderTop: "1px solid var(--border)", marginBottom: 16 }} />
 
@@ -115,7 +101,7 @@ const ProjectDetailCard = ({ project }) => {
           </p>
           <div className="flex gap-1 flex-wrap">
             {sortedTags.map(t => (
-              <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>
+              <Tag key={t.label} theme={t.theme} size="xs" variant="dim">{t.label}</Tag>
             ))}
           </div>
         </div>
@@ -126,11 +112,6 @@ const ProjectDetailCard = ({ project }) => {
 
       {/* actions */}
       <div className="flex flex-col gap-2">
-        {project.link && (
-          <Button variant="primary" href={project.link}>
-            ↗ Visit Live Site
-          </Button>
-        )}
         <Button variant="secondary" href="/engineering/archive">
           ← Back to Archive
         </Button>
@@ -161,7 +142,7 @@ const EngineeringProject = () => {
   return (
     <FadeIn className="flex flex-col w-full" style={{ background: "var(--bg)" }}>
       <style>{`
-        @media (max-width: 768px) {
+        @media (max-width: 1280px) {
           .eng-project-grid { grid-template-columns: minmax(0, 1fr) !important; }
         }
       `}</style>
@@ -172,7 +153,7 @@ const EngineeringProject = () => {
         {/* CSS grid guarantees definite column widths on first paint — flex-1 does not */}
         <div
           className="eng-project-grid grid gap-[10px]"
-          style={{ gridTemplateColumns: "minmax(0, 360px) minmax(0, 1fr)" }}
+          style={{ gridTemplateColumns: "minmax(0, 480px) minmax(0, 1fr)" }}
         >
           {/* left: project detail */}
           <div>

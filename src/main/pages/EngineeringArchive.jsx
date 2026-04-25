@@ -5,11 +5,13 @@ import Button from "@/components/Button";
 import Header from "@/components/Header";
 import Ornament from "@/components/Ornament";
 import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
+import { useCardInView } from "@/hooks/useCardInView";
 
 // ── Archive entry row ─────────────────────────────────────────────────────────
 
 const ArchiveEntry = ({ project, index }) => {
   const num = String(index + 1).padStart(2, "0");
+  const { ref, active } = useCardInView(project.id ?? index);
 
   const sortedTags = [...(project.tags ?? [])].sort((a, b) =>
     a.label.localeCompare(b.label)
@@ -24,7 +26,7 @@ const ArchiveEntry = ({ project, index }) => {
       {project.year && (
         <div className="flex justify-end mb-1">
           <span
-            className="font-alkhemikal text-[9px] tracking-[0.15em] uppercase"
+            className="font-alkhemikal text-[10px] tracking-[0.15em] uppercase"
             style={{ color: "var(--text-nav-inactive)" }}
           >
             {project.year}
@@ -80,16 +82,17 @@ const ArchiveEntry = ({ project, index }) => {
 
   return project.link ? (
     <a
+      ref={ref}
       href={project.link}
       target="_blank"
       rel="noreferrer"
-      className="dev-archive-entry block"
+      className={`dev-archive-entry block${active ? " dev-archive-entry--active" : ""}`}
       style={{ textDecoration: "none" }}
     >
       {inner}
     </a>
   ) : (
-    <div className="dev-archive-entry">{inner}</div>
+    <div ref={ref} className={`dev-archive-entry${active ? " dev-archive-entry--active" : ""}`}>{inner}</div>
   );
 };
 
@@ -113,12 +116,18 @@ const EngineeringArchive = () => {
     <FadeIn className="flex flex-col min-h-full max-w-[680px]" style={{ background: "var(--bg)" }}>
       <style>{`
         .dev-archive-entry {
-          transition: background 150ms ease-out;
+          transition: background 150ms linear;
+          cursor: pointer;
         }
-        .dev-archive-entry:hover {
+        .dev-archive-entry:hover,
+        .dev-archive-entry--active {
           background: var(--bg-ticker);
         }
-        .dev-archive-entry:hover h2 {
+        .dev-archive-entry h2 {
+          transition: filter 150ms ease-out;
+        }
+        .dev-archive-entry:hover h2,
+        .dev-archive-entry--active h2 {
           filter: drop-shadow(0 0 4px var(--pink-glow)) drop-shadow(0 0 6px var(--pink-glow));
         }
         .dev-archive-entry .dev-bottom-tags span,
@@ -126,7 +135,9 @@ const EngineeringArchive = () => {
           transition: color 150ms ease-out, border-color 150ms ease-out, background 150ms ease-out;
         }
         .dev-archive-entry:hover .dev-bottom-tags span,
-        .dev-archive-entry:hover .dev-bottom-tags button {
+        .dev-archive-entry:hover .dev-bottom-tags button,
+        .dev-archive-entry--active .dev-bottom-tags span,
+        .dev-archive-entry--active .dev-bottom-tags button {
           color: var(--tag-lit-text) !important;
           border-color: var(--tag-lit-border) !important;
           background: var(--tag-lit-bg) !important;

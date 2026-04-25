@@ -1,5 +1,6 @@
 // src/main/pages/Engineering.jsx
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useCardInView } from "@/hooks/useCardInView";
 import Tag from "@/components/Tag";
 import Button from "@/components/Button";
 import Ornament from "@/components/Ornament";
@@ -49,56 +50,6 @@ const useIsMobile = () => {
   return mobile;
 };
 
-// ── Scroll-based card highlight (mobile only, one card active at a time) ──────
-
-const _cardRegistry = new Map(); // id -> { setActive, getEl }
-let _activeCardId = null;
-
-const _activateCard = (id) => {
-  if (_activeCardId === id) return;
-  if (_activeCardId !== null) _cardRegistry.get(_activeCardId)?.setActive(false);
-  _activeCardId = id;
-  _cardRegistry.get(id)?.setActive(true);
-};
-
-// Always picks the card whose top most recently passed the viewport center:
-// top <= centerY, and as close to centerY as possible (highest value).
-// This means no gaps — the moment card B's top passes center it takes over from A.
-const _checkScroll = () => {
-  if (!window.matchMedia("(max-width: 640px)").matches) return;
-  const centerY = window.innerHeight * 0.5;
-  let bestId = null;
-  let bestTop = -Infinity;
-  for (const [id, { getEl }] of _cardRegistry) {
-    const el = getEl();
-    if (!el) continue;
-    const { top } = el.getBoundingClientRect();
-    if (top <= centerY && top > bestTop) {
-      bestTop = top;
-      bestId = id;
-    }
-  }
-  if (bestId) _activateCard(bestId);
-};
-
-const useCardInView = (id) => {
-  const ref = useRef(null);
-  const [active, setActive] = useState(false);
-
-  useEffect(() => {
-    _cardRegistry.set(id, { setActive, getEl: () => ref.current });
-    // Same fn reference — addEventListener won't register duplicates
-    window.addEventListener("scroll", _checkScroll, { passive: true });
-    _checkScroll();
-    return () => {
-      _cardRegistry.delete(id);
-      if (_activeCardId === id) { _activeCardId = null; setActive(false); }
-      if (_cardRegistry.size === 0) window.removeEventListener("scroll", _checkScroll);
-    };
-  }, [id]);
-
-  return { ref, active };
-};
 
 // ── Featured card (large, left column) ───────────────────────────────────────
 
