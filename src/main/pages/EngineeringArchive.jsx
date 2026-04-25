@@ -18,17 +18,29 @@ const ArchiveEntry = ({ project, index }) => {
   const inner = (
     <div
       className="py-5"
-      style={{ borderBottom: "1px solid var(--border)" }}
+      style={{ borderBottom: "1px solid var(--border)", paddingRight: "calc(var(--spacing) * 3)" }}
     >
-      {/* top row: number + title + topTags + year */}
-      <div className="flex items-baseline gap-3">
+      {/* row 1: year right-aligned */}
+      {project.year && (
+        <div className="flex justify-end mb-1">
+          <span
+            className="font-alkhemikal text-[9px] tracking-[0.15em] uppercase"
+            style={{ color: "var(--text-nav-inactive)" }}
+          >
+            {project.year}
+          </span>
+        </div>
+      )}
+
+      {/* row 2: number + title + topTags */}
+      <div className="flex items-start gap-3">
         <span
           className="font-alagard flex-shrink-0 w-7 text-right"
-          style={{ fontSize: 13, color: "var(--text-dim)", opacity: 0.4 }}
+          style={{ fontSize: 13, color: "var(--text-nav-inactive)" }}
         >
           {num}
         </span>
-        <div className="flex-1 flex items-baseline gap-2 flex-wrap min-w-0 items-center">
+        <div className="flex-1 flex items-start justify-between gap-2 min-w-0">
           <h2
             className="font-alagard tracking-[0.5px] leading-tight"
             style={{ fontSize: 18, color: "var(--text-heading)" }}
@@ -36,21 +48,13 @@ const ArchiveEntry = ({ project, index }) => {
             {project.title}
           </h2>
           {project.topTags?.length > 0 && (
-            <div className="flex gap-1 flex-wrap">
+            <div className="flex gap-1 flex-wrap justify-end flex-shrink-0">
               {project.topTags.map(t => (
                 <Tag key={t.label} theme={t.theme} size="xxs" variant="lit">{t.label}</Tag>
               ))}
             </div>
           )}
         </div>
-        {project.year && (
-          <span
-            className="font-alkhemikal text-[9px] tracking-[0.15em] uppercase flex-shrink-0"
-            style={{ color: "var(--text-nav-inactive)" }}
-          >
-            {project.year}
-          </span>
-        )}
       </div>
 
       {/* description */}
@@ -134,9 +138,8 @@ const EngineeringArchive = () => {
         style={{ maxWidth: 880 }}
       >
         {/* header */}
-        <div className="flex items-start justify-between gap-4 mb-6">
-          <div>
-            {header ? (
+        <div className="mb-6">
+          {header ? (
               <Header
                 eyebrow="software engineering ➺ the archive"
                 title="releases & relics"
@@ -158,10 +161,6 @@ const EngineeringArchive = () => {
                 </h1>
               </>
             )}
-          </div>
-          <Button variant="secondary" href="/engineering/resume" disabled>
-            résumé →
-          </Button>
         </div>
 
         {/* divider */}
