@@ -5,6 +5,7 @@ import Ornament from "@/components/Ornament";
 import Header from "@/components/Header";
 import Tag from "@/components/Tag";
 import Button from "@/components/Button";
+import Modal from "@/components/Modal";
 import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
 
 // ── Drawing Modal ─────────────────────────────────────────────────────────────
@@ -17,13 +18,6 @@ const DrawModal = ({ onClose, onAttach }) => {
   const [weight,   setWeightState] = useState(3);
   const [mode,     setModeState]   = useState("draw"); // "draw" | "erase"
   const [canUndo,  setCanUndo]     = useState(false);
-
-  // Close on Escape
-  useEffect(() => {
-    const handler = (e) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [onClose]);
 
   useEffect(() => {
     let destroyed = false;
@@ -127,17 +121,13 @@ const undo = () => {
   const WEIGHTS = [{ v:2, label:"·" }, { v:4, label:"●" }, { v:9, label:"●●" }];
 
   return (
-    <>
+    <Modal onClose={onClose} maxWidth={500}>
       <style>{`
-        .modal-overlay{position:fixed;inset:0;background:rgba(6,3,9,.88);z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;}
-        .draw-modal{background:var(--bg);border:1px solid var(--border-soft);border-radius:4px;width:100%;max-width:500px;display:flex;flex-direction:column;overflow:hidden;}
         .draw-modal-bar{background:var(--bg-ticker);border-bottom:1px solid var(--border-soft);padding:6px 12px;display:flex;align-items:center;justify-content:space-between;}
         .draw-canvas{width:100%;height:280px;display:block;background:var(--bg-sidebar);cursor:crosshair;touch-action:none;}
         .draw-modal-ft{background:var(--bg-ticker);border-top:1px solid var(--border-soft);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
       `}</style>
-      <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-        <div className="draw-modal">
-          <div className="draw-modal-bar">
+      <div className="draw-modal-bar">
             <span className="font-alkhemikal text-[8px] tracking-[0.2em] uppercase" style={{ color:"var(--pink-text)" }}>✦ draw something</span>
             <button onClick={onClose} style={{ color:"var(--text-nav-inactive)", background:"none", border:"none", cursor:"pointer", fontFamily:"monospace", fontSize:14 }}>✕</button>
           </div>
@@ -193,38 +183,23 @@ const undo = () => {
               </button>
             </div>
           </div>
-        </div>
-      </div>
-    </>
+    </Modal>
   );
 };
 
 // ── Drawing Lightbox (desktop only) ──────────────────────────────────────────
-const DrawingLightbox = ({ src, onClose }) => {
-  useEffect(() => {
-    const handler = (e) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [onClose]);
-
-  return (
-  <>
-    <style>{`
-      .lightbox-overlay{position:fixed;inset:0;background:rgba(6,3,9,.92);z-index:50;display:flex;align-items:center;justify-content:center;padding:40px;cursor:pointer;}
-      .lightbox-inner{max-width:600px;width:100%;display:flex;flex-direction:column;gap:12px;cursor:default;}
-      .lightbox-img{width:100%;border-radius:2px;border:1px solid var(--border-soft);}
-    `}</style>
-    <div className="lightbox-overlay" onClick={onClose}>
-      <div className="lightbox-inner" onClick={(e) => e.stopPropagation()}>
-        <div style={{ display:"flex", justifyContent:"flex-end" }}>
-          <button onClick={onClose} style={{ color:"var(--text-nav-inactive)", background:"none", border:"none", cursor:"pointer", fontFamily:"monospace", fontSize:14 }}>✕</button>
-        </div>
-        <img src={src} alt="drawing" className="lightbox-img" style={{ background:"var(--bg-sidebar)" }} />
-      </div>
+const DrawingLightbox = ({ src, onClose }) => (
+  <Modal onClose={onClose} maxWidth={600}>
+    <div style={{ display:"flex", justifyContent:"flex-end", padding:"6px 10px", background:"var(--bg-ticker)", borderBottom:"1px solid var(--border-soft)" }}>
+      <button onClick={onClose} style={{ color:"var(--text-nav-inactive)", background:"none", border:"none", cursor:"pointer", fontFamily:"monospace", fontSize:14 }}>✕</button>
     </div>
-  </>
-  );
-};
+    <img
+      src={src}
+      alt="drawing"
+      style={{ width:"100%", display:"block", borderRadius:0, background:"var(--bg-sidebar)", border:"none" }}
+    />
+  </Modal>
+);
 
 // ── Entry Card ────────────────────────────────────────────────────────────────
 const EntryCard = ({ entry }) => {

@@ -1,12 +1,83 @@
 // src/main/pages/EngineeringProject.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Tag from "@/components/Tag";
 import Button from "@/components/Button";
 import Header from "@/components/Header";
+import Modal from "@/components/Modal";
 import Ornament from "@/components/Ornament";
 import PreservedSite from "@/components/PreservedSite";
+import MobileSitePreview from "@/components/MobileSitePreview";
 import LoadingScreen, { FadeIn } from "@/components/LoadingScreen";
+
+const useIsMobile = () => {
+  const [mobile, setMobile] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)");
+    const handler = (e) => setMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return mobile;
+};
+
+// ── Site thumbnail (mobile — opens modal) ─────────────────────────────────────
+
+const SiteThumbnail = ({ project, onClick }) => {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position:    "relative",
+        aspectRatio: "16/9",
+        borderRadius: 2,
+        border:      `1px solid ${hovered ? "var(--tag-lit-border)" : "var(--border-soft)"}`,
+        background:  "var(--bg-ticker)",
+        overflow:    "hidden",
+        cursor:      "pointer",
+        transition:  "border-color 150ms ease-out",
+      }}
+    >
+      {project.thumbnail ? (
+        <img
+          src={project.thumbnail}
+          alt={project.title}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+        />
+      ) : (
+        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Ornament />
+        </div>
+      )}
+
+      {/* hover overlay */}
+      <div style={{
+        position:        "absolute",
+        inset:           0,
+        background:      hovered ? "rgba(6,3,9,0.72)" : "rgba(6,3,9,0.4)",
+        display:         "flex",
+        alignItems:      "center",
+        justifyContent:  "center",
+        transition:      "background 150ms ease-out",
+      }}>
+        <span
+          className="font-alkhemikal text-[10px] tracking-[0.2em] uppercase"
+          style={{
+            color:      hovered ? "var(--text-heading)" : "var(--text-nav-inactive)",
+            transition: "color 150ms ease-out",
+          }}
+        >
+          ↗ view site
+        </span>
+      </div>
+    </div>
+  );
+};
 
 // ── Mock data (replace with API fetch once ready) ─────────────────────────────
 
@@ -123,8 +194,10 @@ const ProjectDetailCard = ({ project }) => {
 // ── Page ─────────────────────────────────────────────────────────────────────
 
 const EngineeringProject = () => {
-  const { slug } = useParams();
-  const project = MOCK_PROJECTS[slug];
+  const { slug }   = useParams();
+  const project    = MOCK_PROJECTS[slug];
+  const mobile     = useIsMobile();
+  const [siteOpen, setSiteOpen] = useState(false);
 
   if (!project) {
     return (
@@ -163,10 +236,40 @@ const EngineeringProject = () => {
           {/* right: preserved site preview */}
           <div>
             {project.previewSrc ? (
-              <PreservedSite
-                src={project.previewSrc}
-                style={{ borderRadius: 2, border: "1px solid var(--border-soft)" }}
-              />
+              mobile ? (
+                <>
+                  {siteOpen && (
+                    <Modal onClose={() => setSiteOpen(false)} maxWidth={420}>
+                      {/* title bar */}
+                      <div style={{
+                        display: "flex", alignItems: "center", justifyContent: "space-between",
+                        padding: "6px 12px",
+                        background: "var(--bg-ticker)",
+                        borderBottom: "1px solid var(--border-soft)",
+                        flexShrink: 0,
+                      }}>
+                        <span
+                          className="font-alkhemikal text-[9px] tracking-[0.2em] uppercase"
+                          style={{ color: "var(--text-nav-inactive)" }}
+                        >
+                          // {project.title}
+                        </span>
+                        <button
+                          onClick={() => setSiteOpen(false)}
+                          style={{ color: "var(--text-nav-inactive)", background: "none", border: "none", cursor: "pointer", fontFamily: "monospace", fontSize: 14 }}
+                        >✕</button>
+                      </div>
+                      <MobileSitePreview src={project.previewSrc} />
+                    </Modal>
+                  )}
+                  <SiteThumbnail project={project} onClick={() => setSiteOpen(true)} />
+                </>
+              ) : (
+                <PreservedSite
+                  src={project.previewSrc}
+                  style={{ borderRadius: 2, border: "1px solid var(--border-soft)" }}
+                />
+              )
             ) : (
               <div
                 className="flex items-center justify-center w-full rounded-[2px] border"
