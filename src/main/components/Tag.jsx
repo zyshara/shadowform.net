@@ -60,9 +60,14 @@ const Tag = ({
 
   // Themed tags: CSS class owns all color/border/bg — no inline style override.
   // Plain tags: dim at rest when interactive, lit on hover; otherwise use `variant`.
-  const colorKey = isInteractive ? (hovered ? "lit" : "dim") : (variant === "dim" ? "dim" : "lit");
+  const colorKey = (hovered && isInteractive) ? "lit" : (variant === "dim" ? "dim" : "lit");
   const style    = theme
-    ? {}
+    ? {
+        opacity:     colorKey === "dim" ? 0.45 : 1,
+        borderColor: colorKey === "dim" ? "var(--tag-dim-border)" : undefined,
+        background:  colorKey === "dim" ? "var(--tag-dim-bg)"     : undefined,
+        transition:  "opacity 150ms, border-color 150ms, background 150ms",
+      }
     : { color: COLORS[colorKey].color, borderColor: COLORS[colorKey].borderColor, background: COLORS[colorKey].background };
 
   const cls = [

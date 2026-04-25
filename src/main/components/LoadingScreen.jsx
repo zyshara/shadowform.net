@@ -54,7 +54,7 @@ export function usePageLoad(fetchFn, { minLoadMs = 500, fadeDuration = 400 } = {
 //   if (loading) return <LoadingScreen fading={fading} />;
 //
 const LoadingScreen = ({ fading = false, fadeDuration = 400 }) => (
-  <div className="flex flex-col min-h-full" style={{ background: "var(--bg)" }}>
+  <div className="flex flex-col min-h-full w-full" style={{ background: "var(--bg)" }}>
     <div
       className="flex-1 flex items-center justify-center"
       style={{

@@ -28,7 +28,7 @@ const ArchiveEntry = ({ project, index }) => {
         >
           {num}
         </span>
-        <div className="flex-1 flex items-baseline gap-2 flex-wrap min-w-0">
+        <div className="flex-1 flex items-baseline gap-2 flex-wrap min-w-0 items-center">
           <h2
             className="font-alagard tracking-[0.5px] leading-tight"
             style={{ fontSize: 18, color: "var(--text-heading)" }}
@@ -38,7 +38,7 @@ const ArchiveEntry = ({ project, index }) => {
           {project.topTags?.length > 0 && (
             <div className="flex gap-1 flex-wrap">
               {project.topTags.map(t => (
-                <Tag key={t.label} theme={t.theme} variant="lit">{t.label}</Tag>
+                <Tag key={t.label} theme={t.theme} size="xxs" variant="lit">{t.label}</Tag>
               ))}
             </div>
           )}

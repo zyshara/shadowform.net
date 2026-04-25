@@ -18,6 +18,13 @@ const DrawModal = ({ onClose, onAttach }) => {
   const [mode,     setModeState]   = useState("draw"); // "draw" | "erase"
   const [canUndo,  setCanUndo]     = useState(false);
 
+  // Close on Escape
+  useEffect(() => {
+    const handler = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
   useEffect(() => {
     let destroyed = false;
     (async () => {
@@ -193,7 +200,14 @@ const undo = () => {
 };
 
 // ── Drawing Lightbox (desktop only) ──────────────────────────────────────────
-const DrawingLightbox = ({ src, onClose }) => (
+const DrawingLightbox = ({ src, onClose }) => {
+  useEffect(() => {
+    const handler = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  return (
   <>
     <style>{`
       .lightbox-overlay{position:fixed;inset:0;background:rgba(6,3,9,.92);z-index:50;display:flex;align-items:center;justify-content:center;padding:40px;cursor:pointer;}
@@ -209,12 +223,13 @@ const DrawingLightbox = ({ src, onClose }) => (
       </div>
     </div>
   </>
-);
+  );
+};
 
 // ── Entry Card ────────────────────────────────────────────────────────────────
 const EntryCard = ({ entry }) => {
-  const [lightbox, setLightbox] = useState(false);
-  const isDesktop = typeof window !== "undefined" && window.innerWidth >= 640;
+  const [lightbox,    setLightbox]    = useState(false);
+  const [thumbHover,  setThumbHover]  = useState(false);
 
   return (
     <>
@@ -228,15 +243,24 @@ const EntryCard = ({ entry }) => {
       >
         {/* desktop thumbnail — clickable to open lightbox */}
         <div
-          className="hidden sm:flex w-16 h-16 flex-shrink-0 items-center justify-center rounded-[2px] border overflow-hidden"
+          className="hidden sm:flex w-40 h-30 flex-shrink-0 items-center justify-center rounded-[2px] border overflow-hidden"
           style={{
-            background:"var(--bg-sidebar)", borderColor:"var(--border)",
-            cursor: entry.drawing ? "pointer" : "default",
+            background:  "var(--bg-sidebar)",
+            borderColor: entry.drawing && thumbHover ? "var(--tag-lit-border)" : "var(--border)",
+            cursor:      entry.drawing ? "pointer" : "default",
+            transition:  "border-color 150ms ease-out",
           }}
           onClick={() => entry.drawing && setLightbox(true)}
+          onMouseEnter={() => entry.drawing && setThumbHover(true)}
+          onMouseLeave={() => setThumbHover(false)}
         >
           {entry.drawing
-            ? <img src={entry.drawing} alt="doodle" className="w-full h-full object-contain" />
+            ? <img
+                src={entry.drawing}
+                alt="doodle"
+                className="w-full h-full object-contain"
+                style={{ filter: thumbHover ? "brightness(1.15)" : "none", transition: "filter 150ms ease-out" }}
+              />
             : <span className="font-alagard text-[18px]" style={{ color:"var(--ornament-glyph)" }}>✿</span>
           }
         </div>
@@ -370,7 +394,7 @@ const Guestbook = () => {
       )}
 
       <FadeIn className="flex flex-col max-w-600 w-full min-h-full" style={{ background:"var(--bg)" }}>
-        <div className="flex-1 flex flex-col px-10 py-8 max-w-[640px] w-full mx-auto">
+        <div className="flex-1 flex flex-col px-10 py-8 max-w-[640px] w-full">
 
           <Header eyebrow="guestbook" title="sign the book"
             description="leave a message, a drawing, or whatever's on your mind!" />
@@ -443,7 +467,7 @@ const Guestbook = () => {
                 </div>
               ) : (
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <Button variant="secondary" accent="front" className="w-full sm:w-auto justify-center" onClick={() => setShowDraw(true)}>
+                  <Button variant="secondary" corners arrow="right" className="w-full sm:w-auto justify-center" onClick={() => setShowDraw(true)}>
                     open drawing pad
                   </Button>
                   <div className="flex items-center gap-3 sm:flex-none">

@@ -421,10 +421,7 @@ const Engineering = () => {
         }
       `}</style>
 
-      <div
-        className="flex-1 flex flex-col px-8 py-8 w-full mx-auto"
-        style={{ maxWidth: 880 }}
-      >
+      <div className="flex-1 flex flex-col px-8 py-8 w-full mx-auto">
         <Header
           eyebrow={header?.eyebrow}
           title={header?.heading}
