@@ -5,12 +5,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import cherry_blossom from "@shared/assets/images/cherry_blossom.png";
-import { MOCK_PROJECTS } from "./EngineeringWebArchiveProject";
 
 const EngineeringWebArchiveProjectRaw = () => {
   const { slug }        = useParams();
   const navigate        = useNavigate();
-  const project         = MOCK_PROJECTS[slug];
+  const previewSrc      = slug ? `/preserved/${slug}/index.html` : null;
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
   useEffect(() => {
@@ -22,7 +21,7 @@ const EngineeringWebArchiveProjectRaw = () => {
     return () => window.removeEventListener('message', handler);
   }, []);
 
-  if (!project?.previewSrc) {
+  if (!previewSrc) {
     return (
       <div style={{
         display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
@@ -58,7 +57,7 @@ const EngineeringWebArchiveProjectRaw = () => {
         pointerEvents:   lightboxOpen ? "none" : "auto",
         transition:      "opacity 200ms ease-out",
       }}>
-        {/* left: back + title */}
+        {/* left: back button */}
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <button
             onClick={() => navigate(-1)}
@@ -78,19 +77,6 @@ const EngineeringWebArchiveProjectRaw = () => {
           >
             ← back
           </button>
-          <span
-            className="font-alkhemikal text-[9px] tracking-[0.2em] uppercase"
-            style={{
-              color:          "rgba(255,255,255,0.4)",
-              background:     "rgba(6,3,9,0.6)",
-              border:         "1px solid rgba(255,255,255,0.08)",
-              borderRadius:   2,
-              padding:        "5px 10px",
-              backdropFilter: "blur(6px)",
-            }}
-          >
-            {project.title}
-          </span>
         </div>
 
         {/* right: sakura + shadowform.net */}
@@ -98,10 +84,7 @@ const EngineeringWebArchiveProjectRaw = () => {
           display:        "flex",
           flexDirection:  "column",
           alignItems:     "center",
-          //background:     "rgba(6,3,9,0.6)",
-          //border:         "1px solid rgba(255,255,255,0.08)",
           borderRadius:    2,
-          //backdropFilter: "blur(6px)",
           padding:         "0px 10px",
           gap:             4,
           transform:       "scale(1.7)",
@@ -123,8 +106,8 @@ const EngineeringWebArchiveProjectRaw = () => {
 
       {/* full-screen iframe */}
       <iframe
-        src={project.previewSrc}
-        title={project.title}
+        src={previewSrc}
+        title={slug}
         style={{
           width:   "100%",
           height:  "100%",

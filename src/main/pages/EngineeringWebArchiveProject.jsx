@@ -8,7 +8,7 @@ import Modal from "@/components/Modal";
 import Ornament from "@/components/Ornament";
 import PreservedSite from "@/components/PreservedSite";
 import MobileSitePreview from "@/components/MobileSitePreview";
-import LoadingScreen, { FadeIn } from "@/components/LoadingScreen";
+import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
 
 const useIsMobile = () => {
   const [mobile, setMobile] = useState(() =>
@@ -79,47 +79,6 @@ const SiteThumbnail = ({ project, onClick }) => {
   );
 };
 
-// ── Mock data (replace with API fetch once ready) ─────────────────────────────
-
-export const MOCK_PROJECTS = {
-  "dragonflight": {
-    id:          "dragonflight",
-    eyebrow:     "software engineering ➺ the archive ➺ dragonflight",
-    title:       "World of Warcraft: Dragonflight Site",
-    year:        "2022 ➺ 2024",
-    link:        "https://worldofwarcraft.blizzard.com/dragonflight",
-    previewSrc:  "/preserved/dragonflight/index.html",
-    description: "Official promotional website for World of Warcraft: Dragonflight. Built season pages, expansion landing experiences, and feature showcases. Primary engineer on ongoing iteration cycles with PM and design stakeholders.",
-    role:        "Front End Engineer · primary engineer",
-    topTags:     [{ label: "Blizzard", theme: "blizzard" }],
-    tags:        [
-      { label: "Express",     theme: null },
-      { label: "Lit Element", theme: null },
-      { label: "Node.js",     theme: null },
-      { label: "Pug",         theme: null },
-      { label: "SCSS",        theme: null },
-    ],
-  },
-
-  "wotlk": {
-    id:          "wotlk",
-    eyebrow:     "software engineering ➺ the archive ➺ wrath of the lich king",
-    title:       "WoW Classic: Wrath of the Lich King",
-    year:        "2022",
-    link:        "https://wowclassic.blizzard.com/en-us/",
-    previewSrc:  "/preserved/wotlk/index.html",
-    description: "Promotional landing page for World of Warcraft Classic: Wrath of the Lich King. Built feature sections, media galleries, and edition comparison layouts. Worked directly with PM and design on launch timing and content iteration.",
-    role:        "Front End Engineer · primary engineer",
-    topTags:     [{ label: "Blizzard", theme: "blizzard" }],
-    tags:        [
-      { label: "Express",     theme: null },
-      { label: "Lit Element", theme: null },
-      { label: "Node.js",     theme: null },
-      { label: "Pug",         theme: null },
-      { label: "SCSS",        theme: null },
-    ],
-  },
-};
 
 
 // ── Project detail card (left column) ────────────────────────────────────────
@@ -202,9 +161,20 @@ const ProjectDetailCard = ({ project }) => {
 
 const EngineeringWebArchiveProject = () => {
   const { slug }   = useParams();
-  const project    = MOCK_PROJECTS[slug];
   const mobile     = useIsMobile();
   const [siteOpen, setSiteOpen] = useState(false);
+
+  const { data: apiData, error, loading, fading } = usePageLoad(
+    () => fetch(`/api/engineering/archive/${slug}`).then(r => {
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.json();
+    }),
+    { minLoadMs: 300 },
+  );
+
+  if (loading) return <LoadingScreen fading={fading} />;
+
+  const project = apiData?.data ?? null;
 
   if (!project) {
     return (
