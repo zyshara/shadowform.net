@@ -1,0 +1,15 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  focusable="false"
+  stroke="currentColor"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  role="img"
+  fill="currentColor"
+  stroke-width="0"
+  viewBox="0 0 48 48"
+  aria-labelledby="blz-icon-title-onestore"
+>
+  <title id="blz-icon-title-onestore">OneStore</title>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M4 24C4 8.21053 8.21053 4 24 4C39.7895 4 44 8.21053 44 24C44 39.7895 39.7895 44 24 44C8.21053 44 4 39.7895 4 24ZM17.1579 16.6314L24.3509 12.4209C25.579 11.7191 27.1579 12.2454 28.0351 13.4735C28.2105 13.8244 28.386 14.3507 28.386 14.877V33.1226C28.386 34.5261 27.1579 35.7542 25.7544 35.7542C24.3509 35.7542 23.1228 34.5261 23.1228 33.1226V21.0174L25.9298 17.8595L19.7895 21.3683C18.386 22.07 16.807 21.7191 16.1053 20.3156C15.4035 18.9121 15.9298 17.3332 17.1579 16.6314Z"></path>
+</svg>

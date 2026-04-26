@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" focusable="false" stroke="currentColor" stroke-linecap="round"
+    stroke-linejoin="round" role="img" fill="currentColor" stroke-width="0" viewBox="0 0 48 48"
+    aria-labelledby="blz-icon-title-windows">
+    <title id="blz-icon-title-windows">Windows</title>
+    <path d="M6 6H23.0639V23.0632H6V6Z" />
+    <path d="M24.9361 6H42V23.0632H24.9361V6Z" />
+    <path d="M6 24.9368H23.0639V42H6V24.9368Z" />
+    <path d="M24.9361 24.9368H42V42H24.9361V24.9368Z" />
+</svg>

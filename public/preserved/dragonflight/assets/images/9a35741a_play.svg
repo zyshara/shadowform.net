@@ -1,0 +1,13 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  focusable="false"
+  stroke="currentColor"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  role="presentation"
+  fill="currentColor"
+  stroke-width="0"
+  viewBox="0 0 24 24"
+>
+  <path d="M6 5.57345C6 4.3064 7.60353 3.56078 8.77742 4.282L19.2375 10.7086C20.2542 11.3332 20.2542 12.6668 19.2375 13.2914L8.77741 19.718C7.60353 20.4392 6 19.6936 6 18.4266V5.57345Z" />
+</svg>

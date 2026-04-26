@@ -1,0 +1,17 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  focusable="false"
+  stroke="currentColor"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  role="img"
+  fill="currentColor"
+  stroke-width="0"
+  viewBox="0 0 48 48"
+  aria-labelledby="blz-icon-title-twitch"
+>
+  <title id="blz-icon-title-twitch">Twitch</title>
+  <path d="M14.1429 6L7 13.1429V38.8571H15.5714V46L22.7143 38.8571H28.4286L41.2857 26V6H14.1429ZM38.4286 24.5714L32.7143 30.2857H27L22 35.2857V30.2857H15.5714V8.85714H38.4286V24.5714Z"></path>
+  <path d="M34.1429 13.8571H31.2857V22.4286H34.1429V13.8571Z"></path>
+  <path d="M26.2857 13.8571H23.4286V22.4286H26.2857V13.8571Z"></path>
+</svg>

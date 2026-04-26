@@ -1,0 +1,14 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  focusable="false"
+  stroke="currentColor"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  role="presentation"
+  fill="currentColor"
+  stroke-width="0"
+  viewBox="0 0 24 24"
+>
+  <path d="M17.3333 4H15.6667C14.7462 4 14 4.76751 14 5.71429V18.2857C14 19.2325 14.7462 20 15.6667 20H17.3333C18.2538 20 19 19.2325 19 18.2857V5.71429C19 4.76751 18.2538 4 17.3333 4Z" />
+  <path d="M8.33333 4.00001H6.66667C5.74619 4.00001 5 4.76752 5 5.71429V18.2857C5 19.2325 5.74619 20 6.66667 20H8.33333C9.25381 20 10 19.2325 10 18.2857V5.71429C10 4.76752 9.25381 4.00001 8.33333 4.00001Z" />
+</svg>
