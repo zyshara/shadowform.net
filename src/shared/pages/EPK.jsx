@@ -128,7 +128,7 @@ function Hero({ artist }) {
 }
 
 // ── Bio + Stats ───────────────────────────────────────────────────────────────
-function BioSection({ artist }) {
+function BioSection({ artist, portraitUrl }) {
   return (
     <div className="epk-bio-grid">
       <div style={css.card}>
@@ -138,9 +138,23 @@ function BioSection({ artist }) {
         </p>
       </div>
       <div>
+        <div style={{
+          ...css.card,
+          padding: 0,
+          overflow: "hidden",
+          marginBottom: "1.5rem",
+        }}>
+          <img
+            src={portraitUrl}
+            alt={artist.name}
+            style={{ display:"block", width:"100%", aspectRatio:"1 / 1", objectFit:"cover", objectPosition:"center" }}
+          />
+        </div>
         <p style={css.label}>// Stats</p>
         <div className="epk-stats-grid">
-          {artist.stats.map(s => (
+          {artist.stats
+            .filter(s => !["Upcoming Shows", "Total Releases"].includes(s.label))
+            .map(s => (
             <div key={s.label} style={{
               background:"var(--surface)",
               border:"0.5px solid var(--border)",
@@ -459,7 +473,7 @@ export default function EPK({ slug: slugProp }) {
   if (loading) return <div />;
   if (!epk)    return <div />;
 
-  const { artist, featured_tracks, photos_and_media, press, links } = epk;
+  const { artist, portrait_url, featured_tracks, photos_and_media, press, links } = epk;
 
   return (
     <>
@@ -506,7 +520,7 @@ export default function EPK({ slug: slugProp }) {
 
       <div style={{ maxWidth:860, margin:"0 auto", padding:"2rem 1.5rem" }}>
         <Hero artist={artist} />
-        <BioSection artist={artist} />
+        <BioSection artist={artist} portraitUrl={portrait_url} />
         <MusicSection tracks={featured_tracks} />
         <PhotosSection photos={photos_and_media} />
         <PressAndContact press={press} artist={artist} />

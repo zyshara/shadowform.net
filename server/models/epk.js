@@ -37,6 +37,7 @@ export function normalizeEpk(entry) {
 
   return {
     artist:           normalizeArtist(e.artist),
+    portrait_url:     e.portrait?.url ?? null,
     featured_tracks:  (e.featured_tracks  ?? []).map(normalizeFeaturedTrack).filter(Boolean),
     photos_and_media: (e.photos_and_media ?? []).map(normalizePhotoMedia).filter(Boolean),
     press:            (e.press            ?? []).map(normalizePress).filter(Boolean),
