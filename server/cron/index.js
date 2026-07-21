@@ -1,14 +1,26 @@
-import cron from "node-cron";
 import { syncAllArtistStats } from "./syncStats.js";
+import { startNotionCron } from "./notion.js";
+import { startInstagramCron } from "./instagram.js";
 import { logger } from "../lib/logger.js";
 
-// Run daily at 3am
-cron.schedule("0 3 * * *", async () => {
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+async function runSyncAllArtistStats() {
   try {
     await syncAllArtistStats();
   } catch (err) {
     logger.error("[cron] syncStats failed:", err.message);
   }
-});
+}
 
-logger.info("[cron] jobs registered");
+export function startCronJobs() {
+  // Disabled in dev — hits Spotify/Instagram/Songkick on every restart and
+  // gets rate limited fast. Uncomment before deploying to prod.
+  runSyncAllArtistStats();
+  setInterval(runSyncAllArtistStats, ONE_DAY_MS);
+
+  startNotionCron();
+  startInstagramCron();
+
+  logger.info("[cron] jobs registered");
+}

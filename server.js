@@ -2,7 +2,7 @@ import "dotenv/config";
 
 import express from "express";
 import { logger } from "./server/lib/logger.js";
-import { syncAllArtistStats } from "./server/cron/syncStats.js";
+import { startCronJobs } from "./server/cron/index.js";
 import { setupLiveReload } from "./server/dev.js";
 import { sslRedirect, noCacheHtml, stripTrailingSlash } from "./server/middleware/index.js";
 import { registerApiRoutes } from "./server/routes/api.js";
@@ -12,7 +12,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const isDev = process.env.NODE_ENV !== "production";
 
-syncAllArtistStats();
+startCronJobs();
 
 if (isDev) await setupLiveReload(app);
 
