@@ -4,6 +4,8 @@
   --hero-bg:         #060608;
   --hero-grid-line:  rgba(200, 38, 42, 0.14);
   --hero-glow:       rgba(180, 20, 24, 0.32);
+  --hero-title-color:    #fff;
+  --hero-subtitle-color: rgba(255, 255, 255, 0.5);
   --bg:              #0d0d10;
   --text:            #f5f0f0;
   --text-muted:      #7a7a82;

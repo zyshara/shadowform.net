@@ -116,10 +116,10 @@ function Hero({ artist }) {
         <p style={{ ...css.mono, fontSize:11, color: "var(--accent)", letterSpacing:"0.15em", textTransform:"uppercase", marginBottom:8 }}>
           // Artist Press Kit - 2026
         </p>
-        <h1 className="epk-hero-title" style={{ fontFamily:"'Syne', sans-serif", fontWeight:800, color:"#fff", lineHeight:1, margin:"0 0 8px" }}>
+        <h1 className="epk-hero-title" style={{ fontFamily:"'Syne', sans-serif", fontWeight:800, color:"var(--hero-title-color)", lineHeight:1, margin:"0 0 8px" }}>
           {artist.name}
         </h1>
-        <p style={{ fontSize:14, color:"rgba(255,255,255,0.5)", margin:0 }}>
+        <p style={{ fontSize:14, color:"var(--hero-subtitle-color)", margin:0 }}>
           {`${artist.primary_genre} · ${artist.location}`}
         </p>
       </div>
