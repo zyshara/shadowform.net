@@ -5,6 +5,23 @@
     <link rel="icon" type="image/png" href="/shared/favicon.png" />
     <title><%= title %></title>
     <meta name="description" content="<%= description %>" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="<%= ogTitle %>" />
+    <meta property="og:description" content="<%= ogDescription %>" />
+    <% if (canonicalUrl) { %><meta property="og:url" content="<%= canonicalUrl %>" /><% } %>
+    <% if (ogImage) { %><meta property="og:image" content="<%= ogImage %>" /><% } %>
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="<%= ogTitle %>" />
+    <meta name="twitter:description" content="<%= ogDescription %>" />
+    <% if (canonicalUrl) { %><meta name="twitter:url" content="<%= canonicalUrl %>" /><% } %>
+    <% if (ogImage) { %><meta name="twitter:image" content="<%= ogImage %>" /><% } %>
+
+    <meta name="robots" content="index, follow" />
+    <% if (canonicalUrl) { %><link rel="canonical" href="<%= canonicalUrl %>" /><% } %>
+    <% if (jsonLd) { %><script type="application/ld+json"><%= JSON.stringify(jsonLd) %></script><% } %>
+
     <% if (isProd && umamiId) { %>
       <script defer src="https://shadowform-umami-af10566d4462.herokuapp.com/script.js" data-website-id="<%= umamiId %>"></script>
     <% } %>

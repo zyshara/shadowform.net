@@ -46,7 +46,15 @@ const sharedPlugins = [
 
 const isProd = process.env.NODE_ENV === "production";
 
-const makeConfig = ({ entry, outputPath, publicPath, title, alias, umamiId = null }) => ({
+const makeConfig = ({
+  entry, outputPath, publicPath, title, alias, umamiId = null,
+  description = "welcome to shadowform~",
+  ogTitle = null,
+  ogDescription = null,
+  ogImage = null,
+  canonicalUrl = null,
+  jsonLd = null,
+}) => ({
   entry,
   output: {
     path: path.resolve(__dirname, outputPath),
@@ -66,7 +74,12 @@ const makeConfig = ({ entry, outputPath, publicPath, title, alias, umamiId = nul
       filename: "index.html",
       templateParameters: {
         title,
-        description: "welcome to shadowform~",
+        description,
+        ogTitle: ogTitle || title,
+        ogDescription: ogDescription || description,
+        ogImage,
+        canonicalUrl,
+        jsonLd,
         isProd,
         umamiId,
       },
@@ -79,7 +92,20 @@ export default [
     entry: "./src/redspear/index.js",
     outputPath: "dist/redspear",
     publicPath: "/",
-    title: "redspear",
+    title: "Red Spear",
+    description: "Follow the Red Spear",
+    ogTitle: "Lost Little Lamb, Why are you Here?",
+    ogImage: "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1784674743/Red_Spear_Wordmark_Red_488735c440.png",
+    canonicalUrl: "https://redspear.shadowform.net/",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "MusicGroup",
+      name: "Red Spear",
+      url: "https://redspear.shadowform.net",
+      image: "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1775258559/redspear_icon_49596002d5.png",
+      genre: ["Electronic", "Hard Techno", "Dark Ambient", "Techno"],
+      description: "Follow the Red Spear",
+    },
     umamiId: "0bf57e1c-2c3f-4f39-80f6-31a7cf393705",
     alias: {
       "@": path.resolve(__dirname, "src/redspear"),

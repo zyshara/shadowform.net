@@ -1,0 +1,14 @@
+{
+  "redspear": {
+    "title": "Artist Press Kit — Red Spear",
+    "description": "Hard techno from LA- aggressive, mechanical, from the darkest corners of the internet",
+    "image": "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1775258559/redspear_icon_49596002d5.png",
+    "url": "https://redspear.shadowform.net/epk"
+  },
+  "low-poly": {
+    "title": "Artist Press Kit — Low Poly",
+    "description": "Forward-thinking bass music with releases on mau5trap, Jadū Dala, and Space Yacht",
+    "image": "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1775258559/lowpoly_icon_4502a47996.png",
+    "url": "https://low-poly.shadowform.net/epk"
+  }
+}

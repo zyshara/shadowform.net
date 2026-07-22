@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useFavicon } from "@shared/hooks/useFavicon";
+import { formatPageTitle } from "@shared/utils/pageTitle";
 
 // ── Waveform bars (decorative) ────────────────────────────────────────────────
 const WAVE_SEEDS = [
@@ -467,7 +468,7 @@ export default function EPK({ slug: slugProp }) {
   useFavicon(epk?.artist?.icon ?? null);
 
   useEffect(() => {
-    if (epk?.artist?.name) document.title = `EPK — ${epk.artist.name}`;
+    if (epk?.artist?.name) document.title = formatPageTitle("Artist Press Kit", epk.artist.name);
   }, [epk?.artist?.name]);
 
   if (loading) return <div />;
