@@ -95,7 +95,7 @@ export default [
     title: "Red Spear",
     description: "Follow the Red Spear",
     ogTitle: "Lost Little Lamb, Why are you Here?",
-    ogImage: "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1784674743/Red_Spear_Wordmark_Red_488735c440.png",
+    ogImage: "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1784683365/Red_Spear_OG_Tag_8cd6dc03db.png",
     canonicalUrl: "https://redspear.shadowform.net/",
     jsonLd: {
       "@context": "https://schema.org",
