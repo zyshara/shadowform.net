@@ -1,0 +1,154 @@
+.rs-page, .rs-page * { margin: 0; padding: 0; box-sizing: border-box; }
+
+.rs-page {
+  min-height: 100vh;
+  background-color: black;
+  overflow-x: hidden;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='28' viewBox='0 0 20 28'%3E%3Cpath d='M2,2 L2,22 L7,17 L11,26 L14,24 L10,16 L16,16 Z' fill='%23ff0000' stroke='%23880000' stroke-width='1'/%3E%3C/svg%3E") 2 2, auto;
+  font-family: 'VT323', monospace;
+}
+
+.rs-page::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
+  pointer-events: none;
+  z-index: 10;
+}
+
+#rs-hub {
+  padding: 40px 20px;
+}
+
+#rs-splash-screen {
+  position: fixed; inset: 0;
+  background-color: #ff0000;
+  padding: 40px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  transition: opacity 500ms;
+}
+#rs-splash-screen.rs-fade-out { opacity: 0; pointer-events: none; }
+
+#rs-enter-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 2px solid black;
+  color: black;
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  letter-spacing: 6px;
+  padding: 8px 30px;
+  max-width: 240px;
+  max-height: 42px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.2s, color 0.2s;
+}
+#rs-enter-button:hover { background: black; color: #ff0000; }
+
+.rs-vhs-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.rs-vhs-wrap img {
+  width: 100%;
+  display: block;
+  filter: contrast(1.08) brightness(0.92) saturate(1.1);
+  animation: rsRgbShift 8s infinite;
+}
+
+@keyframes rsRgbShift {
+  0%, 100% { filter: contrast(1.08) brightness(0.92) saturate(1.1); transform: translateX(0); }
+  15%      { filter: contrast(1.1) brightness(0.88) saturate(1.2) hue-rotate(2deg); transform: translateX(-1px); }
+  16%      { filter: contrast(1.15) brightness(0.85) saturate(1.3) hue-rotate(-2deg); transform: translateX(1px); }
+  17%      { filter: contrast(1.08) brightness(0.92) saturate(1.1); transform: translateX(0); }
+  60%      { filter: contrast(1.08) brightness(0.92) saturate(1.1); }
+  60.5%    { filter: contrast(1.2) brightness(0.7) saturate(1.5); transform: translateX(-2px) skewX(1deg); }
+  61%      { filter: contrast(1.08) brightness(0.92) saturate(1.1); transform: translateX(0) skewX(0); }
+}
+
+.rs-vhs-scanlines {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 1px, transparent 1px, transparent 2px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.rs-vhs-noise {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  animation: rsNoiseAnim 0.15s steps(1) infinite;
+  opacity: 0;
+}
+@keyframes rsNoiseAnim {
+  0%, 89%, 100% { opacity: 0; }
+  90% { opacity: 1; background: repeating-linear-gradient(90deg, rgba(255,0,0,0.03) 0px, transparent 1px, transparent 3px); }
+  95% { opacity: 1; background: repeating-linear-gradient(0deg, rgba(255,0,0,0.05) 0px, transparent 2px, transparent 4px); }
+}
+
+.rs-vhs-tracking {
+  position: absolute; left: 0; right: 0;
+  height: 3px;
+  background: rgba(255,0,0,0.12);
+  pointer-events: none;
+  z-index: 4;
+  animation: rsTrackingSweep 12s linear infinite;
+  opacity: 0;
+}
+@keyframes rsTrackingSweep {
+  0%    { top: -5px; opacity: 0; }
+  5%    { opacity: 0; }
+  10%   { opacity: 1; }
+  90%   { opacity: 0.4; }
+  95%, 100% { top: 105%; opacity: 0; }
+}
+
+.rs-hub-link {
+  text-decoration: none;
+  color: #ff0000;
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  padding: 8px 30px;
+  border: 1px solid rgba(255,0,0,0.4);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 240px;
+  max-height: 42px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  text-align: center;
+}
+.rs-hub-link::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,0,0,0.15), transparent);
+  transition: 0.5s;
+}
+.rs-hub-link:hover::before { left: 100%; }
+.rs-hub-link:hover {
+  background-color: rgba(255,0,0,0.1);
+  text-shadow: 0 0 8px #ff0000;
+  border-style: dashed;
+}
+
+@media (max-width: 600px) {
+  #rs-splash-title { font-size: 42px; letter-spacing: 6px; }
+  #rs-enter-button  { font-size: 22px; padding: 10px 30px; }
+  .rs-hub-link      { font-size: 22px; padding: 8px 24px; }
+}

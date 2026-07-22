@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "@/pages/Home";
 import NotFound from "@/pages/NotFound";
 import EPK from "@shared/pages/EPK";
+import "@shared/themes/epk/redspear.css";
 
 const App = () => {
   return (
