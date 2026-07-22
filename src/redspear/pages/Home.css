@@ -91,8 +91,8 @@
 }
 @keyframes rsNoiseAnim {
   0%, 89%, 100% { opacity: 0; }
-  90% { opacity: 1; background: repeating-linear-gradient(90deg, rgba(255,0,0,0.03) 0px, transparent 1px, transparent 3px); }
-  95% { opacity: 1; background: repeating-linear-gradient(0deg, rgba(255,0,0,0.05) 0px, transparent 2px, transparent 4px); }
+  90% { opacity: 1; background: repeating-linear-gradient(90deg, rgba(255,0,0,0.14) 0px, transparent 1px, transparent 3px); }
+  95% { opacity: 1; background: repeating-linear-gradient(0deg, rgba(255,0,0,0.20) 0px, transparent 2px, transparent 4px); }
 }
 
 .rs-vhs-tracking {
@@ -147,8 +147,10 @@
   border-style: dashed;
 }
 
+.rs-hub-link-sm { font-size: 12px; }
+
 @media (max-width: 600px) {
-  #rs-splash-title { font-size: 42px; letter-spacing: 6px; }
   #rs-enter-button  { font-size: 22px; padding: 10px 30px; }
-  .rs-hub-link      { font-size: 22px; padding: 8px 24px; }
+  .rs-hub-link      { font-size: 14px; padding: 8px 24px; }
+  .rs-hub-link-sm   { font-size: 13px; }
 }

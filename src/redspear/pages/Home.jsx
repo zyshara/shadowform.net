@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useFavicon } from "@shared/hooks/useFavicon";
 import "./Home.css";
 
 // ── Data ──────────────────────────────────────────────────────────────────────
@@ -6,7 +7,7 @@ const LINKS = [
   { label: "Spotify",              url: "https://open.spotify.com/artist/4qeN30ffnbXLAjSAMwGpFv" },
   { label: "Soundcloud",           url: "https://soundcloud.com/redspear" },
   { label: "Instagram",            url: "https://instagram.com/redspearmusic" },
-  { label: "Monitored Frequencies",url: "https://open.spotify.com/playlist/6bR12777gXAH2MyHmAcSi4?si=49g8sYt_R2qNng78P6TFzQ", fontSize: 12 },
+  { label: "Monitored Frequencies",url: "https://open.spotify.com/playlist/6bR12777gXAH2MyHmAcSi4?si=49g8sYt_R2qNng78P6TFzQ", small: true },
 ];
 
 // ── ARG console easter egg (ported from the original inline script) ──────────
@@ -26,6 +27,8 @@ export default function Home() {
   const [entered, setEntered]     = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
 
+  useFavicon("https://res.cloudinary.com/dfeyhbxeg/image/upload/v1775258559/redspear_icon_49596002d5.png");
+
   const handleEnter = () => {
     setFadingOut(true);
     setTimeout(() => {
@@ -42,18 +45,18 @@ export default function Home() {
           <img src="https://res.cloudinary.com/dfeyhbxeg/image/upload/v1784674743/Red_Spear_Wordmark_Red_488735c440.png" alt="Red Spear" />
           <div className="rs-vhs-scanlines" />
           <div className="rs-vhs-noise" />
-          <div className="rs-vhs-tracking" />
         </div>
+
+        <div className="rs-vhs-tracking" />
 
         <div className="absolute bottom-10 left-0 right-0 flex flex-col md:flex-row flex-wrap items-center justify-center gap-3.5 px-5">
           {LINKS.map((link) => (
             <a
               key={link.label}
               href={link.url}
-              className="rs-hub-link"
+              className={link.small ? "rs-hub-link rs-hub-link-sm" : "rs-hub-link"}
               target="_blank"
               rel="noreferrer"
-              style={link.fontSize ? { fontSize: link.fontSize } : undefined}
             >
               {link.label}
             </a>
