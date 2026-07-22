@@ -20,6 +20,7 @@
 
 #rs-hub {
   padding: 40px 20px;
+  overflow: hidden;
 }
 
 #rs-splash-screen {
@@ -43,7 +44,7 @@
   color: black;
   font-family: 'VT323', monospace;
   font-size: 20px;
-  letter-spacing: 6px;
+  letter-spacing: 4px;
   padding: 8px 30px;
   max-width: 240px;
   max-height: 42px;
@@ -150,7 +151,7 @@
 .rs-hub-link-sm { font-size: 12px; }
 
 @media (max-width: 600px) {
-  #rs-enter-button  { font-size: 22px; padding: 10px 30px; }
+  #rs-enter-button  { font-size: 14px; padding: 8px 24px; }
   .rs-hub-link      { font-size: 14px; padding: 8px 24px; }
   .rs-hub-link-sm   { font-size: 13px; }
 }

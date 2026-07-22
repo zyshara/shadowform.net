@@ -40,7 +40,7 @@ export default function Home() {
   return (
     <div className="rs-page">
       {/* Hub — always mounted; the splash overlays on top of it until entered */}
-      <div id="rs-hub" className="relative flex min-h-screen w-full items-center justify-center">
+      <div id="rs-hub" className="relative flex min-h-dvh w-full items-center justify-center">
         <div className="rs-vhs-wrap w-full max-w-[1200px] px-5">
           <img src="https://res.cloudinary.com/dfeyhbxeg/image/upload/v1784674743/Red_Spear_Wordmark_Red_488735c440.png" alt="Red Spear" />
           <div className="rs-vhs-scanlines" />
