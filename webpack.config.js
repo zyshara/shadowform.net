@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import path from "path";
 import webpack from "webpack";
 import { fileURLToPath } from "url";
+import { loadMetadata } from "./server/lib/metadata.js";
 
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
@@ -49,11 +50,10 @@ const isProd = process.env.NODE_ENV === "production";
 const makeConfig = ({
   entry, outputPath, publicPath, title, alias, umamiId = null,
   description = "welcome to shadowform~",
-  ogTitle = null,
-  ogDescription = null,
   ogImage = null,
   canonicalUrl = null,
   jsonLd = null,
+  siteName = null,
 }) => ({
   entry,
   output: {
@@ -75,11 +75,10 @@ const makeConfig = ({
       templateParameters: {
         title,
         description,
-        ogTitle: ogTitle || title,
-        ogDescription: ogDescription || description,
         ogImage,
         canonicalUrl,
         jsonLd,
+        siteName,
         isProd,
         umamiId,
       },
@@ -87,25 +86,26 @@ const makeConfig = ({
   ],
 });
 
+// Converts a loaded metadata.json (see server/lib/metadata.js) into
+// makeConfig's metadata-related params.
+const fromMetadata = (metadata) => ({
+  title: metadata.title,
+  siteName: metadata.title,
+  description: metadata.description,
+  ogImage: metadata.image ?? null,
+  canonicalUrl: metadata.url ?? null,
+  jsonLd: metadata.jsonLd ?? null,
+});
+
+const redspearMetadata = loadMetadata(path.join(__dirname, "src/redspear/metadata.json"));
+const lowPolyMetadata  = loadMetadata(path.join(__dirname, "src/low-poly/metadata.json"));
+
 export default [
   makeConfig({
     entry: "./src/redspear/index.js",
     outputPath: "dist/redspear",
     publicPath: "/",
-    title: "Red Spear",
-    description: "Follow the Red Spear",
-    ogTitle: "Lost Little Lamb, Why are you Here?",
-    ogImage: "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1784683365/Red_Spear_OG_Tag_8cd6dc03db.png",
-    canonicalUrl: "https://redspear.shadowform.net/",
-    jsonLd: {
-      "@context": "https://schema.org",
-      "@type": "MusicGroup",
-      name: "Red Spear",
-      url: "https://redspear.shadowform.net",
-      image: "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1775258559/redspear_icon_49596002d5.png",
-      genre: ["Electronic", "Hard Techno", "Dark Ambient", "Techno"],
-      description: "Follow the Red Spear",
-    },
+    ...fromMetadata(redspearMetadata),
     umamiId: "0bf57e1c-2c3f-4f39-80f6-31a7cf393705",
     alias: {
       "@": path.resolve(__dirname, "src/redspear"),
@@ -116,7 +116,7 @@ export default [
     entry: "./src/low-poly/index.js",
     outputPath: "dist/low-poly",
     publicPath: "/",
-    title: "Low Poly",
+    ...fromMetadata(lowPolyMetadata),
     umamiId: "47f76d43-46c9-46aa-9343-d5599838342e",
     alias: {
       "@": path.resolve(__dirname, "src/low-poly"),

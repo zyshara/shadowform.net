@@ -1,0 +1,21 @@
+{
+  "title": "Red Spear",
+  "description": "Hard techno from LA- aggressive, mechanical, from the darkest corners of the internet",
+  "image": "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1784683365/Red_Spear_OG_Tag_8cd6dc03db.png",
+  "url": "https://redspear.shadowform.net/",
+  "jsonLd": {
+    "@context": "https://schema.org",
+    "@type": "MusicGroup",
+    "name": "Red Spear",
+    "url": "https://redspear.shadowform.net",
+    "image": "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1775258559/redspear_icon_49596002d5.png",
+    "genre": ["Electronic", "Hard Techno", "Dark Ambient", "Techno"],
+    "description": "Hard techno from LA- aggressive, mechanical, from the darkest corners of the internet"
+  },
+  "pages": {
+    "epk": {
+      "title": "Artist Press Kit",
+      "url": "https://redspear.shadowform.net/epk"
+    }
+  }
+}

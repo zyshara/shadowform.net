@@ -7,14 +7,15 @@
     <meta name="description" content="<%= description %>" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="<%= ogTitle %>" />
-    <meta property="og:description" content="<%= ogDescription %>" />
+    <% if (siteName) { %><meta property="og:site_name" content="<%= siteName %>" /><% } %>
+    <meta property="og:title" content="<%= title %>" />
+    <meta property="og:description" content="<%= description %>" />
     <% if (canonicalUrl) { %><meta property="og:url" content="<%= canonicalUrl %>" /><% } %>
     <% if (ogImage) { %><meta property="og:image" content="<%= ogImage %>" /><% } %>
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="<%= ogTitle %>" />
-    <meta name="twitter:description" content="<%= ogDescription %>" />
+    <meta name="twitter:title" content="<%= title %>" />
+    <meta name="twitter:description" content="<%= description %>" />
     <% if (canonicalUrl) { %><meta name="twitter:url" content="<%= canonicalUrl %>" /><% } %>
     <% if (ogImage) { %><meta name="twitter:image" content="<%= ogImage %>" /><% } %>
 

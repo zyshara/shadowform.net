@@ -2,28 +2,30 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { readFileSync } from "fs";
 import express from "express";
+import { loadMetadata, resolvePageMetadata } from "../lib/metadata.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const root = path.resolve(__dirname, "../../");
 
-// Per-artist EPK meta (title/description/image/url) for social link previews.
-// Crawlers don't run JS, so this can't come from the CMS at request time via
-// the client — it's injected server-side into the static HTML instead.
-const epkMeta = JSON.parse(readFileSync(path.join(root, "server/data/epk-meta.json"), "utf8"));
+// Per-artist metadata (src/<artist>/metadata.json) for social link previews.
+// Crawlers don't run JS, so per-page overrides (e.g. /epk) can't come from
+// the CMS at request time via the client — they're injected server-side
+// into the static HTML instead.
+const redspearMetadata = loadMetadata(path.join(root, "src/redspear/metadata.json"));
+const lowPolyMetadata  = loadMetadata(path.join(root, "src/low-poly/metadata.json"));
 
 function escapeHtmlAttr(value) {
   return String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-function injectEpkMeta(html, slug) {
-  const meta = epkMeta[slug];
-  if (!meta) return html;
+function injectPageMeta(html, metadata, pageKey) {
+  const resolved = resolvePageMetadata(metadata, pageKey);
 
-  const title       = escapeHtmlAttr(meta.title);
-  const description = escapeHtmlAttr(meta.description);
-  const url         = escapeHtmlAttr(meta.url);
-  const image       = escapeHtmlAttr(meta.image);
+  const title       = escapeHtmlAttr(resolved.title);
+  const description = escapeHtmlAttr(resolved.description);
+  const url         = escapeHtmlAttr(resolved.url);
+  const image       = escapeHtmlAttr(resolved.image);
 
   return html
     .replace(/<title>.*?<\/title>/, `<title>${title}</title>`)
@@ -39,9 +41,9 @@ function injectEpkMeta(html, slug) {
     .replace(/(<link rel="canonical" href=")[^"]*(")/, `$1${url}$2`);
 }
 
-function serveEpkHtml(distIndexPath, slug, res) {
+function servePageHtml(distIndexPath, metadata, pageKey, res) {
   const html = readFileSync(distIndexPath, "utf8");
-  res.type("html").send(injectEpkMeta(html, slug));
+  res.type("html").send(injectPageMeta(html, metadata, pageKey));
 }
 
 export function registerSpaRoutes(app) {
@@ -54,7 +56,7 @@ export function registerSpaRoutes(app) {
   app.use((req, res, next) => {
     const host = req.header("host") || "";
     if (!host.split(":")[0].startsWith("redspear.")) return next();
-    if (req.path === "/epk") return serveEpkHtml(redspearIndex, "redspear", res);
+    if (req.path === "/epk") return servePageHtml(redspearIndex, redspearMetadata, "epk", res);
     redspearStatic(req, res, () => {
       res.sendFile(redspearIndex);
     });
@@ -66,7 +68,7 @@ export function registerSpaRoutes(app) {
   app.use((req, res, next) => {
     const host = req.header("host") || "";
     if (!host.split(":")[0].startsWith("low-poly.")) return next();
-    if (req.path === "/epk") return serveEpkHtml(lowpolyIndex, "low-poly", res);
+    if (req.path === "/epk") return servePageHtml(lowpolyIndex, lowPolyMetadata, "epk", res);
     lowpolyStatic(req, res, () => {
       res.sendFile(lowpolyIndex);
     });
