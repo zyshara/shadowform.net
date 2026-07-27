@@ -1,7 +1,7 @@
 import { getArtists } from "../api/artists.js";
 import { scrapeSpotifyStats, scrapeSpotifyMonthlyListeners } from "./scrapers/spotify.js";
 import { scrapeInstagramFollowers } from "./scrapers/instagram.js";
-import { scrapeSongkickShows } from "./scrapers/songkick.js";
+import { scrapeBandsintownShows } from "./scrapers/bandsintown.js";
 import { logger } from "../lib/logger.js";
 
 const STRAPI_URL   = process.env.STRAPI_API_URL  || "https://strapi-shadowform-52c53315c615.herokuapp.com";
@@ -48,9 +48,9 @@ export async function syncAllArtistStats() {
       return null;
     });
 
-    const [instagram, songkick] = await Promise.allSettled([
+    const [instagram, bandsintown] = await Promise.allSettled([
       scrapeInstagramFollowers(artist),
-      scrapeSongkickShows(artist),
+      scrapeBandsintownShows(artist),
     ]);
 
     logger.debug(`[syncStats] ${artist.name}: monthly result:`, monthly);
@@ -59,8 +59,8 @@ export async function syncAllArtistStats() {
     const stats = {
       ...(monthly      ? monthly      : {}),
       ...(spotifyStats ? spotifyStats : {}),
-      ...(instagram.status === "fulfilled" && instagram.value ? instagram.value : {}),
-      ...(songkick.status  === "fulfilled" && songkick.value  ? songkick.value  : {}),
+      ...(instagram.status   === "fulfilled" && instagram.value   ? instagram.value   : {}),
+      ...(bandsintown.status === "fulfilled" && bandsintown.value ? bandsintown.value : {}),
     };
 
     if (!Object.keys(stats).length) {

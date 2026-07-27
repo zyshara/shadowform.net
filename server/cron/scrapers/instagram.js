@@ -1,11 +1,5 @@
 import { logger } from "../../lib/logger.js";
 
-export function parseInstagramHandle(url) {
-  // https://www.instagram.com/lowpolysound/
-  const match = url.match(/instagram\.com\/([^/?]+)/);
-  return match ? match[1] : null;
-}
-
 export async function scrapeInstagramFollowers(artist) {
   const envKey = `INSTAGRAM_TOKEN_${artist.slug.toUpperCase().replace(/-/g, "_")}`;
   const token = process.env[envKey];

@@ -22,6 +22,5 @@ export function artistPopulate(prefix = "populate") {
     [`${prefix}[genres]`]:                       "*",
     [`${prefix}[instagram]`]:                    "*",
     [`${prefix}[spotify]`]:                      "*",
-    [`${prefix}[songkick]`]:                     "*",
   };
 }

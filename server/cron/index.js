@@ -14,13 +14,13 @@ async function runSyncAllArtistStats() {
 }
 
 export function startCronJobs() {
-  // Disabled in dev — hits Spotify/Instagram/Songkick on every restart and
+  // Disabled in dev — hits Spotify/Instagram/Bandsintown on every restart and
   // gets rate limited fast. Uncomment before deploying to prod.
-  //runSyncAllArtistStats();
-  //setInterval(runSyncAllArtistStats, ONE_DAY_MS);
+  runSyncAllArtistStats();
+  setInterval(runSyncAllArtistStats, ONE_DAY_MS);
 
-  startNotionCron();
-  startInstagramCron();
+  //startNotionCron();
+  //startInstagramCron();
 
   logger.info("[cron] jobs registered");
 }
