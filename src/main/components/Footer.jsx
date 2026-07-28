@@ -2,7 +2,7 @@
 
 const Footer = () => (
   <footer
-    className="px-7 py-[15px] flex items-center justify-center w-full height-[40px] left-0 bottom-0 lg:absolute"
+    className="lg:py-[15px] flex items-center justify-center w-full height-[40px] left-0 bottom-0 lg:absolute"
   >
     {/* social links */}
     <div className="flex items-center gap-3">

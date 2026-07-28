@@ -73,7 +73,7 @@ const MobileMenu = ({ open, onClose }) => {
         <nav className="flex-1 flex flex-col justify-center px-6">
           <Ornament className="mb-8 self-center" />
           <ol className="flex flex-col gap-0">
-            {navlinks.map((navlink) => {
+            {navlinks.filter((navlink) => !navlink.hideFromNav).map((navlink) => {
               const isActive = location.pathname === navlink.url;
               return (
                 <li

@@ -2,22 +2,22 @@
 
 import { useRef, useState } from "react";
 import { Outlet } from "react-router-dom";
-import { DesktopNavbar, MobileNavbar } from "@/components/Navbar";
+import { DesktopNavbar } from "@/components/Navbar";
 import MobileMenu from "@/components/MobileMenu";
 import PageChrome from "@/components/PageChrome";
 import Footer from "@/components/Footer";
 import Scrollbar from "@/components/Scrollbar";
 
 const Layout = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
   const contentRef = useRef(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <div className="flex min-h-dvh max-h-dvh w-full" style={{ background: "#0e0c14" }}>
       <div className="grid items-center justify-center grid-cols-[50px_1fr_50px] lg:grid-cols-[1fr_auto_1fr] w-full">
         {/* ── Sidebar (desktop only) — sticky, stays in viewport while page scrolls ── */}
         <aside className="flex flex-col justify-center items-center h-full">
-          <DesktopNavbar />
+          <DesktopNavbar onOpenMenu={() => setMenuOpen(true)} />
         </aside>
 
         {/* ── Main column ── */}
@@ -35,6 +35,8 @@ const Layout = () => {
 
         <Scrollbar targetRef={contentRef} />
       </div>
+
+      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
     </div>
   );
 };

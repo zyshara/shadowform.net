@@ -5,11 +5,11 @@ import cherry_blossom from "@shared/assets/images/cherry_blossom.png";
 import navlinks from "@/data/navlinks";
 
 // ── Desktop: vertical sidebar nav ──────────────────────────────────────────
-export const DesktopNavbar = () => {
+export const DesktopNavbar = ({ onOpenMenu }) => {
   const location = useLocation();
 
   return (
-    <nav className="absolute lg:relative top-[40px] lg:top-0 left-0 flex flex-col items-end lg:w-full h-full max-h-[424px] justify-between">
+    <nav className="absolute lg:relative top-[40px] lg:top-0 left-0 flex flex-col items-center lg:items-end lg:w-full h-full max-h-[424px] lg:justify-between">
       <NavLink to="/about" className="flex flex-col items-center">
         <img
           src={cherry_blossom}
@@ -23,6 +23,19 @@ export const DesktopNavbar = () => {
           shadowform.net
         </div>
       </NavLink>
+
+      {/* hamburger */}
+      <button
+        onClick={onOpenMenu}
+        aria-label="open menu"
+        className="color-white lg:hidden text-white leading-[0.4] mt-[10px]"
+      >
+        __
+        <br/>
+        __
+        <br/>
+        __
+      </button>
 
       {/* nav links */}
       <ol className="hidden lg:flex flex-col items-end w-full px-5 gap-[2px]">
@@ -56,63 +69,6 @@ export const DesktopNavbar = () => {
           );
         })}
       </ol>
-    </nav>
-  );
-};
-
-// ── Mobile: top bar with hamburger ─────────────────────────────────────────
-export const MobileNavbar = ({ onMenuOpen }) => {
-  const location = useLocation();
-  const currentPage = navlinks.find((n) => {
-    const bare = n.url.replace(/\/+$/, '');
-    return location.pathname === bare || location.pathname.startsWith(bare + '/');
-  });
-
-  return (
-    <nav
-      className="flex lg:hidden flex-col border-b"
-      style={{
-        background: "var(--bg-mobile-nav)",
-        borderColor: "var(--border)",
-      }}
-    >
-      <div className="flex items-center justify-between px-5 py-4">
-        {/* logo */}
-        <NavLink to="/" className="flex items-center gap-2">
-          <img
-            src={cherry_blossom}
-            className="w-[28px]"
-            style={{ filter: "drop-shadow(0 0 4px var(--pink-glow))" }}
-          />
-          <span
-            className="font-alagard text-[13px] tracking-[2px]"
-            style={{ color: "var(--text-mobile-name)" }}
-          >
-            shadowform.net
-          </span>
-        </NavLink>
-
-        {/* current page indicator + hamburger */}
-        <div className="flex items-center gap-3">
-          {currentPage && (
-            <span
-              className="font-alkhemikal text-[10px] tracking-[0.12em] uppercase"
-              style={{ color: "var(--text-page-indicator)" }}
-            >
-              {currentPage.text}
-            </span>
-          )}
-          <button
-            onClick={onMenuOpen}
-            className="flex flex-col gap-[4px] cursor-pointer p-1"
-            aria-label="open menu"
-          >
-            <span className="block w-[18px] h-px" style={{ background: "var(--text-hamburger)" }} />
-            <span className="block w-[18px] h-px" style={{ background: "var(--text-hamburger)" }} />
-            <span className="block w-[18px] h-px" style={{ background: "var(--text-hamburger)" }} />
-          </button>
-        </div>
-      </div>
     </nav>
   );
 };
