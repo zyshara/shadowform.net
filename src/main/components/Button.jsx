@@ -1,5 +1,6 @@
 // src/main/components/Button.jsx
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 // ── Colour tokens per state ───────────────────────────────────────────────────
 const COLORS = {
@@ -240,6 +241,10 @@ const Button = ({
     </>
   );
 
+  const isInternal = href && !target && !/^([a-z]+:)?\/\//i.test(href);
+
+  if (href && !disabled && isInternal)
+    return <Link to={href} className={wrapperCls} style={wrapperStyle} {...handlers}>{inner}</Link>;
   if (href && !disabled)
     return <a href={href} target={target} rel={rel} className={wrapperCls} style={wrapperStyle} {...handlers}>{inner}</a>;
   if (onClick && !disabled)

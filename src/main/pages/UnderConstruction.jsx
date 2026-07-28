@@ -3,12 +3,12 @@
 import { useLocation } from "react-router-dom";
 import Ornament from "@/components/Ornament";
 import Header from "@/components/Header";
-import navlinks from "@/data/navlinks";
+import routes from "@/data/routes";
 
-const UnderConstruction = ({ label }) => {
+const UnderConstruction = () => {
   const location = useLocation();
-  const current  = navlinks.find((n) => location.pathname === n.url);
-  const pageName = label ?? current?.text?.toLowerCase() ?? "this page";
+  const current  = routes.find((r) => location.pathname === r.path);
+  const pageName = current?.text?.toLowerCase() ?? "this page";
 
   return (
     <div className="flex-1 flex flex-col">

@@ -2,7 +2,7 @@
 
 import { NavLink, useLocation } from "react-router-dom";
 import cherry_blossom from "@shared/assets/images/cherry_blossom.png";
-import navlinks from "@/data/navlinks";
+import routes from "@/data/routes";
 
 // ── Desktop: vertical sidebar nav ──────────────────────────────────────────
 export const DesktopNavbar = ({ onOpenMenu }) => {
@@ -39,13 +39,13 @@ export const DesktopNavbar = ({ onOpenMenu }) => {
 
       {/* nav links */}
       <ol className="hidden lg:flex flex-col items-end w-full px-5 gap-[2px]">
-        {navlinks.filter((navlink) => !navlink.hideFromNav).map((navlink) => {
-          const bare = navlink.url.replace(/\/+$/, '');
+        {routes.filter((route) => !route.hideFromNav).map((route) => {
+          const bare = route.path.replace(/\/+$/, '');
           const isActive = location.pathname === bare || location.pathname.startsWith(bare + '/');
           return (
-            <li key={navlink.id}>
+            <li key={route.id}>
               <NavLink
-                to={navlink.url}
+                to={route.path}
                 className="lowercase font-alagard text-[16px] tracking-[1px] py-1 transition-animation transition-filter duration-150"
                 style={{
                   color: isActive
@@ -63,7 +63,7 @@ export const DesktopNavbar = ({ onOpenMenu }) => {
                   if (!isActive) e.target.classList.remove("md:hover:[animation:pink-rotate-text_100ms_linear_infinite]")
                 }}
               >
-                {navlink.text}
+                {route.text}
               </NavLink>
             </li>
           );

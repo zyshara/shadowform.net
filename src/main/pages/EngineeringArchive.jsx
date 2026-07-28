@@ -113,7 +113,7 @@ const EngineeringArchive = () => {
   const entries = apiData?.data?.entries ?? [];
 
   return (
-    <FadeIn className="flex-1 flex flex-col max-w-[680px]">
+    <FadeIn className="flex flex-col">
       <style>{`
         .dev-archive-entry {
           transition: background 150ms linear;
@@ -144,17 +144,14 @@ const EngineeringArchive = () => {
         }
       `}</style>
 
-      <div
-        className="flex-1 flex flex-col px-8 py-8 w-full mx-auto"
-        style={{ maxWidth: 880 }}
-      >
+      <div className="flex flex-col w-full mx-auto">
         {/* header */}
         <div className="mb-6">
           {header ? (
               <Header
-                eyebrow="software engineering ➺ the archive"
-                title="releases & relics"
-                description="here you can find all projects i've worked on through work or leisure. some of these projects have been taken down or decomissioned. i've done my best to preserve them here."
+                eyebrow={header?.eyebrow}
+                title={header?.heading}
+                description={header?.description}
               />
             ) : (
               <>

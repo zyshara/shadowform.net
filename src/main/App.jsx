@@ -1,61 +1,27 @@
 import React from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-
-import { AnimatePresence } from "framer-motion";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import Layout from "@/Layout";
-import { PageTransition } from "@/components";
-import { Enter, NotFound, EngineeringArchive, EngineeringWebArchiveProject, EngineeringWebArchiveProjectRaw, UnderConstruction } from "@/pages";
-import navlinks from "@/data/navlinks";
+import { Enter, NotFound, EngineeringWebArchiveProjectRaw } from "@/pages";
+import routes from "@/data/routes";
 
 const App = () => {
-  const location = useLocation();
-
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Enter />} />
-        <Route path="/engineering/archive/:slug/raw" element={<EngineeringWebArchiveProjectRaw />} />
-        <Route element={<Layout />}>
-          <Route path="*" element={<NotFound />} />
-          <Route
-            path="/engineering/archive"
-            element={<PageTransition><EngineeringArchive /></PageTransition>}
-          />
-          <Route
-            path="/engineering/archive/:slug"
-            element={<PageTransition><EngineeringWebArchiveProject /></PageTransition>}
-          />
-          <Route
-            path="/about/arthur-morgan"
-            element={<PageTransition><UnderConstruction label="arthur morgan" /></PageTransition>}
-          />
-          <Route
-            path="/about/kilrogg-deadeye"
-            element={<PageTransition><UnderConstruction label="kilrogg deadeye" /></PageTransition>}
-          />
-          <Route
-            path="/about/guardian-lulu"
-            element={<PageTransition><UnderConstruction label="guardian lulu" /></PageTransition>}
-          />
-          {navlinks.map(({ id, url, component: Page, redirects = [] }) => (
-            <React.Fragment key={id}>
-              <Route
-                path={url}
-                element={
-                  <PageTransition>
-                    <Page />
-                  </PageTransition>
-                }
-              />
-              {redirects.map((from) => (
-                <Route key={from} path={from} element={<Navigate to={url} replace />} />
-              ))}
-            </React.Fragment>
-          ))}
-        </Route>
-      </Routes>
-    </AnimatePresence>
+    <Routes>
+      <Route path="/" element={<Enter />} />
+      <Route path="/engineering/archive/:slug/raw" element={<EngineeringWebArchiveProjectRaw />} />
+      <Route element={<Layout />}>
+        <Route path="*" element={<NotFound />} />
+        {routes.map(({ id, path, component: Page, props = {}, redirects = [] }) => (
+          <React.Fragment key={id}>
+            <Route path={path} element={<Page {...props} />} />
+            {redirects.map((from) => (
+              <Route key={from} path={from} element={<Navigate to={path} replace />} />
+            ))}
+          </React.Fragment>
+        ))}
+      </Route>
+    </Routes>
   );
 };
 

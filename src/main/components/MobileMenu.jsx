@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import Ornament from "@/components/Ornament";
 
 import cherry_blossom from "@shared/assets/images/cherry_blossom.png";
-import navlinks from "@/data/navlinks";
+import routes from "@/data/routes";
 
 const MobileMenu = ({ open, onClose }) => {
   const location = useLocation();
@@ -73,14 +73,14 @@ const MobileMenu = ({ open, onClose }) => {
         <nav className="flex-1 flex flex-col justify-center px-6">
           <Ornament className="mb-8 self-center" />
           <ol className="flex flex-col gap-0">
-            {navlinks.filter((navlink) => !navlink.hideFromNav).map((navlink) => {
-              const isActive = location.pathname === navlink.url;
+            {routes.filter((route) => !route.hideFromNav).map((route) => {
+              const isActive = location.pathname === route.path;
               return (
                 <li
-                  key={navlink.id}
+                  key={route.id}
                 >
                   <NavLink
-                    to={navlink.url}
+                    to={route.path}
                     className="block font-alagard text-[20px] tracking-[1px] py-3 transition-colors duration-150 text-center lowercase"
                     style={{
                       color: isActive
@@ -95,7 +95,7 @@ const MobileMenu = ({ open, onClose }) => {
                       if (!isActive) e.currentTarget.style.color = "var(--text-menu-inactive)";
                     }}
                   >
-                    {navlink.text}
+                    {route.text}
                   </NavLink>
                 </li>
               );

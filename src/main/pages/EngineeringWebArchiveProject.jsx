@@ -9,6 +9,7 @@ import Ornament from "@/components/Ornament";
 import PreservedSite from "@/components/PreservedSite";
 import MobileSitePreview from "@/components/MobileSitePreview";
 import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
+import { usePageCrumb } from "@/context/PageCrumbContext";
 
 const useIsMobile = () => {
   const [mobile, setMobile] = useState(() =>
@@ -171,6 +172,8 @@ const EngineeringWebArchiveProject = () => {
     }),
     { minLoadMs: 300 },
   );
+
+  usePageCrumb(apiData?.data?.eyebrow);
 
   if (loading) return <LoadingScreen fading={fading} />;
 

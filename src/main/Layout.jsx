@@ -1,16 +1,21 @@
 // src/main/Layout.jsx
 
 import { useRef, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { useLocation, useOutlet } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import { DesktopNavbar } from "@/components/Navbar";
 import MobileMenu from "@/components/MobileMenu";
 import PageChrome from "@/components/PageChrome";
+import PageTransition from "@/components/PageTransition";
 import Footer from "@/components/Footer";
 import Scrollbar from "@/components/Scrollbar";
+import { PageCrumbProvider } from "@/context/PageCrumbContext";
 
 const Layout = () => {
   const contentRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+  const outlet = useOutlet();
 
   return (
     <div className="flex min-h-dvh max-h-dvh w-full" style={{ background: "#0e0c14" }}>
@@ -21,17 +26,23 @@ const Layout = () => {
         </aside>
 
         {/* ── Main column ── */}
-        <div className="grid justify-center items-center w-full h-full grid-rows-[40px_auto_40px] content-center">
-          <PageChrome className="justify-end"/>
-          <div
-            ref={contentRef}
-            className="px-8 py-8 flex flex-col border w-full lg:w-[716px] h-[calc(100dvh-80px)] lg:max-h-full lg:my-0 lg:h-[424px] overflow-y-auto overflow-x-hidden no-scrollbar"
-            style={{ background: "#07060e", borderColor: "#1c1428" }}
-          >
-            <Outlet />
+        <PageCrumbProvider>
+          <div className="grid justify-center items-center w-full h-full grid-cols-[1fr] grid-rows-[40px_auto_40px] content-center">
+            <PageChrome className="justify-end"/>
+            <div
+              ref={contentRef}
+              className="px-8 py-8 flex flex-col border w-full lg:w-[716px] h-[calc(100dvh-80px)] lg:max-h-full lg:my-0 lg:h-[424px] overflow-y-auto overflow-x-hidden no-scrollbar"
+              style={{ background: "#07060e", borderColor: "#1c1428" }}
+            >
+              <AnimatePresence mode="wait">
+                <PageTransition key={location.pathname}>
+                  {outlet}
+                </PageTransition>
+              </AnimatePresence>
+            </div>
+            <Footer />
           </div>
-          <Footer />
-        </div>
+        </PageCrumbProvider>
 
         <Scrollbar targetRef={contentRef} />
       </div>
