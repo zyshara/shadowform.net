@@ -113,7 +113,7 @@ const EngineeringArchive = () => {
   const entries = apiData?.data?.entries ?? [];
 
   return (
-    <FadeIn className="flex flex-col min-h-full max-w-[680px]" style={{ background: "var(--bg)" }}>
+    <FadeIn className="flex-1 flex flex-col max-w-[680px]">
       <style>{`
         .dev-archive-entry {
           transition: background 150ms linear;

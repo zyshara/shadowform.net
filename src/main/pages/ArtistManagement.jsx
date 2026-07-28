@@ -76,7 +76,7 @@ const ArtistManagement = () => {
   if (loading) return <LoadingScreen fading={fading} />;
 
   if (error) return (
-    <div className="flex flex-col min-h-full" style={{ background: "var(--bg)" }}>
+    <div className="flex-1 flex flex-col">
       <div className="flex-1 flex items-center justify-center">
         <p className="font-fell italic text-[13px]" style={{ color: "var(--text-nav-inactive)" }}>
           something went wrong — {error}
@@ -88,8 +88,8 @@ const ArtistManagement = () => {
   const { header, artist_cards: artists = [] } = data?.data ?? {};
 
   return (
-    <FadeIn className="flex flex-col min-h-full" style={{ background: "var(--bg)" }}>
-      <div className="flex-1 flex flex-col px-10 py-8 max-w-[700px] w-full mx-auto justify-center">
+    <FadeIn className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col w-full mx-auto justify-center">
         <Header
           eyebrow={header?.eyebrow}
           title={header?.heading}

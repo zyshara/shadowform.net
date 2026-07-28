@@ -12,7 +12,8 @@ const Enter = () => {
   return (
     <motion.div
       onClick={() => navigate("/about")}
-      className="flex h-dvh w-dvw items-center justify-center font-alagard text-center text-[8vw] sm:text-5xl lg:text-lg text-white flex-col bg-black select-none cursor-pointer"
+      className="flex h-dvh w-dvw items-center justify-center font-alagard text-center text-[8vw] sm:text-5xl lg:text-lg text-white flex-col select-none cursor-pointer"
+      style={{ background: "#0e0c14" }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

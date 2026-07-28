@@ -4,7 +4,6 @@ import { NavLink, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
 import Ornament from "@/components/Ornament";
-import SocialIcons from "@/components/SocialIcons";
 
 import cherry_blossom from "@shared/assets/images/cherry_blossom.png";
 import navlinks from "@/data/navlinks";
@@ -69,7 +68,7 @@ const MobileMenu = ({ open, onClose }) => {
             close
           </button>
         </div>
-i
+
         {/* nav links */}
         <nav className="flex-1 flex flex-col justify-center px-6">
           <Ornament className="mb-8 self-center" />
@@ -104,14 +103,6 @@ i
           </ol>
           <Ornament className="mt-8 self-center" />
         </nav>
-
-        {/* social icons */}
-        <div
-          className="flex justify-center pb-6 pt-2 border-t"
-          style={{ borderColor: "var(--border-menu-header)" }}
-        >
-          <SocialIcons />
-        </div>
       </div>
     </>
   );

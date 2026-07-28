@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Tag from "@/components/Tag";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
+import EntryCard from "@/components/EntryCard";
 import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
 
 // ── Drawing Modal ─────────────────────────────────────────────────────────────
@@ -187,108 +188,6 @@ const undo = () => {
   );
 };
 
-// ── Drawing Lightbox (desktop only) ──────────────────────────────────────────
-const DrawingLightbox = ({ src, onClose }) => (
-  <Modal onClose={onClose} maxWidth={600}>
-    <div style={{ display:"flex", justifyContent:"flex-end", padding:"6px 10px", background:"var(--bg-ticker)", borderBottom:"1px solid var(--border-soft)" }}>
-      <button onClick={onClose} style={{ color:"var(--text-nav-inactive)", background:"none", border:"none", cursor:"pointer", fontFamily:"monospace", fontSize:14 }}>✕</button>
-    </div>
-    <img
-      src={src}
-      alt="drawing"
-      style={{ width:"100%", display:"block", borderRadius:0, background:"var(--bg-sidebar)", border:"none" }}
-    />
-  </Modal>
-);
-
-// ── Entry Card ────────────────────────────────────────────────────────────────
-const EntryCard = ({ entry }) => {
-  const [lightbox,    setLightbox]    = useState(false);
-  const [thumbHover,  setThumbHover]  = useState(false);
-
-  return (
-    <>
-      {lightbox && entry.drawing && (
-        <DrawingLightbox src={entry.drawing} onClose={() => setLightbox(false)} />
-      )}
-
-      <div
-        className="flex items-start gap-4 p-4 border rounded-[2px]"
-        style={{ background:"var(--bg-ticker)", borderColor:"var(--border-soft)" }}
-      >
-        {/* desktop thumbnail — clickable to open lightbox */}
-        <div
-          className="hidden sm:flex w-40 h-30 flex-shrink-0 items-center justify-center rounded-[2px] border overflow-hidden"
-          style={{
-            background:  "var(--bg-sidebar)",
-            borderColor: entry.drawing && thumbHover ? "var(--tag-lit-border)" : "var(--border)",
-            cursor:      entry.drawing ? "pointer" : "default",
-            transition:  "border-color 150ms ease-out",
-          }}
-          onClick={() => entry.drawing && setLightbox(true)}
-          onMouseEnter={() => entry.drawing && setThumbHover(true)}
-          onMouseLeave={() => setThumbHover(false)}
-        >
-          {entry.drawing
-            ? <img
-                src={entry.drawing}
-                alt="doodle"
-                className="w-full h-full object-contain"
-                style={{ filter: thumbHover ? "brightness(1.15)" : "none", transition: "filter 150ms ease-out" }}
-              />
-            : <span className="font-alagard text-[18px]" style={{ color:"var(--ornament-glyph)" }}>✿</span>
-          }
-        </div>
-
-        <div className="flex-1 min-w-0 flex flex-col">
-          {/* name + date */}
-          <div className="flex items-start justify-between gap-2 mb-1">
-            <h3 className="font-alagard text-[16px] tracking-[1px] leading-tight lowercase" style={{ color:"var(--text-heading)" }}>
-              {entry.name}
-            </h3>
-            <span className="font-alkhemikal text-[10px] tracking-[0.15em] uppercase flex-shrink-0" style={{ color:"var(--text-nav-inactive)" }}>
-              {entry.date}
-            </span>
-          </div>
-
-          {/* website */}
-          {entry.website && (
-            <a href={entry.website} target="_blank" rel="noreferrer"
-              className="font-alkhemikal text-[10px] tracking-[0.15em] uppercase mb-1"
-              style={{ color:"var(--text-nav-inactive)" }}>{entry.website}</a>
-          )}
-
-          {/* message */}
-          {entry.message && (
-            <p className="font-fell text-[12px] leading-[1.75]" style={{ color:"var(--text-body)" }}>
-              {entry.message}
-            </p>
-          )}
-
-          {/* tags */}
-          {entry.tags?.length > 0 && (
-            <div className="flex gap-1 flex-wrap mt-auto pt-3">
-              {entry.tags.map((t) => (
-                <Tag key={t.label} theme={t.theme} variant="lit">{t.label}</Tag>
-              ))}
-            </div>
-          )}
-
-          {/* mobile drawing strip */}
-          {entry.drawing && (
-            <div
-              className="sm:hidden mt-3 w-full h-28 rounded-[2px] border overflow-hidden"
-              style={{ background:"var(--bg-sidebar)", borderColor:"var(--border)" }}
-            >
-              <img src={entry.drawing} alt="doodle" className="w-full h-full object-contain" />
-            </div>
-          )}
-        </div>
-      </div>
-    </>
-  );
-};
-
 // ── Guestbook Page ────────────────────────────────────────────────────────────
 const Guestbook = () => {
   const { data, error, loading, fading } = usePageLoad(
@@ -350,7 +249,7 @@ const Guestbook = () => {
   if (loading) return <LoadingScreen fading={fading} />;
 
   if (error) return (
-    <div className="flex flex-col min-h-full" style={{ background: "var(--bg)" }}>
+    <div className="flex-1 flex flex-col">
       <div className="flex-1 flex items-center justify-center">
         <p className="font-fell italic text-[13px]" style={{ color: "var(--text-nav-inactive)" }}>
           something went wrong — {error}
@@ -368,7 +267,7 @@ const Guestbook = () => {
         />
       )}
 
-      <FadeIn className="flex flex-col max-w-600 w-full min-h-full" style={{ background:"var(--bg)" }}>
+      <FadeIn className="flex-1 flex flex-col max-w-600 w-full">
         <div className="flex-1 flex flex-col px-10 py-8 max-w-[640px] w-full">
 
           <Header eyebrow="guestbook" title="sign the book"

@@ -3,15 +3,14 @@
 import { NavLink, useLocation } from "react-router-dom";
 import cherry_blossom from "@shared/assets/images/cherry_blossom.png";
 import navlinks from "@/data/navlinks";
-import SocialIcons from "@/components/SocialIcons";
 
 // ── Desktop: vertical sidebar nav ──────────────────────────────────────────
 export const DesktopNavbar = () => {
   const location = useLocation();
 
   return (
-    <nav className="flex flex-col items-end w-full h-full">
-      <NavLink to="/" className="flex flex-col items-center mb-4">
+    <nav className="absolute lg:relative top-[40px] lg:top-0 left-0 flex flex-col items-end lg:w-full h-full max-h-[424px] justify-between">
+      <NavLink to="/about" className="flex flex-col items-center">
         <img
           src={cherry_blossom}
           className="w-[40px] mb-3"
@@ -25,17 +24,9 @@ export const DesktopNavbar = () => {
         </div>
       </NavLink>
 
-      {/* gradient divider */}
-      <div
-        className="w-[60%] h-px my-4"
-        style={{
-          background: `linear-gradient(to right, transparent, var(--divider), transparent)`,
-        }}
-      />
-
       {/* nav links */}
-      <ol className="flex flex-col items-end w-full px-5 gap-[2px]">
-        {navlinks.map((navlink) => {
+      <ol className="hidden lg:flex flex-col items-end w-full px-5 gap-[2px]">
+        {navlinks.filter((navlink) => !navlink.hideFromNav).map((navlink) => {
           const bare = navlink.url.replace(/\/+$/, '');
           const isActive = location.pathname === bare || location.pathname.startsWith(bare + '/');
           return (
@@ -65,8 +56,6 @@ export const DesktopNavbar = () => {
           );
         })}
       </ol>
-
-      <SocialIcons className="mt-auto pt-6 pb-1" />
     </nav>
   );
 };

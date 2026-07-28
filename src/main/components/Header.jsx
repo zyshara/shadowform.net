@@ -40,12 +40,6 @@ const Header = ({
       className={`flex flex-col gap-2 ${alignClass} max-w-[600px]`}
       style={{ borderColor: "var(--border-soft)" }}
     >
-      {eyebrow && (
-        <p className={`uppercase ${sizeClass.eyebrow}`} style={{ color: "var(--pink-text)" }}>
-          {`// ${eyebrow}`}
-        </p>
-      )}
-
       {title && (
         <h1 className={`font-alagard font-normal leading-tight lowercase ${sizeClass.title}`} style={{ color: "var(--text-heading)" }}>
           {title}

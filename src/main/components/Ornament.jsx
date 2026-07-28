@@ -1,7 +1,7 @@
 // src/main/components/Ornament.jsx
 
 const Ornament = ({ variant = "diamond", className = "" }) => {
-  const divider = "✦·✦·✦";
+  let divider = "✦·✦·✦";
 
   if (variant === "dot") divider = "•• ━━━━━ ••●•• ━━━━━ ••";
 

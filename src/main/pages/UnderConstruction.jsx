@@ -5,13 +5,13 @@ import Ornament from "@/components/Ornament";
 import Header from "@/components/Header";
 import navlinks from "@/data/navlinks";
 
-const UnderConstruction = () => {
+const UnderConstruction = ({ label }) => {
   const location = useLocation();
   const current  = navlinks.find((n) => location.pathname === n.url);
-  const pageName = current?.text?.toLowerCase() ?? "this page";
+  const pageName = label ?? current?.text?.toLowerCase() ?? "this page";
 
   return (
-    <div className="flex flex-col min-h-full" style={{ background: "var(--bg)" }}>
+    <div className="flex-1 flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center px-10 py-12 gap-6">
         <Ornament />
 

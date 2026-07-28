@@ -178,7 +178,7 @@ const EngineeringWebArchiveProject = () => {
 
   if (!project) {
     return (
-      <FadeIn className="flex flex-col w-full min-h-full items-center justify-center" style={{ background: "var(--bg)" }}>
+      <FadeIn className="flex-1 flex flex-col w-full items-center justify-center">
         <p className="font-fell italic" style={{ color: "var(--text-body)" }}>
           Project not found.
         </p>
@@ -190,7 +190,7 @@ const EngineeringWebArchiveProject = () => {
   }
 
   return (
-    <FadeIn className="flex flex-col w-full" style={{ background: "var(--bg)" }}>
+    <FadeIn className="flex-1 flex flex-col w-full">
       <style>{`
         @media (max-width: 1280px) {
           .eng-project-grid { grid-template-columns: minmax(0, 1fr) !important; }

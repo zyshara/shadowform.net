@@ -156,10 +156,7 @@ const NotFound = () => {
         .nf-dialog { animation: fadeIn 200ms ease-out; }
       `}</style>
 
-      <div
-        className="flex flex-col min-h-full"
-        style={{ background: "var(--bg)" }}
-      >
+      <div className="flex-1 flex flex-col">
         <div className="flex-1 flex items-center justify-center p-8">
           <div style={{ maxWidth: 580, width: "100%" }}>
 

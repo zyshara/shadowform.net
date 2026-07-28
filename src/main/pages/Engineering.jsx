@@ -308,7 +308,7 @@ const Engineering = () => {
   const gridCards = projects.slice(4);
 
   return (
-    <FadeIn className="flex flex-col min-h-full max-w-[700px]" style={{ background: "var(--bg)" }}>
+    <FadeIn className="flex flex-col">
       <style>{`
         .dev-top { display: flex; gap: 10px; }
         .dev-top-left { flex: 1; min-width: 0; display: flex; flex-direction: column; }
@@ -374,7 +374,7 @@ const Engineering = () => {
         }
       `}</style>
 
-      <div className="flex-1 flex flex-col px-8 py-8 w-full mx-auto">
+      <div className="flex flex-col w-full">
         <Header
           eyebrow={header?.eyebrow}
           title={header?.heading}

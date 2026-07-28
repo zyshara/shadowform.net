@@ -1,44 +1,40 @@
 // src/main/Layout.jsx
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { DesktopNavbar, MobileNavbar } from "@/components/Navbar";
 import MobileMenu from "@/components/MobileMenu";
+import PageChrome from "@/components/PageChrome";
+import Footer from "@/components/Footer";
+import Scrollbar from "@/components/Scrollbar";
 
 const Layout = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const contentRef = useRef(null);
 
   return (
-    <div
-      className="grid grid-cols-1 lg:grid-cols-[200px_1fr] min-h-dvh w-full"
-      style={{ background: "var(--bg-sidebar)" }}
-    >
-      {/* ── Sidebar (desktop only) — sticky, stays in viewport while page scrolls ── */}
-      <aside
-        className="hidden lg:flex flex-col pt-7 pb-5 items-center border-r"
-        style={{
-          background: "var(--bg-sidebar)",
-          borderColor: "var(--border)",
-          position: "sticky",
-          top: 0,
-          height: "100dvh",
-        }}
-      >
-        <DesktopNavbar />
-      </aside>
+    <div className="flex min-h-dvh max-h-dvh w-full" style={{ background: "#0e0c14" }}>
+      <div className="grid items-center justify-center grid-cols-[50px_1fr_50px] lg:grid-cols-[1fr_auto_1fr] w-full">
+        {/* ── Sidebar (desktop only) — sticky, stays in viewport while page scrolls ── */}
+        <aside className="flex flex-col justify-center items-center h-full">
+          <DesktopNavbar />
+        </aside>
 
-      {/* ── Main column ── */}
-      <div
-        className="flex flex-col min-h-dvh"
-        style={{ background: "var(--bg)" }}
-      >
-        <MobileNavbar onMenuOpen={() => setMenuOpen(true)} />
-        <main className="flex-1">
-          <Outlet />
-        </main>
+        {/* ── Main column ── */}
+        <div className="grid justify-center items-center w-full h-full grid-rows-[40px_auto_40px] content-center">
+          <PageChrome className="justify-end"/>
+          <div
+            ref={contentRef}
+            className="px-8 py-8 flex flex-col border w-full lg:w-[716px] h-[calc(100dvh-80px)] lg:max-h-full lg:my-0 lg:h-[424px] overflow-y-auto overflow-x-hidden no-scrollbar"
+            style={{ background: "#07060e", borderColor: "#1c1428" }}
+          >
+            <Outlet />
+          </div>
+          <Footer />
+        </div>
+
+        <Scrollbar targetRef={contentRef} />
       </div>
-
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
     </div>
   );
 };

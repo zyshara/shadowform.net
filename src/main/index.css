@@ -16,17 +16,31 @@
   src: url("@shared/assets/fonts/Alkhemikal.ttf") format("truetype");
 }
 
+@font-face {
+  font-family: "Manuskript Gotisch";
+  src: url("@shared/assets/fonts/ManuskriptGotisch.ttf") format("truetype");
+}
+
 @theme {
   --font-alagard: "Alagard";
   --font-alkhemikal: "Alkhemikal";
   --font-fell: "IM Fell English";
-  --font-spectral: "Spectral"
+  --font-spectral: "Spectral";
+  --font-manuskript: "Manuskript Gotisch";
 }
 
 @layer components {
   .white-hard-border {
     filter: drop-shadow(1px 1px 0px white) drop-shadow(-1px 1px 0px white)
       drop-shadow(-1px -1px 0px white) drop-shadow(1px -1px 0px white);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -40,6 +54,16 @@ body,
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-100%); }
+}
+
+@keyframes guestbook-heart-pulse {
+  0%, 100% { transform: scale(1.1); }
+  50% { transform: scale(0.9); }
+}
+
+.guestbook-heart {
+  animation: guestbook-heart-pulse 350ms ease-in-out infinite;
+  filter: drop-shadow(0px 0px 5px var(--pink-glow)) drop-shadow(0px 0px 2px var(--pink-glow));
 }
 
 @keyframes pink-rotate-text {
