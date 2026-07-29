@@ -20,14 +20,27 @@ async function getDataSourceId(databaseId) {
   return dataSourceId;
 }
 
-export async function queryDatabase(databaseId, filter, { pageSize } = {}) {
+// Always walks every page of results — a caller-supplied page_size cap
+// silently drops any matches beyond it (no error, no log), which is exactly
+// how a real edit went missing from a calendar sync before.
+export async function queryDatabase(databaseId, filter) {
   logger.debug("[notion] querying database:", databaseId);
-  const res = await notion.dataSources.query({
-    data_source_id: await getDataSourceId(databaseId),
-    ...(filter ? { filter } : {}),
-    ...(pageSize ? { page_size: pageSize } : {}),
-  });
-  return res.results;
+  const dataSourceId = await getDataSourceId(databaseId);
+
+  const results = [];
+  let cursor;
+  do {
+    const res = await notion.dataSources.query({
+      data_source_id: dataSourceId,
+      ...(filter ? { filter } : {}),
+      page_size: 100,
+      ...(cursor ? { start_cursor: cursor } : {}),
+    });
+    results.push(...res.results);
+    cursor = res.has_more ? res.next_cursor : undefined;
+  } while (cursor);
+
+  return results;
 }
 
 export async function createPage(databaseId, properties) {

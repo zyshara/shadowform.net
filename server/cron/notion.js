@@ -10,7 +10,12 @@ const ROLLOUTS_DATABASE_ID              = process.env.NOTION_ROLLOUTS_DATABASE_I
 const ROLLOUT_TASKS_DATABASE_ID         = process.env.NOTION_ROLLOUT_TASKS_DATABASE_ID;
 const ROLLOUT_TASK_TEMPLATE_DATABASE_ID = process.env.NOTION_ROLLOUT_TASK_TEMPLATE_DATABASE_ID;
 
-const LOOKBACK_MS = 90 * 1000; // 1min cron interval + 30s buffer for drift
+// 1min cron interval + a wide buffer: Notion's last_edited_time filter can
+// lag well behind real time for edits made by collaborators (vs. the
+// integration's own writes), so a short window can miss an edit entirely
+// with no error — it just silently never syncs. queryDatabase now paginates
+// fully, so widening this costs nothing extra in practice at this table's size.
+const LOOKBACK_MS = 10 * 60 * 1000;
 
 // maps a Rollout Task's Artist relation to the calendar it belongs on
 const ARTIST_CALENDAR_IDS = {
@@ -45,7 +50,7 @@ async function markOverdueRolloutTasks() {
       { property: "Status", status: { does_not_equal: "Archived" } },
       { property: "Status", status: { does_not_equal: "Dropped" } },
     ],
-  }, { pageSize: 100 });
+  });
 
   for (const task of overdueTasks) {
     const taskName = task.properties["Name"]?.formula?.string ?? getTitle(task, "Description");
@@ -176,7 +181,7 @@ async function syncRolloutTasksToCalendar() {
   const recentTasks = await queryDatabase(ROLLOUT_TASKS_DATABASE_ID, {
     timestamp: "last_edited_time",
     last_edited_time: { on_or_after: since },
-  }, { pageSize: 50 });
+  });
 
   for (const task of recentTasks) {
     await syncTaskToCalendar(task);
@@ -212,7 +217,7 @@ async function syncRolloutsToCalendar() {
   const recentRollouts = await queryDatabase(ROLLOUTS_DATABASE_ID, {
     timestamp: "last_edited_time",
     last_edited_time: { on_or_after: since },
-  }, { pageSize: 50 });
+  });
 
   for (const rollout of recentRollouts) {
     await syncRolloutToCalendar(rollout);

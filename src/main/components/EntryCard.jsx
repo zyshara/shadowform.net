@@ -89,7 +89,7 @@ const EntryCard = ({ entry, className = "" }) => {
           {/* website */}
           {entry.website && (
             <a href={entry.website} target="_blank" rel="noreferrer"
-              className="font-alagard text-wrap break-words underline text-[11px] tracking-[0.15em] uppercase entry-website-rainbow">{entry.website}</a>
+              className="font-alagard text-wrap break-words underline text-[11px] tracking-[0.15em] uppercase entry-website-rainbow md:hover:[animation:pink-rotate-text_100ms_linear_infinite]">{entry.website}</a>
           )}
           </div>
 
