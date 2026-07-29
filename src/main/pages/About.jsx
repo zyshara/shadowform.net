@@ -1,6 +1,6 @@
 // src/main/pages/About.jsx
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Header from "@/components/Header";
 import DotDivider from "@/components/DotDivider";
 import Ornament from "@/components/Ornament";
@@ -9,6 +9,7 @@ import VoidFrame from "@/components/VoidFrame";
 import EntryCard from "@/components/EntryCard";
 import Button from "@/components/Button";
 import SparkleFrame from "@/components/SparkleFrame";
+import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
 
 // ── cat photo — cycles through srcs on click, scales up on hover ──
 const CatImage = ({ srcs, alt }) => {
@@ -36,18 +37,25 @@ const DividerSample = ({ label, children }) => (
   </div>
 );
 
-const About = () => {
-  const [latestEntry, setLatestEntry] = useState(null);
+// ── bordered section wrapper — shared by every block below the intro ──
+const AboutSection = ({ className = "", children }) => (
+  <div className={`flex flex-col sm:px-7 py-8 gap-4 ${className}`} style={{ borderTop: "1px solid var(--border)" }}>
+    {children}
+  </div>
+);
 
-  useEffect(() => {
-    fetch("/api/guestbook")
+const About = () => {
+  const { data: latestEntry, loading, fading } = usePageLoad(
+    () => fetch("/api/guestbook")
       .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-      .then((data) => setLatestEntry(data.guestbook?.guestbook_entries?.[0] ?? null))
-      .catch(() => {});
-  }, []);
+      .then((data) => data.guestbook?.guestbook_entries?.[0] ?? null),
+    { minLoadMs: 300 },
+  );
+
+  if (loading) return <LoadingScreen fading={fading} />;
 
   return (
-    <div className="flex flex-col w-full">
+    <FadeIn className="flex flex-col w-full">
         <div className="flex flex-col justify-center items-center md:items-start md:flex-row gap-7">
           <VoidFrame size={180}>
             <img
@@ -58,45 +66,53 @@ const About = () => {
             />
           </VoidFrame>
 
-          <Header align="left" size="large" title="welcome to shadowform">
-            <div className="flex flex-col gap-4">
-              <p className="font-fell text-[15px] leading-[1.9]" style={{ color: "var(--text-body)" }}>
-                hi im <i style={{ color: "var(--text-heading)" }}>Jennifer</i>, a 31 year old software developer living in los angeles
-                currently working at <i style={{ color: "var(--text-heading)" }}>Blizzard Entertainment</i> on the front end web team.
-              </p>
-              <p className="font-fell text-[15px] leading-[1.9]" style={{ color: "var(--text-body)" }}>
-                i've been on the internet since the days of Zyzz and Albino Black Sheep,
-                and making websites since the dawn of &lt;marquee&gt; and Dreamweaver.
-              </p>
-              <p className="font-fell text-[15px] leading-[1.9]" style={{ color: "var(--text-body)" }}>
-                i'm a raver, a gamer, and a mom to three wonderful cats.<br/>
-                enjoy your stay :-)
-              </p>
-            </div>
-          </Header>
+          <Header
+            align={{ base: "center", md: "left" }}
+            size={{ base: "medium", sm: "large" }}
+            title="welcome to shadowform"
+            description={(
+              <>
+                <p>
+                  hi im <i style={{ color: "var(--text-heading)" }}>Jennifer</i>, a 31 year old software developer living in los angeles
+                  currently working at <i style={{ color: "var(--text-heading)" }}>Blizzard Entertainment</i> on the front end web team.
+                </p>
+                <p>
+                  i've been on the internet since the days of Zyzz and Albino Black Sheep,
+                  and making websites since the dawn of &lt;marquee&gt; and Dreamweaver.
+                </p>
+                <p>
+                  i'm a raver, a gamer, and a mom to three wonderful cats.<br/>
+                  enjoy your stay :-)
+                </p>
+              </>
+            )}
+          />
       </div>
 
       <div className="flex justify-center pb-4">
         <DotDivider variant="alagard" />
       </div>
 
-      <div className="flex flex-col gap-4 px-7 py-6" style={{ borderTop: "1px solid var(--border)" }}>
-        <div className="flex flex-col md:flex-row gap-4 justify-between">
-          <span className="font-alkhemikal text-[12px] uppercase tracking-[0.2em] flex justify-center items-center" style={{ color: "var(--pink-text)" }}>
-            // latest guestbook entry 
+      <AboutSection>
+        <div className="flex flex-col md:flex-row gap-6 justify-between">
+          <span className="text-center sm:text-left font-alkhemikal text-[14px] uppercase tracking-[0.2em] flex justify-center items-center" style={{ color: "var(--pink-text)" }}>
+            // latest guestbook entry
           </span>
-          <Button variant="secondary" corners className="w-full sm:w-auto justify-center text-[10px]" href="/guestbook">
-            <div className="inline-flex guestbook-heart mr-[5px]">🩷</div>Sign My Guestbook!!!
-            <div className="inline-flex guestbook-heart ml-[5px]">🩷</div>
+          <Button variant="secondary" corners className="w-full h-[30px] sm:w-auto justify-center text-[10px]" href="/guestbook">
+            <div className="flex flex-row justify-center items-center">
+              <div className="inline-flex guestbook-heart mr-[5px]">🩷</div>
+              <p className="text-wrap text-center">Sign My Guestbook!!!</p>
+              <div className="inline-flex guestbook-heart ml-[5px]">🩷</div>
+            </div>
           </Button>
         </div>
         <div className="flex">
           {latestEntry && <SparkleFrame className="w-full"><EntryCard entry={latestEntry} className="w-full" /></SparkleFrame>}
         </div>
-      </div>
+      </AboutSection>
 
-      <div className="flex flex-col gap-6 px-7 py-6" style={{ borderTop: "1px solid var(--border)" }}>
-        <span className="font-alkhemikal text-[12px] uppercase tracking-[0.2em]" style={{ color: "var(--pink-text)" }}>
+      <AboutSection>
+          <span className="text-center sm:text-left font-alkhemikal text-[14px] uppercase tracking-[0.2em] flex justify-center items-center" style={{ color: "var(--pink-text)" }}>
           // cat collection
         </span>
         <div className="flex flex-row gap-6">
@@ -150,20 +166,20 @@ const About = () => {
             </Button>
           </div>
         </div>
-      </div>
+      </AboutSection>
 
       {/* footer quote */}
-      <div className="flex flex-col gap-6 px-7 py-6" style={{ borderTop: "1px solid var(--border)" }}>
+      <AboutSection>
         <a
           href="https://www.youtube.com/watch?v=07XwrN878Hs"
           target="_blank"
           rel="noreferrer"
-          className="font-manuskript italic text-[18px] text-center leading-[1.7] px-7 pt-4 pb-6 block transition-colors duration-300 text-[#1c1428] hover:underline hover:text-[var(--pink-text)]"
+          className="font-manuskript italic text-[18px] text-center leading-[1.7] px-7 block transition-colors duration-300 text-[#1c1428] hover:underline hover:text-[var(--pink-text)]"
         >
           "i am the lucid dream... the monster in your nightmares... the fiend of a thousand faces"
         </a>
-      </div>
-    </div>
+      </AboutSection>
+    </FadeIn>
   );
 };
 

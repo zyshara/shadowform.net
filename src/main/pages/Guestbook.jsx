@@ -267,8 +267,8 @@ const Guestbook = () => {
         />
       )}
 
-      <FadeIn className="flex-1 flex flex-col max-w-600 w-full">
-        <div className="flex-1 flex flex-col px-10 py-8 max-w-[640px] w-full">
+      <FadeIn className="flex flex-col w-full">
+        <div className="flex flex-col w-full">
 
           <Header eyebrow="guestbook" title="sign the book"
             description="leave a message, a drawing, or whatever's on your mind!" />

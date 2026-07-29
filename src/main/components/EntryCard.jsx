@@ -25,6 +25,23 @@ const EntryCard = ({ entry, className = "" }) => {
 
   return (
     <>
+      <style>{`
+        @keyframes entry-website-rainbow {
+          0%    { color: #ff4d4d; } /* red */
+          12.5% { color: #ff9933; } /* orange */
+          25%   { color: #ffe066; } /* yellow */
+          37.5% { color: #4ade80; } /* green */
+          50%   { color: #22d3ee; } /* cyan */
+          62.5% { color: #4d94ff; } /* blue */
+          75%   { color: #a855f7; } /* purple */
+          87.5% { color: #f43f9e; } /* magenta */
+          100%  { color: #ff4d4d; } /* back to red */
+        }
+        .entry-website-rainbow {
+          animation: entry-website-rainbow 8s linear infinite;
+        }
+      `}</style>
+
       {lightbox && entry.drawing && (
         <DrawingLightbox src={entry.drawing} onClose={() => setLightbox(false)} />
       )}
@@ -57,13 +74,14 @@ const EntryCard = ({ entry, className = "" }) => {
           }
         </div>
 
-        <div className="flex-1 min-w-0 flex flex-col">
+        <div className="flex-1 min-w-0 flex flex-col gap-4">
           {/* name + date */}
-          <div className="flex items-start justify-between gap-2 mb-1">
-            <h3 className="font-alagard text-[16px] tracking-[1px] leading-tight lowercase" style={{ color:"var(--text-heading)" }}>
+          <div className="flex flex-col">
+          <div className="flex items-start justify-between flex-col sm:flex-row flex-col-reverse sm:flex-col gap-1">
+            <h3 className="font-alagard text-[18px] tracking-[1px] leading-tight lowercase" style={{ color:"var(--text-heading)" }}>
               {entry.name}
             </h3>
-            <span className="font-alkhemikal text-[10px] tracking-[0.15em] uppercase flex-shrink-0" style={{ color:"var(--text-nav-inactive)" }}>
+            <span className="font-alkhemikal text-[12px] tracking-[0.15em] uppercase self-end" style={{ color:"var(--text-nav-inactive)" }}>
               {entry.date}
             </span>
           </div>
@@ -71,30 +89,30 @@ const EntryCard = ({ entry, className = "" }) => {
           {/* website */}
           {entry.website && (
             <a href={entry.website} target="_blank" rel="noreferrer"
-              className="font-alkhemikal text-[10px] tracking-[0.15em] uppercase mb-1"
-              style={{ color:"var(--text-nav-inactive)" }}>{entry.website}</a>
+              className="font-alagard text-wrap break-words underline text-[11px] tracking-[0.15em] uppercase entry-website-rainbow">{entry.website}</a>
           )}
-
-          {/* message */}
-          {entry.message && (
-            <p className="font-fell text-[12px] leading-[1.75]" style={{ color:"var(--text-body)" }}>
-              {entry.message}
-            </p>
-          )}
+          </div>
 
           {/* tags */}
           {entry.tags?.length > 0 && (
-            <div className="flex gap-1 flex-wrap mt-auto pt-3">
+            <div className="flex gap-1 flex-wrap">
               {entry.tags.map((t) => (
                 <Tag key={t.label} theme={t.theme} variant="lit">{t.label}</Tag>
               ))}
             </div>
           )}
 
+          {/* message */}
+          {entry.message && (
+            <p className="font-fell text-[14px] leading-[1.75]" style={{ color:"var(--text-body)" }}>
+              {entry.message}
+            </p>
+          )}
+
           {/* mobile drawing strip */}
           {entry.drawing && (
             <div
-              className="sm:hidden mt-3 w-full h-28 rounded-[2px] border overflow-hidden"
+              className="sm:hidden w-full h-28 rounded-[2px] border overflow-hidden"
               style={{ background:"var(--bg-sidebar)", borderColor:"var(--border)" }}
             >
               <img src={entry.drawing} alt="doodle" className="w-full h-full object-contain" />
