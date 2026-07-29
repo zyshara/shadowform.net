@@ -101,7 +101,7 @@ const CarouselArrow = ({ direction, onClick, label }) => {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       aria-label={label}
-      className="flex-shrink-0 px-3 py-2 text-[20px] cursor-pointer"
+      className={`absolute top-1/2 -translate-y-1/2 ${direction === "left" ? "left-[-24px]" : "right-[-24px]"} px-3 py-2 text-[20px] cursor-pointer`}
       style={{
         color: "var(--pink-text)",
         filter: hovered ? "drop-shadow(0 0 4px var(--pink-glow)) drop-shadow(0 0 6px var(--pink-glow))" : "none",
@@ -134,7 +134,7 @@ const CatCarousel = () => {
 
   return (
     <div
-      className="sm:hidden grid grid-cols-[auto_1fr_auto] items-center gap-2 touch-pan-y"
+      className="md:hidden relative touch-pan-y"
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
     >
@@ -146,7 +146,7 @@ const CatCarousel = () => {
           <span className="font-alagard text-[11px] uppercase tracking-[0.2em] text-nowrap" style={{ color: "var(--pink-text)" }}>
             {cat.name}
           </span>
-          <span className="flex gap-2">
+          <span className="flex gap-2 font-noto-emoji">
             <span>{cat.emojiStart}</span>
             <span>{cat.emojiEnd}</span>
           </span>
@@ -229,36 +229,26 @@ const About = () => {
       </AboutSection>
 
       <AboutSection>
-          <span className="text-center sm:text-left font-alkhemikal text-[14px] uppercase tracking-[0.2em] flex justify-center items-center" style={{ color: "var(--pink-text)" }}>
+          <span className="text-center sm:text-left font-alkhemikal text-[14px] uppercase tracking-[0.2em] flex justify-center items-center gap-2" style={{ color: "var(--pink-text)" }}>
+          <span className="cat-wiggle font-noto-emoji" aria-hidden="true">😻</span>
           // cat collection
+          <span className="cat-wiggle font-noto-emoji" aria-hidden="true">😼</span>
         </span>
 
         <CatCarousel />
 
-        <div className="hidden sm:flex flex-row gap-6">
+        <div className="hidden md:flex flex-row gap-6">
           {CATS.map((cat) => (
             <div key={cat.href} className="w-full min-w-0 flex flex-col justify-center gap-6">
               <CatImage alt={cat.alt} srcs={cat.srcs} />
 
-              {/* below md: name on its own line, both emoji stacked underneath */}
-              <div className="md:hidden flex flex-col items-center gap-1 self-center">
-                <span className="font-alagard text-[11px] uppercase tracking-[0.2em] text-nowrap" style={{ color: "var(--pink-text)" }}>
-                  {cat.name}
-                </span>
-                <span className="flex gap-2">
-                  <span>{cat.emojiStart}</span>
-                  <span>{cat.emojiEnd}</span>
-                </span>
-              </div>
-
-              {/* md+: emoji on either side of the name, inline */}
-              <span className="hidden md:flex items-center gap-2 font-alagard text-[11px] uppercase tracking-[0.2em] self-center text-nowrap" style={{ color: "var(--pink-text)" }}>
-                <span>{cat.emojiStart}</span>
+              <span className="flex items-center gap-2 font-alagard text-[11px] uppercase tracking-[0.2em] self-center text-nowrap" style={{ color: "var(--pink-text)" }}>
+                <span className="font-noto-emoji">{cat.emojiStart}</span>
                 <span>{cat.name}</span>
-                <span>{cat.emojiEnd}</span>
+                <span className="font-noto-emoji">{cat.emojiEnd}</span>
               </span>
-              <Button className="w-full sm:w-auto justify-center min-h-[36px] md:h-auto" href={cat.href}>
-                <div className="text-center text-wrap md:text-nowrap">
+              <Button className="w-auto justify-center min-h-[36px] lg:min-h-auto" href={cat.href}>
+                <div className="text-center max-w-[140px] lg:max-w-full text-wrap">
                   {cat.buttonText}
                 </div>
               </Button>

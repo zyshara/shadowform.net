@@ -7,6 +7,7 @@ export default {
         alkhemikal: ["Alkhemikal", "monospace"],
         fell:       ['"IM Fell English"', "serif"],
         "8bit":     ['"8-BIT-WONDER"', "monospace"],
+        "noto-emoji": ['"Noto Color Emoji"', "sans-serif"],
       },
       colors: {
         sf: {
