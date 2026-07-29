@@ -271,17 +271,22 @@ async function syncRolloutsToCalendar() {
   });
 
   for (const rollout of recentRollouts) {
-    try {
-      // the rollout itself may already be in sync (its own calendar event
-      // doesn't need touching), but its tasks' titles are formula-derived
-      // from its Name and need cascading every time the rollout shows up
-      // here — not just the one tick its own event actually changes.
-      if (!alreadySynced(rollout)) {
+    // separate try/catches — the rollout's own event failing (rate limit,
+    // whatever) must not also block the cascade to its tasks, and vice
+    // versa. They're logically independent operations; a shared try block
+    // meant one failure silently skipped the other every time.
+    if (!alreadySynced(rollout)) {
+      try {
         await syncRolloutToCalendar(rollout);
+      } catch (err) {
+        logger.error(`[notionCron] failed to sync rollout "${getTitle(rollout)}" to calendar:`, err.message);
       }
+    }
+
+    try {
       await resyncTasksForRollout(rollout);
     } catch (err) {
-      logger.error(`[notionCron] failed to sync rollout "${getTitle(rollout)}" to calendar:`, err.message);
+      logger.error(`[notionCron] failed to cascade tasks for rollout "${getTitle(rollout)}":`, err.message);
     }
   }
 }
