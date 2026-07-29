@@ -1,6 +1,6 @@
 // src/main/pages/About.jsx
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Header from "@/components/Header";
 import DotDivider from "@/components/DotDivider";
 import Ornament from "@/components/Ornament";
@@ -43,6 +43,123 @@ const AboutSection = ({ className = "", children }) => (
     {children}
   </div>
 );
+
+// ── cat collection data ──
+const CATS = [
+  {
+    emojiStart: "🧡",
+    name: "Arthur Morgan",
+    emojiEnd: "🍊",
+    href: "/about/arthur-morgan",
+    buttonText: "Learn More about Arthur!",
+    alt: "Arthur Morgan",
+    srcs: [
+      "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785135997/about_arthur3_8eadd8df9d.png",
+      "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785133654/about_arthur1_eda74c82bb.png",
+      "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785135126/about_arthur2_a1f2b00374.png",
+    ],
+  },
+  {
+    emojiStart: "🤍",
+    name: "Kilrogg Deadeye",
+    emojiEnd: "👁️",
+    href: "/about/kilrogg-deadeye",
+    buttonText: "Learn More about Kilrogg!",
+    alt: "Kilrogg Deadeye",
+    srcs: [
+      "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785135126/about_kilrogg3_7130035fbc.png",
+      "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785133654/about_kilrogg1_07f593f1aa.png",
+      "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785135126/about_kilrogg2_15de30b0b8.png",
+      "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785135997/about_kilrogg4_f11ddfa1ce.png",
+    ],
+  },
+  {
+    emojiStart: "☕",
+    name: "Guardian Lulu",
+    emojiEnd: "🌶️",
+    href: "/about/guardian-lulu",
+    buttonText: "Learn More about Lulu!",
+    alt: "Guardian Lulu",
+    srcs: [
+      "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785135126/about_lulu3_013f45c90f.png",
+      "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785133655/about_lulu1_1874d9543d.png",
+      "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785135126/about_lulu2_fc86b6e0e0.png",
+    ],
+  },
+];
+
+// ── carousel arrow — same glyph PageChrome uses for its breadcrumb
+// separator, mirrored for "prev"; hover adds the standard pink-glow
+// drop-shadow used for active/hovered nav state elsewhere on the site ──
+const CarouselArrow = ({ direction, onClick, label }) => {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      aria-label={label}
+      className="flex-shrink-0 px-3 py-2 text-[20px] cursor-pointer"
+      style={{
+        color: "var(--pink-text)",
+        filter: hovered ? "drop-shadow(0 0 4px var(--pink-glow)) drop-shadow(0 0 6px var(--pink-glow))" : "none",
+        transition: "filter 150ms ease-out",
+      }}
+    >
+      <span aria-hidden="true" className={direction === "left" ? "inline-block rotate-180" : "inline-block"}>➺</span>
+    </button>
+  );
+};
+
+// ── mobile/below-sm cat carousel — left arrow / cat / right arrow,
+// swipeable via pointer events (covers touch and mouse alike) ──
+const CatCarousel = () => {
+  const [index, setIndex] = useState(0);
+  const dragStartX = useRef(null);
+
+  const cat = CATS[index];
+  const goPrev = () => setIndex((i) => (i - 1 + CATS.length) % CATS.length);
+  const goNext = () => setIndex((i) => (i + 1) % CATS.length);
+
+  const onPointerDown = (e) => { dragStartX.current = e.clientX; };
+  const onPointerUp = (e) => {
+    if (dragStartX.current === null) return;
+    const deltaX = e.clientX - dragStartX.current;
+    dragStartX.current = null;
+    if (Math.abs(deltaX) < 40) return;
+    if (deltaX > 0) goPrev(); else goNext();
+  };
+
+  return (
+    <div
+      className="sm:hidden grid grid-cols-[auto_1fr_auto] items-center gap-2 touch-pan-y"
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+    >
+      <CarouselArrow direction="left" onClick={goPrev} label="Previous cat" />
+
+      <div className="flex flex-col items-center gap-6 select-none">
+        <CatImage alt={cat.alt} srcs={cat.srcs} />
+        <div className="flex flex-col items-center gap-1">
+          <span className="font-alagard text-[11px] uppercase tracking-[0.2em] text-nowrap" style={{ color: "var(--pink-text)" }}>
+            {cat.name}
+          </span>
+          <span className="flex gap-2">
+            <span>{cat.emojiStart}</span>
+            <span>{cat.emojiEnd}</span>
+          </span>
+        </div>
+        <Button className="w-full justify-center min-h-[36px]" href={cat.href}>
+          <div className="text-center text-wrap">{cat.buttonText}</div>
+        </Button>
+      </div>
+
+      <CarouselArrow direction="right" onClick={goNext} label="Next cat" />
+    </div>
+  );
+};
 
 const About = () => {
   const { data: latestEntry, loading, fading } = usePageLoad(
@@ -115,56 +232,38 @@ const About = () => {
           <span className="text-center sm:text-left font-alkhemikal text-[14px] uppercase tracking-[0.2em] flex justify-center items-center" style={{ color: "var(--pink-text)" }}>
           // cat collection
         </span>
-        <div className="flex flex-row gap-6">
-          <div className="w-full flex flex-col justify-center gap-6">
-            <CatImage
-              alt="Arthur Morgan"
-              srcs={[
-                "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785135997/about_arthur3_8eadd8df9d.png",
-                "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785133654/about_arthur1_eda74c82bb.png",
-                "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785135126/about_arthur2_a1f2b00374.png",
-              ]}
-            />
-            <span className="font-alagard text-[11px] uppercase tracking-[0.2em] self-center" style={{ color: "var(--pink-text)" }}>
-              🧡 Arthur Morgan 🍊
-            </span>
-            <Button className="w-full sm:w-auto justify-center" href="/about/arthur-morgan">
-              Learn More about Arthur!
-            </Button>
-          </div>
-          <div className="w-full flex flex-col justify-center gap-6">
-            <CatImage
-              alt="Kilrogg Deadeye"
-              srcs={[
-                "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785135126/about_kilrogg3_7130035fbc.png",
-                "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785133654/about_kilrogg1_07f593f1aa.png",
-                "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785135126/about_kilrogg2_15de30b0b8.png",
-                "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785135997/about_kilrogg4_f11ddfa1ce.png",
-              ]}
-            />
-            <span className="font-alagard text-[11px] uppercase tracking-[0.2em] self-center" style={{ color: "var(--pink-text)" }}>
-              🤍 Kilrogg Deadeye 👁️
-            </span>
-            <Button className="w-full sm:w-auto justify-center" href="/about/kilrogg-deadeye">
-              Learn More about Kilrogg!
-            </Button>
-          </div>
-          <div className="w-full flex flex-col justify-center gap-6">
-            <CatImage
-              alt="Guardian Lulu"
-              srcs={[
-                "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785135126/about_lulu3_013f45c90f.png",
-                "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785133655/about_lulu1_1874d9543d.png",
-                "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785135126/about_lulu2_fc86b6e0e0.png",
-              ]}
-            />
-            <span className="font-alagard text-[11px] uppercase tracking-[0.2em] self-center" style={{ color: "var(--pink-text)" }}>
-              ☕ Guardian Lulu 🌶️
-            </span>
-            <Button className="w-full sm:w-auto justify-center" href="/about/guardian-lulu">
-              Learn More about Lulu!
-            </Button>
-          </div>
+
+        <CatCarousel />
+
+        <div className="hidden sm:flex flex-row gap-6">
+          {CATS.map((cat) => (
+            <div key={cat.href} className="w-full min-w-0 flex flex-col justify-center gap-6">
+              <CatImage alt={cat.alt} srcs={cat.srcs} />
+
+              {/* below md: name on its own line, both emoji stacked underneath */}
+              <div className="md:hidden flex flex-col items-center gap-1 self-center">
+                <span className="font-alagard text-[11px] uppercase tracking-[0.2em] text-nowrap" style={{ color: "var(--pink-text)" }}>
+                  {cat.name}
+                </span>
+                <span className="flex gap-2">
+                  <span>{cat.emojiStart}</span>
+                  <span>{cat.emojiEnd}</span>
+                </span>
+              </div>
+
+              {/* md+: emoji on either side of the name, inline */}
+              <span className="hidden md:flex items-center gap-2 font-alagard text-[11px] uppercase tracking-[0.2em] self-center text-nowrap" style={{ color: "var(--pink-text)" }}>
+                <span>{cat.emojiStart}</span>
+                <span>{cat.name}</span>
+                <span>{cat.emojiEnd}</span>
+              </span>
+              <Button className="w-full sm:w-auto justify-center min-h-[36px] md:h-auto" href={cat.href}>
+                <div className="text-center text-wrap md:text-nowrap">
+                  {cat.buttonText}
+                </div>
+              </Button>
+            </div>
+          ))}
         </div>
       </AboutSection>
 
