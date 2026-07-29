@@ -29,10 +29,17 @@ const ARTIST_CALENDAR_IDS = {
 // Calendar API call per tick per page, which is what tripped a rate limit.
 // Persisted on the page itself, so it survives restarts and is visible in
 // Notion, unlike the in-memory map this replaced.
-function alreadySynced(page) {
+//
+// `referenceTime` defaults to the page's own last_edited_time, but a cascaded
+// task sync (triggered by its *rollout* changing, not the task itself) needs
+// to compare against the rollout's last_edited_time instead — the task's own
+// last_edited_time never moves when its formula-derived name changes, so
+// defaulting here would either always skip (stale forever) or never skip
+// (resynced every tick), depending which way you get it wrong.
+function alreadySynced(page, referenceTime = page.last_edited_time) {
   const lastSync = page.properties["Google Calendar Last Sync"]?.date?.start;
   if (!lastSync) return false;
-  return new Date(lastSync) >= new Date(page.last_edited_time);
+  return new Date(lastSync) >= new Date(referenceTime);
 }
 
 function getTitle(page, propertyName = "Name") {
@@ -47,6 +54,10 @@ function addDays(isoDate, days) {
 
 function todayISODate() {
   return new Date().toISOString().slice(0, 10);
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 // Scenario 0: Rollout Tasks past due (and not already finished/dead) get
@@ -214,6 +225,7 @@ async function syncRolloutTasksToCalendar() {
     } catch (err) {
       logger.error(`[notionCron] failed to sync task "${getTitle(task, "Description")}" to calendar:`, err.message);
     }
+    await sleep(200); // pace consecutive writes — reduces how often the burst quota gets tripped at all
   }
 }
 
@@ -246,7 +258,9 @@ async function syncRolloutToCalendar(rollout) {
 // bumps that for direct edits to the page itself). So syncRolloutTasksToCalendar's
 // last_edited_time filter never picks these tasks up on its own, no matter how
 // wide the lookback window is. Whenever a Rollout resyncs, force its related
-// tasks to resync too, regardless of their own last_edited_time.
+// tasks to resync too — but gate on the rollout's last_edited_time (not the
+// task's own, which never moves here), or this re-pushes every related task
+// to Google Calendar on every tick for the rollout's whole lookback window.
 async function resyncTasksForRollout(rollout) {
   const relatedTasks = await queryDatabase(ROLLOUT_TASKS_DATABASE_ID, {
     property: "Rollout",
@@ -254,11 +268,13 @@ async function resyncTasksForRollout(rollout) {
   });
 
   for (const task of relatedTasks) {
+    if (alreadySynced(task, rollout.last_edited_time)) continue;
     try {
       await syncTaskToCalendar(task);
     } catch (err) {
       logger.error(`[notionCron] failed to cascade-sync task "${getTitle(task, "Description")}" after rollout change:`, err.message);
     }
+    await sleep(200); // pace consecutive writes — this is exactly the loop that tripped the burst quota
   }
 }
 
