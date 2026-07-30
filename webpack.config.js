@@ -97,8 +97,9 @@ const fromMetadata = (metadata) => ({
   jsonLd: metadata.jsonLd ?? null,
 });
 
-const redspearMetadata = loadMetadata(path.join(__dirname, "src/redspear/metadata.json"));
-const lowPolyMetadata  = loadMetadata(path.join(__dirname, "src/low-poly/metadata.json"));
+const redspearMetadata   = loadMetadata(path.join(__dirname, "src/redspear/metadata.json"));
+const lowPolyMetadata    = loadMetadata(path.join(__dirname, "src/low-poly/metadata.json"));
+const domeofdoomMetadata = loadMetadata(path.join(__dirname, "src/domeofdoom/metadata.json"));
 
 export default [
   makeConfig({
@@ -109,6 +110,16 @@ export default [
     umamiId: "0bf57e1c-2c3f-4f39-80f6-31a7cf393705",
     alias: {
       "@": path.resolve(__dirname, "src/redspear"),
+      "@shared": path.resolve(__dirname, "src/shared"),
+    },
+  }),
+  makeConfig({
+    entry: "./src/domeofdoom/index.js",
+    outputPath: "dist/domeofdoom",
+    publicPath: "/",
+    ...fromMetadata(domeofdoomMetadata),
+    alias: {
+      "@": path.resolve(__dirname, "src/domeofdoom"),
       "@shared": path.resolve(__dirname, "src/shared"),
     },
   }),

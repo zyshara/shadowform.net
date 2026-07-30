@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+/* tailwind.config.js's JS-based theme.extend isn't loaded under Tailwind v4
+   without an explicit @config directive (which this project doesn't use), so
+   custom animations have to be registered here instead, CSS-native. */
+@theme {
+  --animate-marquee: marquee 18s linear infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0%); }
+  to   { transform: translateX(-50%); }
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: oklch(0.72 0.19 25);
+  color: #0d0b0a;
+}

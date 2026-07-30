@@ -3,6 +3,7 @@ import { fileURLToPath } from "url";
 import { readFileSync } from "fs";
 import express from "express";
 import { loadMetadata, resolvePageMetadata } from "../lib/metadata.js";
+import { getDiscography, getRoster, getMerch } from "../lib/bandcampCache.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -46,6 +47,22 @@ function servePageHtml(distIndexPath, metadata, pageKey, res) {
   res.type("html").send(injectPageMeta(html, metadata, pageKey));
 }
 
+// Seeds a JSON blob into the initial HTML so the client can read it on boot
+// without a network round-trip — not React hydration (these are plain CSR
+// SPAs, nothing is server-rendered), just pre-seeding data the server already
+// has. Escaping "<" prevents a literal "</script>" in the data from closing
+// the tag early; JSON strings support \uXXXX escapes, so this is safe to
+// JSON.parse on the other end.
+function injectJsonData(html, elementId, data) {
+  const json = JSON.stringify(data ?? null)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026");
+
+  const script = `<script type="application/json" id="${elementId}">${json}</script>`;
+  return html.replace("</head>", `${script}</head>`);
+}
+
 export function registerSpaRoutes(app) {
   // Shared static assets (served at root)
   app.use("/shared", express.static(path.join(root, "public/shared")));
@@ -71,6 +88,23 @@ export function registerSpaRoutes(app) {
     if (req.path === "/epk") return servePageHtml(lowpolyIndex, lowPolyMetadata, "epk", res);
     lowpolyStatic(req, res, () => {
       res.sendFile(lowpolyIndex);
+    });
+  });
+
+  /* ── Dome of Doom SPA (subdomain) ── */
+  const domeofdoomIndex  = path.join(root, "dist/domeofdoom/index.html");
+  // index: false — otherwise express.static would serve "/" straight off
+  // disk for a directory request, bypassing the discography seed below.
+  const domeofdoomStatic = express.static(path.join(root, "dist/domeofdoom"), { index: false });
+  app.use((req, res, next) => {
+    const host = req.header("host") || "";
+    if (!host.split(":")[0].startsWith("domeofdoom.")) return next();
+    domeofdoomStatic(req, res, () => {
+      let html = readFileSync(domeofdoomIndex, "utf8");
+      html = injectJsonData(html, "discography-data", getDiscography());
+      html = injectJsonData(html, "roster-data", getRoster());
+      html = injectJsonData(html, "merch-data", getMerch());
+      res.type("html").send(html);
     });
   });
 

@@ -88,26 +88,22 @@ const ArtistManagement = () => {
   const { header, artist_cards: artists = [] } = data?.data ?? {};
 
   return (
-    <FadeIn className="flex-1 flex flex-col">
-      <div className="flex-1 flex flex-col w-full mx-auto justify-center">
-        <Header
-          eyebrow={header?.eyebrow}
-          title={header?.heading}
-          description={header?.description}
-        />
+    <FadeIn className="flex flex-col">
+      <div className="flex flex-col w-full mx-auto">
+        <Header title={header?.heading} description={header?.description} align={{ base: "center", md: "left" }} size={{ base: "medium", sm: "large" }}/>
 
         <div className="flex items-center gap-3 mb-4 mt-6">
-          <span className="font-alkhemikal text-[9px] tracking-[0.2em] uppercase" style={{ color: "var(--ornament-glyph)" }}>
+          <span className="font-alkhemikal text-[12px] tracking-[0.2em] uppercase" style={{ color: "var(--tag-dim-text)" }}>
             ✦ &nbsp; artists
           </span>
-          <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, var(--ornament-line), transparent)" }} />
+          <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, var(--tag-dim-text), transparent)" }} />
         </div>
 
         <div className="flex flex-col gap-3">
           {artists.map((artist) => <ArtistCard key={artist.name} artist={artist} />)}
         </div>
 
-        <Ornament className="mt-8 self-center" />
+        <Ornament className="py-8 self-center" />
       </div>
     </FadeIn>
   );

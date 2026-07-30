@@ -206,10 +206,6 @@ const About = () => {
           />
       </div>
 
-      <div className="flex justify-center pb-4">
-        <DotDivider variant="alagard" />
-      </div>
-
       <AboutSection>
         <div className="flex flex-col md:flex-row gap-6 justify-between">
           <span className="text-center sm:text-left font-alkhemikal text-[14px] uppercase tracking-[0.2em] flex justify-center items-center" style={{ color: "var(--pink-text)" }}>
@@ -267,7 +263,9 @@ const About = () => {
         >
           "i am the lucid dream... the monster in your nightmares... the fiend of a thousand faces"
         </a>
+        <Ornament className="self-center" />
       </AboutSection>
+
     </FadeIn>
   );
 };
