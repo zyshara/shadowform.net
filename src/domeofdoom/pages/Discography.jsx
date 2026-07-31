@@ -1,10 +1,13 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import { readSeedData } from "@/utils/readSeedData";
 import { colors } from "@/tokens";
 import Button from "@/components/Button";
 
 const PRIMARY = colors.accent;
 const SECONDARY = colors.secondary;
+
+const VIEW_STORAGE_KEY = "domeofdoom:discography:view";
 
 const GridIcon = () => (
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -47,6 +50,96 @@ function releaseTimestamp(release) {
   return 0;
 }
 
+function slugify(str) {
+  return (str || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function releaseSlug(release) {
+  return `${slugify(release.release_name)}-${release.uid}`;
+}
+
+function extractUidFromSlug(param) {
+  if (!param) return null;
+  const idx = param.lastIndexOf("-");
+  return idx === -1 ? param : param.slice(idx + 1);
+}
+
+function getStoredView() {
+  try {
+    const v = localStorage.getItem(VIEW_STORAGE_KEY);
+    return v === "grid" || v === "list" ? v : "list";
+  } catch {
+    return "list";
+  }
+}
+
+// Matches Tailwind's `md` breakpoint (768px) — below this, discography always
+// renders as a grid regardless of the stored view preference, since the
+// sidebar + 3D preview layout doesn't fit small screens.
+function useIsBelowMd() {
+  const [isBelowMd, setIsBelowMd] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth < 768 : false
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767.98px)");
+    const handler = (e) => setIsBelowMd(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return isBelowMd;
+}
+
+// Drives the same { rx, ry } shape as the mouse-tilt handler, but from the
+// device's gyroscope. iOS 13+ requires an explicit user gesture to grant
+// motion access (DeviceOrientationEvent.requestPermission), so callers
+// should surface `permissionState === "prompt"` as a button. The first
+// reading received is treated as "flat" — tilt is reported relative to
+// however the phone happened to be held, not an absolute angle.
+function useGyroTilt(enabled) {
+  const [gyroTilt, setGyroTilt] = useState({ rx: 0, ry: 0 });
+  const [permissionState, setPermissionState] = useState(() => {
+    if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
+      return "prompt";
+    }
+    return "granted";
+  });
+  const baselineRef = useRef(null);
+
+  useEffect(() => {
+    if (!enabled || permissionState !== "granted") return;
+    baselineRef.current = null;
+
+    const handler = (e) => {
+      if (e.beta == null || e.gamma == null) return;
+      if (!baselineRef.current) baselineRef.current = { beta: e.beta, gamma: e.gamma };
+      const dBeta = e.beta - baselineRef.current.beta;
+      const dGamma = e.gamma - baselineRef.current.gamma;
+      setGyroTilt({
+        rx: Math.max(-22, Math.min(22, dBeta * -0.8)),
+        ry: Math.max(-22, Math.min(22, dGamma * 0.8)),
+      });
+    };
+
+    window.addEventListener("deviceorientation", handler);
+    return () => window.removeEventListener("deviceorientation", handler);
+  }, [enabled, permissionState]);
+
+  const requestPermission = async () => {
+    try {
+      const result = await DeviceOrientationEvent.requestPermission();
+      setPermissionState(result === "granted" ? "granted" : "denied");
+    } catch {
+      setPermissionState("denied");
+    }
+  };
+
+  return { gyroTilt, permissionState, requestPermission };
+}
+
 const CoverPlaceholder = () => (
   <div
     style={{
@@ -66,14 +159,243 @@ const selectStyle = {
   outline: "none",
 };
 
+const GridView = ({ releases, onSelect }) => (
+  <div style={{ flex: 1, overflowY: "auto", paddingRight: 4 }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))",
+        gap: 14,
+      }}
+    >
+      {releases.map((release, i) => (
+        <div
+          key={release.uid ?? i}
+          onClick={() => onSelect(release)}
+          style={{
+            position: "relative",
+            aspectRatio: "1",
+            cursor: "pointer",
+            border: "1px solid rgba(255,255,255,.12)",
+            borderRadius: 3,
+            overflow: "hidden",
+          }}
+        >
+          {release.cover_art_src ? (
+            <img
+              src={release.cover_art_src}
+              alt={release.release_name}
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            />
+          ) : (
+            <CoverPlaceholder />
+          )}
+          <div
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              padding: "4px 6px",
+              font: "600 8.5px 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              color: "#fff",
+              background: "linear-gradient(transparent, rgba(0,0,0,.75))",
+              letterSpacing: ".02em",
+              pointerEvents: "none",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {release.release_name}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const ReleaseCard = ({ release, tilt, hovering, onMouseMove, onMouseLeave }) => {
+  const sheenX = 50 + tilt.ry * 1.6;
+  const sheenY = 50 - tilt.rx * 1.6;
+  const tiltTransition = hovering
+    ? "transform 80ms ease-out"
+    : "transform 500ms cubic-bezier(.2,.8,.2,1)";
+
+  return (
+    <div
+      style={{
+        perspective: "1400px",
+        position: "relative",
+        zIndex: 1,
+        width: "min(600px, 50vh)",
+        height: "min(600px, 50vh)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0,
+      }}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+    >
+      <div
+        style={{
+          position: "relative",
+          width: "min(560px, 46vh)",
+          height: "min(560px, 46vh)",
+          borderRadius: 4,
+          boxShadow: "0 30px 70px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.1)",
+          transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) scale(${hovering ? 1.04 : 1})`,
+          transition: tiltTransition,
+          transformStyle: "preserve-3d",
+          overflow: "hidden",
+        }}
+      >
+        {release.cover_art_src ? (
+          <img
+            src={release.cover_art_src}
+            alt={release.release_name}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          />
+        ) : (
+          <CoverPlaceholder />
+        )}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            pointerEvents: "none",
+            background: `radial-gradient(circle at ${sheenX}% ${sheenY}%, rgba(255,255,255,.22), transparent 55%)`,
+            opacity: hovering ? 1 : 0,
+            transition: "opacity .3s ease",
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
+const ReleaseDetail = ({ release }) => (
+  <div
+    style={{
+      flexShrink: 0,
+      display: "flex",
+      flexDirection: "column",
+      gap: 10,
+      position: "relative",
+      zIndex: 1,
+    }}
+  >
+    <div className="flex flex-col gap-[2px]">
+      <div
+        style={{
+          fontFamily: "Archivo, sans-serif",
+          fontSize: "16px",
+          fontWeight: 600,
+          fontStretch: "expanded",
+          fontVariationSettings: '"wdth" 125',
+          letterSpacing: "0.02em",
+          textTransform: "uppercase",
+          color: "#fff",
+        }}
+      >
+        {release.release_name}
+      </div>
+      <div
+        style={{
+          font: "500 11px 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          color: PRIMARY,
+          letterSpacing: ".05em",
+          textTransform: "uppercase",
+        }}
+      >
+        {artistDisplay(release)}
+      </div>
+      <div
+        style={{
+          font: "400 10px 'Helvetica Neue', Helvetica, Arial, sans-serif",
+          color: "rgba(255,255,255,.35)",
+          letterSpacing: ".04em",
+          textTransform: "uppercase",
+        }}
+      >
+        {release.type} · {release.year}
+      </div>
+    </div>
+    <div style={{ display: "flex", flexDirection: "row", gap: 20, marginTop: 8 }}>
+      {release.spotify_url ? (
+        <Button type="thin" variant="primary" href={release.spotify_url} style={{ width: "100%" }}>
+          Spotify
+        </Button>
+      ) : (
+        <Button variant="disabled" type="thin" style={{ width: "100%" }}>
+          Not on Spotify
+        </Button>
+      )}
+      {release.bandcamp_url && (
+        <Button type="thin" variant="secondary" href={release.bandcamp_url} style={{ width: "100%" }}>
+          Bandcamp
+        </Button>
+      )}
+    </div>
+  </div>
+);
+
 const Discography = () => {
   const allReleases = readSeedData("discography-data") ?? [];
-  const [view, setView] = useState("list");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [view, setView] = useState(getStoredView);
+  const isBelowMd = useIsBelowMd();
   const [activeIndex, setActiveIndex] = useState(0);
   const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
   const [hovering, setHovering] = useState(false);
   const [sortOrder, setSortOrder] = useState("latest");
   const [artistFilter, setArtistFilter] = useState("all");
+
+  const handleToggleView = () => {
+    const next = view === "grid" ? "list" : "grid";
+    setView(next);
+    try {
+      localStorage.setItem(VIEW_STORAGE_KEY, next);
+    } catch {
+      // localStorage unavailable — view just won't persist across reloads
+    }
+  };
+
+  // Grid tile click (mobile-forced grid, or desktop with "grid" preference).
+  const handleSelectRelease = (release) => {
+    setSearchParams({ release: releaseSlug(release) });
+  };
+
+  // Sidebar row click in 3D/list view — stay put, just switch the preview
+  // and mirror the selection into the URL for shareability.
+  const handleActivateRelease = (release, i) => {
+    setActiveIndex(i);
+    setSearchParams({ release: releaseSlug(release) }, { replace: true });
+  };
+
+  const handleBackToDiscography = () => {
+    setSearchParams({}, { replace: true });
+  };
+
+  // The release referenced by ?release=, resolved independent of view/filter
+  // state — a permalink should always point at the same release regardless
+  // of how the page happens to be browsed right now.
+  const linkedRelease = useMemo(() => {
+    const uid = extractUidFromSlug(searchParams.get("release"));
+    if (!uid) return null;
+    return allReleases.find((r) => String(r.uid) === String(uid)) ?? null;
+  }, [searchParams, allReleases]);
+
+  // Grid contexts (mobile — always grid — or desktop with "grid" preference)
+  // show the standalone single-release page; 3D/list view instead keeps the
+  // sidebar + preview UI, with the linked release just highlighted. This is
+  // derived fresh every render (not stored state) so resizing the window
+  // reactively switches between the two without needing a fresh page load.
+  const effectiveGrid = isBelowMd || view === "grid";
+  const showSingleRelease = effectiveGrid && !!linkedRelease;
+  const gyro = useGyroTilt(showSingleRelease && isBelowMd);
 
   const artistOptions = useMemo(() => {
     const set = new Set();
@@ -105,23 +427,28 @@ const Discography = () => {
     return list;
   }, [allReleases, artistFilter, sortOrder]);
 
-  const active = releases.length
-    ? releases[Math.min(activeIndex, releases.length - 1)]
-    : null;
+  const active =
+    linkedRelease && !effectiveGrid
+      ? linkedRelease
+      : releases.length
+      ? releases[Math.min(activeIndex, releases.length - 1)]
+      : null;
 
-  const [currentBgSrc, setCurrentBgSrc] = useState(active?.cover_art_src ?? null);
+  const bgRelease = showSingleRelease ? linkedRelease : active;
+
+  const [currentBgSrc, setCurrentBgSrc] = useState(bgRelease?.cover_art_src ?? null);
   const [prevBgSrc, setPrevBgSrc] = useState(null);
-  const currentBgSrcRef = useRef(active?.cover_art_src ?? null);
+  const currentBgSrcRef = useRef(bgRelease?.cover_art_src ?? null);
 
   useEffect(() => {
-    const next = active?.cover_art_src ?? null;
+    const next = bgRelease?.cover_art_src ?? null;
     if (next === currentBgSrcRef.current) return;
     setPrevBgSrc(currentBgSrcRef.current);
     currentBgSrcRef.current = next;
     setCurrentBgSrc(next);
     const t = setTimeout(() => setPrevBgSrc(null), 700);
     return () => clearTimeout(t);
-  }, [active?.cover_art_src]);
+  }, [bgRelease?.cover_art_src]);
 
   const handlePreviewMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -135,12 +462,6 @@ const Discography = () => {
     setTilt({ rx: 0, ry: 0 });
     setHovering(false);
   };
-
-  const sheenX = 50 + tilt.ry * 1.6;
-  const sheenY = 50 - tilt.rx * 1.6;
-  const tiltTransition = hovering
-    ? "transform 80ms ease-out"
-    : "transform 500ms cubic-bezier(.2,.8,.2,1)";
 
   return (
     <div
@@ -200,344 +521,223 @@ const Discography = () => {
           pointerEvents: "none",
         }}
       />
-      {/* Header */}
-      <div className="mb-4 flex items-start justify-between">
-        <div className="flex flex-col gap-[8px]">
-          <div
-            className="m-0 font-archivo text-[48px] font-semibold uppercase leading-none tracking-tight"
-            style={{ fontFamily: "Archivo, sans-serif", fontStretch: "expanded", fontVariationSettings: "'wdth' 125", fontWeight: "600" }}
+
+      {showSingleRelease ? (
+        <>
+          <button
+            onClick={handleBackToDiscography}
+            style={{
+              alignSelf: "flex-start",
+              background: "none",
+              border: "none",
+              padding: 0,
+              cursor: "pointer",
+              color: "rgba(255,255,255,.5)",
+              font: "600 12px 'Helvetica Neue', Helvetica, Arial, sans-serif",
+              letterSpacing: ".05em",
+              textTransform: "uppercase",
+            }}
           >
-            Discography
+            ← All Releases
+          </button>
+          <div
+            className="relative flex justify-center items-center flex-col flex-1 gap-[48px] sm:gap-[20px] lg:gap-[48px]"
+            style={{ minHeight: 500 }}
+          >
+            <ReleaseCard
+              release={linkedRelease}
+              tilt={isBelowMd ? gyro.gyroTilt : tilt}
+              hovering={isBelowMd ? true : hovering}
+              onMouseMove={isBelowMd ? undefined : handlePreviewMove}
+              onMouseLeave={isBelowMd ? undefined : handlePreviewLeave}
+            />
+            {isBelowMd && gyro.permissionState === "prompt" && (
+              <button
+                onClick={gyro.requestPermission}
+                style={{
+                  background: "none",
+                  border: "1px solid rgba(255,255,255,.25)",
+                  borderRadius: 4,
+                  padding: "8px 18px",
+                  color: "rgba(255,255,255,.7)",
+                  cursor: "pointer",
+                  font: "600 11px 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                  letterSpacing: ".05em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Enable Tilt
+              </button>
+            )}
+            <ReleaseDetail release={linkedRelease} />
           </div>
-          <div className="flex flex-row gap-4 text-[13px] font-bold uppercase tracking-[0.08em] text-white/40" >
-            <span>{releases.length} releases</span>
-            <span>·</span>
-            <select
-              value={sortOrder}
-              onChange={(e) => {
-                setSortOrder(e.target.value);
-                setActiveIndex(0);
-              }}
-              style={selectStyle}
-            >
-              <option value="latest" style={{ background: "#1a1917", color: "#eee" }}>
-                latest first
-              </option>
-              <option value="earliest" style={{ background: "#1a1917", color: "#eee" }}>
-                earliest first
-              </option>
-            </select>
-            {artistOptions.length > 0 && (
-              <>
+        </>
+      ) : (
+        <>
+          {/* Header */}
+          <div className="mb-4 flex items-start justify-between">
+            <div className="flex flex-col gap-[8px]">
+              <div
+                className="m-0 font-archivo text-[48px] font-semibold uppercase leading-none tracking-tight"
+                style={{ fontFamily: "Archivo, sans-serif", fontStretch: "expanded", fontVariationSettings: "'wdth' 125", fontWeight: "600" }}
+              >
+                Discography
+              </div>
+              <div className="flex flex-row gap-4 text-[13px] font-bold uppercase tracking-[0.08em] text-white/40" >
+                <span>{releases.length} releases</span>
                 <span>·</span>
                 <select
-                  value={artistFilter}
+                  value={sortOrder}
                   onChange={(e) => {
-                    setArtistFilter(e.target.value);
+                    setSortOrder(e.target.value);
                     setActiveIndex(0);
                   }}
                   style={selectStyle}
                 >
-                  <option value="all" style={{ background: "#1a1917", color: "#eee" }}>
-                    all artists
+                  <option value="latest" style={{ background: "#1a1917", color: "#eee" }}>
+                    latest first
                   </option>
-                  {artistOptions.sort().map((a) => (
-                    <option key={a} value={a} style={{ background: "#1a1917", color: "#eee" }}>
-                      {a}
-                    </option>
-                  ))}
+                  <option value="earliest" style={{ background: "#1a1917", color: "#eee" }}>
+                    earliest first
+                  </option>
                 </select>
-              </>
-            )}
-          </div>
-        </div>
-        <button
-          onClick={() => setView(view === "grid" ? "list" : "grid")}
-          title={view === "grid" ? "Switch to preview view" : "Switch to grid view"}
-          style={{
-            width: 38,
-            height: 38,
-            background: "none",
-            border: "1px solid rgba(255,255,255,.25)",
-            borderRadius: 2,
-            color: "rgba(255,255,255,.7)",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}
-        >
-          {view === "grid" ? <ListIcon /> : <GridIcon />}
-        </button>
-      </div>
-
-      {/* Grid view */}
-      {view === "grid" && (
-        <div style={{ flex: 1, overflowY: "auto", paddingRight: 4 }}>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))",
-              gap: 14,
-            }}
-          >
-            {releases.map((release, i) => (
-              <div
-                key={i}
-                onClick={() => {
-                  setActiveIndex(i);
-                  setView("list");
-                }}
-                style={{
-                  position: "relative",
-                  aspectRatio: "1",
-                  cursor: "pointer",
-                  border: "1px solid rgba(255,255,255,.12)",
-                  borderRadius: 3,
-                  overflow: "hidden",
-                }}
-              >
-                {release.cover_art_src ? (
-                  <img
-                    src={release.cover_art_src}
-                    alt={release.release_name}
-                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                  />
-                ) : (
-                  <CoverPlaceholder />
+                {artistOptions.length > 0 && (
+                  <>
+                    <span>·</span>
+                    <select
+                      value={artistFilter}
+                      onChange={(e) => {
+                        setArtistFilter(e.target.value);
+                        setActiveIndex(0);
+                      }}
+                      style={selectStyle}
+                    >
+                      <option value="all" style={{ background: "#1a1917", color: "#eee" }}>
+                        all artists
+                      </option>
+                      {artistOptions.sort().map((a) => (
+                        <option key={a} value={a} style={{ background: "#1a1917", color: "#eee" }}>
+                          {a}
+                        </option>
+                      ))}
+                    </select>
+                  </>
                 )}
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    padding: "4px 6px",
-                    font: "600 8.5px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-                    color: "#fff",
-                    background: "linear-gradient(transparent, rgba(0,0,0,.75))",
-                    letterSpacing: ".02em",
-                    pointerEvents: "none",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {release.release_name}
-                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* List view */}
-      {view === "list" && (
-        <div style={{ flex: 1, display: "flex", gap: 28, minHeight: 0 }}>
-          {/* Sidebar */}
-          <div
-            style={{
-              width: 280,
-              height: 640,
-              flexShrink: 0,
-              border: "1px solid rgba(255,255,255,.1)",
-              borderRadius: 4,
-              overflowY: "auto",
-              background: "oklch(0.18 0.008 60)",
-            }}
-          >
-            {releases.map((release, i) => {
-              const on = i === activeIndex;
-              return (
-                <div
-                  key={i}
-                  onClick={() => setActiveIndex(i)}
-                  className="min-h-[60px]"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    padding: "10px 16px",
-                    cursor: "pointer",
-                    background: on ? "rgba(255,255,255,.07)" : "transparent",
-                    borderLeft: `2px solid ${on ? PRIMARY : "transparent"}`,
-                  }}
-                >
-                  <span
-                    style={{
-                      font: "500 11px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-                      color: on ? "#fff" : "rgba(255,255,255,.6)",
-                      flex: 1,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {release.release_name}
-                  </span>
-                  <span
-                    style={{
-                      font: "400 9.5px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-                      color: "rgba(255,255,255,.3)",
-                      flexShrink: 0,
-                    }}
-                  >
-                    {release.year}
-                  </span>
-                  <span
-                    style={{
-                      font: "600 8.5px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-                      color: tagColor(release.type),
-                      letterSpacing: ".04em",
-                      flexShrink: 0,
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {release.type === "Compilation" ? "Comp" : release.type }
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Preview + detail */}
-          {active && (
-            <div
-              className="relative flex justify-center items-center flex-col flex-1 gap-[48px] sm:gap-[20px] lg:gap-[48px] h-[700px]"
-            >
-              {/* 3D card */}
-              <div
+            </div>
+            {!isBelowMd && (
+              <button
+                onClick={handleToggleView}
+                title={view === "grid" ? "Switch to preview view" : "Switch to grid view"}
                 style={{
-                  perspective: "1400px",
-                  position: "relative",
-                  zIndex: 1,
-                  width: "min(600px, 50vh)",
-                  height: "min(600px, 50vh)",
+                  width: 38,
+                  height: 38,
+                  background: "none",
+                  border: "1px solid rgba(255,255,255,.25)",
+                  borderRadius: 2,
+                  color: "rgba(255,255,255,.7)",
+                  cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   flexShrink: 0,
-
                 }}
-                onMouseMove={handlePreviewMove}
-                onMouseLeave={handlePreviewLeave}
               >
+                {view === "grid" ? <ListIcon /> : <GridIcon />}
+              </button>
+            )}
+          </div>
+
+          {/* Below the md breakpoint, always render grid (sidebar + 3D
+              preview doesn't fit small screens) regardless of preference. */}
+          <div style={{ flex: 1, minHeight: 0, display: "flex" }}>
+            {isBelowMd || view === "grid" ? (
+              <GridView releases={releases} onSelect={handleSelectRelease} />
+            ) : (
+              <div style={{ flex: 1, display: "flex", gap: 28, minHeight: 0 }}>
+                {/* Sidebar */}
                 <div
                   style={{
-                    position: "relative",
-                    width: "min(560px, 46vh)",
-                    height: "min(560px, 46vh)",
+                    width: 280,
+                    height: 640,
+                    flexShrink: 0,
+                    border: "1px solid rgba(255,255,255,.1)",
                     borderRadius: 4,
-                    boxShadow:
-                      "0 30px 70px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.1)",
-                    transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) scale(${hovering ? 1.04 : 1})`,
-                    transition: tiltTransition,
-                    transformStyle: "preserve-3d",
-                    overflow: "hidden",
+                    overflowY: "auto",
+                    background: "oklch(0.18 0.008 60)",
                   }}
                 >
-                  {active.cover_art_src ? (
-                    <img
-                      src={active.cover_art_src}
-                      alt={active.release_name}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        display: "block",
-                      }}
-                    />
-                  ) : (
-                    <CoverPlaceholder />
-                  )}
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      pointerEvents: "none",
-                      background: `radial-gradient(circle at ${sheenX}% ${sheenY}%, rgba(255,255,255,.22), transparent 55%)`,
-                      opacity: hovering ? 1 : 0,
-                      transition: "opacity .3s ease",
-                    }}
-                  />
+                  {releases.map((release, i) => {
+                    const on = release.uid != null ? release.uid === active?.uid : i === activeIndex;
+                    return (
+                      <div
+                        key={release.uid ?? i}
+                        onClick={() => handleActivateRelease(release, i)}
+                        className="min-h-[60px]"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 8,
+                          padding: "10px 16px",
+                          cursor: "pointer",
+                          background: on ? "rgba(255,255,255,.07)" : "transparent",
+                          borderLeft: `2px solid ${on ? PRIMARY : "transparent"}`,
+                        }}
+                      >
+                        <span
+                          style={{
+                            font: "500 11px 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                            color: on ? "#fff" : "rgba(255,255,255,.6)",
+                            flex: 1,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {release.release_name}
+                        </span>
+                        <span
+                          style={{
+                            font: "400 9.5px 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                            color: "rgba(255,255,255,.3)",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {release.year}
+                        </span>
+                        <span
+                          style={{
+                            font: "600 8.5px 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                            color: tagColor(release.type),
+                            letterSpacing: ".04em",
+                            flexShrink: 0,
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          {release.type === "Compilation" ? "Comp" : release.type}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
-              </div>
 
-              {/* Detail panel */}
-              <div
-                style={{
-                  flexShrink: 0,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 10,
-                  position: "relative",
-                  zIndex: 1,
-                }}
-              >
-                <div className="flex flex-col gap-[2px]">
-                  <div
-                    style={{
-                      fontFamily: "Archivo, sans-serif",
-                      fontSize: "16px",
-                      fontWeight: 600,
-                      fontStretch: "expanded",
-                      fontVariationSettings: '"wdth" 125',
-                      letterSpacing: "0.02em",
-                      textTransform: "uppercase",
-                      color: "#fff",
-                    }}
-                  >
-                    {active.release_name}
+                {/* Preview + detail */}
+                {active && (
+                  <div className="relative flex justify-center items-center flex-col flex-1 gap-[48px] sm:gap-[20px] lg:gap-[48px] h-[700px]">
+                    <ReleaseCard
+                      release={active}
+                      tilt={tilt}
+                      hovering={hovering}
+                      onMouseMove={handlePreviewMove}
+                      onMouseLeave={handlePreviewLeave}
+                    />
+                    <ReleaseDetail release={active} />
                   </div>
-                  <div
-                    style={{
-                      font: "500 11px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-                      color: PRIMARY,
-                      letterSpacing: ".05em",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {artistDisplay(active)}
-                  </div>
-                  <div
-                    style={{
-                      font: "400 10px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-                      color: "rgba(255,255,255,.35)",
-                      letterSpacing: ".04em",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {active.type} · {active.year}
-                  </div>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: 20,
-                    marginTop: 8,
-                  }}
-                >
-                  {active.spotify_url ? (
-                    <Button type="thin" variant="primary" href={active.spotify_url} style={{ width: "100%" }}>
-                      Spotify
-                    </Button>
-                  ) : (
-                    <Button variant="disabled" type="thin" style={{ width: "100%" }}>
-                      Not on Spotify
-                    </Button>
-                  )}
-                  {active.bandcamp_url && (
-                    <Button type="thin" variant="secondary" href={active.bandcamp_url} style={{ width: "100%" }}>
-                      Bandcamp
-                    </Button>
-                  )}
-                </div>
+                )}
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        </>
       )}
     </div>
   );

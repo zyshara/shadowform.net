@@ -13,6 +13,7 @@ export function normalizeRelease(raw) {
   const artists = linkedArtists.map((a) => a.name ?? a.attributes?.name).filter(Boolean);
 
   return {
+    uid:           raw.documentId ?? raw.id,
     artists,
     release_name:  r.name,
     cover_art_src: r.bandcamp_artwork_url ?? null,

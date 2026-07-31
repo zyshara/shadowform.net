@@ -10,20 +10,20 @@ const VARIANTS = {
   primary: {
     background: BG,
     color: "oklch(0.72 0.19 25)",
-    border: "2px solid oklch(0.72 0.19 25)",
-    outline: "2px solid oklch(0.72 0.19 25)",
+    border: "1px solid oklch(0.72 0.19 25)",
+    outline: "1px solid oklch(0.72 0.19 25)",
   },
   secondary: {
     background: BG,
     color: "oklch(0.78 0.08 320)",
-    border: "2px solid oklch(0.78 0.08 320)",
-    outline: "2px solid oklch(0.78 0.08 320)",
+    border: "1px solid oklch(0.78 0.08 320)",
+    outline: "1px solid oklch(0.78 0.08 320)",
   },
   disabled: {
     background: BG,
     color: "rgba(255,255,255,0.2)",
-    border: "2px solid #ffffff36",
-    outline: "2px solid #ffffff36",
+    border: "1px solid #ffffff36",
+    outline: "1px solid #ffffff36",
   },
 };
 
@@ -33,7 +33,6 @@ const PADDING = {
 };
 
 const baseStyle = {
-  borderRadius: "5px",
   fontStretch: "expanded",
   fontFamily: "Archivo, sans-serif",
   fontVariationSettings: '"wdth" 125',

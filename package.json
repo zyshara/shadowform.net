@@ -17,7 +17,9 @@
   "scripts": {
     "build": "webpack --config webpack.config.js --mode production",
     "start": "node server.js",
-    "dev": "concurrently -k \"webpack --config webpack.config.js --watch --mode development\" \"nodemon server.js\""
+    "dev": "concurrently -k \"webpack --config webpack.config.js --watch --mode development\" \"nodemon server.js\"",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@notionhq/client": "^5.23.2",
@@ -38,18 +40,23 @@
     "@babel/preset-env": "^7.28.3",
     "@babel/preset-react": "^7.27.1",
     "@tailwindcss/postcss": "^4.1.13",
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "autoprefixer": "^10.4.21",
     "babel-loader": "^10.0.0",
     "concurrently": "^9.2.1",
     "connect-livereload": "^0.6.1",
     "css-loader": "^7.1.2",
     "html-webpack-plugin": "^5.6.4",
+    "jsdom": "^24.1.3",
     "livereload": "^0.10.3",
     "nodemon": "^3.1.10",
     "postcss": "^8.5.6",
     "postcss-loader": "^8.2.0",
     "style-loader": "^4.0.0",
     "tailwindcss": "^4.1.13",
+    "vitest": "^2.1.9",
     "webpack": "^5.101.3",
     "webpack-cli": "^6.0.1"
   }
