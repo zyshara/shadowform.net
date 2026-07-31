@@ -7,6 +7,12 @@ function coverArtUrl(artId) {
   return `https://f4.bcbits.com/img/a${String(artId).padStart(10, "0")}_10.jpg`;
 }
 
+function normalizeUrl(url) {
+  if (!url) return null;
+  const absolute = url.startsWith("http") ? url : `https://domeofdoom.bandcamp.com${url}`;
+  return absolute.split("?")[0];
+}
+
 // Bandcamp only server-renders the first ~16 releases as <li class="music-grid-item">
 // inside <ol id="music-grid"> — the rest of the catalog (157 more releases here) ships
 // in that same tag's data-client-items attribute, a JSON blob Bandcamp's own JS
@@ -42,11 +48,13 @@ export async function scrapeBandcampDiscography() {
     const cover_art_src = (item.match(/data-original="([^"]+)"/)?.[1]
       ?? item.match(/<img[^>]*\ssrc="([^"]+)"/)?.[1]
       ?? null)?.replace(/_\d+\.jpg$/i, "_10.jpg") ?? null;
+    const bandcamp_url = normalizeUrl(item.match(/<a href="([^"]+)"/)?.[1]);
 
     releases.set(itemId ?? title, {
       artist: artist ? decodeHtmlEntities(artist) : null,
       release_name: decodeHtmlEntities(title),
       cover_art_src,
+      bandcamp_url,
     });
   }
 
@@ -61,6 +69,7 @@ export async function scrapeBandcampDiscography() {
         artist: it.artist ?? null,
         release_name: it.title ?? null,
         cover_art_src: it.art_id ? coverArtUrl(it.art_id) : null,
+        bandcamp_url: normalizeUrl(it.page_url),
       });
     }
   }

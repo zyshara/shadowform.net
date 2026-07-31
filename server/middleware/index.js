@@ -10,8 +10,12 @@ export function sslRedirect(req, res, next) {
     return next();
   }
 
-  if (proto !== "https" || hostname === "www.shadowform.net") {
+  if (hostname === "www.shadowform.net") {
     return res.redirect(302, `https://shadowform.net${req.url}`);
+  }
+
+  if (proto !== "https") {
+    return res.redirect(302, `https://${hostname}${req.url}`);
   }
 
   next();

@@ -7,7 +7,7 @@ export const colors = {
   bg:      "#0d0b0a",
   text:    "oklch(0.96 0.01 80)",
   accent:  "#75ccae",
-  accent2: "oklch(0.62 0.22 300)",
+  secondary: "oklch(0.62 0.22 300)",
   card:    "#151211",
 };
 
