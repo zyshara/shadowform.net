@@ -215,6 +215,12 @@ const GridView = ({ releases, onSelect }) => (
   </div>
 );
 
+// Card size caps at 600px, or 50% of viewport height (the original desktop
+// feel), or the full width available — that last bound is what keeps this
+// square card from overflowing narrow-but-tall mobile viewports, where a
+// vh-only cap can easily exceed the screen's actual width.
+const CARD_SIZE_CSS = "min(600px, 50vh, 100%)";
+
 const ReleaseCard = ({ release, tilt, hovering, onMouseMove, onMouseLeave }) => {
   const sheenX = 50 + tilt.ry * 1.6;
   const sheenY = 50 - tilt.rx * 1.6;
@@ -228,8 +234,8 @@ const ReleaseCard = ({ release, tilt, hovering, onMouseMove, onMouseLeave }) => 
         perspective: "1400px",
         position: "relative",
         zIndex: 1,
-        width: "min(600px, 50vh)",
-        height: "min(600px, 50vh)",
+        width: CARD_SIZE_CSS,
+        aspectRatio: "1 / 1",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -241,8 +247,8 @@ const ReleaseCard = ({ release, tilt, hovering, onMouseMove, onMouseLeave }) => 
       <div
         style={{
           position: "relative",
-          width: "min(560px, 46vh)",
-          height: "min(560px, 46vh)",
+          width: "92%",
+          aspectRatio: "1 / 1",
           borderRadius: 4,
           boxShadow: "0 30px 70px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.1)",
           transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) scale(${hovering ? 1.04 : 1})`,
@@ -284,6 +290,7 @@ const ReleaseDetail = ({ release }) => (
       gap: 10,
       position: "relative",
       zIndex: 1,
+      width: CARD_SIZE_CSS,
     }}
   >
     <div className="flex flex-col gap-[2px]">
@@ -322,7 +329,7 @@ const ReleaseDetail = ({ release }) => (
         {release.type} · {release.year}
       </div>
     </div>
-    <div style={{ display: "flex", flexDirection: "row", gap: 20, marginTop: 8 }}>
+    <div className="flex flex-col sm:flex-row gap-3 sm:gap-5" style={{ marginTop: 8, width: "100%" }}>
       {release.spotify_url ? (
         <Button type="thin" variant="primary" href={release.spotify_url} style={{ width: "100%" }}>
           Spotify
