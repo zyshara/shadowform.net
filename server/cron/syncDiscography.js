@@ -64,7 +64,6 @@ async function processNewRelease(release, artistCache) {
   if (!releaseDate && match?.release_date) {
     releaseDate = new Date(match.release_date).toISOString();
   }
-  const year = releaseDate ? new Date(releaseDate).getUTCFullYear() : null;
 
   // Bandcamp artist text can list multiple artists (e.g. "DMVU & FINNOH",
   // "ZOF, DMVU, Babyweight") — split and link each to the Artists relation.
@@ -78,13 +77,11 @@ async function processNewRelease(release, artistCache) {
   await strapiPost(RELEASES_PATH, {
     data: {
       name: release.release_name,
-      artist: release.artist,
       artists: artistDocIds,
       type,
       spotify_url: match?.spotify_url ?? null,
       bandcamp_url: release.bandcamp_url,
       release_date: releaseDate,
-      year,
       bandcamp_artwork_url: release.cover_art_src,
     },
   });

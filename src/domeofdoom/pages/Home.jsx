@@ -22,7 +22,11 @@ const Home = () => {
   const releases = readSeedData("discography-data") ?? [];
   const merchItems = readSeedData("merch-data") ?? [];
 
-  const latestRelease = releases[0];
+  const latestRelease = releases.slice().sort((a, b) => {
+    const ta = a.release_date ? new Date(a.release_date).getTime() : a.year ? new Date(`${a.year}-01-01`).getTime() : 0;
+    const tb = b.release_date ? new Date(b.release_date).getTime() : b.year ? new Date(`${b.year}-01-01`).getTime() : 0;
+    return tb - ta;
+  })[0];
   const availableMerch = merchItems.filter((m) => !m.sold_out);
   const merchTeaser = (availableMerch.length ? availableMerch : merchItems).slice(0, 4);
 
@@ -90,7 +94,9 @@ const Home = () => {
                 New on Bandcamp
               </div>
               <div className="mb-1 text-[30px] font-black uppercase leading-[1.1]">{latestRelease.release_name}</div>
-              <div className="text-[15px] font-medium text-white/55">{latestRelease.artist}</div>
+              <div className="text-[15px] font-medium text-white/55">
+                {latestRelease.artists?.length ? latestRelease.artists.join(", ") : "Dome of Doom"}
+              </div>
             </div>
           </div>
         </div>
