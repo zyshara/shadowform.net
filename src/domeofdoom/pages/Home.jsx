@@ -2,12 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { readSeedData } from "@/utils/readSeedData";
 import { colors, LOGO_URL } from "@/tokens";
-import ParallaxHero from "@/components/ParallaxHero";
-
-const primaryButtonClass =
-  "rounded-full px-7 py-4 text-[13px] font-extrabold uppercase tracking-[0.06em] transition-[filter] hover:brightness-110";
-const secondaryButtonClass =
-  "rounded-full border-[1.5px] border-white/30 px-7 py-4 text-[13px] font-extrabold uppercase tracking-[0.06em] transition-colors";
+import Button from "@/components/Button";
 
 const SectionHeader = ({ title, linkTo, linkText }) => (
   <div className="mb-7 flex items-baseline justify-between">
@@ -33,32 +28,47 @@ const Home = () => {
   return (
     <div>
       {/* HERO */}
-      <div className="relative h-[740px] overflow-hidden">
-        <ParallaxHero />
+      <div className="relative h-[640px] overflow-hidden border-b border-white/10">
+        <img
+          src="https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785465704/hero_sphere_3498e09523.png"
+          alt=""
+          className="pointer-events-none absolute right-[-5%] top-1/2 h-[115%] w-auto -translate-y-1/2 object-contain"
+        />
         <div
           className="pointer-events-none absolute inset-0 z-[1]"
-          style={{ background: `linear-gradient(to right, ${colors.bg} 0%, rgba(13,11,10,0.55) 45%, rgba(13,11,10,0.15) 100%)` }}
+          style={{ background: `linear-gradient(to right, ${colors.bg} 0%, ${colors.bg} 22%, rgba(13,11,10,0.6) 50%, rgba(13,11,10,0.05) 100%)` }}
         />
 
         <div className="relative z-[2] mx-auto flex h-full max-w-[1400px] flex-col justify-center px-10">
-          <img src={LOGO_URL} alt="Dome of Doom" className="mb-7 w-[420px] max-w-full h-auto" />
+          <div style={{ position: "relative" }}>
+            <h1
+              style={{
+                position: "relative",
+                zIndex: 1,
+                fontFamily: "Archivo, Arial, sans-serif",
+                fontSize: "clamp(20px, 20vw, 108px)",
+                lineHeight: "0.86",
+                fontWeight: 800,
+                fontStretch: "expanded",
+                fontVariationSettings: '"wdth" 125',
+                letterSpacing: "-0.03em",
+                margin: "0 0 28px",
+                textTransform: "uppercase",
+                WebkitTextStroke: `5px ${colors.accent}`,
+                color: "transparent",
+                textShadow: "0 0 60px rgba(255,120,100,0.25)",
+              }}
+            >
+              DOME<br />OF<br />DOOM
+            </h1>
+          </div>
 
           <p className="m-0 mb-8 max-w-[440px] text-[18px] leading-[1.5] text-white/65">
             A home for restless club music &amp; the artists who make it. Twenty-five years underground and still digging.
           </p>
-          <div className="flex gap-4">
-            <Link to="/discography" className={primaryButtonClass} style={{ background: colors.accent, color: colors.bg }}>
-              Listen Now
-            </Link>
-            <Link
-              to="/merch"
-              className={secondaryButtonClass}
-              style={{ color: colors.text }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = colors.accent; e.currentTarget.style.borderColor = colors.accent; }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = colors.text; e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)"; }}
-            >
-              Shop Merch
-            </Link>
+          <div className="flex gap-4 flex-col sm:flex-row">
+            <Button variant="primary" to="https://open.spotify.com/search/label%3Adome-of-doom/albums">Listen Now</Button>
+            <Button variant="secondary" to="/merch">Shop Merch</Button>
           </div>
         </div>
       </div>

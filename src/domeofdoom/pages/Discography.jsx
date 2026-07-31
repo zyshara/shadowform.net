@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { readSeedData } from "@/utils/readSeedData";
 import { colors } from "@/tokens";
+import Button from "@/components/Button";
 
 const PRIMARY = colors.accent;
 const SECONDARY = colors.secondary;
@@ -121,7 +122,9 @@ const Discography = () => {
       <div className="mb-4 flex items-start justify-between">
         <div>
           <div
-            className="m-0 font-[Arial,sans-serif] text-[48px] font-black uppercase leading-none tracking-tight"
+            className="m-0 font-archivo text-[48px] font-black uppercase leading-none tracking-tight"
+            style={{ fontFamily: "Archivo, sans-serif", fontStretch: "expanded", fontVariationSettings: "'wdth' 125" }}
+
           >
             Discography
           </div>
@@ -269,6 +272,7 @@ const Discography = () => {
                 <div
                   key={i}
                   onClick={() => setActiveIndex(i)}
+                  className="min-h-[60px]"
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -429,23 +433,9 @@ const Discography = () => {
                   }}
                 >
                   {active.spotify_url ? (
-                    <a
-                      href={active.spotify_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: "block",
-                        textAlign: "center",
-                        padding: "9px 0",
-                        border: `1px solid ${PRIMARY}`,
-                        font: "600 10px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-                        letterSpacing: ".06em",
-                        color: PRIMARY,
-                        textDecoration: "none",
-                      }}
-                    >
-                      SPOTIFY
-                    </a>
+                    <Button variant="primary" href={active.spotify_url} style={{ width: "100%" }}>
+                      Spotify
+                    </Button>
                   ) : (
                     <div
                       style={{
@@ -461,23 +451,9 @@ const Discography = () => {
                     </div>
                   )}
                   {active.bandcamp_url && (
-                    <a
-                      href={active.bandcamp_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: "block",
-                        textAlign: "center",
-                        padding: "9px 0",
-                        border: `1px solid ${SECONDARY}`,
-                        font: "600 10px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-                        letterSpacing: ".06em",
-                        color: "rgba(255,255,255,.75)",
-                        textDecoration: "none",
-                      }}
-                    >
-                      BANDCAMP
-                    </a>
+                    <Button variant="secondary" href={active.bandcamp_url} style={{ width: "100%" }}>
+                      Bandcamp
+                    </Button>
                   )}
                 </div>
               </div>

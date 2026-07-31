@@ -9,8 +9,10 @@ import { colors } from "@/tokens";
 const Layout = () => {
   return (
     <div className="min-h-dvh w-full" style={{ background: colors.bg, color: colors.text }}>
-      <MarqueeBanner />
-      <Navbar />
+      <div className="sticky top-0 z-50">
+        <MarqueeBanner />
+        <Navbar />
+      </div>
       <Outlet />
       <Footer />
     </div>
