@@ -5,7 +5,7 @@
 
 export const colors = {
   bg:        "#0d0b0a",
-  text:      "oklch(0.96 0.01 80)",
+  text:      "#fceefa",
   accent:    "oklch(0.72 0.19 25)",
   accent2:   "oklch(0.78 0.08 320)",
   secondary: "oklch(0.62 0.22 300)",

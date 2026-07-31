@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { readSeedData } from "@/utils/readSeedData";
 import { colors } from "@/tokens";
 import Button from "@/components/Button";
@@ -30,9 +30,21 @@ function tagColor(type) {
   return "rgba(255,255,255,.5)";
 }
 
-function artistDisplay(artist) {
-  if (!artist || artist === "DOMEOFDOOM") return "DOME OF DOOM";
-  return `${artist.toUpperCase()}`;
+function artistDisplay(release) {
+  if (release.artists?.length) {
+    return release.artists.map((a) => a.toUpperCase()).join(", ");
+  }
+  if (!release.artist || release.artist === "DOMEOFDOOM") return "DOME OF DOOM";
+  return release.artist.toUpperCase();
+}
+
+function releaseTimestamp(release) {
+  if (release.release_date) {
+    const t = new Date(release.release_date).getTime();
+    if (!isNaN(t)) return t;
+  }
+  if (release.year) return new Date(`${release.year}-01-01`).getTime();
+  return 0;
 }
 
 const CoverPlaceholder = () => (
@@ -63,31 +75,53 @@ const Discography = () => {
   const [sortOrder, setSortOrder] = useState("latest");
   const [artistFilter, setArtistFilter] = useState("all");
 
-  const artistOptions = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          allReleases
-            .map((r) => r.artist)
-            .filter(Boolean)
-            .filter((a) => a !== "DOMEOFDOOM")
-        )
-      ),
-    [allReleases]
-  );
+  const artistOptions = useMemo(() => {
+    const set = new Set();
+    allReleases.forEach((r) => {
+      const names = r.artists?.length
+        ? r.artists
+        : r.artist && r.artist !== "DOMEOFDOOM"
+        ? [r.artist]
+        : [];
+      names.forEach((n) => set.add(n));
+    });
+    return Array.from(set);
+  }, [allReleases]);
 
   const releases = useMemo(() => {
     let list =
       artistFilter === "all"
         ? allReleases
-        : allReleases.filter((r) => r.artist === artistFilter);
-    if (sortOrder === "earliest") list = list.slice().reverse();
+        : allReleases.filter((r) =>
+            r.artists?.length ? r.artists.includes(artistFilter) : r.artist === artistFilter
+          );
+    list = list
+      .slice()
+      .sort((a, b) =>
+        sortOrder === "earliest"
+          ? releaseTimestamp(a) - releaseTimestamp(b)
+          : releaseTimestamp(b) - releaseTimestamp(a)
+      );
     return list;
   }, [allReleases, artistFilter, sortOrder]);
 
   const active = releases.length
     ? releases[Math.min(activeIndex, releases.length - 1)]
     : null;
+
+  const [currentBgSrc, setCurrentBgSrc] = useState(active?.cover_art_src ?? null);
+  const [prevBgSrc, setPrevBgSrc] = useState(null);
+  const currentBgSrcRef = useRef(active?.cover_art_src ?? null);
+
+  useEffect(() => {
+    const next = active?.cover_art_src ?? null;
+    if (next === currentBgSrcRef.current) return;
+    setPrevBgSrc(currentBgSrcRef.current);
+    currentBgSrcRef.current = next;
+    setCurrentBgSrc(next);
+    const t = setTimeout(() => setPrevBgSrc(null), 700);
+    return () => clearTimeout(t);
+  }, [active?.cover_art_src]);
 
   const handlePreviewMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -116,19 +150,66 @@ const Discography = () => {
         display: "flex",
         flexDirection: "column",
         gap: 20,
+        position: "relative",
+        overflow: "hidden",
+        isolation: "isolate",
       }}
     >
+      {/* Atmospheric background — crossfade between prev and current */}
+      {prevBgSrc && (
+        <div
+          key={prevBgSrc + "_out"}
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: `url(${prevBgSrc})`,
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "200% center",
+            animation: "bgFadeOut 0.6s ease forwards",
+            zIndex: -1,
+            pointerEvents: "none",
+          }}
+        />
+      )}
+      {currentBgSrc && (
+        <div
+          key={currentBgSrc + "_in"}
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: `url(${currentBgSrc})`,
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "200% center",
+            animation: "bgFadeIn 0.6s ease forwards",
+            zIndex: -1,
+            pointerEvents: "none",
+          }}
+        />
+      )}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(to right, #0d0b0a 30%, rgba(13,11,10,0.5) 65%, #0d0b0a 100%)",
+          zIndex: -1,
+          pointerEvents: "none",
+        }}
+      />
       {/* Header */}
       <div className="mb-4 flex items-start justify-between">
-        <div>
+        <div className="flex flex-col gap-[8px]">
           <div
-            className="m-0 font-archivo text-[48px] font-black uppercase leading-none tracking-tight"
-            style={{ fontFamily: "Archivo, sans-serif", fontStretch: "expanded", fontVariationSettings: "'wdth' 125" }}
-
+            className="m-0 font-archivo text-[48px] font-semibold uppercase leading-none tracking-tight"
+            style={{ fontFamily: "Archivo, sans-serif", fontStretch: "expanded", fontVariationSettings: "'wdth' 125", fontWeight: "600" }}
           >
             Discography
           </div>
-          <div className="flex flex-row mt-2 gap-4 text-[13px] font-bold uppercase tracking-[0.08em] text-white/40" >
+          <div className="flex flex-row gap-4 text-[13px] font-bold uppercase tracking-[0.08em] text-white/40" >
             <span>{releases.length} releases</span>
             <span>·</span>
             <select
@@ -160,7 +241,7 @@ const Discography = () => {
                   <option value="all" style={{ background: "#1a1917", color: "#eee" }}>
                     all artists
                   </option>
-                  {artistOptions.map((a) => (
+                  {artistOptions.sort().map((a) => (
                     <option key={a} value={a} style={{ background: "#1a1917", color: "#eee" }}>
                       {a}
                     </option>
@@ -258,7 +339,7 @@ const Discography = () => {
           <div
             style={{
               width: 280,
-              height: 600,
+              height: 640,
               flexShrink: 0,
               border: "1px solid rgba(255,255,255,.1)",
               borderRadius: 4,
@@ -323,18 +404,21 @@ const Discography = () => {
           {/* Preview + detail */}
           {active && (
             <div
-              className="relative flex justify-center items-center flex-col lg:flex-row flex-1 gap-[48px] sm:gap-[20px] lg:gap-[48px]"
+              className="relative flex justify-center items-center flex-col flex-1 gap-[48px] sm:gap-[20px] lg:gap-[48px] h-[700px]"
             >
               {/* 3D card */}
               <div
                 style={{
                   perspective: "1400px",
-                  width: "min(400px, 44vh)",
-                  height: "min(400px, 44vh)",
+                  position: "relative",
+                  zIndex: 1,
+                  width: "min(600px, 50vh)",
+                  height: "min(600px, 50vh)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   flexShrink: 0,
+
                 }}
                 onMouseMove={handlePreviewMove}
                 onMouseLeave={handlePreviewLeave}
@@ -342,8 +426,8 @@ const Discography = () => {
                 <div
                   style={{
                     position: "relative",
-                    width: "min(360px, 40vh)",
-                    height: "min(360px, 40vh)",
+                    width: "min(560px, 46vh)",
+                    height: "min(560px, 46vh)",
                     borderRadius: 4,
                     boxShadow:
                       "0 30px 70px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.1)",
@@ -383,20 +467,25 @@ const Discography = () => {
               {/* Detail panel */}
               <div
                 style={{
-                  width: 220,
                   flexShrink: 0,
                   display: "flex",
                   flexDirection: "column",
                   gap: 10,
+                  position: "relative",
+                  zIndex: 1,
                 }}
               >
-                <div>
+                <div className="flex flex-col gap-[2px]">
                   <div
                     style={{
-                      font: "600 20px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-                      color: "#fff",
-                      letterSpacing: ".02em",
+                      fontFamily: "Archivo, sans-serif",
+                      fontSize: "16px",
+                      fontWeight: 600,
+                      fontStretch: "expanded",
+                      fontVariationSettings: '"wdth" 125',
+                      letterSpacing: "0.02em",
                       textTransform: "uppercase",
+                      color: "#fff",
                     }}
                   >
                     {active.release_name}
@@ -407,10 +496,9 @@ const Discography = () => {
                       color: PRIMARY,
                       letterSpacing: ".05em",
                       textTransform: "uppercase",
-                      marginTop: 6,
                     }}
                   >
-                    {artistDisplay(active.artist)}
+                    {artistDisplay(active)}
                   </div>
                   <div
                     style={{
@@ -418,7 +506,6 @@ const Discography = () => {
                       color: "rgba(255,255,255,.35)",
                       letterSpacing: ".04em",
                       textTransform: "uppercase",
-                      marginTop: 4,
                     }}
                   >
                     {active.type} · {active.year}
@@ -427,31 +514,22 @@ const Discography = () => {
                 <div
                   style={{
                     display: "flex",
-                    flexDirection: "column",
-                    gap: 8,
+                    flexDirection: "row",
+                    gap: 20,
                     marginTop: 8,
                   }}
                 >
                   {active.spotify_url ? (
-                    <Button variant="primary" href={active.spotify_url} style={{ width: "100%" }}>
+                    <Button type="thin" variant="primary" href={active.spotify_url} style={{ width: "100%" }}>
                       Spotify
                     </Button>
                   ) : (
-                    <div
-                      style={{
-                        textAlign: "center",
-                        padding: "9px 0",
-                        border: "1px solid rgba(255,255,255,.1)",
-                        font: "600 10px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-                        letterSpacing: ".06em",
-                        color: "rgba(255,255,255,.2)",
-                      }}
-                    >
-                      NOT ON SPOTIFY
-                    </div>
+                    <Button variant="disabled" type="thin" style={{ width: "100%" }}>
+                      Not on Spotify
+                    </Button>
                   )}
                   {active.bandcamp_url && (
-                    <Button variant="secondary" href={active.bandcamp_url} style={{ width: "100%" }}>
+                    <Button type="thin" variant="secondary" href={active.bandcamp_url} style={{ width: "100%" }}>
                       Bandcamp
                     </Button>
                   )}

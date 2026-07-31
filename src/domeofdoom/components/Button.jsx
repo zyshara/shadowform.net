@@ -19,6 +19,17 @@ const VARIANTS = {
     border: "2px solid oklch(0.78 0.08 320)",
     outline: "2px solid oklch(0.78 0.08 320)",
   },
+  disabled: {
+    background: BG,
+    color: "rgba(255,255,255,0.2)",
+    border: "2px solid #ffffff36",
+    outline: "2px solid #ffffff36",
+  },
+};
+
+const PADDING = {
+  default: "14px 28px",
+  thin: "7px 54px",
 };
 
 const baseStyle = {
@@ -37,9 +48,10 @@ const baseStyle = {
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
-  padding: "14px 28px",
+  height: "100%",
   cursor: "pointer",
   transition: "background 0.18s ease, color 0.18s ease",
+  whiteSpace: "nowrap",
 };
 
 const Grain = () => (
@@ -59,20 +71,23 @@ const Grain = () => (
   />
 );
 
-const Button = ({ variant = "primary", to, href, children, style: extraStyle, ...props }) => {
+const Button = ({ variant = "primary", type = "default", to, href, children, style: extraStyle, ...props }) => {
   const [hovered, setHovered] = useState(false);
   const v = VARIANTS[variant];
+  const isDisabled = variant === "disabled";
 
   const style = {
     ...baseStyle,
-    background: hovered ? v.color : v.background,
-    color: hovered ? BG : v.color,
+    padding: PADDING[type] ?? PADDING.default,
+    background: !isDisabled && hovered ? v.color : v.background,
+    color: !isDisabled && hovered ? BG : v.color,
     border: v.border,
     outline: v.outline,
+    cursor: isDisabled ? "default" : "pointer",
     ...extraStyle,
   };
 
-  const hoverProps = {
+  const hoverProps = isDisabled ? {} : {
     onMouseEnter: () => setHovered(true),
     onMouseLeave: () => setHovered(false),
   };

@@ -6,7 +6,8 @@ import Button from "@/components/Button";
 
 const SectionHeader = ({ title, linkTo, linkText }) => (
   <div className="mb-7 flex items-baseline justify-between">
-    <h2 className="m-0 font-[Arial,sans-serif] text-[32px] font-black uppercase leading-none tracking-tight">
+    <h2 className="m-0 font-archivo text-[32px] font-semibold uppercase leading-none tracking-tight"
+      style={{ fontFamily: "Archivo, sans-serif", fontStretch: "expanded", fontVariationSettings: "'wdth' 125", fontWeight: "600" }}>
       {title}
     </h2>
     {linkTo && (

@@ -80,3 +80,29 @@ export async function scrapeBandcampDiscography() {
 
   return result;
 }
+
+// Scrapes the full release date (not just year) off an individual release
+// page. Primary source is the JSON-LD "datePublished" field, which Bandcamp
+// renders as a full timestamp e.g. "20 Sep 2024 04:14:47 GMT". Falls back to
+// the human-readable "released September 20, 2024" text if that's missing.
+export async function scrapeBandcampReleaseDate(url) {
+  const res = await fetch(url, {
+    headers: { "User-Agent": "Mozilla/5.0 (compatible; shadowform-bot/1.0)" },
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const html = await res.text();
+
+  const published = html.match(/"datePublished"\s*:\s*"([^"]+)"/)?.[1];
+  if (published) {
+    const d = new Date(published);
+    if (!isNaN(d.getTime())) return d.toISOString();
+  }
+
+  const relText = html.match(/released\s+([A-Za-z]+ \d{1,2},? \d{4}|\d{1,2} [A-Za-z]+ \d{4})/i)?.[1];
+  if (relText) {
+    const d = new Date(relText);
+    if (!isNaN(d.getTime())) return d.toISOString();
+  }
+
+  return null;
+}

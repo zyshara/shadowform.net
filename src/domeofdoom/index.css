@@ -20,6 +20,16 @@
   to   { transform: translateX(-50%); }
 }
 
+@keyframes bgFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 0.5; }
+}
+
+@keyframes bgFadeOut {
+  from { opacity: 0.5; }
+  to   { opacity: 0; }
+}
+
 html,
 body,
 #root {

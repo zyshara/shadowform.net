@@ -9,12 +9,17 @@ export function normalizeRelease(raw) {
   const r = raw?.attributes ?? raw;
   if (!r || !r.name || !r.artist) return null;
 
+  const linkedArtists = Array.isArray(r.artists) ? r.artists : r.artists?.data ?? [];
+  const artists = linkedArtists.map((a) => a.name ?? a.attributes?.name).filter(Boolean);
+
   return {
     artist:        r.artist,
+    artists,
     release_name:  r.name,
     cover_art_src: r.bandcamp_artwork_url ?? null,
     type:          r.type ?? null,
-    year:          r.year ?? null,
+    year:          r.release_date ? new Date(r.release_date).getUTCFullYear() : r.year ?? null,
+    release_date:  r.release_date ?? null,
     spotify_url:   r.spotify_url ?? null,
     bandcamp_url:  r.bandcamp_url ?? null,
   };
