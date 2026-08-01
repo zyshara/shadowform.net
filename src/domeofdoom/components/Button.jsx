@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const grainSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="4" stitchTiles="stitch"/></filter><rect width="256" height="256" filter="url(#n)"/></svg>`;
-const grainUrl = `url("data:image/svg+xml,${encodeURIComponent(grainSvg)}")`;
-
 const BG = "rgb(13, 11, 10)";
 
 const VARIANTS = {
@@ -59,23 +56,6 @@ const baseStyle = {
   whiteSpace: "nowrap",
 };
 
-const Grain = () => (
-  <span
-    aria-hidden="true"
-    style={{
-      position: "absolute",
-      inset: 0,
-      zIndex: 1,
-      backgroundImage: grainUrl,
-      backgroundRepeat: "repeat",
-      backgroundSize: "256px 256px",
-      mixBlendMode: "hard-light",
-      opacity: 0.18,
-      pointerEvents: "none",
-    }}
-  />
-);
-
 const Button = ({ variant = "primary", type = "default", to, href, children, style: extraStyle, ...props }) => {
   const [hovered, setHovered] = useState(false);
   const v = VARIANTS[variant];
@@ -101,7 +81,6 @@ const Button = ({ variant = "primary", type = "default", to, href, children, sty
   if (href) {
     return (
       <a className="w-full md:max-w-[300px]" href={href} target="_blank" rel="noopener noreferrer" style={style} {...hoverProps} {...props}>
-        <Grain />
         {children}
       </a>
     );
@@ -110,7 +89,6 @@ const Button = ({ variant = "primary", type = "default", to, href, children, sty
   if (to) {
     return (
       <Link className="w-full md:max-w-[300px]" to={to} style={style} {...hoverProps} {...props}>
-        <Grain />
         {children}
       </Link>
     );
@@ -118,7 +96,6 @@ const Button = ({ variant = "primary", type = "default", to, href, children, sty
 
   return (
     <button className="w-full md:max-w-[300px]" style={style} {...hoverProps} {...props}>
-      <Grain />
       {children}
     </button>
   );

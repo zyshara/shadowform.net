@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { readSeedData } from "@/utils/readSeedData";
 import { colors, LOGO_URL } from "@/tokens";
 import Button from "@/components/Button";
+import PosterFrame from "@/components/PosterFrame";
 
 // Drifts `amplitude` px (in either direction) as the element's section
 // passes through the viewport — a slight scroll parallax, reusable across
@@ -47,7 +48,7 @@ const ArrowRightIcon = ({ size = 14 }) => (
 
 const SectionHeader = ({ title, linkTo, linkText }) => (
   <div className="flex-col-reverse gap-[8px] sm:flex-row mb-7 flex items-baseline justify-between items-start">
-    <h2 className="m-0 font-archivo text-[32px] font-semibold uppercase leading-none tracking-tight"
+    <h2 className="m-0 font-archivo text-[36px] font-semibold uppercase leading-none tracking-tight"
       style={{ fontFamily: "Archivo, sans-serif", fontStretch: "expanded", fontVariationSettings: "'wdth' 125", fontWeight: "600" }}>
       {title}
     </h2>
@@ -56,7 +57,7 @@ const SectionHeader = ({ title, linkTo, linkText }) => (
         <div className="flex gap-[4px] items-center" style={{ color: colors.accent2, textAlign: "left" }}>
           <Link
             to={linkTo}
-            className="font-bold text-[9px] md:text-[13px] gap-[4px] uppercase tracking-[0.06em]"
+            className="font-bold text-[11px] sm:text-[12px] py-[4px] sm:py-0 md:text-[13px] gap-[4px] uppercase tracking-[0.06em]"
             style={{ color: colors.accent2, whiteSpace: "nowrap" }}
           >
             {linkText}
@@ -83,13 +84,35 @@ const Home = () => {
   // Slight scroll parallax on the masthead sphere and the latest-release
   // cover — each drifts a few px against the page's scroll as its section
   // passes through the viewport, layered on top of the cover's fixed 3D tilt.
-  const [heroImgRef, heroParallaxY] = useScrollParallax(36);
+  const [heroImgRef, heroParallaxY] = useScrollParallax(60);
   const [coverRef, parallaxY] = useScrollParallax(24);
+
+  // Belt-and-suspenders mute: React's `muted` prop only sets the DOM
+  // property, and some browsers briefly honor autoplay before that property
+  // is applied — forcing it imperatively guarantees no audio ever plays.
+  const heroVideoRef = useRef(null);
+  useEffect(() => {
+    if (heroVideoRef.current) heroVideoRef.current.muted = true;
+  }, []);
 
   return (
     <div>
       {/* HERO */}
       <div className="relative h-[600px] sm:h-[640px] overflow-hidden border-b border-white/10">
+        <video
+          ref={heroVideoRef}
+          className="pointer-events-none absolute left-0 top-0 h-full w-full object-cover"
+          src="https://res.cloudinary.com/dfeyhbxeg/video/upload/v1785558021/test_bg_dfbb193114.mp4"
+          autoPlay
+          muted
+          defaultMuted
+          playsInline
+          loop
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{ background: `linear-gradient(to right, ${colors.bg} 0%, ${colors.bg} 22%, rgba(13,11,10,0.6) 50%, rgba(13,11,10,0.05) 100%)` }}
+        />
         <img
           ref={heroImgRef}
           src="https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785465704/hero_sphere_3498e09523.png"
@@ -140,6 +163,7 @@ const Home = () => {
       {latestRelease && (
         <div className="mx-auto max-w-[1400px] px-10 pb-[90px] pt-10">
           <SectionHeader title="Latest Release" linkTo="/discography" linkText="View Discography" />
+          <PosterFrame>
           <div
             className="grid grid-cols-1 overflow-hidden border border-white/10 sm:grid-cols-[340px_1fr]"
             style={{ background: colors.card }}
@@ -161,15 +185,26 @@ const Home = () => {
                 }}
               />
             </div>
-            <div className="flex flex-col justify-center px-10 py-9">
-              <div className="mb-2.5 text-[13px] font-black uppercase tracking-[0.1em]" style={{ color: colors.accent2 }}>
-                New on Bandcamp
+            <div className="flex flex-col justify-center px-10 py-9 pl-13">
+              <div className="text-[13px] font-black uppercase tracking-[0.1em]" style={{ color: colors.accent2 }}>
+                OUT NOW
               </div>
-              <div className="mb-1 text-[30px] font-black uppercase leading-[1.1]">{latestRelease.release_name}</div>
-              <div className="mb-4 text-[15px] font-medium text-white/55">
+              <div
+                className="mb-1 uppercase leading-[1.1]"
+                style={{
+                  fontFamily: "Archivo, sans-serif",
+                  fontStretch: "expanded",
+                  fontVariationSettings: '"wdth" 125',
+                  fontWeight: 600,
+                  fontSize: "30px",
+                }}
+              >
+                {latestRelease.release_name}
+              </div>
+              <div className="mb-4 text-[15px] font-medium" style={{ color: "rgba(255, 255, 255, 0.35)", letterSpacing: 0 }}>
                 {latestRelease.artists?.length ? latestRelease.artists.join(", ") : "Dome of Doom"}
               </div>
-              <div className="flex flex-col md:flex-row gap-[14px]">
+              <div className="flex flex-col lg:flex-row gap-[14px]">
                 {latestRelease.spotify_url ? (
                   <Button type="small" variant="primary" href={latestRelease.spotify_url}>
                     Spotify
@@ -187,6 +222,7 @@ const Home = () => {
               </div>
             </div>
           </div>
+          </PosterFrame>
         </div>
       )}
 

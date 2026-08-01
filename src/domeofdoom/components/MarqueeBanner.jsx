@@ -1,12 +1,9 @@
-import React from "react";
+import React, { useRef, useState, useLayoutEffect } from "react";
 import { colors } from "@/tokens";
 
 const ITEM = " 15 YEARS OF DOME OF DOOM · EST. 2011 ";
 const REPEAT = 10;
 const FLOWER_URL = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785467660/flower_filgree_iconography_b5cbd61913.png";
-
-const grainSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="4" stitchTiles="stitch"/></filter><rect width="256" height="256" filter="url(#n)"/></svg>`;
-const grainUrl = `url("data:image/svg+xml,${encodeURIComponent(grainSvg)}")`;
 
 function MarqueeContent() {
   return (
@@ -18,8 +15,10 @@ function MarqueeContent() {
             src={FLOWER_URL}
             alt=""
             aria-hidden="true"
-            className="mx-2 mb-[1px]"
-            style={{ display: "inline-block", height: "0.9em", width: "auto", verticalAlign: "middle", opacity: 0.9 }}
+            width={18}
+            height={18}
+            className="mx-1 mb-[5px]"
+            style={{ display: "inline-block", height: "18px", width: "18px", verticalAlign: "middle", opacity: 0.9 }}
           />
         </React.Fragment>
       ))}
@@ -27,30 +26,46 @@ function MarqueeContent() {
   );
 }
 
-const MarqueeBanner = () => (
-  <div
-    className="relative overflow-hidden whitespace-nowrap border-b-2 py-[9px]"
-    style={{ background: "rgb(13,11,10)", color: colors.accent, borderColor: colors.accent }}
-  >
+const MarqueeBanner = () => {
+  // The classic "duplicate content, translate -50%" loop only looks seamless
+  // if both copies render at exactly the same width. Subpixel text-layout
+  // drift across ten repeated chunks means they're actually a few px apart,
+  // so -50% alone produces a visible jump at every loop reset — measure the
+  // first copy's real width instead and drive the animation off that.
+  const firstSpanRef = useRef(null);
+  const [shift, setShift] = useState(null);
+
+  useLayoutEffect(() => {
+    const el = firstSpanRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const measure = () => setShift(el.getBoundingClientRect().width);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  return (
     <div
-      aria-hidden="true"
-      style={{
-        position: "absolute",
-        inset: 0,
-        zIndex: 1,
-        backgroundImage: grainUrl,
-        backgroundRepeat: "repeat",
-        backgroundSize: "256px 256px",
-        mixBlendMode: "hard-light",
-        opacity: 0.18,
-        pointerEvents: "none",
-      }}
-    />
-    <div className="inline-block animate-marquee text-[14px] font-extrabold tracking-[0.06em]" style={{ fontFamily: "Archivo, sans-serif", fontStretch: "expanded", fontVariationSettings: "'wdth' 125" }}>
-      <span className="px-6"><MarqueeContent /></span>
-      <span className="px-6" aria-hidden="true"><MarqueeContent /></span>
+      className="relative overflow-hidden whitespace-nowrap border-b-2 py-[9px]"
+      style={{ background: "rgb(13,11,10)", color: colors.accent, borderColor: colors.accent }}
+    >
+      <div
+        className="inline-block animate-marquee text-[14px] font-bold tracking-[0.06em]"
+        style={{
+          fontFamily: "Archivo, sans-serif",
+          fontStretch: "expanded",
+          fontVariationSettings: "'wdth' 125",
+          willChange: "transform",
+          backfaceVisibility: "hidden",
+          ...(shift ? { "--marquee-shift": `-${shift}px` } : {}),
+        }}
+      >
+        <span ref={firstSpanRef} className="inline-block px-6"><MarqueeContent /></span>
+        <span className="inline-block px-6" aria-hidden="true"><MarqueeContent /></span>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default MarqueeBanner;

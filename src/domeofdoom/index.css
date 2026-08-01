@@ -15,9 +15,13 @@
   --animate-marquee: marquee 24s linear infinite;
 }
 
+/* Falls back to -50% (assumes both halves are equal width) until JS measures
+   the actual width of the first copy and sets --marquee-shift precisely —
+   subpixel text-layout drift between the two duplicated copies means -50%
+   alone can be a few px off, producing a visible jump at each loop reset. */
 @keyframes marquee {
-  from { transform: translateX(0%); }
-  to   { transform: translateX(-50%); }
+  from { transform: translateX(0); }
+  to   { transform: translateX(var(--marquee-shift, -50%)); }
 }
 
 @keyframes bgFadeIn {
@@ -28,6 +32,15 @@
 @keyframes bgFadeOut {
   from { opacity: 0.5; }
   to   { opacity: 0; }
+}
+
+@keyframes navlinkFlash {
+  0%, 100% { color: oklch(0.78 0.08 320); }
+  50%      { color: #ffffff; }
+}
+
+.navlink-hover-flash:hover {
+  animation: navlinkFlash 0.15s linear infinite;
 }
 
 html,
