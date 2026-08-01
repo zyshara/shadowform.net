@@ -30,6 +30,13 @@ const VARIANTS = {
 const PADDING = {
   default: "14px 28px",
   thin: "7px 54px",
+  small: "6px 16px",
+};
+
+const FONT_SIZE = {
+  default: "13px",
+  thin: "13px",
+  small: "10px",
 };
 
 const baseStyle = {
@@ -37,7 +44,6 @@ const baseStyle = {
   fontFamily: "Archivo, sans-serif",
   fontVariationSettings: '"wdth" 125',
   fontWeight: 800,
-  fontSize: "13px",
   letterSpacing: "0.06em",
   textTransform: "uppercase",
   textDecoration: "none",
@@ -78,6 +84,7 @@ const Button = ({ variant = "primary", type = "default", to, href, children, sty
   const style = {
     ...baseStyle,
     padding: PADDING[type] ?? PADDING.default,
+    fontSize: FONT_SIZE[type] ?? FONT_SIZE.default,
     background: !isDisabled && hovered ? v.color : v.background,
     color: !isDisabled && hovered ? BG : v.color,
     border: v.border,
@@ -93,7 +100,7 @@ const Button = ({ variant = "primary", type = "default", to, href, children, sty
 
   if (href) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" style={style} {...hoverProps} {...props}>
+      <a className="w-full md:max-w-[300px]" href={href} target="_blank" rel="noopener noreferrer" style={style} {...hoverProps} {...props}>
         <Grain />
         {children}
       </a>
@@ -102,7 +109,7 @@ const Button = ({ variant = "primary", type = "default", to, href, children, sty
 
   if (to) {
     return (
-      <Link to={to} style={style} {...hoverProps} {...props}>
+      <Link className="w-full md:max-w-[300px]" to={to} style={style} {...hoverProps} {...props}>
         <Grain />
         {children}
       </Link>
@@ -110,7 +117,7 @@ const Button = ({ variant = "primary", type = "default", to, href, children, sty
   }
 
   return (
-    <button style={style} {...hoverProps} {...props}>
+    <button className="w-full md:max-w-[300px]" style={style} {...hoverProps} {...props}>
       <Grain />
       {children}
     </button>

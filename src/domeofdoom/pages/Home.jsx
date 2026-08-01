@@ -39,16 +39,31 @@ function useScrollParallax(amplitude = 24) {
   return [ref, offset];
 }
 
+const ArrowRightIcon = ({ size = 14 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 12H20M20 12L13 5M20 12L13 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 const SectionHeader = ({ title, linkTo, linkText }) => (
-  <div className="mb-7 flex items-baseline justify-between">
+  <div className="flex-col-reverse gap-[8px] sm:flex-row mb-7 flex items-baseline justify-between items-start">
     <h2 className="m-0 font-archivo text-[32px] font-semibold uppercase leading-none tracking-tight"
       style={{ fontFamily: "Archivo, sans-serif", fontStretch: "expanded", fontVariationSettings: "'wdth' 125", fontWeight: "600" }}>
       {title}
     </h2>
     {linkTo && (
-      <Link to={linkTo} className="text-[13px] font-bold uppercase tracking-[0.06em]" style={{ color: colors.accent2 }}>
-        {linkText} →
-      </Link>
+      <>
+        <div className="flex gap-[4px] items-center" style={{ color: colors.accent2, textAlign: "left" }}>
+          <Link
+            to={linkTo}
+            className="font-bold text-[9px] md:text-[13px] gap-[4px] uppercase tracking-[0.06em]"
+            style={{ color: colors.accent2, whiteSpace: "nowrap" }}
+          >
+            {linkText}
+          </Link>
+          <ArrowRightIcon size={13} />
+        </div>
+      </>
     )}
   </div>
 );
@@ -74,12 +89,12 @@ const Home = () => {
   return (
     <div>
       {/* HERO */}
-      <div className="relative h-[640px] overflow-hidden border-b border-white/10">
+      <div className="relative h-[600px] sm:h-[640px] overflow-hidden border-b border-white/10">
         <img
           ref={heroImgRef}
           src="https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785465704/hero_sphere_3498e09523.png"
           alt=""
-          className="pointer-events-none absolute right-[-5%] top-1/2 h-[115%] w-auto object-contain"
+          className="pointer-events-none absolute right-[-5%] top-1/2 h-[115%] w-auto object-contain object-bottom"
           style={{ transform: `translateY(calc(-50% + ${heroParallaxY}px))` }}
         />
         <div
@@ -147,12 +162,28 @@ const Home = () => {
               />
             </div>
             <div className="flex flex-col justify-center px-10 py-9">
-              <div className="mb-2.5 text-[13px] font-black uppercase tracking-[0.1em]" style={{ color: colors.accent }}>
+              <div className="mb-2.5 text-[13px] font-black uppercase tracking-[0.1em]" style={{ color: colors.accent2 }}>
                 New on Bandcamp
               </div>
               <div className="mb-1 text-[30px] font-black uppercase leading-[1.1]">{latestRelease.release_name}</div>
-              <div className="text-[15px] font-medium text-white/55">
+              <div className="mb-4 text-[15px] font-medium text-white/55">
                 {latestRelease.artists?.length ? latestRelease.artists.join(", ") : "Dome of Doom"}
+              </div>
+              <div className="flex flex-col md:flex-row gap-[14px]">
+                {latestRelease.spotify_url ? (
+                  <Button type="small" variant="primary" href={latestRelease.spotify_url}>
+                    Spotify
+                  </Button>
+                ) : (
+                  <Button type="small" variant="disabled">
+                    Not on Spotify
+                  </Button>
+                )}
+                {latestRelease.bandcamp_url && (
+                  <Button type="small" variant="secondary" href={latestRelease.bandcamp_url}>
+                    Bandcamp
+                  </Button>
+                )}
               </div>
             </div>
           </div>
