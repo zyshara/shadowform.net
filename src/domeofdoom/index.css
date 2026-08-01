@@ -40,7 +40,7 @@
 }
 
 .navlink-hover-flash:hover {
-  animation: navlinkFlash 0.15s linear infinite;
+  animation: navlinkFlash 0.08s linear infinite;
 }
 
 html,
@@ -58,4 +58,142 @@ body {
 ::selection {
   background: oklch(0.72 0.19 25);
   color: #0d0b0a;
+}
+
+/* ---- Discography list & filter bar — ported from Claude Design
+   "Discography List" (option 1a: outlined tags, condensed uppercase
+   titles). The design's Barlow/Barlow Condensed aren't loaded on this
+   site, so those are substituted with the existing Helvetica Neue body
+   font; #e8574a / #9b8fd4 are the design tool's approximation of this
+   project's actual accent/secondary tokens, used directly here instead. */
+.disco-filter-count {
+  font: 600 14px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-size: clamp(12px, 2vw, 14px);
+}
+.disco-filter-count b {
+  color: oklch(0.72 0.19 25);
+  font-weight: 600;
+}
+.disco-filter-dot {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 30px;
+  line-height: 13px;
+  margin: 0px 10px;
+}
+
+.disco-filter-select {
+  appearance: none;
+  -webkit-appearance: none;
+  font: 700 13px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: oklch(0.72 0.19 25);
+  background: none;
+  border: 1px solid oklch(0.72 0.19 25);
+  cursor: pointer;
+  padding: 5px 22px 5px 8px;
+  white-space: nowrap;
+}
+.disco-filter-select:focus {
+  outline: none;
+}
+.disco-filter-select option {
+  background: #1a1917;
+  color: #eee;
+}
+
+.disco-item-1a {
+  display: flex;
+  align-items: center;
+  padding: 13px 20px 13px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+.disco-item-1a.active {
+  background: oklch(0.72 0.19 25 / 0.08);
+  border-left-color: oklch(0.72 0.19 25);
+}
+.disco-item-1a:hover:not(.active) {
+  background: oklch(0.72 0.19 25 / 0.14);
+  border-left-color: oklch(0.72 0.19 25 / 0.7);
+}
+.disco-item-1a-title {
+  font: 400 11px/1 "Archivo", sans-serif;
+  font-stretch: expanded;
+  font-variation-settings: "wdth" 125;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: #e0dade;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.disco-item-1a.active .disco-item-1a-title {
+  color: oklch(0.72 0.19 25);
+}
+.disco-item-1a:hover:not(.active) .disco-item-1a-title {
+  color: #ffffff;
+}
+.disco-item-1a-year {
+  font: 400 11px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: rgba(255, 255, 255, 0.28);
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+.disco-tag {
+  font: 700 9px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 6px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+.disco-tag-album {
+  color: rgba(255, 255, 255, 0.5);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.disco-tag-ep {
+  color: rgba(255, 255, 255, 0.5);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.disco-tag-single {
+  color: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.disco-tag-remix {
+  color: oklch(0.72 0.19 25);
+  border-color: oklch(0.72 0.19 25 / 0.5);
+}
+.disco-tag-comp {
+  color: oklch(0.78 0.08 320);
+  border-color: oklch(0.78 0.08 320 / 0.4);
+}
+
+/* Always-visible sidebar scrollbar, aligned right, accent2-colored thumb. */
+.disco-sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.78 0.08 320) transparent;
+}
+.disco-sidebar-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.disco-sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.disco-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: oklch(0.78 0.08 320);
+}
+
+.disco-grid-img {
+  transition: transform 0.3s ease;
+}
+.disco-grid-tile:hover .disco-grid-img {
+  transform: scale(1.05);
 }

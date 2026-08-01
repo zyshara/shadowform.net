@@ -57,7 +57,7 @@ const SectionHeader = ({ title, linkTo, linkText }) => (
         <div className="flex gap-[4px] items-center" style={{ color: colors.accent2, textAlign: "left" }}>
           <Link
             to={linkTo}
-            className="font-bold text-[11px] sm:text-[12px] py-[4px] sm:py-0 md:text-[13px] gap-[4px] uppercase tracking-[0.06em]"
+            className="navlink-hover-flash font-bold text-[11px] sm:text-[12px] py-[4px] sm:py-0 md:text-[13px] gap-[4px] uppercase tracking-[0.06em]"
             style={{ color: colors.accent2, whiteSpace: "nowrap" }}
           >
             {linkText}

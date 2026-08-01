@@ -37,9 +37,14 @@ const MarqueeBanner = () => {
 
   useLayoutEffect(() => {
     const el = firstSpanRef.current;
-    if (!el || typeof ResizeObserver === "undefined") return;
+    if (!el) return;
     const measure = () => setShift(el.getBoundingClientRect().width);
     measure();
+    // The variable Archivo font can still be loading on first paint —
+    // ResizeObserver doesn't reliably fire for reflows caused purely by a
+    // webfont swap, so re-measure explicitly once fonts are ready too.
+    document.fonts?.ready?.then(measure);
+    if (typeof ResizeObserver === "undefined") return;
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     return () => ro.disconnect();

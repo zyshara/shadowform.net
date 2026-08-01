@@ -1,26 +1,13 @@
 import { colors } from "@/tokens";
 
 const FLOWER_URL = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785467660/flower_filgree_iconography_b5cbd61913.png";
-const BAND_SIZE = 26;
 
-const BAND_FONT_STYLE = {
-  fontFamily: "Archivo, sans-serif",
-  fontStretch: "expanded",
-  fontVariationSettings: '"wdth" 125',
-  fontWeight: 400,
-  fontSize: "13px",
-  letterSpacing: "0.06em",
-  textTransform: "uppercase",
-  color: "#ff6a65",
-  whiteSpace: "nowrap",
-};
-
-const CornerFlower = ({ style }) => (
+const CornerFlower = ({ size, style }) => (
   <img
     src={FLOWER_URL}
     alt=""
     aria-hidden="true"
-    style={{ position: "absolute", width: 18, height: 18, zIndex: 1, ...style }}
+    style={{ position: "absolute", width: size, height: size, zIndex: 1, ...style }}
   />
 );
 
@@ -37,63 +24,81 @@ function RepeatedLabel({ label, count = 14 }) {
   );
 }
 
-// A poster-style border: flower icons at each corner, "DOMEOFDOOM ·" tiled
-// around all four edges (bottom/left/right rotated so the whole frame reads
-// with consistent orientation, like a record sleeve).
-const PosterFrame = ({ label = "DOMEOFDOOM", children }) => (
-  <div
-    className="relative border border-white/10"
-    style={{ padding: BAND_SIZE, background: colors.bg }}
-  >
-    <CornerFlower style={{ left: 4, top: 4 }} />
-    <CornerFlower style={{ right: 4, top: 4 }} />
-    <CornerFlower style={{ left: 4, bottom: 4 }} />
-    <CornerFlower style={{ right: 4, bottom: 4 }} />
+// A poster-style border: flower icons at each corner, with an optional
+// "DOMEOFDOOM ·" text tiled around all four edges (bottom/left/right
+// rotated so the whole frame reads with consistent orientation, like a
+// record sleeve). `bandSize` controls the frame's overall thickness;
+// `showText` toggles the repeating label off for a plainer, thinner frame.
+const PosterFrame = ({ label = "DOMEOFDOOM", showText = true, bandSize = 26, flowerSize = 18, children }) => {
+  const bandFontStyle = {
+    fontFamily: "Archivo, sans-serif",
+    fontStretch: "expanded",
+    fontVariationSettings: '"wdth" 125',
+    fontWeight: 400,
+    fontSize: "13px",
+    letterSpacing: "0.06em",
+    textTransform: "uppercase",
+    color: "#ff6a65",
+    whiteSpace: "nowrap",
+  };
+  const flowerInset = Math.max(2, Math.round(bandSize * 0.15));
 
-    {/* top — inset past the corner flowers/vertical bands so nothing overlaps */}
-    <div
-      className="absolute overflow-hidden text-center"
-      style={{ left: BAND_SIZE, right: BAND_SIZE, top: 0, height: BAND_SIZE, lineHeight: `${BAND_SIZE}px`, ...BAND_FONT_STYLE }}
-    >
-      <RepeatedLabel label={label} />
-    </div>
+  return (
+    <div className="relative border border-white/10" style={{ padding: bandSize, background: colors.bg }}>
+      <CornerFlower size={flowerSize} style={{ left: flowerInset, top: flowerInset }} />
+      <CornerFlower size={flowerSize} style={{ right: flowerInset, top: flowerInset }} />
+      <CornerFlower size={flowerSize} style={{ left: flowerInset, bottom: flowerInset }} />
+      <CornerFlower size={flowerSize} style={{ right: flowerInset, bottom: flowerInset }} />
 
-    {/* bottom (flipped so the frame reads with 180°-rotational symmetry) */}
-    <div
-      className="absolute overflow-hidden text-center"
-      style={{ left: BAND_SIZE, right: BAND_SIZE, bottom: 0, height: BAND_SIZE, lineHeight: `${BAND_SIZE}px`, transform: "rotate(180deg)", ...BAND_FONT_STYLE }}
-    >
-      <RepeatedLabel label={label} />
-    </div>
+      {showText && (
+        <>
+          {/* top — inset past the corner flowers/vertical bands so nothing overlaps */}
+          <div
+            className="absolute overflow-hidden text-center"
+            style={{ left: bandSize, right: bandSize, top: 0, height: bandSize, lineHeight: `${bandSize}px`, ...bandFontStyle }}
+          >
+            <RepeatedLabel label={label} />
+          </div>
 
-    {/* left */}
-    <div
-      className="absolute overflow-hidden"
-      style={{
-        left: "3px",
-        top: BAND_SIZE,
-        bottom: BAND_SIZE,
-        width: BAND_SIZE,
-        writingMode: "vertical-rl",
-        transform: "rotate(180deg)",
-        ...BAND_FONT_STYLE,
-      }}
-    >
-      <RepeatedLabel label={label} />
-    </div>
+          {/* bottom (flipped so the frame reads with 180°-rotational symmetry) */}
+          <div
+            className="absolute overflow-hidden text-center"
+            style={{ left: bandSize, right: bandSize, bottom: 0, height: bandSize, lineHeight: `${bandSize}px`, transform: "rotate(180deg)", ...bandFontStyle }}
+          >
+            <RepeatedLabel label={label} />
+          </div>
 
-    {/* right */}
-    <div
-      className="absolute overflow-hidden"
-      style={{ right: "3px", top: BAND_SIZE, bottom: BAND_SIZE, width: BAND_SIZE, writingMode: "vertical-rl", ...BAND_FONT_STYLE }}
-    >
-      <RepeatedLabel label={label} />
-    </div>
+          {/* left */}
+          <div
+            className="absolute overflow-hidden"
+            style={{
+              left: "3px",
+              top: bandSize,
+              bottom: bandSize,
+              width: bandSize,
+              writingMode: "vertical-rl",
+              transform: "rotate(180deg)",
+              ...bandFontStyle,
+            }}
+          >
+            <RepeatedLabel label={label} />
+          </div>
 
-    <div className="relative" style={{ zIndex: 1 }}>
-      {children}
+          {/* right */}
+          <div
+            className="absolute overflow-hidden"
+            style={{ right: "3px", top: bandSize, bottom: bandSize, width: bandSize, writingMode: "vertical-rl", ...bandFontStyle }}
+          >
+            <RepeatedLabel label={label} />
+          </div>
+        </>
+      )}
+
+      <div className="relative" style={{ zIndex: 1 }}>
+        {children}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default PosterFrame;

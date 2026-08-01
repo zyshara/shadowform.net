@@ -3,9 +3,9 @@ import { useSearchParams } from "react-router-dom";
 import { readSeedData } from "@/utils/readSeedData";
 import { colors } from "@/tokens";
 import Button from "@/components/Button";
+import PosterFrame from "@/components/PosterFrame";
 
 const PRIMARY = colors.accent;
-const SECONDARY = colors.secondary;
 
 const VIEW_STORAGE_KEY = "domeofdoom:discography:view";
 
@@ -26,11 +26,32 @@ const ListIcon = () => (
   </svg>
 );
 
-function tagColor(type) {
-  if (type === "Compilation") return SECONDARY;
-  if (type === "Remix") return PRIMARY;
-  if (type === "Album") return "rgba(255,255,255,.85)";
-  return "rgba(255,255,255,.5)";
+// Same arrow glyph as Home.jsx's ArrowRightIcon, mirrored to point left.
+const ArrowLeftIcon = ({ size = 14 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ transform: "scaleX(-1)" }}>
+    <path d="M4 12H20M20 12L13 5M20 12L13 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+// Overlaid on a native <select> styled to look like a bordered pill button —
+// pointer-events:none so clicks still reach the select underneath.
+const FilterChevron = () => (
+  <svg
+    viewBox="0 0 10 10"
+    width="8"
+    height="8"
+    style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
+  >
+    <polyline points="2,3 5,7 8,3" fill="none" stroke={PRIMARY} strokeWidth="2.5" />
+  </svg>
+);
+
+function tagClassName(type) {
+  if (type === "Compilation") return "disco-tag-comp";
+  if (type === "Remix") return "disco-tag-remix";
+  if (type === "Album") return "disco-tag-album";
+  if (type === "EP") return "disco-tag-ep";
+  return "disco-tag-single";
 }
 
 function artistDisplay(release) {
@@ -151,20 +172,12 @@ const CoverPlaceholder = () => (
   />
 );
 
-const selectStyle = {
-  color: PRIMARY,
-  letterSpacing: "0.04em",
-  textTransform: "uppercase",
-  cursor: "pointer",
-  outline: "none",
-};
-
 const GridView = ({ releases, onSelect }) => (
   <div style={{ flex: 1, overflowY: "auto", paddingRight: 4 }}>
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))",
+        gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
         gap: 14,
       }}
     >
@@ -172,42 +185,51 @@ const GridView = ({ releases, onSelect }) => (
         <div
           key={release.uid ?? i}
           onClick={() => onSelect(release)}
+          className="disco-grid-tile"
           style={{
-            position: "relative",
-            aspectRatio: "1",
+            display: "flex",
+            flexDirection: "column",
             cursor: "pointer",
             border: "1px solid rgba(255,255,255,.12)",
-            borderRadius: 3,
             overflow: "hidden",
           }}
         >
-          {release.cover_art_src ? (
-            <img
-              src={release.cover_art_src}
-              alt={release.release_name}
-              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-            />
-          ) : (
-            <CoverPlaceholder />
-          )}
+          <div style={{ position: "relative", aspectRatio: "1", overflow: "hidden" }}>
+            {release.cover_art_src ? (
+              <img
+                src={release.cover_art_src}
+                alt={release.release_name}
+                className="disco-grid-img"
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              />
+            ) : (
+              <CoverPlaceholder />
+            )}
+          </div>
           <div
             style={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              padding: "4px 6px",
-              font: "600 8.5px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-              color: "#fff",
-              background: "linear-gradient(transparent, rgba(0,0,0,.75))",
-              letterSpacing: ".02em",
-              pointerEvents: "none",
+              height: 12,
+              width: "100%",
+              flexShrink: 0,
+              background: PRIMARY,
+              display: "flex",
+              alignItems: "center",
+              padding: "0 6px",
               overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
             }}
           >
-            {release.release_name}
+            <span
+              style={{
+                font: "600 8px 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                color: colors.bg,
+                letterSpacing: ".02em",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {release.release_name}
+            </span>
           </div>
         </div>
       ))}
@@ -472,7 +494,7 @@ const Discography = () => {
 
   return (
     <div
-      className="mx-auto max-w-[1400px] px-10 py-[70px]"
+      className="mx-auto max-w-[1400px] px-10 py-10 lg:py-[70px]"
       style={{
         fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
         display: "flex",
@@ -535,6 +557,9 @@ const Discography = () => {
             onClick={handleBackToDiscography}
             style={{
               alignSelf: "flex-start",
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
               background: "none",
               border: "none",
               padding: 0,
@@ -545,7 +570,8 @@ const Discography = () => {
               textTransform: "uppercase",
             }}
           >
-            ← All Releases
+            <ArrowLeftIcon size={12} />
+            All Releases
           </button>
           <div
             className="relative flex justify-center items-center flex-col flex-1 gap-[48px] sm:gap-[20px] lg:gap-[48px]"
@@ -583,53 +609,61 @@ const Discography = () => {
         <>
           {/* Header */}
           <div className="mb-4 flex items-start justify-between">
-            <div className="flex flex-col gap-[8px]">
+            <div className="flex flex-col gap-[8px] w-full sm:max-w-[50%]">
               <div
-                className="m-0 font-archivo text-[48px] font-semibold uppercase leading-none tracking-tight"
+                className="m-0 font-archivo text-[clamp(26px,_7vw,_48px)] font-semibold uppercase leading-none tracking-tight"
                 style={{ fontFamily: "Archivo, sans-serif", fontStretch: "expanded", fontVariationSettings: "'wdth' 125", fontWeight: "600" }}
               >
                 Discography
               </div>
-              <div className="flex flex-row gap-4 text-[13px] font-bold uppercase tracking-[0.08em] text-white/40" >
-                <span>{releases.length} releases</span>
-                <span>·</span>
-                <select
-                  value={sortOrder}
-                  onChange={(e) => {
-                    setSortOrder(e.target.value);
-                    setActiveIndex(0);
-                  }}
-                  style={selectStyle}
-                >
-                  <option value="latest" style={{ background: "#1a1917", color: "#eee" }}>
-                    latest first
-                  </option>
-                  <option value="earliest" style={{ background: "#1a1917", color: "#eee" }}>
-                    earliest first
-                  </option>
-                </select>
+              <div className="flex w-full flex-col gap-4 w-full items-start justify-start">
+                <div className="flex flex-row w-full">
+                <span className="disco-filter-count">
+                  <b>{releases.length}</b> releases
+                </span>
+                <div className="disco-filter-dot"> · </div>
+                  <span className="disco-filter-count">
+                    <b>{artistOptions.length}</b> artists
+                  </span>
+                </div>
+                <div className="flex flex-row gap-4 w-full">
+                <span className="w-full" style={{ position: "relative", display: "inline-flex" }}>
+                  <select
+                    value={sortOrder}
+                    onChange={(e) => {
+                      setSortOrder(e.target.value);
+                      setActiveIndex(0);
+                    }}
+                    className="disco-filter-select w-full"
+                  >
+                    <option value="latest">latest first</option>
+                    <option value="earliest">earliest first</option>
+                  </select>
+                  <FilterChevron />
+                </span>
                 {artistOptions.length > 0 && (
                   <>
-                    <span>·</span>
-                    <select
-                      value={artistFilter}
-                      onChange={(e) => {
-                        setArtistFilter(e.target.value);
-                        setActiveIndex(0);
-                      }}
-                      style={selectStyle}
-                    >
-                      <option value="all" style={{ background: "#1a1917", color: "#eee" }}>
-                        all artists
-                      </option>
-                      {artistOptions.sort().map((a) => (
-                        <option key={a} value={a} style={{ background: "#1a1917", color: "#eee" }}>
-                          {a}
-                        </option>
-                      ))}
-                    </select>
+                    <span className="w-full" style={{ position: "relative", display: "inline-flex" }}>
+                      <select
+                        value={artistFilter}
+                        onChange={(e) => {
+                          setArtistFilter(e.target.value);
+                          setActiveIndex(0);
+                        }}
+                        className="disco-filter-select w-full"
+                      >
+                        <option value="all">all artists</option>
+                        {artistOptions.sort().map((a) => (
+                          <option key={a} value={a}>
+                            {a}
+                          </option>
+                        ))}
+                      </select>
+                      <FilterChevron />
+                    </span>
                   </>
                 )}
+              </div>
               </div>
             </div>
             {!isBelowMd && (
@@ -663,70 +697,37 @@ const Discography = () => {
             ) : (
               <div style={{ flex: 1, display: "flex", gap: 28, minHeight: 0 }}>
                 {/* Sidebar */}
-                <div
-                  style={{
-                    width: 280,
-                    height: 640,
-                    flexShrink: 0,
-                    border: "1px solid rgba(255,255,255,.1)",
-                    borderRadius: 4,
-                    overflowY: "auto",
-                    background: "oklch(0.18 0.008 60)",
-                  }}
-                >
-                  {releases.map((release, i) => {
-                    const on = release.uid != null ? release.uid === active?.uid : i === activeIndex;
-                    return (
-                      <div
-                        key={release.uid ?? i}
-                        onClick={() => handleActivateRelease(release, i)}
-                        className="min-h-[60px]"
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 8,
-                          padding: "10px 16px",
-                          cursor: "pointer",
-                          background: on ? "rgba(255,255,255,.07)" : "transparent",
-                          borderLeft: `2px solid ${on ? PRIMARY : "transparent"}`,
-                        }}
-                      >
-                        <span
-                          style={{
-                            font: "500 11px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-                            color: on ? "#fff" : "rgba(255,255,255,.6)",
-                            flex: 1,
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
+                <PosterFrame showText={false} bandSize={10} flowerSize={12}>
+                  <div
+                    className="disco-sidebar-scroll"
+                    style={{
+                      width: 280,
+                      height: 640,
+                      flexShrink: 0,
+                      border: "1px solid rgba(255,255,255,.1)",
+                      borderRadius: 4,
+                      overflowY: "scroll",
+                      background: "oklch(0.18 0.008 60)",
+                    }}
+                  >
+                    {releases.map((release, i) => {
+                      const on = release.uid != null ? release.uid === active?.uid : i === activeIndex;
+                      return (
+                        <div
+                          key={release.uid ?? i}
+                          onClick={() => handleActivateRelease(release, i)}
+                          className={`disco-item-1a min-h-[60px]${on ? " active" : ""}`}
                         >
-                          {release.release_name}
-                        </span>
-                        <span
-                          style={{
-                            font: "400 9.5px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-                            color: "rgba(255,255,255,.3)",
-                            flexShrink: 0,
-                          }}
-                        >
-                          {release.year}
-                        </span>
-                        <span
-                          style={{
-                            font: "600 8.5px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-                            color: tagColor(release.type),
-                            letterSpacing: ".04em",
-                            flexShrink: 0,
-                            textTransform: "uppercase",
-                          }}
-                        >
-                          {release.type === "Compilation" ? "Comp" : release.type}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
+                          <span className="disco-item-1a-title">{release.release_name}</span>
+                          <span className="disco-item-1a-year">{release.year}</span>
+                          <span className={`disco-tag ${tagClassName(release.type)}`}>
+                            {release.type === "Compilation" ? "Comp" : release.type}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </PosterFrame>
 
                 {/* Preview + detail */}
                 {active && (
