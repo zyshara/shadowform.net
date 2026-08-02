@@ -700,7 +700,6 @@ const Discography = () => {
                       height: 640,
                       flexShrink: 0,
                       border: "1px solid rgba(255,255,255,.1)",
-                      borderRadius: 4,
                       overflowY: "scroll",
                       background: "oklch(0.18 0.008 60)",
                     }}
