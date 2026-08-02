@@ -1,12 +1,13 @@
 import React from "react";
 import { readSeedData } from "@/utils/readSeedData";
+import SubpageHeader from "@/components/SubpageHeader";
 
 const Merch = () => {
   const items = readSeedData("merch-data") ?? [];
 
   return (
-    <main>
-      <h1>merch</h1>
+    <div className="mx-auto max-w-[1400px] px-10 py-10 lg:py-[70px]">
+     <SubpageHeader heading="Merch"/>
       <div className="flex flex-wrap gap-4">
         {items.map((item, i) => (
           <div key={i} className="flex flex-col max-w-[200px]">
@@ -17,7 +18,7 @@ const Merch = () => {
           </div>
         ))}
       </div>
-    </main>
+    </div>
   );
 };
 

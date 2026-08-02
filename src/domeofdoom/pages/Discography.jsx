@@ -4,6 +4,7 @@ import { readSeedData } from "@/utils/readSeedData";
 import { colors } from "@/tokens";
 import Button from "@/components/Button";
 import PosterFrame from "@/components/PosterFrame";
+import SubpageHeader from "@/components/SubpageHeader";
 
 const PRIMARY = colors.accent;
 
@@ -610,12 +611,7 @@ const Discography = () => {
           {/* Header */}
           <div className="mb-4 flex items-start justify-between">
             <div className="flex flex-col gap-[8px] w-full sm:max-w-[50%]">
-              <div
-                className="m-0 font-archivo text-[clamp(26px,_7vw,_48px)] font-semibold uppercase leading-none tracking-tight"
-                style={{ fontFamily: "Archivo, sans-serif", fontStretch: "expanded", fontVariationSettings: "'wdth' 125", fontWeight: "600" }}
-              >
-                Discography
-              </div>
+              <SubpageHeader heading="Discography">
               <div className="flex w-full flex-col gap-4 w-full items-start justify-start">
                 <div className="flex flex-row w-full">
                 <span className="disco-filter-count">
@@ -665,6 +661,7 @@ const Discography = () => {
                 )}
               </div>
               </div>
+              </SubpageHeader>
             </div>
             {!isBelowMd && (
               <button
@@ -675,7 +672,6 @@ const Discography = () => {
                   height: 38,
                   background: "none",
                   border: "1px solid rgba(255,255,255,.25)",
-                  borderRadius: 2,
                   color: "rgba(255,255,255,.7)",
                   cursor: "pointer",
                   display: "flex",
@@ -697,7 +693,6 @@ const Discography = () => {
             ) : (
               <div style={{ flex: 1, display: "flex", gap: 28, minHeight: 0 }}>
                 {/* Sidebar */}
-                <PosterFrame showText={false} bandSize={10} flowerSize={12}>
                   <div
                     className="disco-sidebar-scroll"
                     style={{
@@ -727,7 +722,6 @@ const Discography = () => {
                       );
                     })}
                   </div>
-                </PosterFrame>
 
                 {/* Preview + detail */}
                 {active && (

@@ -72,7 +72,7 @@ body {
   color: rgba(255, 255, 255, 0.35);
   text-transform: uppercase;
   white-space: nowrap;
-  font-size: clamp(12px, 2vw, 14px);
+  font-size: 14px;
 }
 .disco-filter-count b {
   color: oklch(0.72 0.19 25);
@@ -81,7 +81,7 @@ body {
 .disco-filter-dot {
   color: rgba(255, 255, 255, 0.2);
   font-size: 30px;
-  line-height: 13px;
+  line-height: 11px;
   margin: 0px 10px;
 }
 
