@@ -3,6 +3,9 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/shared/favicon.png" />
+    <% if (preloadFonts) { preloadFonts.forEach(function(href) { %>
+      <link rel="preload" as="font" type="font/woff2" href="<%= href %>" crossorigin />
+    <% }); } %>
     <title><%= title %></title>
     <meta name="description" content="<%= description %>" />
 

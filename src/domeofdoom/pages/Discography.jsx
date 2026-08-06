@@ -173,6 +173,41 @@ const CoverPlaceholder = () => (
   />
 );
 
+// Cover images are real network requests, so their `load` events fire in
+// whatever order the network happens to finish them in — gating reveal on
+// load alone stops the "popping in" but makes the reveal order look
+// random. `scheduled` enforces a deterministic top-left-to-bottom-right
+// cascade (index order matches the grid's row-major layout) as a floor;
+// an image only actually reveals once it's both loaded AND reached its
+// slot, so a fast-loading image still waits its turn, while a slow one
+// just reveals late instead of popping in out of order. The textured
+// placeholder stays underneath the whole time so there's never a blank gap.
+const GridCoverImage = ({ src, alt, index }) => {
+  const [loaded, setLoaded] = useState(false);
+  const [scheduled, setScheduled] = useState(false);
+
+  useEffect(() => {
+    const delay = Math.min(index * 22, 650);
+    const t = setTimeout(() => setScheduled(true), delay);
+    return () => clearTimeout(t);
+  }, [index]);
+
+  const revealed = loaded && scheduled;
+
+  return (
+    <>
+      <CoverPlaceholder />
+      <img
+        src={src}
+        alt={alt}
+        className={`disco-grid-img${revealed ? " loaded" : ""}`}
+        onLoad={() => setLoaded(true)}
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+      />
+    </>
+  );
+};
+
 const GridView = ({ releases, onSelect }) => (
   <div style={{ flex: 1, overflowY: "auto", paddingRight: 4 }}>
     <div
@@ -197,32 +232,28 @@ const GridView = ({ releases, onSelect }) => (
         >
           <div style={{ position: "relative", aspectRatio: "1", overflow: "hidden" }}>
             {release.cover_art_src ? (
-              <img
-                src={release.cover_art_src}
-                alt={release.release_name}
-                className="disco-grid-img"
-                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-              />
+              <GridCoverImage src={release.cover_art_src} alt={release.release_name} index={i} />
             ) : (
               <CoverPlaceholder />
             )}
           </div>
           <div
+            className="h-[16px] md:h-[12px]"
             style={{
-              height: 12,
               width: "100%",
               flexShrink: 0,
-              background: PRIMARY,
+              borderTop: `1px solid ${PRIMARY}`,
               display: "flex",
               alignItems: "center",
               padding: "0 6px",
               overflow: "hidden",
+              marginTop: "1px",
             }}
           >
             <span
               style={{
                 font: "600 8px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-                color: colors.bg,
+                color: "white",
                 letterSpacing: ".02em",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -382,6 +413,15 @@ const Discography = () => {
   const [hovering, setHovering] = useState(false);
   const [sortOrder, setSortOrder] = useState("latest");
   const [artistFilter, setArtistFilter] = useState("all");
+
+  // Cascading fade-in only plays once, on the page's first mount in list
+  // view — flips off after the cascade finishes so it never replays on
+  // sort/filter changes or when toggling back from grid.
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setIsFirstLoad(false), 1000);
+    return () => clearTimeout(t);
+  }, []);
 
   const handleToggleView = () => {
     const next = view === "grid" ? "list" : "grid";
@@ -585,24 +625,6 @@ const Discography = () => {
               onMouseMove={isBelowMd ? undefined : handlePreviewMove}
               onMouseLeave={isBelowMd ? undefined : handlePreviewLeave}
             />
-            {isBelowMd && gyro.permissionState === "prompt" && (
-              <button
-                onClick={gyro.requestPermission}
-                style={{
-                  background: "none",
-                  border: "1px solid rgba(255,255,255,.25)",
-                  borderRadius: 4,
-                  padding: "8px 18px",
-                  color: "rgba(255,255,255,.7)",
-                  cursor: "pointer",
-                  font: "600 11px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-                  letterSpacing: ".05em",
-                  textTransform: "uppercase",
-                }}
-              >
-                Enable Tilt
-              </button>
-            )}
             <ReleaseDetail release={linkedRelease} />
           </div>
         </>
@@ -710,7 +732,8 @@ const Discography = () => {
                         <div
                           key={release.uid ?? i}
                           onClick={() => handleActivateRelease(release, i)}
-                          className={`disco-item-1a min-h-[60px]${on ? " active" : ""}`}
+                          className={`disco-item-1a min-h-[60px]${on ? " active" : ""}${isFirstLoad ? " disco-cascade-item" : ""}`}
+                          style={isFirstLoad ? { animationDelay: `${Math.min(i * 18, 500)}ms` } : undefined}
                         >
                           <span className="disco-item-1a-title">{release.release_name}</span>
                           <span className="disco-item-1a-year">{release.year}</span>
@@ -724,7 +747,10 @@ const Discography = () => {
 
                 {/* Preview + detail */}
                 {active && (
-                  <div className="relative flex justify-center items-center flex-col flex-1 gap-[48px] sm:gap-[20px] lg:gap-[48px] h-[700px]">
+                  <div
+                    className={`relative flex justify-center items-center flex-col flex-1 gap-[48px] sm:gap-[20px] lg:gap-[48px] h-[700px]${isFirstLoad ? " disco-cascade-item" : ""}`}
+                    style={isFirstLoad ? { animationDelay: "150ms" } : undefined}
+                  >
                     <ReleaseCard
                       release={active}
                       tilt={tilt}

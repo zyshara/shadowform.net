@@ -54,6 +54,7 @@ const makeConfig = ({
   canonicalUrl = null,
   jsonLd = null,
   siteName = null,
+  preloadFonts = [],
 }) => ({
   entry,
   output: {
@@ -81,6 +82,7 @@ const makeConfig = ({
         siteName,
         isProd,
         umamiId,
+        preloadFonts,
       },
     }),
   ],
@@ -118,6 +120,7 @@ export default [
     outputPath: "dist/domeofdoom",
     publicPath: "/",
     ...fromMetadata(domeofdoomMetadata),
+    preloadFonts: ["/fonts/Archivo-VariableFont_wdth,wght.woff2"],
     alias: {
       "@": path.resolve(__dirname, "src/domeofdoom"),
       "@shared": path.resolve(__dirname, "src/shared"),

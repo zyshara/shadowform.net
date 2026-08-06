@@ -2,7 +2,9 @@
 
 @font-face {
   font-family: "Archivo";
-  src: url("@shared/assets/fonts/Archivo-VariableFont_wdth,wght.ttf") format("truetype");
+  src:
+    url("@shared/assets/fonts/Archivo-VariableFont_wdth,wght.woff2") format("woff2"),
+    url("@shared/assets/fonts/Archivo-VariableFont_wdth,wght.ttf") format("truetype");
   font-weight: 100 900;
   font-stretch: 62.5% 125%;
   font-style: normal;
@@ -12,6 +14,7 @@
    without an explicit @config directive (which this project doesn't use), so
    custom animations have to be registered here instead, CSS-native. */
 @theme {
+  --font-archivo: "Archivo";
   --animate-marquee: marquee 24s linear infinite;
 }
 
@@ -191,8 +194,39 @@ body {
   background: oklch(0.78 0.08 320);
 }
 
+/* Roster carousel — ported from Claude Design "Roster Carousel" 1a. */
+@keyframes rosterScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+/* !important is required: the track's `animation` shorthand is set inline
+   (duration is computed from artist count), and inline style specificity
+   otherwise always beats this rule's animation-play-state, hover or not. */
+.roster-carousel-wrap:hover .roster-carousel-track {
+  animation-play-state: paused !important;
+}
+.roster-carousel-card {
+  transition: filter 0.3s;
+}
+.roster-carousel-card:hover {
+  filter: brightness(1.2);
+}
+
+@keyframes discoCascadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.disco-cascade-item {
+  opacity: 0;
+  animation: discoCascadeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
 .disco-grid-img {
-  transition: transform 0.3s ease;
+  transition: opacity 0.5s ease, transform 0.3s ease;
+  opacity: 0;
+}
+.disco-grid-img.loaded {
+  opacity: 1;
 }
 .disco-grid-tile:hover .disco-grid-img {
   transform: scale(1.05);
