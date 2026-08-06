@@ -1,20 +1,21 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { colors } from "@/tokens";
 
-const BG = "rgb(13, 11, 10)";
+const BG = colors.bg;
 
 const VARIANTS = {
   primary: {
     background: BG,
-    color: "oklch(0.72 0.19 25)",
-    border: "1px solid oklch(0.72 0.19 25)",
-    outline: "1px solid oklch(0.72 0.19 25)",
+    color: colors.accent,
+    border: `1px solid ${colors.accent}`,
+    outline: `1px solid ${colors.accent}`,
   },
   secondary: {
     background: BG,
-    color: "oklch(0.78 0.08 320)",
-    border: "1px solid oklch(0.78 0.08 320)",
-    outline: "1px solid oklch(0.78 0.08 320)",
+    color: colors.accent2,
+    border: `1px solid ${colors.accent2}`,
+    outline: `1px solid ${colors.accent2}`,
   },
   disabled: {
     background: BG,

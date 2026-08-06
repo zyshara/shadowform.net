@@ -18,6 +18,24 @@
   --animate-marquee: marquee 24s linear infinite;
 }
 
+/* Single source of truth for the palette — tokens.js re-exports these as
+   var() references rather than raw values, so every component that reads
+   `colors.accent` etc. is actually reading these at paint time. Edit any
+   of these live in devtools (on the :root rule, or via
+   document.documentElement.style.setProperty("--dod-accent", "...")) to
+   re-theme the whole site instantly, no rebuild needed. Tinted/alpha
+   variants below use CSS Color 4 relative syntax (`oklch(from var(...) l c
+   h / a)`) specifically so they keep tracking these too, instead of
+   silently going stale if you only change the base var. */
+:root {
+  --dod-bg: #0a0d0d;
+  --dod-text: #c5c0ce;
+  --dod-accent: #b1f0d5;
+  --dod-accent2: #736cd3;
+  --dod-secondary: #736cd3;
+  --dod-card: #131115;
+}
+
 /* Falls back to -50% (assumes both halves are equal width) until JS measures
    the actual width of the first copy and sets --marquee-shift precisely —
    subpixel text-layout drift between the two duplicated copies means -50%
@@ -38,7 +56,7 @@
 }
 
 @keyframes navlinkFlash {
-  0%, 100% { color: oklch(0.78 0.08 320); }
+  0%, 100% { color: var(--dod-accent2); }
   50%      { color: #ffffff; }
 }
 
@@ -59,8 +77,8 @@ body {
 }
 
 ::selection {
-  background: oklch(0.72 0.19 25);
-  color: #0d0b0a;
+  background: var(--dod-accent);
+  color: var(--dod-bg);
 }
 
 /* ---- Discography list & filter bar — ported from Claude Design
@@ -78,7 +96,7 @@ body {
   font-size: 14px;
 }
 .disco-filter-count b {
-  color: oklch(0.72 0.19 25);
+  color: var(--dod-accent);
   font-weight: 600;
 }
 .disco-filter-dot {
@@ -94,9 +112,9 @@ body {
   font: 700 13px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: oklch(0.72 0.19 25);
+  color: var(--dod-accent);
   background: none;
-  border: 1px solid oklch(0.72 0.19 25);
+  border: 1px solid var(--dod-accent);
   cursor: pointer;
   padding: 5px 22px 5px 8px;
   white-space: nowrap;
@@ -119,12 +137,12 @@ body {
   transition: all 0.15s;
 }
 .disco-item-1a.active {
-  background: oklch(0.72 0.19 25 / 0.08);
-  border-left-color: oklch(0.72 0.19 25);
+  background: oklch(from var(--dod-accent) l c h / 0.08);
+  border-left-color: var(--dod-accent);
 }
 .disco-item-1a:hover:not(.active) {
-  background: oklch(0.72 0.19 25 / 0.14);
-  border-left-color: oklch(0.72 0.19 25 / 0.7);
+  background: oklch(from var(--dod-accent) l c h / 0.14);
+  border-left-color: oklch(from var(--dod-accent) l c h / 0.7);
 }
 .disco-item-1a-title {
   font: 400 11px/1 "Archivo", sans-serif;
@@ -139,7 +157,7 @@ body {
   white-space: nowrap;
 }
 .disco-item-1a.active .disco-item-1a-title {
-  color: oklch(0.72 0.19 25);
+  color: var(--dod-accent);
 }
 .disco-item-1a:hover:not(.active) .disco-item-1a-title {
   color: #ffffff;
@@ -171,18 +189,18 @@ body {
   border-color: rgba(255, 255, 255, 0.12);
 }
 .disco-tag-remix {
-  color: oklch(0.72 0.19 25);
-  border-color: oklch(0.72 0.19 25 / 0.5);
+  color: var(--dod-accent);
+  border-color: oklch(from var(--dod-accent) l c h / 0.5);
 }
 .disco-tag-comp {
-  color: oklch(0.78 0.08 320);
-  border-color: oklch(0.78 0.08 320 / 0.4);
+  color: var(--dod-accent2);
+  border-color: oklch(from var(--dod-accent2) l c h / 0.4);
 }
 
 /* Always-visible sidebar scrollbar, aligned right, accent2-colored thumb. */
 .disco-sidebar-scroll {
   scrollbar-width: thin;
-  scrollbar-color: oklch(0.78 0.08 320) transparent;
+  scrollbar-color: var(--dod-accent2) transparent;
 }
 .disco-sidebar-scroll::-webkit-scrollbar {
   width: 8px;
@@ -191,7 +209,7 @@ body {
   background: transparent;
 }
 .disco-sidebar-scroll::-webkit-scrollbar-thumb {
-  background: oklch(0.78 0.08 320);
+  background: var(--dod-accent2);
 }
 
 /* Roster carousel — ported from Claude Design "Roster Carousel" 1a. */

@@ -48,7 +48,7 @@ const Navbar = () => {
   }, [updateIndicator]);
 
   return (
-    <div style={{ background: "rgba(13,11,10,0.85)", backdropFilter: "blur(12px)" }}>
+    <div style={{ background: `color-mix(in srgb, ${colors.bg} 85%, transparent)`, backdropFilter: "blur(12px)" }}>
       {/* Bar */}
       <div className="flex items-center justify-between border-b border-white/10 px-6 py-[22px] lg:px-10">
         <NavLink to="/" className="flex items-center">

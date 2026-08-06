@@ -38,7 +38,7 @@ const PosterFrame = ({ label = "DOMEOFDOOM", showText = true, bandSize = 26, flo
     fontSize: "13px",
     letterSpacing: "0.06em",
     textTransform: "uppercase",
-    color: "#ff6a65",
+    color: colors.accent,
     whiteSpace: "nowrap",
   };
   const flowerInset = Math.max(2, Math.round(bandSize * 0.15));

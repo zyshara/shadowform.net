@@ -4,6 +4,7 @@ import { readSeedData } from "@/utils/readSeedData";
 import { colors, LOGO_URL } from "@/tokens";
 import Button from "@/components/Button";
 import PosterFrame from "@/components/PosterFrame";
+import testBg3 from "@/assets/test_bg_3.png";
 
 // Drifts `amplitude` px (in either direction) as the element's section
 // passes through the viewport — a slight scroll parallax, reusable across
@@ -81,48 +82,23 @@ const Home = () => {
   const availableMerch = merchItems.filter((m) => !m.sold_out);
   const merchTeaser = (availableMerch.length ? availableMerch : merchItems).slice(0, 4);
 
-  // Slight scroll parallax on the masthead sphere and the latest-release
-  // cover — each drifts a few px against the page's scroll as its section
-  // passes through the viewport, layered on top of the cover's fixed 3D tilt.
-  const [heroImgRef, heroParallaxY] = useScrollParallax(60);
+  // Slight scroll parallax on the latest-release cover — drifts a few px
+  // against the page's scroll as its section passes through the viewport,
+  // layered on top of the cover's fixed 3D tilt.
   const [coverRef, parallaxY] = useScrollParallax(24);
-
-  // Belt-and-suspenders mute: React's `muted` prop only sets the DOM
-  // property, and some browsers briefly honor autoplay before that property
-  // is applied — forcing it imperatively guarantees no audio ever plays.
-  const heroVideoRef = useRef(null);
-  useEffect(() => {
-    if (heroVideoRef.current) heroVideoRef.current.muted = true;
-  }, []);
 
   return (
     <div>
       {/* HERO */}
       <div className="relative h-[600px] sm:h-[640px] overflow-hidden border-b border-white/10">
-        <video
-          ref={heroVideoRef}
-          className="pointer-events-none absolute left-0 top-0 h-full w-full object-cover"
-          src="https://res.cloudinary.com/dfeyhbxeg/video/upload/v1785558021/test_bg_dfbb193114.mp4"
-          autoPlay
-          muted
-          defaultMuted
-          playsInline
-          loop
-        />
+        <img src={testBg3} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover" />
         <div
           className="pointer-events-none absolute inset-0"
-          style={{ background: `linear-gradient(to right, ${colors.bg} 0%, ${colors.bg} 22%, rgba(13,11,10,0.6) 50%, rgba(13,11,10,0.05) 100%)` }}
-        />
-        <img
-          ref={heroImgRef}
-          src="https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785465704/hero_sphere_3498e09523.png"
-          alt=""
-          className="pointer-events-none absolute right-[-5%] top-1/2 h-[115%] w-auto object-contain object-bottom"
-          style={{ transform: `translateY(calc(-50% + ${heroParallaxY}px))` }}
+          style={{ background: `linear-gradient(to right, ${colors.bg} 0%, ${colors.bg} 22%, color-mix(in srgb, ${colors.bg} 60%, transparent) 50%, color-mix(in srgb, ${colors.bg} 5%, transparent) 100%)` }}
         />
         <div
           className="pointer-events-none absolute inset-0 z-[1]"
-          style={{ background: `linear-gradient(to right, ${colors.bg} 0%, ${colors.bg} 22%, rgba(13,11,10,0.6) 50%, rgba(13,11,10,0.05) 100%)` }}
+          style={{ background: `linear-gradient(to right, ${colors.bg} 0%, ${colors.bg} 22%, color-mix(in srgb, ${colors.bg} 60%, transparent) 50%, color-mix(in srgb, ${colors.bg} 5%, transparent) 100%)` }}
         />
 
         <div className="relative z-[2] mx-auto flex h-full max-w-[1400px] flex-col justify-center px-10">
@@ -142,7 +118,7 @@ const Home = () => {
                 textTransform: "uppercase",
                 WebkitTextStroke: `5px ${colors.accent}`,
                 color: "transparent",
-                textShadow: "0 0 60px rgba(255,120,100,0.25)",
+                textShadow: "0 0 60px color-mix(in srgb, var(--dod-accent2) 50%, transparent)",
               }}
             >
               DOME<br />OF<br />DOOM
@@ -179,9 +155,9 @@ const Home = () => {
                 className="h-full w-full object-cover"
                 style={{
                   transform: `translateY(${parallaxY}px) rotateX(32deg) rotateY(-16deg) rotateZ(24deg) scale(1)`,
-                  filter: "drop-shadow(rgb(30, 30, 30) 1px 1px 0px) drop-shadow(rgb(30, 30, 30) 2px 2px 0px) drop-shadow(rgb(30, 30, 30) 3px 3px 0px) drop-shadow(rgb(255, 107, 101) 2px 2px 0px)",
+                  filter: `drop-shadow(rgb(30, 30, 30) 1px 1px 0px) drop-shadow(rgb(30, 30, 30) 2px 2px 0px) drop-shadow(rgb(30, 30, 30) 3px 3px 0px) drop-shadow(${colors.accent} 2px 2px 0px)`,
                   borderRadius: "3px",
-                  border: "2px solid #ff6b65",
+                  border: `2px solid ${colors.accent}`,
                 }}
               />
             </div>

@@ -10,6 +10,7 @@ import { Fragment } from "react";
 import { colors } from "@/tokens";
 
 const FLOWER_URL = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785467660/flower_filgree_iconography_b5cbd61913.png";
+const FLOWER_URL_PURPLE = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1786002015/flower_decor_purple_eedfc4f98d.png";
 
 const headingFont = {
   fontFamily: "Archivo, sans-serif",
@@ -124,7 +125,7 @@ const CarouselDivider = ({ height }) => {
     fontSize: "11px",
     letterSpacing: "0.06em",
     textTransform: "uppercase",
-    color: "#ff6a65",
+    color: colors.accent,
     whiteSpace: "nowrap",
   };
 
@@ -136,7 +137,7 @@ const CarouselDivider = ({ height }) => {
         flexShrink: 0,
         transform: `skew(-${SKEW_DEG}deg, -1deg)`,
         position: "relative",
-        border: "2px solid #ff6a65",
+        border: `1px solid ${colors.accent}`,
         margin: "0 11px",
         display: "flex",
         flexDirection: "column",

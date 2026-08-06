@@ -1,9 +1,10 @@
 import React, { useRef, useState, useLayoutEffect } from "react";
 import { colors } from "@/tokens";
 
-const ITEM = " 15 YEARS OF DOME OF DOOM · EST. 2011 ";
+const ITEM = " 15 YEARS OF DOMEOFDOOM · EST. 2011 ";
 const REPEAT = 10;
 const FLOWER_URL = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785467660/flower_filgree_iconography_b5cbd61913.png";
+const FLOWER_URL_PURPLE = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1786002015/flower_decor_purple_eedfc4f98d.png";
 
 function MarqueeContent() {
   return (
@@ -12,13 +13,13 @@ function MarqueeContent() {
         <React.Fragment key={i}>
           {ITEM}
           <img
-            src={FLOWER_URL}
+            src={FLOWER_URL_PURPLE}
             alt=""
             aria-hidden="true"
-            width={18}
-            height={18}
-            className="mx-1 mb-[5px]"
-            style={{ display: "inline-block", height: "18px", width: "18px", verticalAlign: "middle", opacity: 0.9 }}
+            width={100}
+            height={100}
+            className="mx-1 mb-[5px] p-[5px]"
+            style={{ display: "inline-block", height: "38px", width: "42px", verticalAlign: "middle", opacity: 0.9, background: colors.accent }}
           />
         </React.Fragment>
       ))}
@@ -52,13 +53,14 @@ const MarqueeBanner = () => {
 
   return (
     <div
-      className="relative overflow-hidden whitespace-nowrap border-b-2 py-[9px]"
-      style={{ background: "rgb(13,11,10)", color: colors.accent, borderColor: colors.accent }}
+      className="relative overflow-hidden whitespace-nowrap border-b-2 h-[40px]"
+      style={{ background: colors.accent2, color: colors.accent, borderColor: colors.accent }}
     >
       <div
         className="inline-block animate-marquee text-[14px] font-bold tracking-[0.06em]"
         style={{
           fontFamily: "Archivo, sans-serif",
+          fontSize: "18px",
           fontStretch: "expanded",
           fontVariationSettings: "'wdth' 125",
           willChange: "transform",

@@ -1,7 +1,6 @@
 // src/domeofdoom/components/Footer.jsx
 
 import { Link } from "react-router-dom";
-import { colors } from "@/tokens";
 
 const FooterColumn = ({ title, children }) => (
   <div>
@@ -13,10 +12,7 @@ const FooterColumn = ({ title, children }) => (
 const linkClass = "transition-colors hover:text-[var(--dod-accent)]";
 
 const Footer = () => (
-  <div
-    className="mx-auto grid max-w-[1400px] grid-cols-2 gap-8 border-t border-white/10 px-10 py-[50px] sm:grid-cols-4"
-    style={{ "--dod-accent": colors.accent }}
-  >
+  <div className="mx-auto grid max-w-[1400px] grid-cols-2 gap-8 border-t border-white/10 px-10 py-[50px] sm:grid-cols-4">
     <div className="col-span-2 sm:col-span-1">
       <div className="mb-3.5 font-[Arial,sans-serif] text-xl font-black leading-[0.95] tracking-tight">
         DOME<br />OF DOOM

@@ -3,6 +3,7 @@ import { readSeedData } from "@/utils/readSeedData";
 import { colors } from "@/tokens";
 import SubpageHeader from "@/components/SubpageHeader";
 import RosterCarousel, { initialsOf } from "@/components/RosterCarousel";
+import CascadeImage from "@/components/CascadeImage";
 
 const PRIMARY = colors.accent;
 
@@ -16,7 +17,7 @@ const FilterChevron = () => (
     height="8"
     style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
   >
-    <polyline points="2,3 5,7 8,3" fill="none" stroke={PRIMARY} strokeWidth="2.5" />
+    <polyline points="2,3 5,7 8,3" fill="none" style={{ stroke: PRIMARY }} strokeWidth="2.5" />
   </svg>
 );
 
@@ -78,10 +79,10 @@ const RosterGridView = ({ artists }) => (
       >
         <div style={{ position: "relative", aspectRatio: "1", overflow: "hidden", background: colors.card }}>
           {artist.photo_src ? (
-            <img
+            <CascadeImage
               src={artist.photo_src}
               alt={artist.name}
-              className="disco-grid-img"
+              index={i}
               style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
             />
           ) : (

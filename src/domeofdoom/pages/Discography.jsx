@@ -5,6 +5,7 @@ import { colors } from "@/tokens";
 import Button from "@/components/Button";
 import PosterFrame from "@/components/PosterFrame";
 import SubpageHeader from "@/components/SubpageHeader";
+import CascadeImage from "@/components/CascadeImage";
 
 const PRIMARY = colors.accent;
 
@@ -43,7 +44,7 @@ const FilterChevron = () => (
     height="8"
     style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
   >
-    <polyline points="2,3 5,7 8,3" fill="none" stroke={PRIMARY} strokeWidth="2.5" />
+    <polyline points="2,3 5,7 8,3" fill="none" style={{ stroke: PRIMARY }} strokeWidth="2.5" />
   </svg>
 );
 
@@ -173,40 +174,19 @@ const CoverPlaceholder = () => (
   />
 );
 
-// Cover images are real network requests, so their `load` events fire in
-// whatever order the network happens to finish them in — gating reveal on
-// load alone stops the "popping in" but makes the reveal order look
-// random. `scheduled` enforces a deterministic top-left-to-bottom-right
-// cascade (index order matches the grid's row-major layout) as a floor;
-// an image only actually reveals once it's both loaded AND reached its
-// slot, so a fast-loading image still waits its turn, while a slow one
-// just reveals late instead of popping in out of order. The textured
-// placeholder stays underneath the whole time so there's never a blank gap.
-const GridCoverImage = ({ src, alt, index }) => {
-  const [loaded, setLoaded] = useState(false);
-  const [scheduled, setScheduled] = useState(false);
-
-  useEffect(() => {
-    const delay = Math.min(index * 22, 650);
-    const t = setTimeout(() => setScheduled(true), delay);
-    return () => clearTimeout(t);
-  }, [index]);
-
-  const revealed = loaded && scheduled;
-
-  return (
-    <>
-      <CoverPlaceholder />
-      <img
-        src={src}
-        alt={alt}
-        className={`disco-grid-img${revealed ? " loaded" : ""}`}
-        onLoad={() => setLoaded(true)}
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-      />
-    </>
-  );
-};
+// The textured placeholder stays underneath the whole time so there's
+// never a blank gap while CascadeImage waits for its load + schedule gate.
+const GridCoverImage = ({ src, alt, index }) => (
+  <>
+    <CoverPlaceholder />
+    <CascadeImage
+      src={src}
+      alt={alt}
+      index={index}
+      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+    />
+  </>
+);
 
 const GridView = ({ releases, onSelect }) => (
   <div style={{ flex: 1, overflowY: "auto", paddingRight: 4 }}>
@@ -535,7 +515,7 @@ const Discography = () => {
 
   return (
     <div
-      className="mx-auto max-w-[1400px] px-10 py-10 lg:py-[70px]"
+      className="mx-auto max-w-[1400px] px-10 py-8 lg:py-[48px]"
       style={{
         fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
         display: "flex",
@@ -586,7 +566,7 @@ const Discography = () => {
         style={{
           position: "absolute",
           inset: 0,
-          background: "linear-gradient(to right, #0d0b0a 30%, rgba(13,11,10,0.5) 65%, #0d0b0a 100%)",
+          background: `linear-gradient(to right, ${colors.bg} 30%, color-mix(in srgb, ${colors.bg} 50%, transparent) 65%, ${colors.bg} 100%)`,
           zIndex: -1,
           pointerEvents: "none",
         }}
@@ -719,7 +699,7 @@ const Discography = () => {
                     className="disco-sidebar-scroll"
                     style={{
                       width: 280,
-                      height: 640,
+                      height: "min(640px, 58vh)",
                       flexShrink: 0,
                       border: "1px solid rgba(255,255,255,.1)",
                       overflowY: "scroll",
@@ -748,8 +728,8 @@ const Discography = () => {
                 {/* Preview + detail */}
                 {active && (
                   <div
-                    className={`relative flex justify-center items-center flex-col flex-1 gap-[48px] sm:gap-[20px] lg:gap-[48px] h-[700px]${isFirstLoad ? " disco-cascade-item" : ""}`}
-                    style={isFirstLoad ? { animationDelay: "150ms" } : undefined}
+                    className={`relative flex justify-center items-center flex-col flex-1 gap-[48px] sm:gap-[20px] lg:gap-[48px]${isFirstLoad ? " disco-cascade-item" : ""}`}
+                    style={{ height: "min(700px, 62vh)", ...(isFirstLoad ? { animationDelay: "150ms" } : null) }}
                   >
                     <ReleaseCard
                       release={active}
