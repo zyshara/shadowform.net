@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { readSeedData } from "@/utils/readSeedData";
 import { colors } from "@/tokens";
 import SubpageHeader from "@/components/SubpageHeader";
@@ -9,7 +9,6 @@ const PRIMARY = colors.accent;
 
 const VIEW_STORAGE_KEY = "domeofdoom:roster:view";
 
-// Same overlaid-chevron treatment as Discography's filter selects.
 const FilterChevron = () => (
   <svg
     viewBox="0 0 10 10"
@@ -135,9 +134,11 @@ const RosterGridView = ({ artists }) => (
 );
 
 const Roster = () => {
-  const artists = (readSeedData("roster-data") ?? []).filter((a) => a?.name);
+  const allArtists = (readSeedData("roster-data") ?? []).filter((a) => a?.name);
   const isBelowMd = useIsBelowMd();
   const [view, setView] = useState(getStoredView);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState("az");
 
   const handleToggleView = () => {
     const next = view === "grid" ? "carousel" : "grid";
@@ -149,11 +150,24 @@ const Roster = () => {
     }
   };
 
+  const artists = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    let list = q
+      ? allArtists.filter((a) => a.name.toLowerCase().includes(q))
+      : allArtists;
+    list = list.slice().sort((a, b) =>
+      sortOrder === "az"
+        ? a.name.localeCompare(b.name)
+        : b.name.localeCompare(a.name)
+    );
+    return list;
+  }, [allArtists, searchQuery, sortOrder]);
+
   const effectiveGrid = isBelowMd || view === "grid";
 
   return (
     <div>
-      <div className="mx-auto max-w-[1400px] px-10 pt-10 lg:pt-[70px]">
+      <div className="mx-auto max-w-[1400px] pt-10 lg:pt-[70px]">
         <div className="mb-4 flex items-start justify-between">
           <div className="flex flex-col gap-[8px] w-full sm:max-w-[50%]">
             <SubpageHeader heading="Roster">
@@ -161,20 +175,30 @@ const Roster = () => {
                 <div className="flex flex-row w-full">
                   <span className="disco-filter-count">
                     <b>{artists.length}</b> artists
+                    {searchQuery && allArtists.length !== artists.length && (
+                      <span style={{ color: "rgba(255,255,255,.35)", fontWeight: 400 }}>
+                        {" "}of {allArtists.length}
+                      </span>
+                    )}
                   </span>
                 </div>
-                {/* Placeholders for the search/filter UI to come — not wired up yet. */}
                 <div className="flex flex-row gap-4 w-full">
-                  <span className="w-full" style={{ position: "relative", display: "inline-flex" }}>
-                    <select className="disco-filter-select w-full" defaultValue="az">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="search artists…"
+                    className="disco-filter-select w-full"
+                    style={{ flex: 2, cursor: "text", textTransform: "none", paddingRight: 8 }}
+                  />
+                  <span className="w-full" style={{ position: "relative", display: "inline-flex", flex: 1 }}>
+                    <select
+                      value={sortOrder}
+                      onChange={(e) => setSortOrder(e.target.value)}
+                      className="disco-filter-select w-full"
+                    >
                       <option value="az">a–z</option>
-                      <option value="newest">newest</option>
-                    </select>
-                    <FilterChevron />
-                  </span>
-                  <span className="w-full" style={{ position: "relative", display: "inline-flex" }}>
-                    <select className="disco-filter-select w-full" defaultValue="all">
-                      <option value="all">all genres</option>
+                      <option value="za">z–a</option>
                     </select>
                     <FilterChevron />
                   </span>
@@ -206,7 +230,7 @@ const Roster = () => {
       </div>
 
       {effectiveGrid ? (
-        <div className="mx-auto max-w-[1400px] px-10 pb-10 lg:pb-[70px]">
+        <div className="mx-auto max-w-[1400px] pb-10 lg:pb-[70px]">
           <RosterGridView artists={artists} />
         </div>
       ) : (

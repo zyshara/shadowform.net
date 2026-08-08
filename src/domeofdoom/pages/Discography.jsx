@@ -703,7 +703,7 @@ const Discography = () => {
                       flexShrink: 0,
                       border: "1px solid rgba(255,255,255,.1)",
                       overflowY: "scroll",
-                      background: "oklch(0.18 0.008 60)",
+                      background: colors.card,
                     }}
                   >
                     {releases.map((release, i) => {

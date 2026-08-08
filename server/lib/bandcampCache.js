@@ -8,6 +8,7 @@
 let discography = [];
 let roster = [];
 let merch = [];
+let shows = [];
 
 export function getDiscography() {
   return discography;
@@ -31,4 +32,12 @@ export function getMerch() {
 
 export function setMerch(items) {
   merch = items;
+}
+
+export function getShows() {
+  return shows;
+}
+
+export function setShows(events) {
+  shows = events;
 }

@@ -224,10 +224,19 @@ body {
   animation-play-state: paused !important;
 }
 .roster-carousel-card {
-  transition: filter 0.3s;
+  transition: filter 0.3s, transform 0.3s;
 }
+
+.roster-carousel-card img {
+  transition: filter 0.3s, transform 0.3s;
+}
+
 .roster-carousel-card:hover {
   filter: brightness(1.2);
+}
+
+.roster-carousel-card:hover img {
+  transform: scale(1.1);
 }
 
 @keyframes discoCascadeIn {
@@ -248,4 +257,26 @@ body {
 }
 .disco-grid-tile:hover .disco-grid-img {
   transform: scale(1.05);
+}
+
+.poster-frame-clickable {
+  transition: background-color 0.25s ease;
+}
+/* !important needed to beat the inline `background: colors.bg` style —
+   author-stylesheet !important outranks a plain inline declaration. */
+.poster-frame-clickable:hover {
+  background-color: var(--dod-accent2) !important;
+}
+.poster-frame-flower-default {
+  transition: opacity 0.25s ease;
+}
+.poster-frame-flower-hover {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.poster-frame-clickable:hover .poster-frame-flower-default {
+  opacity: 0;
+}
+.poster-frame-clickable:hover .poster-frame-flower-hover {
+  opacity: 1;
 }

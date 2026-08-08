@@ -5,6 +5,7 @@ import { colors, LOGO_URL } from "@/tokens";
 import Button from "@/components/Button";
 import PosterFrame from "@/components/PosterFrame";
 import testBg3 from "@/assets/test_bg_3.png";
+import { ShowRow } from "@/pages/Shows";
 
 // Drifts `amplitude` px (in either direction) as the element's section
 // passes through the viewport — a slight scroll parallax, reusable across
@@ -74,6 +75,19 @@ const Home = () => {
   const releases = readSeedData("discography-data") ?? [];
   const merchItems = readSeedData("merch-data") ?? [];
 
+  const showsData = readSeedData("shows-data") ?? [];
+  const now = Date.now();
+  const upcomingShows = showsData
+    .filter((s) => {
+      const [y, m, d] = s.date.split("-").map(Number);
+      return new Date(y, m - 1, d).getTime() >= now;
+    })
+    .sort((a, b) => {
+      const [ay, am, ad] = a.date.split("-").map(Number);
+      const [by, bm, bd] = b.date.split("-").map(Number);
+      return new Date(ay, am - 1, ad) - new Date(by, bm - 1, bd);
+    });
+
   const latestRelease = releases.slice().sort((a, b) => {
     const ta = a.release_date ? new Date(a.release_date).getTime() : a.year ? new Date(`${a.year}-01-01`).getTime() : 0;
     const tb = b.release_date ? new Date(b.release_date).getTime() : b.year ? new Date(`${b.year}-01-01`).getTime() : 0;
@@ -126,7 +140,7 @@ const Home = () => {
           </div>
 
           <p className="m-0 mb-8 max-w-[440px] text-[18px] leading-[1.5] text-white/65">
-            A home for restless club music &amp; the artists who make it. Twenty-five years underground and still digging.
+            Celebrating 15 years of supporting experimental & bass artists on vinyl & casette
           </p>
           <div className="flex gap-4 flex-col sm:flex-row">
             <Button variant="primary" to="https://open.spotify.com/search/label%3Adome-of-doom/albums">Listen Now</Button>
@@ -156,7 +170,6 @@ const Home = () => {
                 style={{
                   transform: `translateY(${parallaxY}px) rotateX(32deg) rotateY(-16deg) rotateZ(24deg) scale(1)`,
                   filter: `drop-shadow(rgb(30, 30, 30) 1px 1px 0px) drop-shadow(rgb(30, 30, 30) 2px 2px 0px) drop-shadow(rgb(30, 30, 30) 3px 3px 0px) drop-shadow(${colors.accent} 2px 2px 0px)`,
-                  borderRadius: "3px",
                   border: `2px solid ${colors.accent}`,
                 }}
               />
@@ -204,9 +217,13 @@ const Home = () => {
 
       {/* SHOWS */}
       <div className="mx-auto max-w-[1400px] px-10 pb-[90px]">
-        <SectionHeader title="Upcoming Shows" />
-        <div className="flex flex-col border-t border-white/10">
-          <div className="py-10 text-center text-[14px] text-white/45">No shows announced yet — check back soon.</div>
+        <SectionHeader title="Upcoming Shows" linkTo="/shows" linkText="Past Shows" />
+        <div style={{ borderTop: "1px solid rgba(255,255,255,.08)" }}>
+          {upcomingShows.length === 0 ? (
+            <div className="py-10 text-center text-[14px] text-white/45">No upcoming shows announced yet — check back soon.</div>
+          ) : (
+            upcomingShows.map((show, i) => <ShowRow key={i} show={show} />)
+          )}
         </div>
       </div>
 
@@ -214,16 +231,22 @@ const Home = () => {
       {merchTeaser.length > 0 && (
         <div className="mx-auto max-w-[1400px] px-10 pb-[100px]">
           <SectionHeader title="Merch" linkTo="/merch" linkText="Shop All" />
-          <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
             {merchTeaser.map((item, i) => (
-              <Link key={i} to="/merch" className="block">
-                <div className="mb-3.5 aspect-square overflow-hidden rounded-[14px]" style={{ background: colors.bg }}>
-                  <img src={item.cover_art_src} alt={item.item_name} className="h-full w-full object-cover" />
-                </div>
-                <div className="truncate text-[14px] font-bold uppercase">{item.item_name}</div>
-                <div className="mt-0.5 text-[13px] font-medium text-white/50">
-                  {item.sold_out ? "Sold Out" : `$${item.price} ${item.currency}`}
-                </div>
+              <Link key={i} to="/merch" className="group block">
+                  <div className="mb-3.5 aspect-square overflow-hidden" style={{ background: colors.bg }}>
+                    <PosterFrame clickable>
+                      <img
+                        src={item.cover_art_src.replace("_10", "_2")}
+                        alt={item.item_name}
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.2]"
+                      />
+                    </PosterFrame>
+                  </div>
+                  <div className="truncate text-[14px] font-bold uppercase">{item.item_name}</div>
+                  <div className="mt-0.5 text-[13px] font-medium text-white/50">
+                    {item.sold_out ? "Sold Out" : `$${item.price} ${item.currency}`}
+                  </div>
               </Link>
             ))}
           </div>

@@ -37,6 +37,9 @@ const Footer = () => (
 
     <FooterColumn title="Follow">
       <a href="https://domeofdoom.bandcamp.com" target="_blank" rel="noreferrer" className={linkClass}>Bandcamp</a>
+      <a href="https://www.instagram.com/domeofdoom" target="_blank" rel="noreferrer" className={linkClass}>Instagram</a>
+      <a href="https://x.com/domeofdoom" target="_blank" rel="noreferrer" className={linkClass}>X</a>
+      <a href="https://www.youtube.com/domeofdoomrecords" target="_blank" rel="noreferrer" className={linkClass}>YouTube</a>
     </FooterColumn>
   </div>
 );

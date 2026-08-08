@@ -47,7 +47,7 @@ const RosterCard = ({ artist, height }) => {
   return (
   <div
     className="roster-carousel-card"
-    style={{ width: 280, height, flexShrink: 0, transform: CARD_SKEW, overflow: "hidden", position: "relative" }}
+    style={{ width: 380, height, flexShrink: 0, transform: CARD_SKEW, overflow: "hidden", position: "relative" }}
   >
     <div
       style={{
@@ -100,7 +100,7 @@ const RosterCard = ({ artist, height }) => {
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
-            maxWidth: 230,
+            maxWidth: 330,
           }}
         >
           {artist.name}
@@ -137,7 +137,6 @@ const CarouselDivider = ({ height }) => {
         flexShrink: 0,
         transform: `skew(-${SKEW_DEG}deg, -1deg)`,
         position: "relative",
-        border: `1px solid ${colors.accent}`,
         margin: "0 11px",
         display: "flex",
         flexDirection: "column",
@@ -161,7 +160,7 @@ const CarouselDivider = ({ height }) => {
   );
 };
 
-const CARD_HEIGHT = 520;
+const CARD_HEIGHT = 680;
 
 const RosterCarousel = ({ artists = [] }) => {
   const named = artists.filter((a) => a?.name);
@@ -171,7 +170,7 @@ const RosterCarousel = ({ artists = [] }) => {
   const duration = Math.max(20, named.length * 2.8);
 
   return (
-    <div className="roster-carousel-wrap relative w-full overflow-hidden" style={{ background: colors.bg, padding: "56px 0" }}>
+    <div className="my-0 mx-auto max-w-[1400px] roster-carousel-wrap relative w-full overflow-hidden" style={{ background: colors.bg, padding: "56px 0" }}>
       <div
         className="pointer-events-none absolute left-0 top-0 bottom-0 z-10"
         style={{ width: 110, background: `linear-gradient(to right, ${colors.bg}, transparent)` }}

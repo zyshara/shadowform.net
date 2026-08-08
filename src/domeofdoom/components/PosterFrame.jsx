@@ -1,15 +1,63 @@
 import { colors } from "@/tokens";
 
 const FLOWER_URL = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785467660/flower_filgree_iconography_b5cbd61913.png";
+const FLOWER_URL_PURPLE = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1786002015/flower_decor_purple_eedfc4f98d.png";
 
-const CornerFlower = ({ size, style }) => (
-  <img
-    src={FLOWER_URL}
-    alt=""
-    aria-hidden="true"
-    style={{ position: "absolute", width: size, height: size, zIndex: 1, ...style }}
-  />
-);
+// Which two edges each corner sits flush against — drives both the badge's
+// own position (relative to the frame) and, in turn, which edges its hover
+// image hugs (relative to the badge itself).
+const CORNER_EDGES = {
+  tl: { top: true, left: true },
+  tr: { top: true, right: true },
+  bl: { bottom: true, left: true },
+  br: { bottom: true, right: true },
+};
+
+// When `clickable`, a purple variant is stacked on top of the default flower
+// and crossfaded in via .poster-frame-clickable:hover (see index.css) — img
+// `src` can't be transitioned directly, so this is the two-image trick. Both
+// images are absolutely positioned to fill the badge span entirely.
+//
+// Flush offset for the badge itself — sits just past the frame's own
+// border so it reads as sitting right on the corner intersection, not
+// inset inward from it.
+const EDGE_OFFSET = -1;
+
+const CornerFlower = ({ corner, size, clickable }) => {
+  const { top, bottom, left, right } = CORNER_EDGES[corner];
+
+  const outerStyle = {
+    position: "absolute",
+    width: size,
+    height: size,
+    zIndex: 1,
+    boxSizing: "border-box",
+    display: "block",
+    ...(top ? { top: EDGE_OFFSET } : { bottom: EDGE_OFFSET }),
+    ...(left ? { left: EDGE_OFFSET } : { right: EDGE_OFFSET }),
+  };
+
+  return (
+    <span className="poster-frame-flower" style={outerStyle}>
+      <img
+        src={FLOWER_URL}
+        alt=""
+        aria-hidden="true"
+        className="poster-frame-flower-default p-[4px]"
+        style={{ position: "absolute", inset: 0, objectFit: "contain" }}
+      />
+      {clickable && (
+        <img
+          src={FLOWER_URL_PURPLE}
+          alt=""
+          aria-hidden="true"
+          className="poster-frame-flower-hover p-[4px]"
+          style={{ position: "absolute", inset: 0, background: "var(--dod-accent)", objectFit: "contain" }}
+        />
+      )}
+    </span>
+  );
+};
 
 function RepeatedLabel({ label, count = 14 }) {
   return (
@@ -29,7 +77,7 @@ function RepeatedLabel({ label, count = 14 }) {
 // rotated so the whole frame reads with consistent orientation, like a
 // record sleeve). `bandSize` controls the frame's overall thickness;
 // `showText` toggles the repeating label off for a plainer, thinner frame.
-const PosterFrame = ({ label = "DOMEOFDOOM", showText = true, bandSize = 26, flowerSize = 18, children }) => {
+const PosterFrame = ({ label = "DOMEOFDOOM", showText = true, bandSize = 26, flowerSize = 25, clickable = false, children }) => {
   const bandFontStyle = {
     fontFamily: "Archivo, sans-serif",
     fontStretch: "expanded",
@@ -41,14 +89,15 @@ const PosterFrame = ({ label = "DOMEOFDOOM", showText = true, bandSize = 26, flo
     color: colors.accent,
     whiteSpace: "nowrap",
   };
-  const flowerInset = Math.max(2, Math.round(bandSize * 0.15));
-
   return (
-    <div className="relative border border-white/10" style={{ padding: bandSize, background: colors.bg }}>
-      <CornerFlower size={flowerSize} style={{ left: flowerInset, top: flowerInset }} />
-      <CornerFlower size={flowerSize} style={{ right: flowerInset, top: flowerInset }} />
-      <CornerFlower size={flowerSize} style={{ left: flowerInset, bottom: flowerInset }} />
-      <CornerFlower size={flowerSize} style={{ right: flowerInset, bottom: flowerInset }} />
+    <div
+      className={`relative border border-white/10 poster-frame${clickable ? " poster-frame-clickable" : ""}`}
+      style={{ padding: bandSize, background: colors.bg }}
+    >
+      <CornerFlower corner="tl" size={flowerSize} clickable={clickable} />
+      <CornerFlower corner="tr" size={flowerSize} clickable={clickable} />
+      <CornerFlower corner="bl" size={flowerSize} clickable={clickable} />
+      <CornerFlower corner="br" size={flowerSize} clickable={clickable} />
 
       {showText && (
         <>
@@ -94,7 +143,7 @@ const PosterFrame = ({ label = "DOMEOFDOOM", showText = true, bandSize = 26, flo
         </>
       )}
 
-      <div className="relative" style={{ zIndex: 1 }}>
+      <div className="relative overflow-hidden" style={{ zIndex: 1 }}>
         {children}
       </div>
     </div>
