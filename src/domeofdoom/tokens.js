@@ -20,3 +20,6 @@ export const colors = {
 };
 
 export const LOGO_URL = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785389998/DOD_LOGO_transparent_2f6232f4c2.png";
+
+export const FLOWER_FILIGREE = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1786232107/flower_decor_60_60_bc512335c1.png";
+export const FLOWER_FILIGREE_PURPLE = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1786232107/flower_decor_purple_60_60_df8c81e922.png";

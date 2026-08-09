@@ -1,7 +1,4 @@
-import { colors } from "@/tokens";
-
-const FLOWER_URL = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785467660/flower_filgree_iconography_b5cbd61913.png";
-const FLOWER_URL_PURPLE = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1786002015/flower_decor_purple_eedfc4f98d.png";
+import { colors, FLOWER_FILIGREE, FLOWER_FILIGREE_PURPLE } from "@/tokens";
 
 // Which two edges each corner sits flush against — drives both the badge's
 // own position (relative to the frame) and, in turn, which edges its hover
@@ -40,7 +37,7 @@ const CornerFlower = ({ corner, size, clickable }) => {
   return (
     <span className="poster-frame-flower" style={outerStyle}>
       <img
-        src={FLOWER_URL}
+        src={FLOWER_FILIGREE}
         alt=""
         aria-hidden="true"
         className="poster-frame-flower-default p-[4px]"
@@ -48,7 +45,7 @@ const CornerFlower = ({ corner, size, clickable }) => {
       />
       {clickable && (
         <img
-          src={FLOWER_URL_PURPLE}
+          src={FLOWER_FILIGREE_PURPLE}
           alt=""
           aria-hidden="true"
           className="poster-frame-flower-hover p-[4px]"

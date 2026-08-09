@@ -1,10 +1,8 @@
 import React, { useRef, useState, useLayoutEffect } from "react";
-import { colors } from "@/tokens";
+import { colors, FLOWER_FILIGREE_PURPLE } from "@/tokens";
 
 const ITEM = " 15 YEARS OF DOMEOFDOOM · EST. 2011 ";
 const REPEAT = 10;
-const FLOWER_URL = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785467660/flower_filgree_iconography_b5cbd61913.png";
-const FLOWER_URL_PURPLE = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1786002015/flower_decor_purple_eedfc4f98d.png";
 
 function MarqueeContent() {
   return (
@@ -13,7 +11,7 @@ function MarqueeContent() {
         <React.Fragment key={i}>
           {ITEM}
           <img
-            src={FLOWER_URL_PURPLE}
+            src={FLOWER_FILIGREE_PURPLE}
             alt=""
             aria-hidden="true"
             width={100}

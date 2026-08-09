@@ -7,10 +7,7 @@
 // own Archivo-expanded treatment; artists without a photo fall back to
 // their initials on a tinted card, same as the design's placeholder state.
 import { Fragment } from "react";
-import { colors } from "@/tokens";
-
-const FLOWER_URL = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785467660/flower_filgree_iconography_b5cbd61913.png";
-const FLOWER_URL_PURPLE = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1786002015/flower_decor_purple_eedfc4f98d.png";
+import { colors, FLOWER_FILIGREE } from "@/tokens";
 
 const headingFont = {
   fontFamily: "Archivo, sans-serif",
@@ -143,7 +140,7 @@ const CarouselDivider = ({ height }) => {
         alignItems: "center",
       }}
     >
-      <img src={FLOWER_URL} alt="" aria-hidden="true" style={{ width: 16, height: 16, margin: "18px 0", flexShrink: 0 }} />
+      <img src={FLOWER_FILIGREE} alt="" aria-hidden="true" style={{ width: 16, height: 16, margin: "18px 0", flexShrink: 0 }} />
       <div
         className="overflow-hidden"
         style={{ flex: 1, width: 22, writingMode: "vertical-rl", ...bandFontStyle, marginRight: 4 }}
@@ -155,7 +152,7 @@ const CarouselDivider = ({ height }) => {
           </span>
         ))}
       </div>
-      <img src={FLOWER_URL} alt="" aria-hidden="true" style={{ width: 16, height: 16, margin: "18px 0", flexShrink: 0 }} />
+      <img src={FLOWER_FILIGREE} alt="" aria-hidden="true" style={{ width: 16, height: 16, margin: "18px 0", flexShrink: 0 }} />
     </div>
   );
 };
