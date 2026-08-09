@@ -7,6 +7,7 @@ import {
   About,
   Discography,
   Roster,
+  Artist,
   Shows,
   Merch,
   Contact,
@@ -22,6 +23,7 @@ const App = () => {
         <Route path="/about" element={<About />} />
         <Route path="/discography" element={<Discography />} />
         <Route path="/roster" element={<Roster />} />
+        <Route path="/roster/:artistSlug" element={<Artist />} />
         <Route path="/shows" element={<Shows />} />
         <Route path="/merch" element={<Merch />} />
         <Route path="/press" element={<Press />} />

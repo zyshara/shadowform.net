@@ -37,6 +37,12 @@ const FONT_SIZE = {
   small: "10px",
 };
 
+// href is used both for genuinely external links (Spotify, Bandcamp) and,
+// sometimes, for same-site paths that should really behave like `to` — an
+// absolute URL, protocol-relative URL, or mailto:/tel: link is external;
+// anything else (e.g. "/press") is treated as an in-app route.
+const isExternalHref = (url) => /^([a-z][a-z0-9+.-]*:)?\/\//i.test(url) || /^(mailto|tel):/i.test(url);
+
 const baseStyle = {
   fontStretch: "expanded",
   fontFamily: "Archivo, sans-serif",
@@ -79,7 +85,7 @@ const Button = ({ variant = "primary", type = "default", to, href, children, sty
     onMouseLeave: () => setHovered(false),
   };
 
-  if (href) {
+  if (href && isExternalHref(href)) {
     return (
       <a className="w-full md:max-w-[300px]" href={href} target="_blank" rel="noopener noreferrer" style={style} {...hoverProps} {...props}>
         {children}
@@ -87,9 +93,10 @@ const Button = ({ variant = "primary", type = "default", to, href, children, sty
     );
   }
 
-  if (to) {
+  const internalTo = to ?? href;
+  if (internalTo) {
     return (
-      <Link className="w-full md:max-w-[300px]" to={to} style={style} {...hoverProps} {...props}>
+      <Link className="w-full md:max-w-[300px]" to={internalTo} style={style} {...hoverProps} {...props}>
         {children}
       </Link>
     );

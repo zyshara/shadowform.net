@@ -74,7 +74,35 @@ function RepeatedLabel({ label, count = 14 }) {
 // rotated so the whole frame reads with consistent orientation, like a
 // record sleeve). `bandSize` controls the frame's overall thickness;
 // `showText` toggles the repeating label off for a plainer, thinner frame.
-const PosterFrame = ({ label = "DOMEOFDOOM", showText = true, bandSize = 26, flowerSize = 25, clickable = false, children }) => {
+// `skewDeg` skews the whole frame (border, corners, text bands included —
+// same "let decorative content shear naturally" choice CarouselDivider
+// already makes in RosterCarousel.jsx) so it visually matches a skewed
+// child like ArtistPhoto; the children wrapper is counter-skewed back to
+// neutral so whatever's inside renders at its own intended angle instead
+// of getting sheared twice. When skewed, the wrapper also needs the same
+// oversize-and-recenter treatment ArtistPhoto's own inner layer uses (see
+// its comment) — pass `skewOversize` (in px, from `skewOversizePx`) or the
+// counter-skewed wrapper ends up a plain rectangle sitting inside the
+// frame's now-parallelogram silhouette, leaving gaps at two corners.
+// `contentWidth`/`contentHeight` give the content area a fixed footprint
+// (required alongside `skewDeg`) so the oversized inner layer — positioned
+// absolutely within it — can extend past that footprint to close the
+// corner gaps without changing the frame's own outer size; pass the
+// skewed child with `fill` (e.g. `<ArtistPhoto fill .../>`) so it stretches
+// to whatever size that oversized layer ends up being.
+const PosterFrame = ({
+  label = "DOMEOFDOOM",
+  showText = true,
+  bandSize = 26,
+  flowerSize = 25,
+  clickable = false,
+  skewDeg = 0,
+  skewOversize = 0,
+  contentWidth,
+  contentHeight,
+  style,
+  children,
+}) => {
   const bandFontStyle = {
     fontFamily: "Archivo, sans-serif",
     fontStretch: "expanded",
@@ -89,7 +117,12 @@ const PosterFrame = ({ label = "DOMEOFDOOM", showText = true, bandSize = 26, flo
   return (
     <div
       className={`relative border border-white/10 poster-frame${clickable ? " poster-frame-clickable" : ""}`}
-      style={{ padding: bandSize, background: colors.bg }}
+      style={{
+        padding: bandSize,
+        background: colors.bg,
+        transform: skewDeg ? `skewX(${-skewDeg}deg)` : undefined,
+        ...style,
+      }}
     >
       <CornerFlower corner="tl" size={flowerSize} clickable={clickable} />
       <CornerFlower corner="tr" size={flowerSize} clickable={clickable} />
@@ -140,9 +173,25 @@ const PosterFrame = ({ label = "DOMEOFDOOM", showText = true, bandSize = 26, flo
         </>
       )}
 
-      <div className="relative overflow-hidden" style={{ zIndex: 1 }}>
-        {children}
-      </div>
+      {skewDeg && contentWidth && contentHeight ? (
+        <div className="relative overflow-hidden" style={{ zIndex: 1, width: contentWidth, height: contentHeight }}>
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              transform: `skewX(${skewDeg}deg)`,
+              width: skewOversize ? `calc(100% + ${skewOversize}px)` : "100%",
+              marginLeft: skewOversize ? `-${skewOversize / 2}px` : undefined,
+            }}
+          >
+            {children}
+          </div>
+        </div>
+      ) : (
+        <div className="relative overflow-hidden" style={{ zIndex: 1 }}>
+          {children}
+        </div>
+      )}
     </div>
   );
 };

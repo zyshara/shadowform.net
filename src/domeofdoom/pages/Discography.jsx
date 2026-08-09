@@ -6,6 +6,8 @@ import Button from "@/components/Button";
 import PosterFrame from "@/components/PosterFrame";
 import SubpageHeader from "@/components/SubpageHeader";
 import CascadeImage from "@/components/CascadeImage";
+import SpotifyIcon from "@/components/SpotifyIcon";
+import BandcampIcon from "@/components/BandcampIcon";
 
 const PRIMARY = colors.accent;
 
@@ -81,7 +83,7 @@ function slugify(str) {
     .replace(/^-+|-+$/g, "");
 }
 
-function releaseSlug(release) {
+export function releaseSlug(release) {
   return `${slugify(release.release_name)}-${release.uid}`;
 }
 
@@ -193,7 +195,7 @@ const GridView = ({ releases, onSelect }) => (
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
+        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
         gap: 14,
       }}
     >
@@ -366,16 +368,25 @@ const ReleaseDetail = ({ release }) => (
     <div className="flex flex-col sm:flex-row gap-3 sm:gap-5" style={{ marginTop: 8, width: "100%" }}>
       {release.spotify_url ? (
         <Button type="thin" variant="primary" href={release.spotify_url} style={{ width: "100%" }}>
-          Spotify
+          <span className="inline-flex items-center gap-[6px]">
+            <SpotifyIcon size={14} />
+            Spotify
+          </span>
         </Button>
       ) : (
         <Button variant="disabled" type="thin" style={{ width: "100%" }}>
-          Not on Spotify
+          <span className="inline-flex items-center gap-[6px]">
+            <SpotifyIcon size={14} />
+            Not on Spotify
+          </span>
         </Button>
       )}
       {release.bandcamp_url && (
         <Button type="thin" variant="secondary" href={release.bandcamp_url} style={{ width: "100%" }}>
-          Bandcamp
+          <span className="inline-flex items-center gap-[6px]">
+            <BandcampIcon size={14} />
+            Bandcamp
+          </span>
         </Button>
       )}
     </div>
@@ -393,6 +404,8 @@ const Discography = () => {
   const [hovering, setHovering] = useState(false);
   const [sortOrder, setSortOrder] = useState("latest");
   const [artistFilter, setArtistFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Cascading fade-in only plays once, on the page's first mount in list
   // view — flips off after the cascade finishes so it never replays on
@@ -460,6 +473,14 @@ const Discography = () => {
     return Array.from(set);
   }, [allReleases]);
 
+  const typeOptions = useMemo(() => {
+    const set = new Set();
+    allReleases.forEach((r) => {
+      if (r.type) set.add(r.type);
+    });
+    return Array.from(set);
+  }, [allReleases]);
+
   const releases = useMemo(() => {
     let list =
       artistFilter === "all"
@@ -467,6 +488,19 @@ const Discography = () => {
         : allReleases.filter((r) =>
             r.artists?.length ? r.artists.includes(artistFilter) : r.artist === artistFilter
           );
+    if (typeFilter !== "all") {
+      list = list.filter((r) => r.type === typeFilter);
+    }
+    const q = searchQuery.trim().toLowerCase();
+    if (q) {
+      list = list.filter((r) => {
+        const names = r.artists?.length ? r.artists : r.artist ? [r.artist] : [];
+        return (
+          r.release_name?.toLowerCase().includes(q) ||
+          names.some((n) => n.toLowerCase().includes(q))
+        );
+      });
+    }
     list = list
       .slice()
       .sort((a, b) =>
@@ -475,7 +509,7 @@ const Discography = () => {
           : releaseTimestamp(b) - releaseTimestamp(a)
       );
     return list;
-  }, [allReleases, artistFilter, sortOrder]);
+  }, [allReleases, artistFilter, typeFilter, searchQuery, sortOrder]);
 
   const active =
     linkedRelease && !effectiveGrid
@@ -621,6 +655,17 @@ const Discography = () => {
             }
             filters={
               <>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setActiveIndex(0);
+                  }}
+                  placeholder="search releases…"
+                  className="disco-filter-select"
+                  style={{ cursor: "text", textTransform: "none", paddingRight: 8 }}
+                />
                 <span style={{ position: "relative", display: "inline-flex" }}>
                   <select
                     value={sortOrder}
@@ -635,6 +680,26 @@ const Discography = () => {
                   </select>
                   <FilterChevron />
                 </span>
+                {typeOptions.length > 0 && (
+                  <span style={{ position: "relative", display: "inline-flex" }}>
+                    <select
+                      value={typeFilter}
+                      onChange={(e) => {
+                        setTypeFilter(e.target.value);
+                        setActiveIndex(0);
+                      }}
+                      className="disco-filter-select"
+                    >
+                      <option value="all">all types</option>
+                      {typeOptions.sort().map((t) => (
+                        <option key={t} value={t}>
+                          {t}
+                        </option>
+                      ))}
+                    </select>
+                    <FilterChevron />
+                  </span>
+                )}
                 {artistOptions.length > 0 && (
                   <span style={{ position: "relative", display: "inline-flex" }}>
                     <select

@@ -7,7 +7,10 @@
 // own Archivo-expanded treatment; artists without a photo fall back to
 // their initials on a tinted card, same as the design's placeholder state.
 import { Fragment } from "react";
+import { Link } from "react-router-dom";
 import { colors, FLOWER_FILIGREE } from "@/tokens";
+import { artistSlug } from "@/utils/artistSlug";
+import ArtistPhoto from "@/components/ArtistPhoto";
 
 const headingFont = {
   fontFamily: "Archivo, sans-serif",
@@ -16,69 +19,14 @@ const headingFont = {
 };
 
 const SKEW_DEG = 12;
-const CARD_SKEW = `skewX(-${SKEW_DEG}deg)`;
-const COUNTER_SKEW = `skewX(${SKEW_DEG}deg)`;
 
-// A counter-skewed child only fully cancels its skewed parent's shear (and
-// so covers the parent's slanted overflow-hidden edges with no gaps) if
-// it's widened by roughly the total horizontal shear the parent's height
-// introduces — this depends on height, not on the child's own width, so a
-// narrow divider needs the same oversize as a wide card of the same
-// height. Under-sizing this is exactly why the divider's "vertical" text
-// was actually rendering on a slant.
-function skewOversizePx(height) {
-  const shear = height * Math.tan((SKEW_DEG * Math.PI) / 180);
-  return Math.ceil(shear + 90);
-}
-
-export const initialsOf = (name) =>
-  name
-    .split(" ")
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase();
-
-const RosterCard = ({ artist, height }) => {
-  const oversize = skewOversizePx(height);
-  return (
-  <div
-    className="roster-carousel-card"
-    style={{ width: 380, height, flexShrink: 0, transform: CARD_SKEW, overflow: "hidden", position: "relative" }}
+const RosterCard = ({ artist, height }) => (
+  <Link
+    to={`/roster/${artistSlug(artist.name)}`}
+    className="block"
+    style={{ width: 380, height, flexShrink: 0, cursor: "pointer" }}
   >
-    <div
-      style={{
-        transform: COUNTER_SKEW,
-        width: `calc(100% + ${oversize}px)`,
-        marginLeft: `-${oversize / 2}px`,
-        height: "100%",
-        position: "relative",
-        background: colors.card,
-      }}
-    >
-      {artist.photo_src ? (
-        <img
-          src={artist.photo_src}
-          alt={artist.name}
-          className="h-full w-full object-cover"
-          style={{ display: "block" }}
-        />
-      ) : (
-        <div className="flex h-full w-full items-center justify-center">
-          <span
-            style={{
-              ...headingFont,
-              fontWeight: 800,
-              fontSize: 64,
-              color: "rgba(255,255,255,0.09)",
-              letterSpacing: "-1px",
-              userSelect: "none",
-            }}
-          >
-            {initialsOf(artist.name)}
-          </span>
-        </div>
-      )}
+    <ArtistPhoto name={artist.name} src={artist.photo_src} height={height} fill hoverEffect>
       <div
         className="pointer-events-none absolute bottom-0 left-0 w-full"
         style={{
@@ -103,10 +51,9 @@ const RosterCard = ({ artist, height }) => {
           {artist.name}
         </div>
       </div>
-    </div>
-  </div>
-  );
-};
+    </ArtistPhoto>
+  </Link>
+);
 
 // Fills the thin parallelogram of negative space that two skewed cards
 // leave between them, in the same poster-border language as

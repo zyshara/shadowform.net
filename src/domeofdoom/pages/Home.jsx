@@ -6,6 +6,11 @@ import Button from "@/components/Button";
 import PosterFrame from "@/components/PosterFrame";
 import testBg3 from "@/assets/test_bg_3.png";
 import { ShowRow } from "@/pages/Shows";
+import SectionHeader from "@/components/SectionHeader";
+import SpotifyIcon from "@/components/SpotifyIcon";
+import BandcampIcon from "@/components/BandcampIcon";
+import ArrowUpRightIcon from "@/components/ArrowUpRightIcon";
+import ArrowRightIcon from "@/components/ArrowRightIcon";
 
 // Drifts `amplitude` px (in either direction) as the element's section
 // passes through the viewport — a slight scroll parallax, reusable across
@@ -42,34 +47,11 @@ function useScrollParallax(amplitude = 24) {
   return [ref, offset];
 }
 
-const ArrowRightIcon = ({ size = 14 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M4 12H20M20 12L13 5M20 12L13 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const SectionHeader = ({ title, linkTo, linkText }) => (
-  <div className="flex-col-reverse gap-[8px] sm:flex-row mb-7 flex items-baseline justify-between items-start">
-    <h2 className="m-0 font-archivo text-[36px] font-semibold uppercase leading-none tracking-tight"
-      style={{ fontFamily: "Archivo, sans-serif", fontStretch: "expanded", fontVariationSettings: "'wdth' 125", fontWeight: "600" }}>
-      {title}
-    </h2>
-    {linkTo && (
-      <>
-        <div className="flex gap-[4px] items-center" style={{ color: colors.accent2, textAlign: "left" }}>
-          <Link
-            to={linkTo}
-            className="navlink-hover-flash font-bold text-[11px] sm:text-[12px] py-[4px] sm:py-0 md:text-[13px] gap-[4px] uppercase tracking-[0.06em]"
-            style={{ color: colors.accent2, whiteSpace: "nowrap" }}
-          >
-            {linkText}
-          </Link>
-          <ArrowRightIcon size={13} />
-        </div>
-      </>
-    )}
-  </div>
-);
+function formatReleaseDate(dateStr) {
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
 
 const Home = () => {
   const releases = readSeedData("discography-data") ?? [];
@@ -143,8 +125,8 @@ const Home = () => {
             Celebrating 15 years of supporting experimental & bass artists on vinyl & casette
           </p>
           <div className="flex gap-4 flex-col sm:flex-row">
-            <Button variant="primary" to="https://open.spotify.com/search/label%3Adome-of-doom/albums">Listen Now</Button>
-            <Button variant="secondary" to="/merch">Shop Merch</Button>
+            <Button variant="primary" href="https://open.spotify.com/search/label%3Adome-of-doom/albums"><div className="flex gap-2 justify-center items-center">Listen Now<ArrowUpRightIcon size={15}/></div></Button>
+            <Button variant="secondary" to="/merch"><div className="flex gap-2 justify-center items-center">Shop Merch<ArrowRightIcon size={15} /></div></Button>
           </div>
         </div>
       </div>
@@ -176,7 +158,9 @@ const Home = () => {
             </div>
             <div className="flex flex-col justify-center px-10 py-9 pl-13">
               <div className="text-[13px] font-black uppercase tracking-[0.1em]" style={{ color: colors.accent2 }}>
-                OUT NOW
+                {latestRelease.spotify_url
+                  ? "OUT NOW"
+                  : `COMING ${formatReleaseDate(latestRelease.release_date) ?? "SOON"}`}
               </div>
               <div
                 className="mb-1 uppercase leading-[1.1]"
@@ -196,16 +180,25 @@ const Home = () => {
               <div className="flex flex-col lg:flex-row gap-[14px]">
                 {latestRelease.spotify_url ? (
                   <Button type="small" variant="primary" href={latestRelease.spotify_url}>
-                    Spotify
+                    <span className="inline-flex items-center gap-[6px]">
+                      <SpotifyIcon size={14} />
+                      Spotify
+                    </span>
                   </Button>
                 ) : (
                   <Button type="small" variant="disabled">
-                    Not on Spotify
+                    <span className="inline-flex items-center gap-[6px]">
+                      <SpotifyIcon size={14} />
+                      Coming Soon
+                    </span>
                   </Button>
                 )}
                 {latestRelease.bandcamp_url && (
                   <Button type="small" variant="secondary" href={latestRelease.bandcamp_url}>
-                    Bandcamp
+                    <span className="inline-flex items-center gap-[6px]">
+                      <BandcampIcon size={14} />
+                      Bandcamp
+                    </span>
                   </Button>
                 )}
               </div>

@@ -29,7 +29,7 @@ function showTimestamp(show) {
   return new Date(y, m - 1, d).getTime();
 }
 
-export const ShowRow = ({ show, isPast = false }) => (
+export const ShowRow = ({ show, isPast = false, index = 0 }) => (
   <div
     className="flex-col sm:flex-row justify-between"
     style={{
@@ -37,7 +37,8 @@ export const ShowRow = ({ show, isPast = false }) => (
       alignItems: "flex-start",
       gap: 20,
       borderBottom: "1px solid rgba(255,255,255,.08)",
-      padding: "16px 0",
+      padding: "16px",
+      background: index % 2 === 1 ? "transparent" : "oklch(from var(--dod-accent2) l c h / 0.03)",
     }}
   >
     <div
@@ -171,13 +172,13 @@ const Shows = () => {
       {/* Upcoming Shows */}
       <div className="mb-[60px]">
         <SubpageHeader heading="Upcoming Shows" />
-        <div style={{ borderTop: "1px solid rgba(255,255,255,.08)" }}>
+        <div style={{ borderTop: "1px solid rgba(255,255,255,.08)", borderBottom: "1px solid rgba(255,255,255,.08)", background: "oklch(from var(--dod-accent2) l c h / 0.03)" }}>
           {upcoming.length === 0 ? (
             <div className="py-10 text-center text-[14px]" style={{ color: "rgba(255,255,255,.35)" }}>
               No upcoming shows announced yet — check back soon.
             </div>
           ) : (
-            upcoming.map((show, i) => <ShowRow key={i} show={show} />)
+            upcoming.map((show, i) => <ShowRow key={i} show={show} index={i} />)
           )}
         </div>
       </div>
@@ -216,7 +217,7 @@ const Shows = () => {
               No past shows found.
             </div>
           ) : (
-            filteredPast.map((show, i) => <ShowRow key={i} show={show} isPast />)
+            filteredPast.map((show, i) => <ShowRow key={i} show={show} isPast index={i} />)
           )}
         </div>
       </div>

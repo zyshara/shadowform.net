@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { readSeedData } from "@/utils/readSeedData";
 import { colors } from "@/tokens";
 import SubpageHeader from "@/components/SubpageHeader";
-import RosterCarousel, { initialsOf } from "@/components/RosterCarousel";
+import RosterCarousel from "@/components/RosterCarousel";
+import { initialsOf } from "@/components/ArtistPhoto";
 import CascadeImage from "@/components/CascadeImage";
+import { artistSlug } from "@/utils/artistSlug";
 
 const PRIMARY = colors.accent;
 
@@ -66,13 +69,14 @@ const RosterGridView = ({ artists }) => (
   <div
     style={{
       display: "grid",
-      gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
+      gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
       gap: 14,
     }}
   >
     {artists.map((artist, i) => (
-      <div
+      <Link
         key={i}
+        to={`/roster/${artistSlug(artist.name)}`}
         className="disco-grid-tile"
         style={{ display: "flex", flexDirection: "column", overflow: "hidden", border: "1px solid rgba(255,255,255,.12)" }}
       >
@@ -128,7 +132,7 @@ const RosterGridView = ({ artists }) => (
             {artist.name}
           </span>
         </div>
-      </div>
+      </Link>
     ))}
   </div>
 );
