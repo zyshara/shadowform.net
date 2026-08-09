@@ -1,10 +1,11 @@
-export { default as Home } from "./Home.jsx";
 export { default as About } from "./About.jsx";
-export { default as Discography } from "./Discography.jsx";
-export { default as Roster } from "./Roster.jsx";
 export { default as Artist } from "./Artist.jsx";
-export { default as Shows } from "./Shows.jsx";
-export { default as Merch } from "./Merch.jsx";
+export { default as Catalog } from "./Catalog.jsx";
 export { default as Contact } from "./Contact.jsx";
+export { default as Discography } from "./Discography.jsx";
+export { default as Home } from "./Home.jsx";
+export { default as Merch } from "./Merch.jsx";
 export { default as NotFound } from "./NotFound.jsx";
 export { default as Press } from "./Press.jsx";
+export { default as Roster } from "./Roster.jsx";
+export { default as Shows } from "./Shows.jsx";

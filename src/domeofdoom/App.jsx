@@ -3,16 +3,17 @@ import { Routes, Route } from "react-router-dom";
 
 import Layout from "@/Layout";
 import {
-  Home,
   About,
-  Discography,
-  Roster,
   Artist,
-  Shows,
-  Merch,
+  Catalog,
   Contact,
+  Discography,
+  Home,
+  Merch,
   NotFound,
   Press,
+  Roster,
+  Shows,
 } from "@/pages";
 
 const App = () => {
@@ -22,6 +23,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/discography" element={<Discography />} />
+        <Route path="/catalog" element={<Catalog/>} />
         <Route path="/roster" element={<Roster />} />
         <Route path="/roster/:artistSlug" element={<Artist />} />
         <Route path="/shows" element={<Shows />} />

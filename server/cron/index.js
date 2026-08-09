@@ -1,6 +1,7 @@
 import { syncAllArtistStats } from "./syncStats.js";
 import { startNotionCron } from "./notion.js";
 import { startInstagramCron } from "./instagram.js";
+import { startDomeOfDoomCron } from "./domeofdoom/index.js";
 import { syncDiscography } from "./syncDiscography.js";
 import { syncShows } from "./syncShows.js";
 import { syncAboutPage } from "./syncAboutPage.js";
@@ -89,6 +90,7 @@ export function startCronJobs() {
 
   startNotionCron();
   startInstagramCron();
+  startDomeOfDoomCron();
 
   logger.info("[cron] jobs registered");
 }
