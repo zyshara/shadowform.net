@@ -170,9 +170,7 @@ const Shows = () => {
     <div className="mx-auto max-w-[1400px] px-10 py-10 lg:py-[70px]">
       {/* Upcoming Shows */}
       <div className="mb-[60px]">
-        <div className="mb-6">
-          <SubpageHeader heading="Upcoming Shows" />
-        </div>
+        <SubpageHeader heading="Upcoming Shows" />
         <div style={{ borderTop: "1px solid rgba(255,255,255,.08)" }}>
           {upcoming.length === 0 ? (
             <div className="py-10 text-center text-[14px]" style={{ color: "rgba(255,255,255,.35)" }}>
@@ -186,30 +184,32 @@ const Shows = () => {
 
       {/* Past Shows */}
       <div>
-        <div className="mb-6 flex items-end justify-between gap-4 flex-wrap">
-          <SubpageHeader heading="Past Shows" />
-          <div className="flex flex-row gap-4">
-            <span style={{ position: "relative", display: "inline-flex" }}>
-              <select
-                value={yearFilter}
-                onChange={(e) => setYearFilter(e.target.value)}
-                className="disco-filter-select"
-              >
-                <option value="all">all years</option>
-                {pastYears.map((y) => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
-              <FilterChevron />
-            </span>
-            <span style={{ position: "relative", display: "inline-flex" }}>
-              <select value={artistFilter} onChange={(e) => setArtistFilter(e.target.value)} className="disco-filter-select">
-                <option value="all">all artists</option>
-              </select>
-              <FilterChevron />
-            </span>
-          </div>
-        </div>
+        <SubpageHeader
+          heading="Past Shows"
+          filters={
+            <>
+              <span style={{ position: "relative", display: "inline-flex" }}>
+                <select
+                  value={yearFilter}
+                  onChange={(e) => setYearFilter(e.target.value)}
+                  className="disco-filter-select"
+                >
+                  <option value="all">all years</option>
+                  {pastYears.map((y) => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                </select>
+                <FilterChevron />
+              </span>
+              <span style={{ position: "relative", display: "inline-flex" }}>
+                <select value={artistFilter} onChange={(e) => setArtistFilter(e.target.value)} className="disco-filter-select">
+                  <option value="all">all artists</option>
+                </select>
+                <FilterChevron />
+              </span>
+            </>
+          }
+        />
         <div style={{ borderTop: "1px solid rgba(255,255,255,.08)" }}>
           {filteredPast.length === 0 ? (
             <div className="py-10 text-center text-[14px]" style={{ color: "rgba(255,255,255,.35)" }}>

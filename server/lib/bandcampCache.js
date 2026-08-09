@@ -9,6 +9,7 @@ let discography = [];
 let roster = [];
 let merch = [];
 let shows = [];
+let aboutPage = null;
 
 export function getDiscography() {
   return discography;
@@ -40,4 +41,12 @@ export function getShows() {
 
 export function setShows(events) {
   shows = events;
+}
+
+export function getAboutPage() {
+  return aboutPage;
+}
+
+export function setAboutPage(page) {
+  aboutPage = page;
 }

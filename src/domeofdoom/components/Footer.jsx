@@ -1,6 +1,7 @@
 // src/domeofdoom/components/Footer.jsx
 
 import { Link } from "react-router-dom";
+import { LOGO_URL } from "@/tokens";
 
 const FooterColumn = ({ title, children }) => (
   <div>
@@ -14,11 +15,12 @@ const linkClass = "transition-colors hover:text-[var(--dod-accent)]";
 const Footer = () => (
   <div className="mx-auto grid max-w-[1400px] grid-cols-2 gap-8 border-t border-white/10 px-10 py-[50px] sm:grid-cols-4">
     <div className="col-span-2 sm:col-span-1">
-      <div className="mb-3.5 font-[Arial,sans-serif] text-xl font-black leading-[0.95] tracking-tight">
-        DOME<br />OF DOOM
+      <img src={LOGO_URL} alt="Dome of Doom" className="mb-3.5 h-11 w-auto" />
+      <div className="max-w-[220px] text-[13px] leading-relaxed text-white/45">
+        © DOMEOFDOOM 2026, All Rights Reserved
       </div>
       <div className="max-w-[220px] text-[13px] leading-relaxed text-white/45">
-        Independent electronic music label. Est. 1999.
+        Powered By Shadowform
       </div>
     </div>
 

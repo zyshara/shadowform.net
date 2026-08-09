@@ -6,3 +6,4 @@ export { default as Shows } from "./Shows.jsx";
 export { default as Merch } from "./Merch.jsx";
 export { default as Contact } from "./Contact.jsx";
 export { default as NotFound } from "./NotFound.jsx";
+export { default as Press } from "./Press.jsx";

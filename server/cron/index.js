@@ -3,6 +3,7 @@ import { startNotionCron } from "./notion.js";
 import { startInstagramCron } from "./instagram.js";
 import { syncDiscography } from "./syncDiscography.js";
 import { syncShows } from "./syncShows.js";
+import { syncAboutPage } from "./syncAboutPage.js";
 import { scrapeBandcampRoster } from "./scrapers/bandcampRoster.js";
 import { scrapeBandcampMerch } from "./scrapers/bandcampMerch.js";
 import { setRoster, setMerch } from "../lib/bandcampCache.js";
@@ -52,6 +53,14 @@ async function runSyncShows() {
   }
 }
 
+async function runSyncAboutPage() {
+  try {
+    await syncAboutPage();
+  } catch (err) {
+    logger.error("[cron] about page sync failed:", err.message);
+  }
+}
+
 // Shows sync matches artist names against the roster cache to attach
 // photos (see syncShows.js), so the roster scrape must complete first —
 // everything else here is independent and can fire concurrently.
@@ -74,6 +83,9 @@ export function startCronJobs() {
 
   runBandcampMerchScrape();
   setInterval(runBandcampMerchScrape, ONE_DAY_MS);
+
+  runSyncAboutPage();
+  setInterval(runSyncAboutPage, ONE_DAY_MS);
 
   startNotionCron();
   startInstagramCron();

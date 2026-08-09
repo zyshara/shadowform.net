@@ -168,65 +168,64 @@ const Roster = () => {
   return (
     <div>
       <div className="mx-auto max-w-[1400px] pt-10 lg:pt-[70px]">
-        <div className="mb-4 flex items-start justify-between">
-          <div className="flex flex-col gap-[8px] w-full sm:max-w-[50%]">
-            <SubpageHeader heading="Roster">
-              <div className="flex w-full flex-col gap-4 items-start justify-start">
-                <div className="flex flex-row w-full">
-                  <span className="disco-filter-count">
-                    <b>{artists.length}</b> artists
-                    {searchQuery && allArtists.length !== artists.length && (
-                      <span style={{ color: "rgba(255,255,255,.35)", fontWeight: 400 }}>
-                        {" "}of {allArtists.length}
-                      </span>
-                    )}
-                  </span>
-                </div>
-                <div className="flex flex-row gap-4 w-full">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="search artists…"
-                    className="disco-filter-select w-full"
-                    style={{ flex: 2, cursor: "text", textTransform: "none", paddingRight: 8 }}
-                  />
-                  <span className="w-full" style={{ position: "relative", display: "inline-flex", flex: 1 }}>
-                    <select
-                      value={sortOrder}
-                      onChange={(e) => setSortOrder(e.target.value)}
-                      className="disco-filter-select w-full"
-                    >
-                      <option value="az">a–z</option>
-                      <option value="za">z–a</option>
-                    </select>
-                    <FilterChevron />
-                  </span>
-                </div>
-              </div>
-            </SubpageHeader>
-          </div>
-          {!isBelowMd && (
-            <button
-              onClick={handleToggleView}
-              title={view === "grid" ? "Switch to carousel view" : "Switch to grid view"}
-              style={{
-                width: 38,
-                height: 38,
-                background: "none",
-                border: "1px solid rgba(255,255,255,.25)",
-                color: "rgba(255,255,255,.7)",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-              }}
-            >
-              {view === "grid" ? <CarouselIcon /> : <GridIcon />}
-            </button>
-          )}
-        </div>
+        <SubpageHeader
+          heading="Roster"
+          subheading={
+            <span className="disco-filter-count">
+              <b>{artists.length}</b> artists
+              {searchQuery && allArtists.length !== artists.length && (
+                <span style={{ color: "rgba(255,255,255,.35)", fontWeight: 400 }}>
+                  {" "}of {allArtists.length}
+                </span>
+              )}
+            </span>
+          }
+          filters={
+            <>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="search artists…"
+                className="disco-filter-select"
+                style={{ cursor: "text", textTransform: "none", paddingRight: 8 }}
+              />
+              <span style={{ position: "relative", display: "inline-flex" }}>
+                <select
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value)}
+                  className="disco-filter-select"
+                >
+                  <option value="az">a–z</option>
+                  <option value="za">z–a</option>
+                </select>
+                <FilterChevron />
+              </span>
+            </>
+          }
+          viewToggle={
+            !isBelowMd && (
+              <button
+                onClick={handleToggleView}
+                title={view === "grid" ? "Switch to carousel view" : "Switch to grid view"}
+                style={{
+                  width: 38,
+                  height: 38,
+                  background: "none",
+                  border: "1px solid rgba(255,255,255,.25)",
+                  color: "rgba(255,255,255,.7)",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                {view === "grid" ? <CarouselIcon /> : <GridIcon />}
+              </button>
+            )
+          }
+        />
       </div>
 
       {effectiveGrid ? (

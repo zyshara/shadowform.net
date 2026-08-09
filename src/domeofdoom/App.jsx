@@ -11,6 +11,7 @@ import {
   Merch,
   Contact,
   NotFound,
+  Press,
 } from "@/pages";
 
 const App = () => {
@@ -23,6 +24,7 @@ const App = () => {
         <Route path="/roster" element={<Roster />} />
         <Route path="/shows" element={<Shows />} />
         <Route path="/merch" element={<Merch />} />
+        <Route path="/press" element={<Press />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="*" element={<NotFound />} />
       </Route>

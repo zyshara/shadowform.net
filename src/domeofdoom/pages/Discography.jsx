@@ -520,7 +520,6 @@ const Discography = () => {
         fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
         display: "flex",
         flexDirection: "column",
-        gap: 20,
         position: "relative",
         overflow: "hidden",
         isolation: "isolate",
@@ -611,28 +610,25 @@ const Discography = () => {
       ) : (
         <>
           {/* Header */}
-          <div className="mb-4 flex items-start justify-between">
-            <div className="flex flex-col gap-[8px] w-full sm:max-w-[50%]">
-              <SubpageHeader heading="Discography">
-              <div className="flex w-full flex-col gap-4 w-full items-start justify-start">
-                <div className="flex flex-row w-full">
+          <SubpageHeader
+            heading="Discography"
+            subheading={
+              <>
                 <span className="disco-filter-count">
                   <b>{releases.length}</b> releases
                 </span>
-                <div className="disco-filter-dot"> · </div>
-                  <span className="disco-filter-count">
-                    <b>{artistOptions.length}</b> artists
-                  </span>
-                </div>
-                <div className="flex flex-row gap-4 w-full">
-                <span className="w-full" style={{ position: "relative", display: "inline-flex" }}>
+              </>
+            }
+            filters={
+              <>
+                <span style={{ position: "relative", display: "inline-flex" }}>
                   <select
                     value={sortOrder}
                     onChange={(e) => {
                       setSortOrder(e.target.value);
                       setActiveIndex(0);
                     }}
-                    className="disco-filter-select w-full"
+                    className="disco-filter-select"
                   >
                     <option value="latest">latest first</option>
                     <option value="earliest">earliest first</option>
@@ -640,52 +636,50 @@ const Discography = () => {
                   <FilterChevron />
                 </span>
                 {artistOptions.length > 0 && (
-                  <>
-                    <span className="w-full" style={{ position: "relative", display: "inline-flex" }}>
-                      <select
-                        value={artistFilter}
-                        onChange={(e) => {
-                          setArtistFilter(e.target.value);
-                          setActiveIndex(0);
-                        }}
-                        className="disco-filter-select w-full"
-                      >
-                        <option value="all">all artists</option>
-                        {artistOptions.sort().map((a) => (
-                          <option key={a} value={a}>
-                            {a}
-                          </option>
-                        ))}
-                      </select>
-                      <FilterChevron />
-                    </span>
-                  </>
+                  <span style={{ position: "relative", display: "inline-flex" }}>
+                    <select
+                      value={artistFilter}
+                      onChange={(e) => {
+                        setArtistFilter(e.target.value);
+                        setActiveIndex(0);
+                      }}
+                      className="disco-filter-select"
+                    >
+                      <option value="all">all artists</option>
+                      {artistOptions.sort().map((a) => (
+                        <option key={a} value={a}>
+                          {a}
+                        </option>
+                      ))}
+                    </select>
+                    <FilterChevron />
+                  </span>
                 )}
-              </div>
-              </div>
-              </SubpageHeader>
-            </div>
-            {!isBelowMd && (
-              <button
-                onClick={handleToggleView}
-                title={view === "grid" ? "Switch to preview view" : "Switch to grid view"}
-                style={{
-                  width: 38,
-                  height: 38,
-                  background: "none",
-                  border: "1px solid rgba(255,255,255,.25)",
-                  color: "rgba(255,255,255,.7)",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                }}
-              >
-                {view === "grid" ? <ListIcon /> : <GridIcon />}
-              </button>
-            )}
-          </div>
+              </>
+            }
+            viewToggle={
+              !isBelowMd && (
+                <button
+                  onClick={handleToggleView}
+                  title={view === "grid" ? "Switch to preview view" : "Switch to grid view"}
+                  style={{
+                    width: 38,
+                    height: 38,
+                    background: "none",
+                    border: "1px solid rgba(255,255,255,.25)",
+                    color: "rgba(255,255,255,.7)",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  {view === "grid" ? <ListIcon /> : <GridIcon />}
+                </button>
+              )
+            }
+          />
 
           {/* Below the md breakpoint, always render grid (sidebar + 3D
               preview doesn't fit small screens) regardless of preference. */}
