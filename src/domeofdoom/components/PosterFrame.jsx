@@ -111,7 +111,7 @@ const PosterFrame = ({
     fontSize: "13px",
     letterSpacing: "0.06em",
     textTransform: "uppercase",
-    color: colors.accent,
+    color: colors.neon_mint,
     whiteSpace: "nowrap",
   };
   return (
@@ -119,7 +119,7 @@ const PosterFrame = ({
       className={`relative border border-white/10 poster-frame${clickable ? " poster-frame-clickable" : ""}`}
       style={{
         padding: bandSize,
-        background: colors.bg,
+        background: colors.black,
         transform: skewDeg ? `skewX(${-skewDeg}deg)` : undefined,
         ...style,
       }}

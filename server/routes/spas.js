@@ -4,6 +4,7 @@ import { readFileSync } from "fs";
 import express from "express";
 import { loadMetadata, resolvePageMetadata } from "../lib/metadata.js";
 import { getDiscography, getRoster, getMerch, getShows, getAboutPage } from "../lib/bandcampCache.js";
+import { getCatalogItems } from "../lib/strapiCatalogCache.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -106,6 +107,7 @@ export function registerSpaRoutes(app) {
       html = injectJsonData(html, "merch-data", getMerch());
       html = injectJsonData(html, "shows-data", getShows());
       html = injectJsonData(html, "about-page-data", getAboutPage());
+      html = injectJsonData(html, "catalog-items-data", getCatalogItems());
       res.type("html").send(html);
     });
   });

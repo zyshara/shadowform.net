@@ -2,23 +2,21 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { colors } from "@/tokens";
 
-const BG = colors.bg;
-
 const VARIANTS = {
   primary: {
-    background: BG,
-    color: colors.accent,
-    border: `1px solid ${colors.accent}`,
-    outline: `1px solid ${colors.accent}`,
+    background: colors.black,
+    color: colors.neon_mint,
+    border: `1px solid ${colors.neon_mint}`,
+    outline: `1px solid ${colors.neon_mint}`,
   },
   secondary: {
-    background: BG,
-    color: colors.accent2,
-    border: `1px solid ${colors.accent2}`,
-    outline: `1px solid ${colors.accent2}`,
+    background: colors.black,
+    color: colors.lilac,
+    border: `1px solid ${colors.lilac}`,
+    outline: `1px solid ${colors.lilac}`,
   },
   disabled: {
-    background: BG,
+    background: colors.black,
     color: "rgba(255,255,255,0.2)",
     border: "1px solid #ffffff36",
     outline: "1px solid #ffffff36",
@@ -73,7 +71,7 @@ const Button = ({ variant = "primary", type = "default", to, href, children, sty
     padding: PADDING[type] ?? PADDING.default,
     fontSize: FONT_SIZE[type] ?? FONT_SIZE.default,
     background: !isDisabled && hovered ? v.color : v.background,
-    color: !isDisabled && hovered ? BG : v.color,
+    color: !isDisabled && hovered ? colors.black : v.color,
     border: v.border,
     outline: v.outline,
     cursor: isDisabled ? "default" : "pointer",

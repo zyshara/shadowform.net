@@ -11,6 +11,13 @@
 // this module first ran.
 
 export const colors = {
+  black:        "var(--dod-black)",
+  white:        "var(--dod-white)",
+  white:        "var(--dod-white)",
+  lilac:        "var(--dod-lilac)",
+  neon_mint:    "var(--dod-neon-mint)",
+  deep_purple:  "var(--dod-deep-purple)",
+
   bg:        "var(--dod-bg)",
   text:      "var(--dod-text)",
   accent:    "var(--dod-accent)",
@@ -23,3 +30,7 @@ export const LOGO_URL = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785
 
 export const FLOWER_FILIGREE = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1786232107/flower_decor_60_60_bc512335c1.png";
 export const FLOWER_FILIGREE_PURPLE = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1786232107/flower_decor_purple_60_60_df8c81e922.png";
+
+// Purple starburst on a faint wireframe grid - used behind hero art on the
+// Catalog header and (now) the CatalogItem page for visual consistency.
+export const STARBURST_DECOR = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1786394700/1c06c18c_abd7_4f31_b56a_283589514894_1166923abe.png";

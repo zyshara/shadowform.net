@@ -1,7 +1,6 @@
 [
   { "id": "home", "path": "/", "text": "Home" },
-  { "id": "about", "path": "/about", "text": "About" },
-  { "id": "discography", "path": "/discography", "text": "Discography" },
+  { "id": "catalog", "path": "/catalog", "text": "Catalog" },
   { "id": "roster", "path": "/roster", "text": "Roster" },
   { "id": "shows", "path": "/shows", "text": "Shows" },
   { "id": "merch", "path": "/merch", "text": "Merch" },

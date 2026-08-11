@@ -69,7 +69,7 @@ const CarouselDivider = ({ height }) => {
     fontSize: "11px",
     letterSpacing: "0.06em",
     textTransform: "uppercase",
-    color: colors.accent,
+    color: colors.neon_mint,
     whiteSpace: "nowrap",
   };
 
@@ -114,14 +114,14 @@ const RosterCarousel = ({ artists = [] }) => {
   const duration = Math.max(20, named.length * 2.8);
 
   return (
-    <div className="my-0 mx-auto max-w-[1400px] roster-carousel-wrap relative w-full overflow-hidden" style={{ background: colors.bg }}>
+    <div className="my-0 mx-auto max-w-[1400px] roster-carousel-wrap relative w-full overflow-hidden" style={{ background: colors.black }}>
       <div
         className="pointer-events-none absolute left-0 top-0 bottom-0 z-10"
-        style={{ width: 110, background: `linear-gradient(to right, ${colors.bg}, transparent)` }}
+        style={{ width: 110, background: `linear-gradient(to right, ${colors.black}, transparent)` }}
       />
       <div
         className="pointer-events-none absolute right-0 top-0 bottom-0 z-10"
-        style={{ width: 110, background: `linear-gradient(to left, ${colors.bg}, transparent)` }}
+        style={{ width: 110, background: `linear-gradient(to left, ${colors.black}, transparent)` }}
       />
       <div
         className="roster-carousel-track flex items-stretch"

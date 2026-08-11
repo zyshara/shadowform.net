@@ -13,7 +13,7 @@ const FooterColumn = ({ title, children }) => (
 const linkClass = "transition-colors hover:text-[var(--dod-accent)]";
 
 const Footer = () => (
-  <div className="mx-auto grid max-w-[1400px] grid-cols-2 gap-8 border-t border-white/10 px-10 py-[50px] sm:grid-cols-4">
+  <div className="col-start-2 col-span-4 grid grid-cols-2 gap-8 border-t border-white/10 px-10 py-[50px] sm:grid-cols-4">
     <div className="col-span-2 sm:col-span-1">
       <img src={LOGO_URL} alt="Dome of Doom" className="mb-3.5 h-11 w-auto" />
       <div className="max-w-[220px] text-[13px] leading-relaxed text-white/45">
@@ -25,16 +25,16 @@ const Footer = () => (
     </div>
 
     <FooterColumn title="Label">
-      <Link to="/" className={linkClass}>Home</Link>
-      <Link to="/about" className={linkClass}>About</Link>
-      <Link to="/discography" className={linkClass}>Discography</Link>
+      <Link to="/catalog" className={linkClass}>Catalog</Link>
       <Link to="/roster" className={linkClass}>Roster</Link>
+      <Link to="/shows" className={linkClass}>Shows</Link>
+      <Link to="/shop" className={linkClass}>Shop</Link>
+      <Link to="/contact" className={linkClass}>Contact</Link>
     </FooterColumn>
 
     <FooterColumn title="More">
-      <Link to="/shows" className={linkClass}>Shows</Link>
-      <Link to="/merch" className={linkClass}>Merch</Link>
-      <Link to="/contact" className={linkClass}>Contact</Link>
+      <Link to="/about" className={linkClass}>About</Link>
+      <Link to="/press" className={linkClass}>Press</Link>
     </FooterColumn>
 
     <FooterColumn title="Follow">

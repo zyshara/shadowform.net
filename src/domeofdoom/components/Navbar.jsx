@@ -48,9 +48,9 @@ const Navbar = () => {
   }, [updateIndicator]);
 
   return (
-    <div style={{ background: `color-mix(in srgb, ${colors.bg} 85%, transparent)`, backdropFilter: "blur(12px)" }}>
+    <div className="sticky top-0 z-50 col-span-4 col-start-2 bg-dod-black/85 backdrop-blur-md">
       {/* Bar */}
-      <div className="flex items-center justify-between border-b border-white/10 px-6 py-[22px] lg:px-10">
+      <div className="col-start-2 col-span-4 flex items-center justify-between border-b border-white/10 px-6 py-[22px] lg:px-10">
         <NavLink to="/" className="flex items-center">
           <img src={LOGO_URL} alt="Dome of Doom" className="h-11 w-auto" />
         </NavLink>
@@ -67,7 +67,7 @@ const Navbar = () => {
               end={link.path === "/"}
               className="navlink-hover-flash py-1.5 text-[13px] uppercase tracking-[0.02em]"
               style={({ isActive }) => ({
-                color: isActive ? "#ffffff" : colors.text,
+                color: isActive ? "#ffffff" : colors.white,
                 ...NAV_FONT_STYLE,
               })}
             >
@@ -80,7 +80,7 @@ const Navbar = () => {
               position: "absolute",
               bottom: 0,
               height: 2,
-              background: colors.accent,
+              background: colors.neon_mint,
               left: indicator.left,
               width: indicator.width,
               opacity: indicator.ready ? 1 : 0,
@@ -97,15 +97,15 @@ const Navbar = () => {
         >
           <span
             className="block h-[2px] w-6 origin-center transition-all duration-200"
-            style={{ background: colors.text, transform: open ? "translateY(7px) rotate(45deg)" : "none" }}
+            style={{ background: colors.white, transform: open ? "translateY(7px) rotate(45deg)" : "none" }}
           />
           <span
             className="block h-[2px] w-6 transition-all duration-200"
-            style={{ background: colors.text, opacity: open ? 0 : 1 }}
+            style={{ background: colors.white, opacity: open ? 0 : 1 }}
           />
           <span
             className="block h-[2px] w-6 origin-center transition-all duration-200"
-            style={{ background: colors.text, transform: open ? "translateY(-7px) rotate(-45deg)" : "none" }}
+            style={{ background: colors.white, transform: open ? "translateY(-7px) rotate(-45deg)" : "none" }}
           />
         </button>
       </div>
@@ -123,7 +123,7 @@ const Navbar = () => {
               end={link.path === "/"}
               className="rounded px-4 py-3 text-[14px] uppercase tracking-[0.02em] transition-colors"
               style={({ isActive }) => ({
-                color: isActive ? colors.accent : colors.text,
+                color: isActive ? colors.neon_mint : colors.white,
                 background: isActive ? "rgba(255,255,255,0.05)" : "transparent",
                 ...NAV_FONT_STYLE,
               })}

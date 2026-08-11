@@ -10,11 +10,67 @@
   font-style: normal;
 }
 
+/* Six static faces under one family name - not variable fonts, so each
+   gets its own fixed font-weight/font-style rather than a range like
+   Archivo's above. The browser picks between them automatically based on
+   the font-weight/font-style applied wherever "PP Neue Montreal" is used
+   (e.g. Tailwind's `italic font-semibold` selects the semibold italic face
+   below). "Book" is this family's name for its regular/400 weight. */
+@font-face {
+  font-family: "PP Neue Montreal";
+  src: url("@shared/assets/fonts/ppneuemontreal-thin.otf") format("opentype");
+  font-weight: 100;
+  font-style: normal;
+}
+@font-face {
+  font-family: "PP Neue Montreal";
+  src: url("@shared/assets/fonts/ppneuemontreal-book.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "PP Neue Montreal";
+  src: url("@shared/assets/fonts/ppneuemontreal-italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: "PP Neue Montreal";
+  src: url("@shared/assets/fonts/ppneuemontreal-medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "PP Neue Montreal";
+  src: url("@shared/assets/fonts/ppneuemontreal-bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: "PP Neue Montreal";
+  src: url("@shared/assets/fonts/ppneuemontreal-semibolditalic.otf") format("opentype");
+  font-weight: 600;
+  font-style: italic;
+}
+
 /* tailwind.config.js's JS-based theme.extend isn't loaded under Tailwind v4
    without an explicit @config directive (which this project doesn't use), so
    custom animations have to be registered here instead, CSS-native. */
 @theme {
   --font-archivo: "Archivo";
+  --font-ppneue: "PP Neue Montreal";
+  --color-dod-black: var(--dod-black);
+  --color-dod-white: var(--dod-white);
+  --color-dod-neon-mint: var(--dod-neon-mint);
+  --color-dod-lilac: var(--dod-lilac);
+  --color-dod-deep-purple: var(--dod-deep-purple);
+  --color-dod-orange: var(--dod-orange);
+  --color-dod-pink: var(--dod-pink);
+
+  --text-xxs: 0.625rem;
+  --text-xxs--line-height: 0.875rem;
+
+
   --animate-marquee: marquee 24s linear infinite;
 }
 
@@ -28,6 +84,16 @@
    h / a)`) specifically so they keep tracking these too, instead of
    silently going stale if you only change the base var. */
 :root {
+  --dod-black: #030507;
+  --dod-white: #c5c0ce;
+  --dod-lilac: #9A93F8;
+  --dod-neon-mint: #A4F4C2;
+  --dod-deep-purple: #533cab;
+  --dod-orange: #ff8c87;
+  --dod-pink: #f4b2e0;
+
+
+
   --dod-bg: #0a0d0d;
   --dod-text: #c5c0ce;
   --dod-accent: #b1f0d5;
@@ -56,7 +122,7 @@
 }
 
 @keyframes navlinkFlash {
-  0%, 100% { color: var(--dod-accent2); }
+  0%, 100% { color: var(--dod-lilac); }
   50%      { color: #ffffff; }
 }
 
@@ -77,8 +143,8 @@ body {
 }
 
 ::selection {
-  background: var(--dod-accent);
-  color: var(--dod-bg);
+  background: var(--dod-neon-mint);
+  color: var(--dod-black);
 }
 
 /* ---- Discography list & filter bar — ported from Claude Design
@@ -96,7 +162,7 @@ body {
   font-size: 14px;
 }
 .disco-filter-count b {
-  color: var(--dod-accent);
+  color: var(--dod-neon-mint);
   font-weight: 600;
 }
 .disco-filter-dot {
@@ -112,9 +178,9 @@ body {
   font: 700 13px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--dod-accent);
+  color: var(--dod-neon-mint);
   background: none;
-  border: 1px solid var(--dod-accent);
+  border: 1px solid var(--dod-neon-mint);
   cursor: pointer;
   padding: 5px 22px 5px 8px;
   white-space: nowrap;
@@ -137,12 +203,12 @@ body {
   transition: all 0.15s;
 }
 .disco-item-1a.active {
-  background: oklch(from var(--dod-accent) l c h / 0.08);
-  border-left-color: var(--dod-accent);
+  background: oklch(from var(--dod-neon-mint) l c h / 0.08);
+  border-left-color: var(--dod-neon-mint);
 }
 .disco-item-1a:hover:not(.active) {
-  background: oklch(from var(--dod-accent) l c h / 0.14);
-  border-left-color: oklch(from var(--dod-accent) l c h / 0.7);
+  background: oklch(from var(--dod-neon-mint) l c h / 0.14);
+  border-left-color: oklch(from var(--dod-neon-mint) l c h / 0.7);
 }
 .disco-item-1a-title {
   font: 400 11px/1 "Archivo", sans-serif;
@@ -157,7 +223,7 @@ body {
   white-space: nowrap;
 }
 .disco-item-1a.active .disco-item-1a-title {
-  color: var(--dod-accent);
+  color: var(--dod-neon-mint);
 }
 .disco-item-1a:hover:not(.active) .disco-item-1a-title {
   color: #ffffff;
@@ -189,18 +255,18 @@ body {
   border-color: rgba(255, 255, 255, 0.12);
 }
 .disco-tag-remix {
-  color: var(--dod-accent);
-  border-color: oklch(from var(--dod-accent) l c h / 0.5);
+  color: var(--dod-neon-mint);
+  border-color: oklch(from var(--dod-neon-mint) l c h / 0.5);
 }
 .disco-tag-comp {
-  color: var(--dod-accent2);
-  border-color: oklch(from var(--dod-accent2) l c h / 0.4);
+  color: var(--dod-lilac);
+  border-color: oklch(from var(--dod-lilac) l c h / 0.4);
 }
 
 /* Always-visible sidebar scrollbar, aligned right, accent2-colored thumb. */
 .disco-sidebar-scroll {
   scrollbar-width: thin;
-  scrollbar-color: var(--dod-accent2) transparent;
+  scrollbar-color: var(--dod-lilac) transparent;
 }
 .disco-sidebar-scroll::-webkit-scrollbar {
   width: 8px;
@@ -209,7 +275,7 @@ body {
   background: transparent;
 }
 .disco-sidebar-scroll::-webkit-scrollbar-thumb {
-  background: var(--dod-accent2);
+  background: var(--dod-lilac);
 }
 
 /* Roster carousel — ported from Claude Design "Roster Carousel" 1a. */
@@ -265,7 +331,7 @@ body {
 /* !important needed to beat the inline `background: colors.bg` style —
    author-stylesheet !important outranks a plain inline declaration. */
 .poster-frame-clickable:hover {
-  background-color: var(--dod-accent2) !important;
+  background-color: var(--dod-lilac) !important;
 }
 .poster-frame-flower-default {
   transition: opacity 0.25s ease;
@@ -279,4 +345,201 @@ body {
 }
 .poster-frame-clickable:hover .poster-frame-flower-hover {
   opacity: 1;
+}
+
+/* Tilted 3D cover — CatalogItem hero. Three real CSS 3D faces (front/left/
+   bottom) rather than a flat image with a fake drop shadow, so the artist
+   name and catalog number read as text printed on the object's own edge.
+   .tilted-cover-rotor's rotateX+rotateZ is the classic "one-corner cube"
+   transform: it tilts the front face into a rhombus and swings the left/
+   bottom faces (each rotated -90deg around their own shared edge, in the
+   box's local space) into view as thin visible strips. --tilt-depth is the
+   only knob that needs to move if the object should read thicker/thinner. */
+.tilted-cover-scene {
+  --tilt-depth: 20px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  perspective: 1800px;
+}
+.tilted-cover-rotor {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: rotateX(56deg) rotateZ(-38deg);
+}
+.tilted-cover-face {
+  position: absolute;
+  backface-visibility: hidden;
+}
+.tilted-cover-front {
+  inset: 0;
+  overflow: hidden;
+  background: var(--dod-white);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45);
+}
+.tilted-cover-front img:first-child {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.tilted-cover-mark {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  opacity: 0.85;
+}
+.tilted-cover-left {
+  top: 0;
+  left: calc(var(--tilt-depth) * -1);
+  width: var(--tilt-depth);
+  height: 100%;
+  transform-origin: right center;
+  transform: rotateY(-90deg);
+  background: linear-gradient(to bottom, #ddd9e2, #b6b1bd);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tilted-cover-left span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font: 700 9px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dod-black);
+  white-space: nowrap;
+}
+.tilted-cover-bottom {
+  left: 0;
+  bottom: calc(var(--tilt-depth) * -1);
+  width: 100%;
+  height: var(--tilt-depth);
+  transform-origin: top center;
+  transform: rotateX(-90deg);
+  background: linear-gradient(to right, #cdc9d3, #a29db0);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 10px;
+}
+.tilted-cover-bottom span {
+  font: 700 9px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dod-black);
+  white-space: nowrap;
+}
+.tilted-cover-bottom-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tilted-cover-bottom-catno {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+/* Vinyl record — sleeve square-on, disc peeking out from behind its
+   bottom-right corner (like a record flat-lay pulled just clear of its
+   sleeve), sliding further out and spinning on hover. Grooves are a
+   repeating radial gradient rather than actual rings, so they read
+   correctly at any size with no extra markup. Deliberately flat/2D here -
+   CatalogItem.jsx's own .format-vinyl-tilt wrapper (below) handles the
+   isometric staging. */
+.vinyl-record {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+}
+.vinyl-record-disc {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 50%;
+  background:
+    repeating-radial-gradient(
+      circle at center,
+      #1c1c1c 0px,
+      #1c1c1c 2px,
+      #0a0a0a 2px,
+      #0a0a0a 4px
+    );
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 4px 4px 16px rgba(0, 0, 0, 0.6);
+  transform: translate(16%, 16%) rotate(0deg);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: vinyl-record-spin 2.4s linear infinite;
+  animation-play-state: paused;
+}
+.vinyl-record-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 36%;
+  height: 36%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+.vinyl-record-label img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.vinyl-record-label::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10%;
+  height: 10%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--dod-black);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+.vinyl-record-sleeve {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.55);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.vinyl-record-sleeve img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.vinyl-record:hover .vinyl-record-disc {
+  transform: translate(28%, 28%) rotate(0deg);
+  animation-play-state: running;
+}
+.vinyl-record:hover .vinyl-record-sleeve {
+  transform: translate(-6%, -6%);
+}
+@keyframes vinyl-record-spin {
+  from { transform: translate(28%, 28%) rotate(0deg); }
+  to   { transform: translate(28%, 28%) rotate(360deg); }
+}
+
+/* Isometric staging for the vinyl format card - the VinylRecord component
+   itself stays flat/2D (see above) so it's reusable elsewhere; this wrapper
+   is what actually angles it on the CatalogItem page. perspective on the
+   parent plus a modest rotate+skewY reads as tilted-back-and-turned without
+   the full 3-face 3D rig TiltedCover uses (a record's face doesn't need a
+   visible edge/thickness the way the print cover's spine does). */
+.format-vinyl-tilt {
+  perspective: 900px;
+}
+.format-vinyl-tilt > * {
+  transform: rotate(-8deg) skewY(6deg) scale(0.92);
+  transform-origin: center;
 }

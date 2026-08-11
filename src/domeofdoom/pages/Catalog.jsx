@@ -1,26 +1,335 @@
-import React from "react";
-import SubpageHeader from "@/components/SubpageHeader";
-import PosterFrame from "@/components/PosterFrame";
-import ArrowRightIcon from "@/components/ArrowRightIcon";
+// src/domeofdoom/pages/Catalog.jsx
+//
+// Filter bar (dropdown pills: Format / Type / Origin / Year, sort on the
+// right) above a full-bleed image grid with a bottom-gradient title/artist/
+// type·year caption on each card - ported from a Claude Design mock, not
+// the earlier "Crate Sidebar" checkbox-list direction this page used
+// before.
+//
+// Data comes from the "catalog-items-data" seed (see injectJsonData in
+// server/routes/spas.js, populated by fetchAndCacheStrapiData.js every 5
+// minutes) - same server-seeded-JSON pattern as discography-data/
+// roster-data/etc, no client-side fetch needed. Each item is already
+// override ?? derived normalized server-side (server/models/catalogItem.js).
+// Facet counts are computed against the full set rather than cross-filtered
+// against the other active facets (real faceted search would recompute
+// each group's counts against the other groups' current selection) -
+// simpler for now, worth revisiting later.
+
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { readSeedData } from "@/utils/readSeedData";
+import { catalogItemSlug } from "@/utils/catalogItemSlug";
+import { STARBURST_DECOR } from "@/tokens";
+
+// value = the real stored format name (must match derived.formats exactly
+// for filtering to work); label = what the dropdown displays. These differ
+// for Cassette on request ("Cassette Tape" reads more clearly to a fan
+// than the bare CMS taxonomy term).
+const FORMAT_OPTIONS = [
+  { value: "Vinyl", label: "Vinyl" },
+  { value: "Cassette", label: "Cassette Tape" },
+  { value: "Compact Disc", label: "Compact Disc" },
+  { value: "Digital", label: "Digital" },
+];
+const TYPE_OPTIONS = ["Album", "EP", "Single", "Compilation", "Sample Pack"];
+// "Origin" per conversation history - not a real genre facet (we don't
+// have genre data), this is label_role wearing a fan-facing name.
+const ORIGIN_OPTIONS = [
+  { value: "original", label: "Original" },
+  { value: "reissue", label: "Reissue" },
+  { value: "physical", label: "Physical Only" },
+  { value: "other", label: "Other" },
+];
+
+function yearOf(item) {
+  const t = new Date(item.release_date).getTime();
+  return isNaN(t) ? null : new Date(item.release_date).getUTCFullYear();
+}
+
+function timestampOf(item) {
+  const t = new Date(item.release_date).getTime();
+  return isNaN(t) ? 0 : t;
+}
+
+const ChevronIcon = ({ open }) => (
+  <svg
+    viewBox="0 0 10 10"
+    width="8"
+    height="8"
+    className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`}
+  >
+    <polyline points="2,3 5,7 8,3" fill="none" stroke="currentColor" strokeWidth="2" />
+  </svg>
+);
+
+// One dropdown pill button + its checkbox-list popover (Format / Type /
+// Origin / Year). `panelKey` is this dropdown's identity in the shared
+// openPanel state, so only one can be open at a time.
+const FilterDropdown = ({ panelKey, label, options, selected, onToggle, openPanel, onOpenPanel }) => {
+  const isOpen = openPanel === panelKey;
+  const activeCount = selected.size;
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => onOpenPanel(isOpen ? null : panelKey)}
+        className={`flex items-center gap-1.5 border px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition-colors ${
+          activeCount > 0
+            ? "border-dod-neon-mint text-dod-neon-mint"
+            : "border-dod-lilac/50 text-dod-lilac hover:border-dod-lilac"
+        }`}
+      >
+        {label}
+        {activeCount > 0 && <span>({activeCount})</span>}
+        <ChevronIcon open={isOpen} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full left-0 z-30 mt-2 max-h-[280px] min-w-[200px] overflow-y-auto border border-dod-lilac/50 bg-dod-black p-2 shadow-xl">
+          {options.map(({ value, label: optLabel, count }) => {
+            const isSelected = selected.has(value);
+            return (
+              <div
+                key={value}
+                onClick={() => onToggle(value)}
+                className="flex cursor-pointer items-center justify-between gap-3 px-2 py-1.5 hover:bg-dod-lilac/10"
+              >
+                <span className={`flex items-center gap-2 text-sm ${isSelected ? "text-dod-neon-mint" : "text-dod-white"}`}>
+                  <span
+                    className={`h-3 w-3 flex-shrink-0 border ${
+                      isSelected ? "border-dod-neon-mint bg-dod-neon-mint" : "border-dod-lilac/50"
+                    }`}
+                  />
+                  {optLabel}
+                </span>
+                <span className="text-xs text-dod-lilac/60">{count}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const CatalogCard = ({ item }) => (
+  <Link
+    to={`/catalog/${catalogItemSlug(item)}`}
+    className="group relative aspect-[135/172] cursor-pointer overflow-hidden bg-dod-deep-purple/20 border border-dod-lilac/50 hover:border-dod-neon-mint/60 transition-colors duration-300 gap-2"
+  >
+    {item.catalog_number && (
+      <div className="absolute bottom-2 font-ppneue left-2 z-10 border border-dod-lilac bg-dod-black/65 px-1.5 py-0.5 font-medium text-xxs xl:text-xs uppercase tracking-wide text-dod-white group-hover:border-dod-neon-mint transition-colors">
+        {item.catalog_number}
+      </div>
+    )}
+    { item.label_role === "reissue" && (
+      <div className="absolute bottom-2 font-ppneue right-2 z-10 border border-dod-pink bg-dod-pink font-medium px-1.5 py-0.5 text-xxs xl:text-xs uppercase tracking-wide text-dod-black">
+        Reissue
+      </div>
+    )}
+    { item.label_role === "physical" && (
+      <div className="absolute bottom-2 font-ppneue right-2 z-10 border border-dod-orange bg-dod-orange font-medium px-1.5 py-0.5 text-xxs xl:text-xs uppercase tracking-wide text-dod-black">
+        Physical Only
+      </div>
+    )}
+    {item.artwork_url && (
+      <img
+        src={item.artwork_url}
+        alt={item.title}
+        className="absolute inset-0 h-full w-full object-cover transition-[filter_transform] group-hover:scale-105 group-hover:brightness-[1.2] group-hover:saturate-[1.5] duration-300"
+      />
+    )}
+    <div className="absolute inset-x-0 h-full bg-[linear-gradient(to_top,transparent_0%,color-mix(in_srgb,var(--color-dod-deep-purple)_30%,transparent)_35%,color-mix(in_srgb,var(--color-dod-black)_30%,transparent)_55%,color-mix(in_srgb,var(--color-dod-black)_80%,transparent)_75%,var(--color-dod-black)_90%)] p-3 pt-4">
+<div className="mt-1 text-[11px] uppercase tracking-wide text-dod-lilac/50">
+  {item.type} · {yearOf(item)}
+</div>
+      <div className="font-archivo font-bold [font-stretch:expanded] [font-variation-settings:'wdth'_125] text-clamp-[10px,_1vw,_22px] font-semibold uppercase text-dod-white">{item.title}</div>
+      {item.artists.length > 0 && (
+        <div className="font-ppneue text-xs text-dod-white">{item.artists.join(", ")}</div>
+      )}
+    </div>
+  </Link>
+);
 
 const Catalog = () => {
+  const allItems = useMemo(() => readSeedData("catalog-items-data") ?? [], []);
+
+  const [formatSel, setFormatSel] = useState(new Set());
+  const [typeSel, setTypeSel] = useState(new Set());
+  const [originSel, setOriginSel] = useState(new Set());
+  const [yearSel, setYearSel] = useState(new Set());
+  const [sortOrder, setSortOrder] = useState("newest");
+  const [openPanel, setOpenPanel] = useState(null);
+
+  // Closes whichever dropdown is open on any click outside the filter bar.
+  const filterBarRef = useRef(null);
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (filterBarRef.current && !filterBarRef.current.contains(e.target)) {
+        setOpenPanel(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const yearOptions = useMemo(() => {
+    const set = new Set();
+    allItems.forEach((item) => {
+      const y = yearOf(item);
+      if (y) set.add(y);
+    });
+    return Array.from(set).sort((a, b) => b - a);
+  }, [allItems]);
+
+  const facetCounts = useMemo(() => {
+    const counts = { format: {}, type: {}, origin: {}, year: {} };
+    allItems.forEach((item) => {
+      item.formats.forEach((f) => { counts.format[f] = (counts.format[f] ?? 0) + 1; });
+      counts.type[item.type] = (counts.type[item.type] ?? 0) + 1;
+      counts.origin[item.label_role] = (counts.origin[item.label_role] ?? 0) + 1;
+      const y = yearOf(item);
+      if (y) counts.year[y] = (counts.year[y] ?? 0) + 1;
+    });
+    return counts;
+  }, [allItems]);
+
+  const toggle = (setFn) => (value) =>
+    setFn((prev) => {
+      const next = new Set(prev);
+      if (next.has(value)) next.delete(value);
+      else next.add(value);
+      return next;
+    });
+
+  const hasFilters = formatSel.size > 0 || typeSel.size > 0 || originSel.size > 0 || yearSel.size > 0;
+
+  const clearAll = () => {
+    setFormatSel(new Set());
+    setTypeSel(new Set());
+    setOriginSel(new Set());
+    setYearSel(new Set());
+  };
+
+  const items = useMemo(() => {
+    let list = allItems.filter((item) => {
+      if (formatSel.size && !item.formats.some((f) => formatSel.has(f))) return false;
+      if (typeSel.size && !typeSel.has(item.type)) return false;
+      if (originSel.size && !originSel.has(item.label_role)) return false;
+      if (yearSel.size && !yearSel.has(yearOf(item))) return false;
+      return true;
+    });
+    list = list.slice().sort((a, b) => {
+      if (sortOrder === "az") return a.title.localeCompare(b.title);
+      if (sortOrder === "oldest") return timestampOf(a) - timestampOf(b);
+      return timestampOf(b) - timestampOf(a);
+    });
+    return list;
+  }, [allItems, formatSel, typeSel, originSel, yearSel, sortOrder]);
+
   return (
-    <div className="mx-auto max-w-[1400px] px-10 py-10 lg:py-[70px]">
-     <SubpageHeader heading="Catalog"/>
-     <div className="flex flex-col gap-8">
-     <PosterFrame>
-     </PosterFrame>
-     <PosterFrame>
-       <div className="flex flex-row justify-center items-center">
-         <img src="https://i1.sndcdn.com/visuals-000062643645-4vCjuR-t1240x260.jpg"/>
-         <div className="absolute flex flex-row justify-center items-center p-3">
-           Sounds
-           <ArrowRightIcon size={15} />
-         </div>
-       </div>
-     </PosterFrame>
-     </div>
-    </div>
+    <>
+      <div className="border-b border-dod-lilac/50 mb-10 grid grid-cols-1 md:grid-cols-2">
+        <div className="flex flex-col gap-4 border-r border-dod-lilac/50 p-16 pl-0">
+          <span className="text-[clamp(4.5rem,6.5vw,6rem)] text-dod-neon-mint italic font-semibold">CATALOG</span>
+          <div className="text-xl">
+            <span className="text-dod-lilac font-bold">{items.length}</span> of {allItems.length} items 
+          </div>
+          <div className="text-xl text-dod-lilac">
+            Comprehensive catalog of our original releases, vinyl presses, cassette duplications, and more
+          </div>
+        </div>
+        <div className="relative overflow-hidden">
+          <img
+            className="absolute inset-0 w-full h-full object-cover"
+            src={STARBURST_DECOR}
+          />
+        </div>
+      </div>
+
+      <div>
+        {/* Filter bar */}
+        <div ref={filterBarRef} className="mb-10 flex flex-wrap items-center justify-between gap-3 font-sans">
+          <div className="flex flex-wrap items-center gap-2">
+            <FilterDropdown
+              panelKey="format"
+              label="Format"
+              options={FORMAT_OPTIONS.map((f) => ({ value: f.value, label: f.label, count: facetCounts.format[f.value] ?? 0 }))}
+              selected={formatSel}
+              onToggle={toggle(setFormatSel)}
+              openPanel={openPanel}
+              onOpenPanel={setOpenPanel}
+            />
+            <FilterDropdown
+              panelKey="type"
+              label="Type"
+              options={TYPE_OPTIONS.map((t) => ({ value: t, label: t, count: facetCounts.type[t] ?? 0 }))}
+              selected={typeSel}
+              onToggle={toggle(setTypeSel)}
+              openPanel={openPanel}
+              onOpenPanel={setOpenPanel}
+            />
+            <FilterDropdown
+              panelKey="origin"
+              label="Origin"
+              options={ORIGIN_OPTIONS.map((r) => ({ value: r.value, label: r.label, count: facetCounts.origin[r.value] ?? 0 }))}
+              selected={originSel}
+              onToggle={toggle(setOriginSel)}
+              openPanel={openPanel}
+              onOpenPanel={setOpenPanel}
+            />
+            <FilterDropdown
+              panelKey="year"
+              label="Year"
+              options={yearOptions.map((y) => ({ value: y, label: String(y), count: facetCounts.year[y] ?? 0 }))}
+              selected={yearSel}
+              onToggle={toggle(setYearSel)}
+              openPanel={openPanel}
+              onOpenPanel={setOpenPanel}
+            />
+            {hasFilters && (
+              <button
+                type="button"
+                onClick={clearAll}
+                className="text-xs font-semibold uppercase tracking-wide text-dod-neon-mint"
+              >
+                Clear ✕
+              </button>
+            )}
+          </div>
+
+          <div className="relative inline-flex">
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              className="cursor-pointer appearance-none border border-dod-lilac/50 bg-transparent px-3 py-1.5 pr-7 text-xs font-semibold uppercase tracking-wide text-dod-lilac"
+            >
+              <option className="bg-dod-black" value="newest">Newest First</option>
+              <option className="bg-dod-black" value="oldest">Oldest First</option>
+              <option className="bg-dod-black" value="az">A–Z</option>
+            </select>
+            <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-dod-lilac">
+              <ChevronIcon open={false} />
+            </span>
+          </div>
+        </div>
+
+        {/* Grid */}
+        {items.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4 mb-10">
+            {items.map((item) => (
+              <CatalogCard key={item.uid} item={item} />
+            ))}
+          </div>
+        ) : (
+          <div className="py-16 text-center font-sans text-dod-lilac/60">
+            No releases match the current filters.
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

@@ -36,7 +36,7 @@ const Layout = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-dvh w-full" style={{ background: colors.bg, color: colors.text }}>
+    <div className="min-h-dvh w-full bg-dod-black text-dod-white grid grid-cols-6 grid-rows-[auto_1fr_auto]">
       <div
         aria-hidden="true"
         style={{
@@ -51,10 +51,7 @@ const Layout = () => {
           pointerEvents: "none",
         }}
       />
-      <div className="sticky top-0 z-50">
-        <MarqueeBanner />
-        <Navbar />
-      </div>
+      <Navbar />
       {/* Outgoing and incoming pages animate at the same time: the exiting
           page is pulled out of normal flow (position: absolute, via its
           `exit` variant) so it can fade in place as an overlay while the
@@ -62,7 +59,7 @@ const Layout = () => {
           height/scroll — slides up underneath/over it. The relative
           wrapper gives that absolutely-positioned exit something to
           anchor to. */}
-      <div style={{ position: "relative" }}>
+      <div className="relative col-start-2 col-span-4">
         <AnimatePresence>
           <motion.div
             key={location.pathname}

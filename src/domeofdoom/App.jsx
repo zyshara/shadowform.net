@@ -6,6 +6,7 @@ import {
   About,
   Artist,
   Catalog,
+  CatalogItem,
   Contact,
   Discography,
   Home,
@@ -22,8 +23,8 @@ const App = () => {
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
-        <Route path="/discography" element={<Discography />} />
         <Route path="/catalog" element={<Catalog/>} />
+        <Route path="/catalog/:catalogParam" element={<CatalogItem />} />
         <Route path="/roster" element={<Roster />} />
         <Route path="/roster/:artistSlug" element={<Artist />} />
         <Route path="/shows" element={<Shows />} />
