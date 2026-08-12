@@ -5,6 +5,7 @@ import express from "express";
 import { loadMetadata, resolvePageMetadata } from "../lib/metadata.js";
 import { getDiscography, getRoster, getMerch, getShows, getAboutPage } from "../lib/bandcampCache.js";
 import { getCatalogItems } from "../lib/strapiCatalogCache.js";
+import { getArtistProfilePictures } from "../lib/strapiArtistOverridesCache.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -64,6 +65,18 @@ function injectJsonData(html, elementId, data) {
   return html.replace("</head>", `${script}</head>`);
 }
 
+// A human-set DomeOfDoomArtist.overrides.profile_picture takes priority
+// over the Bandcamp-scraped photo, matched by name (same matching key
+// lib/artists.js uses to resolve artist relations elsewhere).
+function withArtistProfilePictures(roster) {
+  const overrides = getArtistProfilePictures();
+  if (!overrides.size) return roster;
+  return roster.map((artist) => {
+    const override = overrides.get((artist.name ?? "").trim().toUpperCase());
+    return override ? { ...artist, photo_src: override } : artist;
+  });
+}
+
 export function registerSpaRoutes(app) {
   // Shared static assets (served at root)
   app.use("/shared", express.static(path.join(root, "public/shared")));
@@ -103,7 +116,7 @@ export function registerSpaRoutes(app) {
     domeofdoomStatic(req, res, () => {
       let html = readFileSync(domeofdoomIndex, "utf8");
       html = injectJsonData(html, "discography-data", getDiscography());
-      html = injectJsonData(html, "roster-data", getRoster());
+      html = injectJsonData(html, "roster-data", withArtistProfilePictures(getRoster()));
       html = injectJsonData(html, "merch-data", getMerch());
       html = injectJsonData(html, "shows-data", getShows());
       html = injectJsonData(html, "about-page-data", getAboutPage());

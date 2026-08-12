@@ -129,6 +129,8 @@ export function normalizeCatalogItem(raw) {
     catalog_number: catalogNumber,
     artists,
     formats,
+    tracks: derived.tracks ?? null,
+    packages: derived.packages ?? null,
     release_date: derived.release_date ?? null,
     publish_date: derived.publish_date ?? null,
   };

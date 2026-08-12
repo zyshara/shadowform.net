@@ -278,6 +278,22 @@ body {
   background: var(--dod-lilac);
 }
 
+/* CatalogItem tracklist — same always-visible (non-overlay) scrollbar
+   pattern as .disco-sidebar-scroll, just neon-mint instead of lilac.
+   scrollbar-gutter: stable reserves the thumb's track space up front so
+   the row content doesn't shift width the moment a release crosses the
+   10-track threshold and becomes scrollable. */
+/* Native scrollbar hidden entirely - CatalogItem.jsx's TracklistScrollArea
+   draws its own permanently-visible track+thumb instead (native scrollbars,
+   even styled via scrollbar-color/::-webkit-scrollbar, still fade on
+   inactivity on some platforms). */
+.tracklist-scroll {
+  scrollbar-width: none;
+}
+.tracklist-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 /* Roster carousel — ported from Claude Design "Roster Carousel" 1a. */
 @keyframes rosterScroll {
   from { transform: translateX(0); }

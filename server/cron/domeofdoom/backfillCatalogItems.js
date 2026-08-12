@@ -125,9 +125,15 @@ function normalizeFormatName(formatType) {
   return "Other";
 }
 
-// Pure - no writes. Used for both dry-run display and as input to resolveFormatIds.
+// Pure - no writes. Used for both dry-run display and as input to
+// resolveFormatIds. Bandcamp's package list always includes a placeholder
+// "Digital" entry even when digital purchase isn't actually enabled for a
+// release - every other field on it (sku/price/availability/etc) is null,
+// unlike real packages which always carry a real availability value (e.g.
+// "SoldOut", "OnlineOnly"). Filtering those out is what keeps formats from
+// claiming "Digital" is purchasable when it isn't.
 function computeFormatNames(packages) {
-  return [...new Set((packages || []).map((p) => normalizeFormatName(p.formatType)))];
+  return [...new Set((packages || []).filter((p) => p.availability != null).map((p) => normalizeFormatName(p.formatType)))];
 }
 
 async function resolveFormatIds(formatCache, formatNames) {
@@ -252,6 +258,8 @@ export async function backfillCatalogItems({ dryRun = false } = {}) {
           suggested_type: suggestType(title, trackCount),
           formats: formatIds,
           label_role: suggestLabelRole(title, packages),
+          packages: rawItem.packages ?? null,
+          tracks: rawItem.tracks ?? null,
         },
       };
 

@@ -59,7 +59,7 @@ const Layout = () => {
           height/scroll — slides up underneath/over it. The relative
           wrapper gives that absolutely-positioned exit something to
           anchor to. */}
-      <div className="relative col-start-2 col-span-4">
+      <div className="relative col-start-1 col-span-6 lg:col-span-4 lg:col-start-2 px-8">
         <AnimatePresence>
           <motion.div
             key={location.pathname}

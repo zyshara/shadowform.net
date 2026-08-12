@@ -48,7 +48,7 @@ const Navbar = () => {
   }, [updateIndicator]);
 
   return (
-    <div className="sticky top-0 z-50 col-span-4 col-start-2 bg-dod-black/85 backdrop-blur-md">
+    <div className="sticky top-0 z-50 col-start-1 col-span-6 lg:col-span-4 lg:col-start-2 bg-dod-black/85 backdrop-blur-md">
       {/* Bar */}
       <div className="col-start-2 col-span-4 flex items-center justify-between border-b border-white/10 px-6 py-[22px] lg:px-10">
         <NavLink to="/" className="flex items-center">

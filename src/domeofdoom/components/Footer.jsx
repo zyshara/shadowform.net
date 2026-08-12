@@ -13,7 +13,7 @@ const FooterColumn = ({ title, children }) => (
 const linkClass = "transition-colors hover:text-[var(--dod-accent)]";
 
 const Footer = () => (
-  <div className="col-start-2 col-span-4 grid grid-cols-2 gap-8 border-t border-white/10 px-10 py-[50px] sm:grid-cols-4">
+  <div className="col-start-1 col-span-6 lg:col-span-4 lg:col-start-2 grid grid-cols-2 gap-8 border-t border-white/10 px-10 py-[50px] sm:grid-cols-4">
     <div className="col-span-2 sm:col-span-1">
       <img src={LOGO_URL} alt="Dome of Doom" className="mb-3.5 h-11 w-auto" />
       <div className="max-w-[220px] text-[13px] leading-relaxed text-white/45">

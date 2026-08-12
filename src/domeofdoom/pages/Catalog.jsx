@@ -138,10 +138,19 @@ const CatalogCard = ({ item }) => (
       <img
         src={item.artwork_url}
         alt={item.title}
-        className="absolute inset-0 h-full w-full object-cover transition-[filter_transform] group-hover:scale-105 group-hover:brightness-[1.2] group-hover:saturate-[1.5] duration-300"
+        className="absolute bottom-0 aspect-square w-full object-cover transition-[filter_transform] group-hover:scale-105 group-hover:brightness-[1.2] group-hover:saturate-[1.5] duration-300"
       />
     )}
-    <div className="absolute inset-x-0 h-full bg-[linear-gradient(to_top,transparent_0%,color-mix(in_srgb,var(--color-dod-deep-purple)_30%,transparent)_35%,color-mix(in_srgb,var(--color-dod-black)_30%,transparent)_55%,color-mix(in_srgb,var(--color-dod-black)_80%,transparent)_75%,var(--color-dod-black)_90%)] p-3 pt-4">
+    {/* aspect-[135/172] card + aspect-square image (bottom-anchored) means
+        the image only covers the bottom ~78.5% of the card - the rest is
+        bare card background. The old stops didn't hit 100% opacity until
+        90%, so between ~78.5%-90% a translucent gradient sat over two
+        different surfaces (image vs flat bg), and their different colors
+        showed through as a seam even though the overlay itself was
+        continuous. Hitting solid black by 78% keeps 100%-opaque coverage
+        starting at/before the image's real top edge, so the fade only
+        ever plays out over the photo itself - never over bare background. */}
+    <div className="absolute inset-x-0 h-full bg-[linear-gradient(to_top,transparent_0%,color-mix(in_srgb,var(--color-dod-deep-purple)_30%,transparent)_25%,color-mix(in_srgb,var(--color-dod-black)_55%,transparent)_45%,color-mix(in_srgb,var(--color-dod-black)_90%,transparent)_62%,var(--color-dod-black)_78%)] p-3 pt-4">
 <div className="mt-1 text-[11px] uppercase tracking-wide text-dod-lilac/50">
   {item.type} · {yearOf(item)}
 </div>
@@ -231,8 +240,8 @@ const Catalog = () => {
 
   return (
     <>
-      <div className="border-b border-dod-lilac/50 mb-10 grid grid-cols-1 md:grid-cols-2">
-        <div className="flex flex-col gap-4 border-r border-dod-lilac/50 p-16 pl-0">
+      <div className="border-b border-dod-lilac/50 mb-10 gap-4 lg:gap-0 grid grid-cols-1 md:grid-cols-2">
+        <div className="flex flex-col gap-4 lg:border-r lg:border-dod-lilac/50 lg:p-16 pl-0">
           <span className="text-[clamp(4.5rem,6.5vw,6rem)] text-dod-neon-mint italic font-semibold">CATALOG</span>
           <div className="text-xl">
             <span className="text-dod-lilac font-bold">{items.length}</span> of {allItems.length} items 
@@ -241,7 +250,7 @@ const Catalog = () => {
             Comprehensive catalog of our original releases, vinyl presses, cassette duplications, and more
           </div>
         </div>
-        <div className="relative overflow-hidden">
+        <div className="relative overflow-hidden min-h-[110px]">
           <img
             className="absolute inset-0 w-full h-full object-cover"
             src={STARBURST_DECOR}
@@ -318,7 +327,7 @@ const Catalog = () => {
 
         {/* Grid */}
         {items.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4 mb-10">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4 mb-10">
             {items.map((item) => (
               <CatalogCard key={item.uid} item={item} />
             ))}
