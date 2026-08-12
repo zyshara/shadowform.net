@@ -8,15 +8,79 @@ const TYPE_LABELS = {
   sample_pack: "Sample Pack",
 };
 
-// Strapi's "blocks" rich-text field is an array of block nodes - flatten to
-// plain text for now (Catalog.jsx doesn't render rich formatting yet).
-function blocksToText(blocks) {
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+// Strapi's "blocks" rich-text field is an array of block nodes (paragraph/
+// heading/list/quote/code, with inline bold/italic/underline/strikethrough/
+// link marks on text children) - rendered to real HTML so the client can
+// dangerouslySetInnerHTML it, rather than flattened to plain text.
+function renderInlineChildren(children) {
+  return (children || [])
+    .map((child) => {
+      if (child.type === "link") {
+        const href = escapeHtml(child.url ?? "#");
+        return `<a href="${href}" target="_blank" rel="noopener noreferrer">${renderInlineChildren(child.children)}</a>`;
+      }
+      let text = escapeHtml(child.text ?? "");
+      if (child.code) text = `<code>${text}</code>`;
+      if (child.bold) text = `<strong>${text}</strong>`;
+      if (child.italic) text = `<em>${text}</em>`;
+      if (child.underline) text = `<u>${text}</u>`;
+      if (child.strikethrough) text = `<s>${text}</s>`;
+      return text;
+    })
+    .join("");
+}
+
+const HEADING_TAGS = { 1: "h1", 2: "h2", 3: "h3", 4: "h4", 5: "h5", 6: "h6" };
+
+function renderBlock(block) {
+  switch (block.type) {
+    case "heading": {
+      const tag = HEADING_TAGS[block.level] ?? "h3";
+      return `<${tag}>${renderInlineChildren(block.children)}</${tag}>`;
+    }
+    case "list": {
+      const tag = block.format === "ordered" ? "ol" : "ul";
+      const items = (block.children || [])
+        .map((item) => `<li>${renderInlineChildren(item.children)}</li>`)
+        .join("");
+      return `<${tag}>${items}</${tag}>`;
+    }
+    case "quote":
+      return `<blockquote>${renderInlineChildren(block.children)}</blockquote>`;
+    case "code":
+      return `<pre><code>${escapeHtml((block.children || []).map((c) => c.text || "").join(""))}</code></pre>`;
+    case "paragraph":
+    default:
+      return `<p>${renderInlineChildren(block.children)}</p>`;
+  }
+}
+
+function blocksToHtml(blocks) {
   if (!Array.isArray(blocks) || blocks.length === 0) return null;
-  const text = blocks
-    .map((block) => (block.children || []).map((c) => c.text || "").join(""))
-    .join("\n\n")
-    .trim();
-  return text || null;
+  const html = blocks.map(renderBlock).join("").trim();
+  return html || null;
+}
+
+// derived.description is plain text scraped from Bandcamp, not Strapi
+// blocks - wrapped in <p> tags (blank-line-separated paragraphs, single
+// newlines as <br/>) so item.description is *always* ready-to-render HTML
+// regardless of which layer it came from, never a mix of raw HTML and
+// plain text the client would need to handle differently.
+function plainTextToHtml(text) {
+  if (!text) return null;
+  const html = text
+    .split(/\n{2,}/)
+    .map((para) => `<p>${escapeHtml(para).replace(/\n/g, "<br/>")}</p>`)
+    .join("");
+  return html || null;
 }
 
 function resolveMediaUrl(media) {
@@ -47,7 +111,7 @@ export function normalizeCatalogItem(raw) {
 
   const rawType = overrides.type || derived.suggested_type || null;
   const artworkUrl = resolveMediaUrl(overrides.primary_image) || derived.artwork_url || null;
-  const description = blocksToText(overrides.description) || derived.description || null;
+  const description = blocksToHtml(overrides.description) || plainTextToHtml(derived.description) || null;
   const labelRole = overrides.label_role || derived.label_role || null;
   const catalogNumber = overrides.catalog_number || null;
 

@@ -16,6 +16,7 @@ import SpotifyIcon from "@/components/SpotifyIcon";
 import BandcampIcon from "@/components/BandcampIcon";
 import DownloadIcon from "@/components/DownloadIcon";
 import VinylRecord from "@/components/VinylRecord";
+import CassetteTape from "@/components/CassetteTape";
 
 function yearOf(item) {
   const t = new Date(item.release_date).getTime();
@@ -107,16 +108,24 @@ const CatalogItem = () => {
     console.log(item);
 
   return (
-    <div className="font-ppneue py-10">
+    <div className="font-ppneue py-10 flex flex-col gap-8">
       <div className="grid grid-cols-6 items-center justify-center w-full h-full">
-        <div className="flex flex-col gap-4 pr-2 col-start-1 col-span-3">
-          <div className="text-[clamp(20px,3vw,8rem)] leading-[1.05] italic font-semibold uppercase text-dod-neon-mint">
-            {item.title}
+        <div className="flex flex-col gap-8 pr-2 col-start-1 col-span-3">
+          <div className="flex flex-col gap-2">
+            <div className="text-[clamp(20px,3vw,8rem)] leading-[1.05] italic font-semibold uppercase text-dod-neon-mint">
+              {item.title}
+            </div>
+            <div className="text-xl text-dod-deep-purple font-medium">{artistLabel}</div>
+            <div className="uppercase text-sm font-medium tracking-[0.15em] text-dod-white">
+              {item.type} {yearOf(item) ? `· ${yearOf(item)}` : ""}
+            </div>
           </div>
-          <div className="text-xl text-dod-deep-purple font-medium">{artistLabel}</div>
-          <div className="uppercase text-sm font-medium tracking-[0.15em] text-dod-white">
-            {item.type} {yearOf(item) ? `· ${yearOf(item)}` : ""}
-          </div>
+          {item.description && (
+            <div
+              className="rich-text font-ppneue text-dod-white/50"
+              dangerouslySetInnerHTML={{ __html: item.description }}
+            />
+          )}
           <div className="flex flex-col gap-3 lg:flex-row">
             {item.spotify_url ? (
               <Button type="thin" variant="primary" href={item.spotify_url} style={{ width: "100%" }}>
@@ -153,8 +162,8 @@ const CatalogItem = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-6 gap-10 p-10 border border-dod-lilac/50 min-h-126">
-        <div className="col-start-1 col-span-2">
+      <div className="grid grid-rows-1 grid-cols-6 gap-10 p-10 border border-dod-lilac/50 min-h-126">
+        <div className="col-start-1 col-span-6 xl:col-start-1 xl:col-span-2">
           <SectionLabel>Tracklist</SectionLabel>
           <div>
             {MOCK_TRACKLIST.map((track, i) => (
@@ -174,9 +183,9 @@ const CatalogItem = () => {
           </div>
         </div>
 
-        <div className="col-start-3 col-span-4">
+        <div className="col-start-1 col-span-6 xl:col-start-3 xl:col-span-4">
           <SectionLabel>Formats</SectionLabel>
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {MOCK_FORMATS.map((format) => (
               <div
                 key={format.key}
@@ -193,8 +202,12 @@ const CatalogItem = () => {
                       <DownloadIcon size={28} />
                     </div>
                   ) : format.key === "vinyl" ? (
-                    <div className="format-vinyl-tilt absolute inset-0 flex items-center justify-center">
-                      <VinylRecord artworkUrl={item.artwork_url} title={item.title} className="w-[85%]" />
+                    <div className="absolute p-2 pb-0 inset-0 flex items-center justify-center">
+                      <VinylRecord artwork={item.artwork_url} />
+                    </div>
+                  ) : format.key === "cassette" ? (
+                    <div className="absolute p-4 pb-0 inset-0 flex items-center justify-center">
+                      <CassetteTape artwork={item.artwork_url} />
                     </div>
                   ) : (
                     item.artwork_url && (
