@@ -1,205 +1,234 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
 import { readSeedData } from "@/utils/readSeedData";
 import { colors } from "@/tokens";
-import SubpageHeader from "@/components/SubpageHeader";
-import RosterCarousel from "@/components/RosterCarousel";
-import { initialsOf } from "@/components/ArtistPhoto";
-import CascadeImage from "@/components/CascadeImage";
-import { artistSlug } from "@/utils/artistSlug";
+import OrbitFrame from "@/components/OrbitFrame";
 
 const PRIMARY = colors.accent;
 
-const VIEW_STORAGE_KEY = "domeofdoom:roster:view";
+// OrbitFrame is purely presentational.
+// All randomized values are generated here once per artist.
+//
+// Corners come in diagonal PAIRS, not picked independently - a card
+// gets two OrbitFrames, either (top-left + bottom-right) or
+// (top-right + bottom-left), never e.g. two corners on the same side.
+const CORNER_PAIRS = [
+  ["top-left", "bottom-right"],
+  ["top-right", "bottom-left"],
+];
 
-const FilterChevron = () => (
-  <svg
-    viewBox="0 0 10 10"
-    width="8"
-    height="8"
-    style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
-  >
-    <polyline points="2,3 5,7 8,3" fill="none" style={{ stroke: PRIMARY }} strokeWidth="2.5" />
-  </svg>
-);
+const ORBIT_COLOR_PAIRS = [
+  {
+    ring: colors.white,
+    starFrom: colors.lilac,
+    starTo: colors.deep_purple,
+    glow: colors.lilac,
+  },
+  {
+    ring: colors.neon_mint,
+    starFrom: colors.lilac,
+    starTo: colors.lilac,
+    glow: colors.white,
+  },
+  {
+    ring: colors.lilac,
+    starFrom: colors.lilac,
+    starTo: colors.neon_mint,
+    glow: colors.neon_mint,
+  },
+];
 
-const GridIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-    <rect x="1" y="1" width="6.5" height="6.5" stroke="currentColor" strokeWidth="1.4" />
-    <rect x="10.5" y="1" width="6.5" height="6.5" stroke="currentColor" strokeWidth="1.4" />
-    <rect x="1" y="10.5" width="6.5" height="6.5" stroke="currentColor" strokeWidth="1.4" />
-    <rect x="10.5" y="10.5" width="6.5" height="6.5" stroke="currentColor" strokeWidth="1.4" />
-  </svg>
-);
+const STAR_SIZES = [12, 16, 18];
 
-const CarouselIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-    <rect x="1" y="3" width="16" height="12" stroke="currentColor" strokeWidth="1.4" />
-    <line x1="6.5" y1="3" x2="6.5" y2="15" stroke="currentColor" strokeWidth="1.4" />
-    <line x1="11.5" y1="3" x2="11.5" y2="15" stroke="currentColor" strokeWidth="1.4" />
-  </svg>
-);
-
-function getStoredView() {
-  try {
-    const v = localStorage.getItem(VIEW_STORAGE_KEY);
-    return v === "grid" || v === "carousel" ? v : "carousel";
-  } catch {
-    return "carousel";
-  }
-}
-
-// Matches Tailwind's `md` breakpoint (768px) — below this, roster always
-// renders as a grid regardless of the stored view preference, same as
-// Discography.
-function useIsBelowMd() {
-  const [isBelowMd, setIsBelowMd] = useState(() =>
-    typeof window !== "undefined" ? window.innerWidth < 768 : false
+// 1-3 stars per ring, each an independently random size. OrbitFrame
+// staggers their starting points around the ring itself (evenly, by
+// count) - all this needs to hand it is how many and how big.
+function randomStars() {
+  const count = 1 + Math.floor(Math.random() * 3);
+  return Array.from(
+    { length: count },
+    () => STAR_SIZES[Math.floor(Math.random() * STAR_SIZES.length)]
   );
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767.98px)");
-    const handler = (e) => setIsBelowMd(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
-  return isBelowMd;
 }
 
-const RosterGridView = ({ artists }) => (
-  <div
-    style={{
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-      gap: 14,
-    }}
-  >
-    {artists.map((artist, i) => (
-      <Link
-        key={i}
-        to={`/roster/${artistSlug(artist.name)}`}
-        className="disco-grid-tile"
-        style={{ display: "flex", flexDirection: "column", overflow: "hidden", border: "1px solid rgba(255,255,255,.12)" }}
-      >
-        <div style={{ position: "relative", aspectRatio: "1", overflow: "hidden", background: colors.card }}>
-          {artist.photo_src ? (
-            <CascadeImage
-              src={artist.photo_src}
-              alt={artist.name}
-              index={i}
-              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center">
-              <span
-                style={{
-                  fontFamily: "Archivo, sans-serif",
-                  fontStretch: "expanded",
-                  fontVariationSettings: '"wdth" 125',
-                  fontWeight: 800,
-                  fontSize: 40,
-                  color: "rgba(255,255,255,0.12)",
-                  letterSpacing: "-1px",
-                }}
-              >
-                {initialsOf(artist.name)}
-              </span>
-            </div>
-          )}
-        </div>
-        <div
-          className="h-[16px] md:h-[12px]"
-          style={{
-            width: "100%",
-            flexShrink: 0,
-            borderTop: `1px solid ${PRIMARY}`,
-            display: "flex",
-            alignItems: "center",
-            padding: "0 6px",
-            overflow: "hidden",
-            marginTop: "1px",
-          }}
-        >
-          <span
-            style={{
-              font: "600 8px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-              color: "white",
-              letterSpacing: ".02em",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {artist.name}
-          </span>
-        </div>
-      </Link>
-    ))}
-  </div>
-);
+// Returns an array of two OrbitFrame prop objects - one per corner in
+// the chosen diagonal pair. Both corners on a card share the same
+// color pair (keeps each card looking like one coherent effect), but
+// each corner's star count/sizes are rolled independently.
+function randomOrbitPairProps() {
+  const corners =
+    CORNER_PAIRS[Math.floor(Math.random() * CORNER_PAIRS.length)];
+
+  const {
+    ring,
+    starFrom,
+    starTo,
+    glow,
+  } =
+    ORBIT_COLOR_PAIRS[
+      Math.floor(Math.random() * ORBIT_COLOR_PAIRS.length)
+    ];
+
+  return corners.map((corner) => ({
+    corner,
+    ringColor: ring,
+    starGradientFrom: starFrom,
+    starGradientTo: starTo,
+    glowColor: glow,
+    stars: randomStars(),
+  }));
+}
 
 const Roster = () => {
-  const allArtists = (readSeedData("roster-data") ?? []).filter((a) => a?.name);
-  const isBelowMd = useIsBelowMd();
-  const [view, setView] = useState(getStoredView);
+  const allArtists = (readSeedData("roster-data") ?? []).filter(
+    (artist) => artist?.name
+  );
+
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("az");
 
-  const handleToggleView = () => {
-    const next = view === "grid" ? "carousel" : "grid";
-    setView(next);
-    try {
-      localStorage.setItem(VIEW_STORAGE_KEY, next);
-    } catch {
-      // localStorage unavailable — view just won't persist across reloads
-    }
-  };
+  /*
+   * Generate orbit values exactly once.
+   *
+   * OrbitFrame never generates randomness itself.
+   * Each artist therefore gets a consistent orbit configuration
+   * for the lifetime of this Roster component.
+   */
+  const orbitPropsByName = useMemo(() => {
+    const map = {};
+
+    allArtists.forEach((artist) => {
+      map[artist.name] = randomOrbitPairProps();
+    });
+
+    return map;
+
+    // allArtists is intentionally omitted.
+    // readSeedData is static for the lifetime of this page and we
+    // specifically want these values generated only once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const artists = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    let list = q
-      ? allArtists.filter((a) => a.name.toLowerCase().includes(q))
+    const query = searchQuery.trim().toLowerCase();
+
+    let list = query
+      ? allArtists.filter((artist) =>
+          artist.name.toLowerCase().includes(query)
+        )
       : allArtists;
-    list = list.slice().sort((a, b) =>
+
+    return list.slice().sort((a, b) =>
       sortOrder === "az"
         ? a.name.localeCompare(b.name)
         : b.name.localeCompare(a.name)
     );
-    return list;
   }, [allArtists, searchQuery, sortOrder]);
-
-  const effectiveGrid = isBelowMd || view === "grid";
-
-   console.log(artists);
 
   return (
     <>
-      <div className="border-b border-dod-lilac/50 mb-10 grid grid-cols-1 md:grid-cols-2">
-        <div className="flex flex-col gap-4 p-16 pl-0">
-          <span className="text-[clamp(4.5rem,6.5vw,6rem)] text-dod-neon-mint italic font-semibold">ROSTER</span>
+      {/* Header */}
+      <div className="mb-10 grid grid-cols-1 border-b border-dod-lilac/50 md:grid-cols-2">
+        <div className="flex flex-col gap-4 lg:p-16 lg:pl-0">
+          <span className="text-[clamp(4.5rem,6.5vw,6rem)] font-semibold italic text-dod-neon-mint">
+            ROSTER
+          </span>
+
           <div className="text-xl">
-            <span className="text-dod-lilac font-bold">{artists.length}</span> of {allArtists.length} items 
+            <span className="font-bold text-dod-lilac">
+              {artists.length}
+            </span>{" "}
+            of {allArtists.length} items
           </div>
+
           <div className="text-xl text-dod-lilac">
             Artists who have released through our label, the DOMEOFDOOM family
           </div>
         </div>
+
         <div className="relative overflow-hidden">
           <img
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover"
             src=""
+            alt=""
           />
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-6">
-        {allArtists.map((artist) => (
-           <div className="aspect-square relative border-dod-lilac/50 border">
-             <div className="w-full h-full relative z-3">
-               <span className="font-ppneue text-dod-neon-mint font-semibold uppercase bottom-0 absolute p-3">{artist.name}</span>
-             </div>
-             <div className="w-full h-full absolute z-2 bg-dod-deep-purple/20 top-0 bg-[linear-gradient(0deg,_var(--dod-black)_0%,_transparent_40%)]"></div>
-             <div className="w-full h-full absolute z-2 bg-dod-deep-purple/50 top-0 mix-blend-overlay saturate-200"></div>
-             <img className="object-cover absolute w-full h-full top-0 grayscale-100" src={artist.photo_src}/>
-           </div>
+
+      {/* Roster Grid */}
+      <div className="mb-10 grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+        {artists.map((artist) => (
+          <div
+            key={artist.name}
+            className="
+              group
+              relative
+              aspect-square
+              overflow-visible
+              border
+              border-dod-lilac/50
+              hover:z-32
+              cursor-pointer
+            "
+          >
+            {/*
+             * -------------------------------------------------------
+             * CARD
+             * -------------------------------------------------------
+             *
+             * This entire layer sits above the rear portion of the
+             * orbit ring.
+             */}
+            <div className="absolute inset-0 overflow-hidden">
+              <img
+                className="absolute inset-0 h-full w-full object-cover grayscale group transition-all group-hover:scale-110 group-hover:grayscale-0 duration-500"
+                src={artist.photo_src}
+                alt={artist.name}
+              />
+
+              {/* Bottom fade */}
+              <div className="absolute inset-0 bg-[linear-gradient(0deg,_var(--dod-black)_0%,_transparent_40%)]" />
+
+              {/* Color treatment */}
+              <div className="absolute inset-0 bg-dod-deep-purple/50 mix-blend-overlay saturate-200 group-hover:opacity-50 transitio-all duration-500" />
+
+              {/* Artist name */}
+              <span className="absolute bottom-0 p-3 font-ppneue font-semibold uppercase text-dod-neon-mint">
+                {artist.name}
+              </span>
+            </div>
+
+            {/*
+             * -------------------------------------------------------
+             * ORBIT
+             * -------------------------------------------------------
+             *
+             * Two OrbitFrames per card, one per corner of the diagonal
+             * pair from randomOrbitPairProps() (e.g. top-left AND
+             * bottom-right together, never independently chosen).
+             *
+             * Each OrbitFrame contains two separate visual layers:
+             *
+             *   rear ring  → behind this card
+             *   star/front → above this card
+             *
+             * Testing at opacity-100 first (per request) - once confirmed,
+             * swap back to:
+             *   opacity-0 transition-opacity duration-300 group-hover:opacity-100
+             *
+             * Deliberately NOT setting z-index here (see OrbitFrame's own
+             * "do not give this element a z-index" comment) - doing so
+             * creates a new stacking context on the root, which hoists the
+             * whole back+front ring pair above the card as one unit and
+             * breaks the behind/in-front illusion entirely.
+             */}
+            {orbitPropsByName[artist.name].map((orbitProps) => (
+              <OrbitFrame
+                key={orbitProps.corner}
+                {...orbitProps}
+                className={`transition-all duration-500 opacity-0 group-hover:opacity-100 ${orbitProps.corner.includes("top") ? "mt-[-100px] group-hover:mt-0" : "mt-[100px] group-hover:mt-0"}`}
+              />
+            ))}
+          </div>
         ))}
       </div>
     </>

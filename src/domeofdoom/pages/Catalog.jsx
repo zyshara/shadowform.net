@@ -241,8 +241,8 @@ const Catalog = () => {
   return (
     <>
       <div className="border-b border-dod-lilac/50 mb-10 gap-4 lg:gap-0 grid grid-cols-1 md:grid-cols-2">
-        <div className="flex flex-col gap-4 lg:border-r lg:border-dod-lilac/50 lg:p-16 pl-0">
-          <span className="text-[clamp(4.5rem,6.5vw,6rem)] text-dod-neon-mint italic font-semibold">CATALOG</span>
+        <div className="flex flex-col gap-4 lg:border-r lg:border-dod-lilac/50 lg:p-16 lg:pl-0">
+          <span className="text-[clamp(4.5rem,6.3vw,6rem)] text-dod-neon-mint italic font-semibold">CATALOG</span>
           <div className="text-xl">
             <span className="text-dod-lilac font-bold">{items.length}</span> of {allItems.length} items 
           </div>
