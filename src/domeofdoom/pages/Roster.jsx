@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from "react";
 import { readSeedData } from "@/utils/readSeedData";
 import { colors } from "@/tokens";
 import OrbitFrame from "@/components/OrbitFrame";
+import WarpedGrid from "@/components/WarpedGrid";
+import GridDome from "@/components/GridDome";
 
 const PRIMARY = colors.accent;
 
@@ -48,6 +50,16 @@ function randomStars() {
     { length: count },
     () => STAR_SIZES[Math.floor(Math.random() * STAR_SIZES.length)]
   );
+}
+
+// Small per-card variation around WarpedGrid's defaults (intensity=1,
+// density=1) - enough that cards don't all look identical, not enough
+// to stop reading as "the same grid".
+function randomWarpedGridProps() {
+  return {
+    intensity: 0.5 + Math.random() * 1.1, // 0.8 - 1.2
+    density: 0.1 + Math.random() * 0.4, // 0.85 - 1.15
+  };
 }
 
 // Returns an array of two OrbitFrame prop objects - one per corner in
@@ -108,6 +120,18 @@ const Roster = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const warpedGridPropsByName = useMemo(() => {
+    const map = {};
+
+    allArtists.forEach((artist) => {
+      map[artist.name] = randomWarpedGridProps();
+    });
+
+    return map;
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const artists = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
@@ -146,10 +170,10 @@ const Roster = () => {
         </div>
 
         <div className="relative overflow-hidden">
-          <img
-            className="absolute inset-0 h-full w-full object-cover"
-            src=""
-            alt=""
+          <GridDome
+            width={295}
+            perspective={1}
+            style={{ transform: "scale(1.2)" }}
           />
         </div>
       </div>
@@ -190,6 +214,11 @@ const Roster = () => {
 
               {/* Color treatment */}
               <div className="absolute inset-0 bg-dod-deep-purple/50 mix-blend-overlay saturate-200 group-hover:opacity-50 transitio-all duration-500" />
+
+              <WarpedGrid
+                {...warpedGridPropsByName[artist.name]}
+                className="absolute w-full h-full scale-120"
+              />
 
               {/* Artist name */}
               <span className="absolute bottom-0 p-3 font-ppneue font-semibold uppercase text-dod-neon-mint">

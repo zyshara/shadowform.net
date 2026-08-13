@@ -356,7 +356,6 @@ const OrbitFrame = ({
 
           overflow: visible;
           pointer-events: none;
-          /* filter (drop-shadow using glowColor) is set inline - see style={{ filter: ... }} above. */
         }
 
         .orbit-frame__ring--back {
@@ -396,7 +395,6 @@ const OrbitFrame = ({
           pointer-events: none;
 
           z-index: -1;
-          /* filter (drop-shadow using glowColor) is set inline - see style={{ filter: ... }} above. */
         }
 
         @keyframes star-z-index {
