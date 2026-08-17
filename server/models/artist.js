@@ -1,34 +1,57 @@
-import { formatCompactNumber } from "../utils/formatCompactNumber.js";
+// server/models/artist.js
+//
+// Maps a raw Strapi DomeOfDoomArtist entry -> the shape the client expects
+// (name, slug, photo_src, location, url) - same overrides ?? derived ??
+// raw-scrape fallback pattern catalogItem.js uses, so the Roster/Artist
+// pages become 100% Strapi-sourced the same way CatalogItem already is,
+// instead of reading the separate Bandcamp-scrape-only roster cache.
+//
+// location has no home in `derived` (Strapi's derived COMPONENT schema
+// doesn't define that field - confirmed by a live write attempt getting
+// rejected with a validation error, not silently dropped) so it's read
+// from bandcamp_raw_data instead, which is a schemaless json field and
+// always round-trips whatever the scraper wrote to it.
+//
+// overrides fields beyond profile_picture (e.g. a location/name override)
+// aren't confirmed to exist in Strapi's overrides component schema yet -
+// referencing them here is harmless if they don't (just undefined, falls
+// through to the next fallback) but they won't actually DO anything until
+// added to Strapi, same as slug needed to be added before it was usable.
 
-function createArtistStats(data) {
-  return [
-    { label: "Spotify Monthly",    value: formatCompactNumber(data?.spotify_monthly_listeners) },
-    { label: "Instagram Followers", value: formatCompactNumber(data?.instagram_followers) },
-    { label: "Upcoming Shows",     value: formatCompactNumber(data?.upcoming_shows) },
-    { label: "Shows Played",       value: formatCompactNumber(data?.shows_played) },
-    { label: "Total Releases",     value: formatCompactNumber(data?.total_releases) },
-  ];
+function resolveMediaUrl(media) {
+  const url = media?.url;
+  if (!url) return null;
+  if (/^https?:\/\//.test(url)) return url;
+  const base = process.env.STRAPI_API_URL || "https://strapi-shadowform-52c53315c615.herokuapp.com";
+  return `${base}${url}`;
 }
 
-/**
- * Maps a raw Strapi artist entry → the shape the client expects.
- * Compatible with both Strapi v4 (entry.attributes) and v5 (flat entry).
- */
 export function normalizeArtist(raw) {
-  if (!raw || !raw.id || !raw.name || !raw.slug) return null;
+  const r = raw?.attributes ?? raw;
+  if (!r) return null;
+
+  const derived = r.derived ?? {};
+  const overrides = r.overrides ?? {};
+  const bandcampRaw = r.bandcamp_raw_data ?? {};
+
+  const name = overrides.name || derived.name || r.name || null;
+  if (!name) return null;
+
+  const photoSrc =
+    resolveMediaUrl(overrides.profile_picture) || derived.bandcamp_image || bandcampRaw.imageUrl || null;
+  const location = overrides.location || bandcampRaw.location || null;
+  const url = overrides.bandcamp_url || derived.bandcamp_url || bandcampRaw.bandcampUrl || null;
 
   return {
-    id:            raw.id,
-    slug:          raw.slug,
-    name:          raw.name,
-    primary_genre: raw.primary_genre?.Name,
-    location:      raw.location,
-    genres:        raw.genres?.map((g) => g?.Name) ?? [],
-    blurb:         raw.blurb_biography ?? "",
-    biography:     raw.biography ?? "",
-    icon:          raw.icon?.url,
-    stats:         createArtistStats(raw.artist_statistics),
-    bookings:      raw.booking_email ?? "",
-    management:    raw.management_email ?? "",
+    uid: raw.documentId ?? raw.id,
+    name,
+    slug: r.slug ?? null,
+    photo_src: photoSrc,
+    location,
+    url,
   };
+}
+
+export function normalizeArtists(list = []) {
+  return list.map(normalizeArtist).filter(Boolean);
 }

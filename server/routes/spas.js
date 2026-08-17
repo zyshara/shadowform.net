@@ -3,9 +3,10 @@ import { fileURLToPath } from "url";
 import { readFileSync } from "fs";
 import express from "express";
 import { loadMetadata, resolvePageMetadata } from "../lib/metadata.js";
-import { getDiscography, getRoster, getMerch, getShows, getAboutPage } from "../lib/bandcampCache.js";
+import { getDiscography, getMerch, getShows, getAboutPage } from "../lib/bandcampCache.js";
 import { getCatalogItems } from "../lib/strapiCatalogCache.js";
-import { getArtistProfilePictures } from "../lib/strapiArtistOverridesCache.js";
+import { getArtists } from "../lib/strapiArtistCache.js";
+import { withCacheBust } from "../lib/cacheBustToken.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -65,16 +66,14 @@ function injectJsonData(html, elementId, data) {
   return html.replace("</head>", `${script}</head>`);
 }
 
-// A human-set DomeOfDoomArtist.overrides.profile_picture takes priority
-// over the Bandcamp-scraped photo, matched by name (same matching key
-// lib/artists.js uses to resolve artist relations elsewhere).
-function withArtistProfilePictures(roster) {
-  const overrides = getArtistProfilePictures();
-  if (!overrides.size) return roster;
-  return roster.map((artist) => {
-    const override = overrides.get((artist.name ?? "").trim().toUpperCase());
-    return override ? { ...artist, photo_src: override } : artist;
-  });
+// Busts the browser's image cache with a `?v=<token>` that only changes
+// when fetchAndCacheStrapiData() pulls fresh data (see cacheBustToken.js) -
+// not on every request, so a page reload doesn't force every artist photo
+// to re-download.
+function withCacheBustedPhotos(roster) {
+  return roster.map((artist) =>
+    artist.photo_src ? { ...artist, photo_src: withCacheBust(artist.photo_src) } : artist
+  );
 }
 
 export function registerSpaRoutes(app) {
@@ -116,7 +115,7 @@ export function registerSpaRoutes(app) {
     domeofdoomStatic(req, res, () => {
       let html = readFileSync(domeofdoomIndex, "utf8");
       html = injectJsonData(html, "discography-data", getDiscography());
-      html = injectJsonData(html, "roster-data", withArtistProfilePictures(getRoster()));
+      html = injectJsonData(html, "roster-data", withCacheBustedPhotos(getArtists()));
       html = injectJsonData(html, "merch-data", getMerch());
       html = injectJsonData(html, "shows-data", getShows());
       html = injectJsonData(html, "about-page-data", getAboutPage());

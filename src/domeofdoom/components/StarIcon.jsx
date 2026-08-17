@@ -19,6 +19,7 @@ const StarIcon = ({
   showBackground = true,
   backgroundColor = "#0a0812",
   opacity = 1,
+  className = "",
 }) => {
   const uid = useId();
   const glowId = `star-icon-glow-${uid}`;
@@ -26,7 +27,7 @@ const StarIcon = ({
   const [x1, y1, x2, y2] = gradientDirection === "vertical" ? ["0%", "0%", "0%", "100%"] : ["0%", "0%", "100%", "100%"];
 
   return (
-    <svg width={size} height={size} viewBox="-30 -30 260 260" xmlns="http://www.w3.org/2000/svg" style={{ opacity }}>
+    <svg width={size} height={size} viewBox="-30 -30 260 260" xmlns="http://www.w3.org/2000/svg" style={{ opacity }} className={className}>
       <defs>
         {showGlow && (
           <radialGradient id={glowId} cx="50%" cy="50%" r="50%">

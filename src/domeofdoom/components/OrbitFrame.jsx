@@ -1,16 +1,21 @@
 // src/domeofdoom/components/OrbitFrame.jsx
 
-import React, { useId } from "react";
+import React, { useId, useRef, useEffect } from "react";
 import StarIcon from "./StarIcon";
 
 // The front ring's hand-tuned clip wedge, as raw [x%, y%] points, so
 // `corner` can reflect/flip them the same way it transforms the
 // geometry below instead of needing four hardcoded polygons.
 const FRONT_CLIP_POINTS = [
-  [0, 10],
-  [30, -16],
-  [50, 50],
-  [-100, 0],
+  [0, 0],
+  [0, 100],
+  [100, 0],
+];
+
+const BACK_CLIP_POINTS = [
+  [0, 0],
+  [0, 100],
+  [100, 100],
 ];
 
 const OrbitFrame = ({
@@ -18,14 +23,14 @@ const OrbitFrame = ({
   // outside the card so only a sliver of it ever dips inside. These
   // are the TOP-LEFT values - pass corner to get any of the other
   // three, rather than hand-deriving mirrored/flipped numbers.
-  cx = -60,
-  cy = 15,
-  rx = 40,
-  ry = 26,
+  cx = -290,
+  cy = 68,
+  rx = 78,
+  ry = 78,
 
   // True 3D tilt (not a 2D rotate()) - applied to both layers identically
   // so their ellipses stay perfectly aligned with each other.
-  rotateX = 39,
+  rotateX = 43,
   rotateY = 251,
 
   // Which corner to hug - reuses the same top-left cx/cy/rx/ry/
@@ -48,6 +53,8 @@ const OrbitFrame = ({
   // space, so plain 100-x / 100-y reflections are correct for it.
   corner = "top-left",
 
+  orientation = "front",
+
   ringColor = "#BFA7FF",
   ringWidth = 2,
 
@@ -60,7 +67,7 @@ const OrbitFrame = ({
   // One entry per star (1-3 of them), each just its size - stagger
   // and randomization live in the caller (Roster.jsx), same as every
   // other random-per-artist value; OrbitFrame stays presentational.
-  stars = [20],
+  stars = [14],
   starGradientFrom = "#5425A8",
   starGradientTo = "#9FFFC8",
 
@@ -83,24 +90,38 @@ const OrbitFrame = ({
 
   const tilt = `rotateY(${effectiveRotateY}deg) rotateX(${effectiveRotateX}deg)`;
 
-  const frontClipPath = `polygon(${FRONT_CLIP_POINTS.map(
+  // Same mirrored points that make up frontClipPath below, kept as plain
+  // numbers (not a CSS polygon() string) so the star's z-index effect can
+  // point-in-polygon test against the exact same wedge the ring uses -
+  // see the STAR MOTION + Z-INDEX comment further down for why that has
+  // to be the ring's wedge specifically, not just "anywhere inside the
+  // card".
+  const effectiveFrontWedge = FRONT_CLIP_POINTS.map(([x, y]) => [
+    mirrorX ? 100 - x : x,
+    flipY ? 100 - y : y,
+  ]);
+
+  const frontClipPath = `polygon(${effectiveFrontWedge
+    .map(([x, y]) => `${x}% ${y}%`)
+    .join(", ")})`;
+
+  const backClipPath = `polygon(${BACK_CLIP_POINTS.map(
     ([x, y]) => `${mirrorX ? 100 - x : x}% ${flipY ? 100 - y : y}%`
   ).join(", ")})`;
 
   /*
    * The billboard/counter-rotation approach (rotate the star by the
    * exact inverse of `tilt`) turned out to not reliably cancel out in
-   * practice - it relies on the WHOLE chain (including the
-   * <animateMotion> group) staying in one consistent 3D rendering
-   * context, and something in that chain (likely animateMotion's SMIL
-   * transform, which predates CSS 3D transforms) wasn't composing the
-   * way plain matrix algebra predicts, leaving the star rotated
+   * practice - it relies on the WHOLE chain staying in one consistent
+   * 3D rendering context, and something in that chain wasn't composing
+   * the way plain matrix algebra predicts, leaving the star rotated
    * almost edge-on.
    *
    * Instead: pre-compute, in plain JS, the 2D shape the tilted ellipse
    * ACTUALLY projects to on screen (same rotateY/rotateX math the
-   * browser applies, done by hand here), and animate the star along
-   * THAT flat path directly - no 3D transform on the star's own
+   * browser applies, done by hand here) with this project(t) function,
+   * and drive the star directly from it every frame (see the STAR
+   * MOTION + Z-INDEX effect below) - no 3D transform on the star's own
    * group at all, so there's nothing left that could skew it.
    */
   const X = (effectiveRotateX * Math.PI) / 180;
@@ -123,16 +144,118 @@ const OrbitFrame = ({
     return [x2, y2];
   };
 
-  const SAMPLES = 240;
-  const samplePoints = [];
-  for (let i = 0; i <= SAMPLES; i++) {
-    samplePoints.push(project((i / SAMPLES) * 2 * Math.PI));
-  }
+  /*
+   * ------------------------------------------------------------------
+   * STAR MOTION + Z-INDEX (one JS clock drives both, no SMIL)
+   * ------------------------------------------------------------------
+   *
+   * This used to split the work in two: SMIL <animateMotion> drove the
+   * star's on-screen position, while a separate mechanism (first a CSS
+   * @keyframes animation, then a getBoundingClientRect measurement)
+   * decided z-index. Both iterations of the z-index side eventually hit
+   * the same root problem - SMIL's timeline runs independently of
+   * anything we control, and browsers are free to pause/throttle it for
+   * content that's effectively invisible (this component sits at
+   * opacity:0 whenever its card isn't hovered). That produced exactly
+   * the reported bug: on first hover the star was still wherever SMIL's
+   * paused clock had left it, badly out of sync with the fresh z-index
+   * read, and only caught up a frame or two later once SMIL resumed.
+   *
+   * Fix: don't use SMIL for the star at all. Track one shared elapsed-
+   * time clock ourselves (performance.now() since mount) and, every
+   * rAF tick, compute the star's position with project(t) (the same
+   * hand-computed 3D-projection math the ring's geometry uses), then
+   * set its <g transform> directly.
+   * z-index comes from testing that SAME just-computed point (not a
+   * DOM measurement) against effectiveFrontWedge - the front ring's
+   * actual visible region, not just "anywhere inside the card" (that
+   * was a separate earlier bug - the ring only shows through this small
+   * hand-tuned wedge, not the whole card interior). Position and
+   * z-index are now two reads of one number for one frame, so there's
+   * no separate clock left to fall out of sync with, and nothing to
+   * pause independently while invisible.
+   */
+  const starRefs = useRef([]);
+  const startTimeRef = useRef(null);
 
-  const flatOrbitPath =
-    samplePoints
-      .map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(2)},${y.toFixed(2)}`)
-      .join(" ") + " Z";
+  // Standard sign-of-area point-in-triangle test (effectiveFrontWedge
+  // is always a 3-point polygon).
+  const isInFrontWedge = (px, py) => {
+    const [[x1, y1], [x2, y2], [x3, y3]] = effectiveFrontWedge;
+    const sign = (ax, ay, bx, by, cx2, cy2) =>
+      (bx - ax) * (cy2 - ay) - (by - ay) * (cx2 - ax);
+    const d1 = sign(x1, y1, x2, y2, px, py);
+    const d2 = sign(x2, y2, x3, y3, px, py);
+    const d3 = sign(x3, y3, x1, y1, px, py);
+    const hasNeg = d1 < 0 || d2 < 0 || d3 < 0;
+    const hasPos = d1 > 0 || d2 > 0 || d3 > 0;
+    return !(hasNeg && hasPos);
+  };
+
+  // Evenly spaces multiple stars around the shared loop. Negative -
+  // star i's clock should already be `|stagger|` seconds in, matching
+  // the old SMIL begin="-Ns" convention this replaces.
+  const getStagger = (i) => -((i / stars.length) * duration);
+
+  useEffect(() => {
+    /*
+     * project(0) - the mathematical start of the loop, t=0 - lands
+     * inside the front wedge for this geometry (not by design, just
+     * where the ellipse's own parametrization happens to begin). Since
+     * every instance's clock starts at elapsedSec≈0 on mount, and star
+     * index 0 always has zero stagger, EVERY card's first star began
+     * exactly there on page load - invisible while unhovered, but the
+     * first thing you'd see the moment you hovered shortly after a
+     * reload, which is exactly the reported "starts front, then
+     * corrects" - not a timing bug, just every instance sharing the
+     * same literal start-of-loop position. Back-dating the clock by a
+     * random amount (as if it had already been running before mount)
+     * decorrelates each card's phase at any given moment, including
+     * right after a fresh load.
+     */
+    if (startTimeRef.current == null) {
+      startTimeRef.current = performance.now() - Math.random() * duration * 1000;
+    }
+    let rafId;
+
+    // Half the star's own footprint, in the SAME 0-100 units as
+    // effectiveFrontWedge/project() - the exact hysteresis the corner-
+    // testing fix relied on (front as soon as any part overlaps the
+    // wedge, back only once all of it has cleared), just computed
+    // directly instead of measured, since position is computed too now.
+    const halfSizes = stars.map((size) => size / 2);
+
+    const tick = () => {
+      const now = performance.now();
+
+      starRefs.current.forEach((entry, i) => {
+        if (!entry?.svgEl || !entry?.gEl) return;
+
+        const stagger = getStagger(i);
+        const elapsedSec = (now - startTimeRef.current) / 1000 - stagger;
+        const t = ((elapsedSec % duration) / duration) * 2 * Math.PI;
+        const [x, y] = project(t);
+
+        entry.gEl.setAttribute("transform", `translate(${x} ${y})`);
+
+        const half = halfSizes[i];
+        const corners = [
+          [x - half, y - half],
+          [x + half, y - half],
+          [x - half, y + half],
+          [x + half, y + half],
+        ];
+        const inFront = corners.some(([px, py]) => isInFrontWedge(px, py));
+
+        entry.svgEl.style.zIndex = inFront ? 99 : -1;
+      });
+
+      rafId = requestAnimationFrame(tick);
+    };
+
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [stars, duration]);
 
   /*
    * The star used to live inside the ring's masked/clipped groups, so
@@ -141,8 +264,8 @@ const OrbitFrame = ({
    * stroke), that boundary sliced straight through its body instead
    * of hiding it cleanly. Fix: don't mask/clip the star at all - it's
    * its own layer (.orbit-frame__star-layer below), and visibility is
-   * handled via the star-z-index keyframes instead of any geometric
-   * cut, so it's always drawn as a complete, unsliced star.
+   * handled via the measured z-index effect above instead of any
+   * geometric cut, so it's always drawn as a complete, unsliced star.
    */
   const starIcon = (size) => (
     <g transform={`translate(${-size / 2},${-size / 2})`}>
@@ -157,8 +280,10 @@ const OrbitFrame = ({
     </g>
   );
 
+  const glowFilter = `drop-shadow(0px 0px 6px ${glowColor}) drop-shadow(0px 0px 0px ${glowColor})`;
+
   return (
-    <div className={`orbit-frame ${className}`} aria-hidden="true">
+    <div className="orbit-frame" aria-hidden="true">
       {/* ============================================================
           BACK RING
 
@@ -172,10 +297,10 @@ const OrbitFrame = ({
           ============================================================ */}
 
       <svg
-        className="orbit-frame__ring orbit-frame__ring--back"
+        className={`orbit-frame__ring orbit-frame__ring--back ${orientation} ${className}`}
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
-        style={{ filter: `drop-shadow(0px 0px 6px ${glowColor})` }}
+        style={{ filter: glowFilter }}
       >
         <defs>
           <mask
@@ -234,12 +359,12 @@ const OrbitFrame = ({
           ============================================================ */}
 
       <svg
-        className="orbit-frame__ring orbit-frame__ring--front"
+        className={`orbit-frame__ring orbit-frame__ring--front ${orientation} ${className}`}
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
         style={{
-          clipPath: frontClipPath,
-          filter: `drop-shadow(0px 0px 6px ${glowColor})`,
+          clipPath: orientation === "front" ? frontClipPath : backClipPath,
+          filter: glowFilter,
         }}
       >
         <g transform={`translate(${offsetX} ${offsetY})`}>
@@ -269,155 +394,37 @@ const OrbitFrame = ({
 
           1-3 of them (however many `stars` has). Deliberately their
           own layer, NOT inside either ring's mask/clip-path above -
-          see the comment by starIcon for why. Each travels the same
-          flatOrbitPath but starts at its own stagger offset (an even
-          split of the loop by star count, via a negative SMIL `begin`
-          - the standard trick for spacing multiple copies around one
-          shared motion path) so multiple stars don't clump together.
-          The z-index keyframes get the matching negative animation-delay
-          so each star's front/behind toggle stays in sync with ITS OWN
-          position rather than all firing on the same fixed schedule.
+          see the comment by starIcon for why. Position AND z-index are
+          both driven imperatively by the effect above (one shared
+          elapsed-time clock, no SMIL) - the <g ref> below just gets its
+          transform attribute set directly every frame, so there's
+          nothing to declare here for motion or timing.
           ============================================================ */}
 
       {stars.map((size, i) => {
-        const stagger = -((i / stars.length) * duration);
         return (
           <svg
             key={i}
-            className="orbit-frame__star-layer"
+            ref={(el) => {
+              starRefs.current[i] ??= {};
+              starRefs.current[i].svgEl = el;
+            }}
+            className={`orbit-frame__star-layer ${className}`}
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
-            style={{
-              animationDelay: `${stagger}s`,
-              filter: `drop-shadow(0px 0px 6px ${glowColor})`,
-            }}
+            style={{ filter: glowFilter }}
           >
-            <g>
-              <animateMotion
-                calcMode="linear"
-                dur={`${duration}s`}
-                begin={`${stagger}s`}
-                repeatCount="indefinite"
-                path={flatOrbitPath}
-                rotate="0"
-              />
+            <g
+              ref={(el) => {
+                starRefs.current[i] ??= {};
+                starRefs.current[i].gEl = el;
+              }}
+            >
               {starIcon(size)}
             </g>
           </svg>
         );
       })}
-
-      <style>{`
-        /*
-         * ============================================================
-         * ROOT
-         * ============================================================
-         */
-
-        .orbit-frame {
-          position: absolute;
-          inset: 0;
-
-          width: 100%;
-          height: 100%;
-
-          overflow: visible;
-          pointer-events: none;
-
-          /*
-           * IMPORTANT:
-           *
-           * Do NOT give this element a z-index.
-           *
-           * Its children need to exist at different stacking levels:
-           *
-           *   back ring  → z-index: 0
-           *   card       → z-index: 10
-           *   front ring → z-index: 20
-           *   star       → z-index: 30
-           *
-           * The star's own visibility isn't driven by z-index/masking
-           * at all though - see the star layer's opacity <animate>.
-           */
-        }
-
-        /*
-         * ============================================================
-         * RINGS
-         * ============================================================
-         */
-
-        .orbit-frame__ring {
-          position: absolute;
-          inset: 0;
-
-          width: 100%;
-          height: 100%;
-
-          overflow: visible;
-          pointer-events: none;
-        }
-
-        .orbit-frame__ring--back {
-          z-index: -1;
-        }
-
-        .orbit-frame__ring--front {
-          z-index: 20;
-
-          /*
-           * clip-path itself is set inline (style={{ clipPath: frontClipPath }}
-           * above) instead of here, since it needs to mirror/flip along
-           * with the rest of the geometry depending on the corner prop -
-           * see FRONT_CLIP_POINTS. Still a hand-tuned wedge; adjust
-           * those points to chase the ring's actual position as
-           * cx/cy/rx/ry/rotateX/rotateY change.
-           */
-          overflow: hidden;
-        }
-
-        /*
-         * ============================================================
-         * STAR LAYER
-         * ============================================================
-         */
-
-        .orbit-frame__star-layer {
-          animation: star-z-index 30s linear infinite;
-
-          position: absolute;
-          inset: 0;
-
-          width: 100%;
-          height: 100%;
-
-          overflow: visible;
-          pointer-events: none;
-
-          z-index: -1;
-        }
-
-        @keyframes star-z-index {
-          0% {
-            z-index: -1;
-          }
-          20% {
-            z-index: -1;
-          }
-          21% {
-            z-index: 29;
-          }
-          70% {
-            z-index: 29; 
-          }
-          71% {
-            z-index: -1; 
-          }
-          100% {
-            z-index: -1;
-          }
-        }
-      `}</style>
     </div>
   );
 };

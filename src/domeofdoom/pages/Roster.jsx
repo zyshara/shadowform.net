@@ -4,6 +4,7 @@ import { colors } from "@/tokens";
 import OrbitFrame from "@/components/OrbitFrame";
 import WarpedGrid from "@/components/WarpedGrid";
 import GridDome from "@/components/GridDome";
+import StarIcon from "@/components/StarIcon";
 
 const PRIMARY = colors.accent;
 
@@ -13,10 +14,9 @@ const PRIMARY = colors.accent;
 // Corners come in diagonal PAIRS, not picked independently - a card
 // gets two OrbitFrames, either (top-left + bottom-right) or
 // (top-right + bottom-left), never e.g. two corners on the same side.
-const CORNER_PAIRS = [
-  ["top-left", "bottom-right"],
-  ["top-right", "bottom-left"],
-];
+const CORNERS = ["top-left", "bottom-right", "top-right", "bottom-left"];
+
+const ORIENTATIONS = ["front"];
 
 const ORBIT_COLOR_PAIRS = [
   {
@@ -45,7 +45,7 @@ const STAR_SIZES = [12, 16, 18];
 // staggers their starting points around the ring itself (evenly, by
 // count) - all this needs to hand it is how many and how big.
 function randomStars() {
-  const count = 1 + Math.floor(Math.random() * 3);
+  const count = 2 + Math.floor(Math.random() * 3);
   return Array.from(
     { length: count },
     () => STAR_SIZES[Math.floor(Math.random() * STAR_SIZES.length)]
@@ -67,8 +67,9 @@ function randomWarpedGridProps() {
 // color pair (keeps each card looking like one coherent effect), but
 // each corner's star count/sizes are rolled independently.
 function randomOrbitPairProps() {
-  const corners =
-    CORNER_PAIRS[Math.floor(Math.random() * CORNER_PAIRS.length)];
+  const corner = CORNERS[Math.floor(Math.random() * CORNERS.length)];
+
+  const orientation = ORIENTATIONS[Math.floor(Math.random() * ORIENTATIONS.length)];
 
   const {
     ring,
@@ -80,14 +81,15 @@ function randomOrbitPairProps() {
       Math.floor(Math.random() * ORBIT_COLOR_PAIRS.length)
     ];
 
-  return corners.map((corner) => ({
+  return {
     corner,
+    orientation: orientation,
     ringColor: ring,
+    stars: randomStars(),
     starGradientFrom: starFrom,
     starGradientTo: starTo,
     glowColor: glow,
-    stars: randomStars(),
-  }));
+  };
 }
 
 const Roster = () => {
@@ -186,6 +188,7 @@ const Roster = () => {
             className="
               group
               relative
+              z-0
               aspect-square
               overflow-visible
               border
@@ -203,17 +206,34 @@ const Roster = () => {
              * orbit ring.
              */}
             <div className="absolute inset-0 overflow-hidden">
-              <img
-                className="absolute inset-0 h-full w-full object-cover grayscale group transition-all group-hover:scale-110 group-hover:grayscale-0 duration-500"
-                src={artist.photo_src}
-                alt={artist.name}
-              />
+              {artist.photo_src ? (
+                <img
+                  className="absolute inset-0 h-full w-full object-cover grayscale group transition-all group-hover:scale-110 group-hover:grayscale-0 duration-500"
+                  src={artist.photo_src}
+                  alt={artist.name}
+                />
+              ) : (
+                // No scraped Bandcamp photo (e.g. artists created directly
+                // in Strapi from catalog/track credits, not from the
+                // Bandcamp artist roster - see conversation history) -
+                // same star used as the Formats-grid filler on CatalogItem.
+                <div className="absolute inset-0 flex items-center justify-center bg-dod-black">
+                  <StarIcon
+                    size={96}
+                    gradientFrom={colors.deep_purple}
+                    gradientTo={colors.deep_purple}
+                    glowColor={colors.lilac}
+                    showGlow={true}
+                    showBackground={false}
+                  />
+                </div>
+              )}
 
               {/* Bottom fade */}
               <div className="absolute inset-0 bg-[linear-gradient(0deg,_var(--dod-black)_0%,_transparent_40%)]" />
 
               {/* Color treatment */}
-              <div className="absolute inset-0 bg-dod-deep-purple/50 mix-blend-overlay saturate-200 group-hover:opacity-50 transitio-all duration-500" />
+              <div className="absolute inset-0 bg-dod-deep-purple/50 mix-blend-overlay saturate-200 group-hover:opacity-50 transition-all duration-500" />
 
               <WarpedGrid
                 {...warpedGridPropsByName[artist.name]}
@@ -250,13 +270,11 @@ const Roster = () => {
              * whole back+front ring pair above the card as one unit and
              * breaks the behind/in-front illusion entirely.
              */}
-            {orbitPropsByName[artist.name].map((orbitProps) => (
-              <OrbitFrame
-                key={orbitProps.corner}
-                {...orbitProps}
-                className={`transition-all duration-500 opacity-0 group-hover:opacity-100 ${orbitProps.corner.includes("top") ? "mt-[-100px] group-hover:mt-0" : "mt-[100px] group-hover:mt-0"}`}
-              />
-            ))}
+             <OrbitFrame
+               key={orbitPropsByName[artist.name].corner}
+               {...orbitPropsByName[artist.name]}
+               className={`transition-all duration-500 opacity-0 group-hover:opacity-100 ${orbitPropsByName[artist.name].corner.includes("top") ? "mt-[-100px] group-hover:mt-0" : "mt-[100px] group-hover:mt-0"}`}
+             />
           </div>
         ))}
       </div>

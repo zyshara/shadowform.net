@@ -21,6 +21,9 @@ import { Link } from "react-router-dom";
 import { readSeedData } from "@/utils/readSeedData";
 import { catalogItemSlug } from "@/utils/catalogItemSlug";
 import { STARBURST_DECOR } from "@/tokens";
+import { colors } from "@/tokens";
+import WarpedGrid from "@/components/WarpedGrid";
+import StarIcon from "@/components/StarIcon";
 
 // value = the real stored format name (must match derived.formats exactly
 // for filtering to work); label = what the dropdown displays. These differ
@@ -251,10 +254,20 @@ const Catalog = () => {
           </div>
         </div>
         <div className="relative overflow-hidden min-h-[110px]">
-          <img
-            className="absolute inset-0 w-full h-full object-cover"
-            src={STARBURST_DECOR}
-          />
+          <div className="absolute inset-0 w-full h-full object-cover flex justify-center items-center filter-[saturate(2)]">
+            <img
+              className="absolute object-cover transition-all" 
+              src="https://res.cloudinary.com/dfeyhbxeg/image/upload/v1786587597/distressed_texture_c11a949095.png"/>
+            <StarIcon
+              size={300}
+              gradientFrom={colors.deep_purple}
+              gradientTo={colors.neon_mint}
+              showGlow={true}
+              showBackground={false}
+              className="absolute transform-[rotateY(4deg)_rotateZ(-30deg)_scaleX(1.05)] animate-[star-hover_6s_ease-in-out_infinite]"
+            />
+            <WarpedGrid/>
+          </div>
         </div>
       </div>
 

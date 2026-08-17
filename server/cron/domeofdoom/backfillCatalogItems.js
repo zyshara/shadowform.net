@@ -20,7 +20,7 @@
 // is never treated as final (see conversation history re: Alpha Dog).
 
 import { strapiGet, strapiPost, strapiPut } from "../../lib/strapi.js";
-import { splitArtistString, loadArtistCache } from "../../lib/artists.js";
+import { slugifyArtistName, resolveArtistNamesFromRawItem, loadArtistCache, ensureArtist } from "../../lib/artists.js";
 import { logger } from "../../lib/logger.js";
 
 const RAW_ITEMS_PATH = "/api/dome-of-doom-bandcamp-item-raws";
@@ -144,35 +144,40 @@ async function resolveFormatIds(formatCache, formatNames) {
   return ids;
 }
 
-// ─── Artists (DomeOfDoomArtist, roster-only matching) ───────────────────────
+// ─── Artists (DomeOfDoomArtist) ─────────────────────────────────────────────
 
-// raw_item.artists is always a single-entry array in practice (our
-// scraper's extractArtists() only ever returns one {name, url} object),
-// but that one name can itself be a comma/&-joined multi-artist string
-// (e.g. "Secret Tape, Rohaan") - split every entry's name the same way
-// the old discography sync does, then only link names that already match
-// an existing roster artist. No stub creation: Bandcamp's /artists roster
-// is the source of truth (see conversation history) - a split name with no
-// roster match (e.g. "Rohaan") is just dropped, not invented.
-function resolveArtistNames(rawArtists) {
-  const names = new Set();
-  for (const entry of rawArtists || []) {
-    for (const name of splitArtistString(entry.name)) {
-      names.add(name);
+// Every candidate name from BOTH the release-level artists field AND
+// tracks[].artist (with remix/flip/VIP-credit filtering - see lib/
+// artists.js's resolveArtistNamesFromRawItem, validated against real
+// catalog data via dryRunArtistExtraction.js before landing here) gets
+// CREATED as a new DomeOfDoomArtist if it has no existing roster match
+// (via ensureArtist, which also sets its slug), rather than dropped -
+// policy as of 2026-08-17: the roster used to be treated as the sole
+// source of truth and unmatched names were silently discarded, but
+// catalog data is now trusted enough to create from directly.
+
+// Slug match first (catches casing/punctuation/accent variants a plain
+// uppercase compare would miss - see lib/artists.js's slugifyArtistName,
+// e.g. "(DJ) NOBOD¥" matching a raw "DJ Nobody" credit), falling back to
+// the plain uppercase key loadArtistCache also still populates. Anything
+// still unmatched gets created (skipped in dry-run - see the `created`
+// list's use at the call site for what WOULD be created instead).
+async function resolveArtistIds(artistCache, names, { dryRun }) {
+  const matched = [];
+  const created = [];
+  for (const name of names) {
+    const trimmed = name.trim();
+    const hit = artistCache.get(slugifyArtistName(trimmed)) ?? artistCache.get(trimmed.toUpperCase());
+    if (hit) {
+      matched.push(hit.docId);
+      continue;
+    }
+    created.push(trimmed);
+    if (!dryRun) {
+      matched.push(await ensureArtist(artistCache, trimmed));
     }
   }
-  return [...names];
-}
-
-function resolveArtistIds(artistCache, names) {
-  const matched = [];
-  const unmatched = [];
-  for (const name of names) {
-    const hit = artistCache.get(name.trim().toUpperCase());
-    if (hit) matched.push(hit.docId);
-    else unmatched.push(name);
-  }
-  return { matched, unmatched };
+  return { matched, created };
 }
 
 // ─── Derived field computation ──────────────────────────────────────────────
@@ -225,7 +230,7 @@ export async function backfillCatalogItems({ dryRun = false } = {}) {
   );
 
   const stats = { created: 0, updated: 0, failed: 0 };
-  const unmatchedArtistNames = new Set();
+  const newArtistNames = new Set();
 
   for (const rawItem of rawItems) {
     const bandcampUrl = rawItem.bandcamp_url ?? rawItem.attributes?.bandcamp_url;
@@ -236,9 +241,9 @@ export async function backfillCatalogItems({ dryRun = false } = {}) {
     const packages = rawItem.packages || [];
     const trackCount = Array.isArray(rawItem.tracks) ? rawItem.tracks.length : null;
     const formatNames = computeFormatNames(packages);
-    const artistNames = resolveArtistNames(rawItem.artists);
-    const { matched: artistIds, unmatched: unmatchedNames } = resolveArtistIds(artistCache, artistNames);
-    unmatchedNames.forEach((n) => unmatchedArtistNames.add(n));
+    const artistNames = resolveArtistNamesFromRawItem(rawItem);
+    const { matched: artistIds, created: createdNames } = await resolveArtistIds(artistCache, artistNames, { dryRun });
+    createdNames.forEach((n) => newArtistNames.add(n));
 
     try {
       // Dry-run computes and logs the same format names but never calls
@@ -269,8 +274,8 @@ export async function backfillCatalogItems({ dryRun = false } = {}) {
         logger.info(
           `[domeofdoomCatalogItems] [dry] would ${existingDocId ? "update" : "create"} "${title}" ` +
           `(suggested_type=${payload.derived.suggested_type}, label_role=${payload.derived.label_role}, ` +
-          `formats=[${formatNames.join(", ")}], artists=[${artistNames.filter((n) => !unmatchedNames.includes(n)).join(", ")}]` +
-          (unmatchedNames.length ? `, unmatched_artists=[${unmatchedNames.join(", ")}]` : "") +
+          `formats=[${formatNames.join(", ")}], artists=[${artistNames.filter((n) => !createdNames.includes(n)).join(", ")}]` +
+          (createdNames.length ? `, would_create_artists=[${createdNames.join(", ")}]` : "") +
           `)`
         );
       } else if (existingDocId) {
@@ -292,10 +297,10 @@ export async function backfillCatalogItems({ dryRun = false } = {}) {
   logger.info(
     `[domeofdoomCatalogItems] complete: ${stats.created} created, ${stats.updated} updated, ${stats.failed} failed`
   );
-  if (unmatchedArtistNames.size > 0) {
+  if (newArtistNames.size > 0) {
     logger.info(
-      `[domeofdoomCatalogItems] ${unmatchedArtistNames.size} artist name(s) had no roster match, dropped: ` +
-      [...unmatchedArtistNames].sort().join(", ")
+      `[domeofdoomCatalogItems] ${newArtistNames.size} new artist name(s) ${dryRun ? "would be" : "were"} created: ` +
+      [...newArtistNames].sort().join(", ")
     );
   }
 

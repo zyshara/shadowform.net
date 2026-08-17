@@ -487,3 +487,100 @@ body {
   padding-left: 1em;
   color: var(--dod-lilac);
 }
+
+/* OrbitFrame - decorative animated ring+star effect around Roster card
+   corners (src/domeofdoom/components/OrbitFrame.jsx). Everything here is
+   geometry-independent and identical across every instance, so it lives
+   once here instead of being duplicated into a <style> tag per card -
+   only the per-instance star z-index @keyframes (computed from that
+   instance's actual corner/ellipse geometry) still get injected inline
+   by the component itself. */
+
+.orbit-frame {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: visible;
+  pointer-events: none;
+
+  /*
+   * IMPORTANT:
+   *
+   * Do NOT give this element (or Roster.jsx's `className` prop, which
+   * OrbitFrame deliberately applies to each ring/star SVG individually
+   * instead of here) a z-index, transform, opacity<1, or filter (not
+   * even "none" - any filter VALUE other than none, like the drop-shadow
+   * glow, counts). Any of these creates a new stacking context on this
+   * root, which traps every descendant's z-index inside it - they can
+   * then only stack relative to EACH OTHER, never relative to the card
+   * sibling outside this div, no matter what z-index they're given.
+   *
+   * This exact bug has happened twice already: once via `filter`
+   * (fixed by applying glowFilter per-layer instead of here), and once
+   * via Roster.jsx's `opacity-0 group-hover:opacity-100` hover-reveal
+   * transition, which used to be applied to this root - opacity is
+   * fractional (thus < 1, thus context-creating) for the ENTIRE ~500ms
+   * fade in both directions, so every ring/star briefly collapsed into
+   * one undifferentiated unit (rendering as if all "front") for that
+   * whole window on every hover in/out, snapping back to correct only
+   * once the transition finished landing on exactly opacity:1. Fixed by
+   * moving that className onto each ring/star SVG instead of this root
+   * - keep it there.
+   *
+   * Its children need to exist at different stacking levels:
+   *
+   *   back ring  → z-index: -1
+   *   card       → in between, outside this div entirely
+   *   front ring → z-index: 99
+   *   star       → z-index: 99, toggled to -1 while behind the card
+   *                (computed every frame in OrbitFrame's own JS, not CSS)
+   */
+}
+
+.orbit-frame__ring {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: visible;
+  pointer-events: none;
+}
+
+.orbit-frame__ring--back.front {
+  z-index: -1 !important;
+}
+
+.orbit-frame__ring--front.front {
+  z-index: 99 !important;
+  overflow: hidden;
+}
+
+.orbit-frame__star-layer {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: visible;
+  pointer-events: none;
+
+  /* Overridden the instant its per-instance @keyframes animation
+     starts - just the pre-animation-start fallback. */
+  z-index: 99;
+}
+
+@keyframes star-hover {
+  0%, 100% {
+    transform: rotateY(4deg) rotateZ(-30deg) scaleX(1.05) translate(0px);
+  }
+
+  50% {
+    transform: rotateY(4deg) rotateZ(-30deg) scaleX(1.05) translateY(-8px);
+  }
+}

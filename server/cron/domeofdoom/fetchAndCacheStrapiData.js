@@ -1,17 +1,30 @@
 // server/cron/domeofdoom/fetchAndCacheStrapiData.js
 //
-// Pulls DomeofDoomCatalogItem from Strapi, normalizes it (override ??
-// derived), and caches it in memory - same pattern as the old
-// bandcampCache.js (getDiscography/getRoster/etc): server/routes/spas.js
-// reads the cache to seed the domeofdoom client bundle on each request, so
-// the browser never has to fetch Strapi directly. Runs on its own fast
-// interval (every 5 min, see index.js) separate from the daily scrape/
-// backfill jobs, since this is just re-reading what those already wrote.
+// Pulls DomeofDoomCatalogItem AND DomeOfDoomArtist from Strapi, normalizes
+// each (override ?? derived), and caches them in memory - same pattern as
+// the old bandcampCache.js (getDiscography/getRoster/etc): server/routes/
+// spas.js reads these caches to seed the domeofdoom client bundle on each
+// request, so the browser never has to fetch Strapi directly. Runs on its
+// own fast interval (every 5 min, see index.js) separate from the daily
+// scrape/backfill jobs, since this is just re-reading what those already
+// wrote.
+//
+// Artists used to be handled differently - the client read the Bandcamp-
+// scraped roster cache directly (bandcampCache.js's getRoster()) with only
+// overrides.profile_picture merged on top from Strapi. Now the whole
+// roster comes from here instead, same as catalog items - Strapi is the
+// 100% source of truth client-side, the Bandcamp scrape is just what feeds
+// derived/bandcamp_raw_data server-side. (getRoster() itself still exists
+// and still gets scraped into - server/cron/syncShows.js and
+// models/show.js still use it for the Shows page - this only changes
+// where the ROSTER PAGE's data comes from.)
 
 import { strapiGet } from "../../lib/strapi.js";
 import { setCatalogItems } from "../../lib/strapiCatalogCache.js";
-import { setArtistProfilePictures } from "../../lib/strapiArtistOverridesCache.js";
+import { setArtists } from "../../lib/strapiArtistCache.js";
+import { refreshCacheBustToken } from "../../lib/cacheBustToken.js";
 import { normalizeCatalogItems } from "../../models/catalogItem.js";
+import { normalizeArtists } from "../../models/artist.js";
 import { logger } from "../../lib/logger.js";
 
 const CATALOG_ITEMS_PATH = "/api/dome-of-doom-catalog-items";
@@ -39,52 +52,36 @@ async function fetchAllCatalogItems() {
   return all;
 }
 
-function resolveMediaUrl(media) {
-  const url = media?.url;
-  if (!url) return null;
-  if (/^https?:\/\//.test(url)) return url;
-  const base = process.env.STRAPI_API_URL || "https://strapi-shadowform-52c53315c615.herokuapp.com";
-  return `${base}${url}`;
-}
-
-// Only overrides.profile_picture is client-facing right now - no need to
-// populate derived here, this cache exists purely to merge one field onto
-// the Bandcamp-scraped roster (see spas.js).
-async function fetchArtistProfilePictures() {
-  const map = new Map();
+async function fetchAllArtists() {
+  const all = [];
   let page = 1;
   while (true) {
     const res = await strapiGet(
       ARTISTS_PATH,
       {
-        "populate[overrides][populate]": "profile_picture",
-        "fields[0]": "name",
+        "populate[derived][populate]": "*",
+        "populate[overrides][populate]": "*",
         "pagination[page]": page,
         "pagination[pageSize]": PAGE_SIZE,
       },
       { noCache: true }
     );
-    for (const entry of res.data) {
-      const r = entry.attributes ?? entry;
-      const name = r.name;
-      const url = resolveMediaUrl(r.overrides?.profile_picture);
-      if (name && url) map.set(name.trim().toUpperCase(), url);
-    }
+    all.push(...res.data);
     if (page >= res.meta.pagination.pageCount) break;
     page++;
   }
-  return map;
+  return all;
 }
 
 export async function fetchAndCacheStrapiData() {
-  const [raw, profilePictures] = await Promise.all([fetchAllCatalogItems(), fetchArtistProfilePictures()]);
+  const [rawItems, rawArtists] = await Promise.all([fetchAllCatalogItems(), fetchAllArtists()]);
 
-  const items = normalizeCatalogItems(raw);
+  const items = normalizeCatalogItems(rawItems);
+  const artists = normalizeArtists(rawArtists);
   setCatalogItems(items);
-  setArtistProfilePictures(profilePictures);
+  setArtists(artists);
+  refreshCacheBustToken();
 
-  logger.info(
-    `[domeofdoomCache] cached ${items.length} catalog item(s), ${profilePictures.size} artist profile picture override(s)`
-  );
-  return { count: items.length, profilePictureCount: profilePictures.size };
+  logger.info(`[domeofdoomCache] cached ${items.length} catalog item(s), ${artists.length} artist(s)`);
+  return { count: items.length, artistCount: artists.length };
 }
