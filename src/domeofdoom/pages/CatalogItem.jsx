@@ -168,31 +168,61 @@ const ReleaseInfo = ({ item, formats }) => (
   </div>
 );
 
+// Photo/placeholder diameter - "medium" for a featured/solo artist,
+// "small" for anywhere several cards share a row and a 120px photo would
+// crowd it. size (not just className) since the StarIcon fallback's own
+// icon size needs to scale down with it, not just the circle around it.
+const AVATAR_SIZE = {
+  small: { box: "h-22 w-22", icon: 56 },
+  medium: { box: "h-30 w-30", icon: 76 },
+  large: { box: "h-38 w-38", icon: 96 },
+};
+
 // `artist` is a roster-data entry (see the linkedArtists join in
 // CatalogItem below) - name, location, photo_src, all sourced from the
 // Bandcamp artist roster scrape, not from the catalog item itself.
-const ArtistCard = ({ artist, className = "" }) => {
+const ArtistCard = ({ artist, size = "small", className = "" }) => {
   const to = `/roster/${artistSlug(artist.name)}`;
+  const avatar = AVATAR_SIZE[size];
   return (
-    <div className={`flex h-full flex-row justify-between gap-4 ${className}`}>
-      {artist.photo_src && (
+    <div className={`flex flex-row justify-between ${size === "large" ? "gap-8" : "gap-4"} ${className}`}>
+      {artist.photo_src ? (
         <img
           src={artist.photo_src}
           alt={artist.name}
-          className="h-[100px] w-[100px] flex-shrink-0 rounded-full object-cover"
+          className={`${avatar.box} flex-shrink-0 rounded-full object-cover  border-2 border-dod-deep-purple/80`}
         />
+      ) : (
+        // No scraped Bandcamp photo (e.g. artists created directly in
+        // Strapi from catalog/track credits, not from the Bandcamp artist
+        // roster) - same treatment as Roster.jsx's photo-less cards, just
+        // circular here to match this card's real-photo shape instead of
+        // filling a whole square tile.
+        <div
+          className={`flex ${avatar.box} flex-shrink-0 items-center justify-center rounded-full border-2 border-dod-deep-purple/50 bg-dod-black`}
+        >
+          <StarIcon
+            size={avatar.icon}
+            gradientFrom={colors.deep_purple}
+            gradientTo={colors.deep_purple}
+            glowColor={colors.lilac}
+            showGlow={true}
+            showBackground={false}
+          />
+        </div>
       )}
-      <div className="flex flex-1 flex-col gap-3">
+      <div className="flex flex-1 flex-col gap-3 justify-center">
         <div className="flex min-w-0 flex-col gap-1">
           <Link to={to} className="truncate font-semibold text-dod-neon-mint hover:underline">
             {artist.name}
           </Link>
-          {artist.location && <div className="truncate text-sm text-dod-lilac">{artist.location}</div>}
-          <span className="self-start border border-dod-lilac/40 px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] text-dod-lilac">
-            {GENRE_PLACEHOLDER}
-          </span>
+          {/* Always rendered (not conditional on artist.location existing)
+              so every card reserves the same height for this line -
+              otherwise cards without a location end up shorter than their
+              siblings and the row looks misaligned. */}
+          <div className="truncate text-sm text-dod-lilac">{artist.location || " "}</div>
         </div>
-        <Button type="small" variant="secondary" to={to} style={{ maxHeight: "20px", }}>
+        <Button type="small" variant="secondary" to={to} style={{ maxHeight: "18px", fontSize:"7px", maxWidth: "fit-content" }}>
           <span className="inline-flex items-center gap-1">View Artist ↗</span>
         </Button>
       </div>
@@ -309,14 +339,22 @@ const CatalogItem = () => {
   const formats = realFormatsOf(item.packages);
 
   // item.artists (normalizeCatalogItem) is name-only - the richer profile
-  // (photo, location) lives in roster-data instead (the Bandcamp artist
-  // roster scrape), joined here by name. roster-data is seeded into every
-  // domeofdoom page unconditionally, so this is a plain lookup, no fetch.
-  // Names that don't match anyone currently on the roster are dropped
-  // rather than shown as a broken/photo-less card.
+  // (photo, location) lives in roster-data instead (normalized
+  // DomeOfDoomArtist records, see server/models/artist.js), joined here by
+  // name. roster-data is seeded into every domeofdoom page unconditionally,
+  // so this is a plain lookup, no fetch. Names that don't match anyone
+  // currently in Strapi are dropped rather than shown as a broken card.
   const roster = readSeedData("roster-data") ?? [];
   const rosterByName = new Map(roster.map((a) => [a.name, a]));
-  const linkedArtists = item.artists.map((name) => rosterByName.get(name)).filter(Boolean);
+  let linkedArtists = item.artists.map((name) => rosterByName.get(name)).filter(Boolean);
+
+  // A compilation's artist order coming off Bandcamp is basically
+  // arbitrary (whatever order tracks/credits happened to be scraped in) -
+  // alphabetical reads as intentional, a normal release's is usually
+  // meaningful (billing order) and stays as-is.
+  if (item.type === "Compilation") {
+    linkedArtists = [...linkedArtists].sort((a, b) => a.name.localeCompare(b.name));
+  }
 
   // Shared by every Release Info / Artists frame below - kept as one
   // constant so the two always stay visually identical bordered boxes.
@@ -492,21 +530,22 @@ const CatalogItem = () => {
           roster-data above:
 
             0 artists  -> Release Info alone, full width
-            1 artist   -> Release Info + one artist card, side by side
+            1 artist   -> Release Info + one (medium) artist card, side
+                          by side
             2 artists  -> Release Info full width, then both artists
-                          side by side in their own row below it
-            3 artists  -> same split as the 1-artist case, but the
-                          artist column itself splits again into the
-                          first artist next to the other two stacked
-            4+ artists -> Release Info full width, then every artist in
-                          a plain 4-per-row grid below it
+                          (medium) side by side in their own row below it
+            3 artists  -> Release Info full width, then all 3 in their
+                          own row below it - the first (large) featured,
+                          the other two (small) stacked beside it
+            4+ artists -> Release Info full width, then every artist
+                          (small) in a plain 4-per-row grid below it
           ============================================================ */}
 
       {/* Release Info and Artists are two visually distinct bordered
           frames (not one shared box like Tracklist/Formats above) - this
           outer grid just controls their relative sizing/position, it
           doesn't carry a border of its own. */}
-      <div className="grid grid-cols-6 gap-10">
+      <div className="grid grid-cols-6 gap-4">
         {linkedArtists.length === 0 && (
           <div className={`col-span-6 ${FRAME_CLASS}`}>
             <ReleaseInfo item={item} formats={formats} />
@@ -520,7 +559,7 @@ const CatalogItem = () => {
             </div>
             <div className={`col-span-2 ${FRAME_CLASS}`}>
               <SectionLabel>Artists</SectionLabel>
-              <ArtistCard artist={linkedArtists[0]} />
+              <ArtistCard artist={linkedArtists[0]} size="medium" />
             </div>
           </>
         )}
@@ -533,8 +572,8 @@ const CatalogItem = () => {
             <div className={`col-span-6 ${FRAME_CLASS}`}>
               <SectionLabel>Artists</SectionLabel>
               <div className="grid grid-cols-2 gap-4">
-                <ArtistCard artist={linkedArtists[0]} />
-                <ArtistCard artist={linkedArtists[1]} />
+                <ArtistCard artist={linkedArtists[0]} size="large" />
+                <ArtistCard artist={linkedArtists[1]} size="large" />
               </div>
             </div>
           </>
@@ -542,21 +581,17 @@ const CatalogItem = () => {
 
         {linkedArtists.length === 3 && (
           <>
-            <div className={`col-span-4 ${FRAME_CLASS}`}>
+            <div className={`col-span-6 ${FRAME_CLASS}`}>
               <ReleaseInfo item={item} formats={formats} />
             </div>
-            <div className={`col-span-2 ${FRAME_CLASS}`}>
+            <div className={`col-span-6 ${FRAME_CLASS}`}>
               <SectionLabel>Artists</SectionLabel>
-              {/* All 3 as direct grid items (not the 2nd/3rd wrapped in
-                  their own flex column) so row-span-2 on the first has
-                  real row tracks - created by the other two naturally
-                  auto-placing into row 1/col 2 and row 2/col 2 - to
-                  span across, and its height stretches to match theirs
-                  combined instead of just guessing at a fixed height. */}
               <div className="grid grid-cols-2 gap-4">
-                <ArtistCard artist={linkedArtists[0]} className="row-span-2" />
-                <ArtistCard artist={linkedArtists[1]} />
-                <ArtistCard artist={linkedArtists[2]} />
+                <ArtistCard artist={linkedArtists[0]} size="large" />
+                <div className="flex flex-col gap-4">
+                  <ArtistCard artist={linkedArtists[1]} size="small" />
+                  <ArtistCard artist={linkedArtists[2]} size="small" />
+                </div>
               </div>
             </div>
           </>
@@ -569,7 +604,7 @@ const CatalogItem = () => {
             </div>
             <div className={`col-span-6 ${FRAME_CLASS}`}>
               <SectionLabel>Artists</SectionLabel>
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-4 gap-12">
                 {linkedArtists.map((artist) => (
                   <ArtistCard key={artist.name} artist={artist} />
                 ))}

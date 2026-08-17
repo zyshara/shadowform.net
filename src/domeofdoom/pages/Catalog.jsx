@@ -117,6 +117,15 @@ const FilterDropdown = ({ panelKey, label, options, selected, onToggle, openPane
   );
 };
 
+// Compilations, and anything with 5+ linked artists, read better as
+// "Various Artists" than a long comma-joined name list on a small grid
+// card - individual artist attribution still lives on the item's own
+// CatalogItem page.
+function artistDisplayLabel(item) {
+  if (item.type === "Compilation" || item.artists.length >= 5) return "Various Artists";
+  return item.artists.join(", ");
+}
+
 const CatalogCard = ({ item }) => (
   <Link
     to={`/catalog/${catalogItemSlug(item)}`}
@@ -158,8 +167,8 @@ const CatalogCard = ({ item }) => (
   {item.type} · {yearOf(item)}
 </div>
       <div className="font-archivo font-bold [font-stretch:expanded] [font-variation-settings:'wdth'_125] text-clamp-[10px,_1vw,_22px] font-semibold uppercase text-dod-white">{item.title}</div>
-      {item.artists.length > 0 && (
-        <div className="font-ppneue text-xs text-dod-white">{item.artists.join(", ")}</div>
+      {(item.type === "Compilation" || item.artists.length > 0) && (
+        <div className="font-ppneue text-xs text-dod-white">{artistDisplayLabel(item)}</div>
       )}
     </div>
   </Link>
@@ -340,7 +349,7 @@ const Catalog = () => {
 
         {/* Grid */}
         {items.length > 0 ? (
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4 mb-10">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-3 xl:grid-cols-4 mb-10">
             {items.map((item) => (
               <CatalogCard key={item.uid} item={item} />
             ))}
