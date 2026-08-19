@@ -151,7 +151,7 @@ const InfoField = ({ label, value }) => (
 const ReleaseInfo = ({ item, formats }) => (
   <div>
     <SectionLabel>Release Info</SectionLabel>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-3">
       <div className="flex flex-col gap-3">
         <InfoField label="Release Date" value={formatReleaseDate(item)} />
         <InfoField label="Catalog Number" value={item.catalog_number} />
@@ -172,10 +172,13 @@ const ReleaseInfo = ({ item, formats }) => (
 // "small" for anywhere several cards share a row and a 120px photo would
 // crowd it. size (not just className) since the StarIcon fallback's own
 // icon size needs to scale down with it, not just the circle around it.
+// max-w (not a fixed h-*/w-*) so the avatar can shrink below its target
+// size when the card runs out of room - paired with aspect-square below
+// so it shrinks in lockstep on both axes instead of squishing.
 const AVATAR_SIZE = {
-  small: { box: "h-22 w-22", icon: 56 },
-  medium: { box: "h-30 w-30", icon: 76 },
-  large: { box: "h-38 w-38", icon: 96 },
+  small: { box: "max-w-[88px]", icon: 56 },
+  medium: { box: "max-w-[120px]", icon: 76 },
+  large: { box: "max-w-[100px] lg:max-w-[120px]", icon: 76 },
 };
 
 // `artist` is a roster-data entry (see the linkedArtists join in
@@ -185,12 +188,12 @@ const ArtistCard = ({ artist, size = "small", className = "" }) => {
   const to = `/roster/${artistSlug(artist.name)}`;
   const avatar = AVATAR_SIZE[size];
   return (
-    <div className={`flex flex-row justify-between ${size === "large" ? "gap-8" : "gap-4"} ${className}`}>
+    <div className={`grid grid-cols-[auto_1fr] justify-between gap-4 ${className}`}>
       {artist.photo_src ? (
         <img
           src={artist.photo_src}
           alt={artist.name}
-          className={`${avatar.box} flex-shrink-0 rounded-full object-cover  border-2 border-dod-deep-purple/80`}
+          className={`${avatar.box} aspect-square w-full self-start rounded-full object-cover border-2 border-dod-deep-purple/80`}
         />
       ) : (
         // No scraped Bandcamp photo (e.g. artists created directly in
@@ -199,7 +202,7 @@ const ArtistCard = ({ artist, size = "small", className = "" }) => {
         // circular here to match this card's real-photo shape instead of
         // filling a whole square tile.
         <div
-          className={`flex ${avatar.box} flex-shrink-0 items-center justify-center rounded-full border-2 border-dod-deep-purple/50 bg-dod-black`}
+          className={`flex ${avatar.box} aspect-square w-full self-start items-center justify-center rounded-full border-2 border-dod-deep-purple/50 bg-dod-black`}
         >
           <StarIcon
             size={avatar.icon}
@@ -211,7 +214,7 @@ const ArtistCard = ({ artist, size = "small", className = "" }) => {
           />
         </div>
       )}
-      <div className="flex flex-1 flex-col gap-3 justify-center">
+      <div className="flex min-w-0 flex-col gap-3 justify-center">
         <div className="flex min-w-0 flex-col gap-1">
           <Link to={to} className="truncate font-semibold text-dod-neon-mint hover:underline">
             {artist.name}
@@ -220,7 +223,7 @@ const ArtistCard = ({ artist, size = "small", className = "" }) => {
               so every card reserves the same height for this line -
               otherwise cards without a location end up shorter than their
               siblings and the row looks misaligned. */}
-          <div className="truncate text-sm text-dod-lilac">{artist.location || " "}</div>
+          <div className="truncate text-xs text-dod-lilac text-wrap">{artist.location || " "}</div>
         </div>
         <Button type="small" variant="secondary" to={to} style={{ maxHeight: "18px", fontSize:"7px", maxWidth: "fit-content" }}>
           <span className="inline-flex items-center gap-1">View Artist ↗</span>
@@ -554,12 +557,12 @@ const CatalogItem = () => {
 
         {linkedArtists.length === 1 && (
           <>
-            <div className={`col-span-4 ${FRAME_CLASS}`}>
+            <div className={`col-span-6 xl:col-span-4 ${FRAME_CLASS}`}>
               <ReleaseInfo item={item} formats={formats} />
             </div>
-            <div className={`col-span-2 ${FRAME_CLASS}`}>
+            <div className={`col-span-6 xl:col-span-2 ${FRAME_CLASS}`}>
               <SectionLabel>Artists</SectionLabel>
-              <ArtistCard artist={linkedArtists[0]} size="medium" />
+              <ArtistCard artist={linkedArtists[0]} size="large" />
             </div>
           </>
         )}
@@ -571,9 +574,9 @@ const CatalogItem = () => {
             </div>
             <div className={`col-span-6 ${FRAME_CLASS}`}>
               <SectionLabel>Artists</SectionLabel>
-              <div className="grid grid-cols-2 gap-4">
-                <ArtistCard artist={linkedArtists[0]} size="large" />
-                <ArtistCard artist={linkedArtists[1]} size="large" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <ArtistCard  artist={linkedArtists[0]} size="large" />
+                <ArtistCard  artist={linkedArtists[1]} size="large" />
               </div>
             </div>
           </>
@@ -586,12 +589,10 @@ const CatalogItem = () => {
             </div>
             <div className={`col-span-6 ${FRAME_CLASS}`}>
               <SectionLabel>Artists</SectionLabel>
-              <div className="grid grid-cols-2 gap-4">
-                <ArtistCard artist={linkedArtists[0]} size="large" />
-                <div className="flex flex-col gap-4">
-                  <ArtistCard artist={linkedArtists[1]} size="small" />
-                  <ArtistCard artist={linkedArtists[2]} size="small" />
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <ArtistCard artist={linkedArtists[0]} size="medium" />
+                <ArtistCard artist={linkedArtists[1]} size="medium" />
+                <ArtistCard artist={linkedArtists[2]} size="medium" />
               </div>
             </div>
           </>

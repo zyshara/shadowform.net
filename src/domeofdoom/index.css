@@ -67,6 +67,9 @@
   --color-dod-orange: var(--dod-orange);
   --color-dod-pink: var(--dod-pink);
 
+  --text-xxxs: 0.425rem;
+  --text-xxxs--line-height: 0.625rem;
+
   --text-xxs: 0.625rem;
   --text-xxs--line-height: 0.875rem;
 
