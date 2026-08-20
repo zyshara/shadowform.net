@@ -37,7 +37,7 @@ const TYPE_OPTIONS = ["Album", "EP", "Single", "Compilation", "Sample Pack"];
 // "Origin" per conversation history - not a real genre facet (we don't
 // have genre data), this is label_role wearing a fan-facing name.
 const ORIGIN_OPTIONS = [
-  { value: "original", label: "Original" },
+  { value: "original", label: "Original Release" },
   { value: "reissue", label: "Reissue" },
   { value: "physical", label: "Physical Only" },
   { value: "other", label: "Other" },
@@ -144,27 +144,40 @@ const MobileFilterSection = ({ label, options, selected, onToggle, isOpen, onTog
   </div>
 );
 
-// One dropdown pill button + its checkbox-list popover (Format / Type /
-// Origin / Year). `panelKey` is this dropdown's identity in the shared
-// openPanel state, so only one can be open at a time.
-const FilterDropdown = ({ panelKey, label, options, selected, onToggle, openPanel, onOpenPanel }) => {
+// One filter segment (Format / Type / Origin / Year) - a small uppercase
+// mint label stacked above the current value (either "All X" or a summary
+// of what's selected) + the overall result count + a chevron, opening the
+// same checkbox-list popover as before. `panelKey` is this dropdown's
+// identity in the shared openPanel state, so only one can be open at a
+// time. `resultCount` is the page's current total match count (not a
+// per-group facet count) - every segment shows the same number, same as
+// the reference design.
+const FilterDropdown = ({ panelKey, label, options, selected, onToggle, openPanel, onOpenPanel, resultCount }) => {
   const isOpen = openPanel === panelKey;
   const activeCount = selected.size;
+  const valueText =
+    activeCount === 0
+      ? `All ${label}s`
+      : options
+          .filter((o) => selected.has(o.value))
+          .map((o) => o.label)
+          .join(", ");
 
   return (
     <div className="relative">
       <button
         type="button"
         onClick={() => onOpenPanel(isOpen ? null : panelKey)}
-        className={`flex items-center cursor-pointer gap-1.5 border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors ${
-          activeCount > 0
-            ? "border-dod-neon-mint text-dod-neon-mint"
-            : "border-dod-lilac/50 text-dod-lilac hover:border-dod-lilac"
-        }`}
+        className="flex cursor-pointer flex-col items-start gap-1 py-1 text-left"
       >
-        {label}
-        {activeCount > 0 && <span>({activeCount})</span>}
-        <ChevronIcon open={isOpen} />
+        <span className={`text-xs font-semibold uppercase tracking-wide ${activeCount > 0 ? "text-dod-neon-mint" : "text-dod-lilac"}`}>
+          {label}
+        </span>
+        <span className="flex items-center gap-2 whitespace-nowrap text-sm font-semibold text-dod-white">
+          <span className="max-w-[160px] truncate">{valueText}</span>
+          <span className="text-dod-lilac/60">{resultCount}</span>
+          <ChevronIcon open={isOpen} />
+        </span>
       </button>
 
       {isOpen && (
@@ -443,6 +456,23 @@ const Catalog = () => {
   const hasFilters = formatSel.size > 0 || typeSel.size > 0 || originSel.size > 0 || yearSel.size > 0;
   const activeFilterCount = formatSel.size + typeSel.size + originSel.size + yearSel.size;
 
+  // Flattened, removable chips for whatever's currently selected across
+  // all four groups - shown in the "Active Filters" row.
+  const selectedChips = [
+    ...[...formatSel].map((v) => ({
+      key: `format-${v}`,
+      label: FORMAT_OPTIONS.find((f) => f.value === v)?.label ?? v,
+      onRemove: () => toggle(setFormatSel)(v),
+    })),
+    ...[...typeSel].map((v) => ({ key: `type-${v}`, label: v, onRemove: () => toggle(setTypeSel)(v) })),
+    ...[...originSel].map((v) => ({
+      key: `origin-${v}`,
+      label: ORIGIN_OPTIONS.find((r) => r.value === v)?.label ?? v,
+      onRemove: () => toggle(setOriginSel)(v),
+    })),
+    ...[...yearSel].map((v) => ({ key: `year-${v}`, label: String(v), onRemove: () => toggle(setYearSel)(v) })),
+  ];
+
   const clearAll = () => {
     setFormatSel(new Set());
     setTypeSel(new Set());
@@ -597,76 +627,127 @@ const Catalog = () => {
           )}
         </div>
 
-        {/* Filter bar */}
-        <div ref={filterBarRef} className="hidden flex-wrap items-center justify-between gap-3 font-sans md:flex">
-          <div className="flex flex-wrap items-center gap-2">
-            <FilterDropdown
-              panelKey="format"
-              label="Format"
-              options={FORMAT_OPTIONS.map((f) => ({ value: f.value, label: f.label, count: facetCounts.format[f.value] ?? 0 }))}
-              selected={formatSel}
-              onToggle={toggle(setFormatSel)}
-              openPanel={openPanel}
-              onOpenPanel={setOpenPanel}
-            />
-            <FilterDropdown
-              panelKey="type"
-              label="Type"
-              options={TYPE_OPTIONS.map((t) => ({ value: t, label: t, count: facetCounts.type[t] ?? 0 }))}
-              selected={typeSel}
-              onToggle={toggle(setTypeSel)}
-              openPanel={openPanel}
-              onOpenPanel={setOpenPanel}
-            />
-            <FilterDropdown
-              panelKey="origin"
-              label="Origin"
-              options={ORIGIN_OPTIONS.map((r) => ({ value: r.value, label: r.label, count: facetCounts.origin[r.value] ?? 0 }))}
-              selected={originSel}
-              onToggle={toggle(setOriginSel)}
-              openPanel={openPanel}
-              onOpenPanel={setOpenPanel}
-            />
-            <FilterDropdown
-              panelKey="year"
-              label="Year"
-              options={yearOptions.map((y) => ({ value: y, label: String(y), count: facetCounts.year[y] ?? 0 }))}
-              selected={yearSel}
-              onToggle={toggle(setYearSel)}
-              openPanel={openPanel}
-              onOpenPanel={setOpenPanel}
-            />
-            {hasFilters && (
-              <button
-                type="button"
-                onClick={clearAll}
-                className="cursor-pointer px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-dod-neon-mint"
-              >
-                Clear ✕
-              </button>
-            )}
-          </div>
+        {/* Filter bar - four stacked label/value segments (Format/Type/
+            Origin/Year), each divided by a vertical rule, Sort pinned to
+            the far right. Below the horizontal divider, an "active
+            filters" row of removable chips only shows once something's
+            actually selected. */}
+        <div ref={filterBarRef} className="hidden flex-col gap-3 font-sans md:flex">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-stretch">
+              <FilterDropdown
+                panelKey="format"
+                label="Format"
+                options={FORMAT_OPTIONS.map((f) => ({ value: f.value, label: f.label, count: facetCounts.format[f.value] ?? 0 }))}
+                selected={formatSel}
+                onToggle={toggle(setFormatSel)}
+                openPanel={openPanel}
+                onOpenPanel={setOpenPanel}
+                resultCount={items.length}
+              />
+              <div className="mx-6 w-px bg-dod-lilac/20" />
+              <FilterDropdown
+                panelKey="type"
+                label="Type"
+                options={TYPE_OPTIONS.map((t) => ({ value: t, label: t, count: facetCounts.type[t] ?? 0 }))}
+                selected={typeSel}
+                onToggle={toggle(setTypeSel)}
+                openPanel={openPanel}
+                onOpenPanel={setOpenPanel}
+                resultCount={items.length}
+              />
+              <div className="mx-6 w-px bg-dod-lilac/20" />
+              <FilterDropdown
+                panelKey="origin"
+                label="Origin"
+                options={ORIGIN_OPTIONS.map((r) => ({ value: r.value, label: r.label, count: facetCounts.origin[r.value] ?? 0 }))}
+                selected={originSel}
+                onToggle={toggle(setOriginSel)}
+                openPanel={openPanel}
+                onOpenPanel={setOpenPanel}
+                resultCount={items.length}
+              />
+              <div className="mx-6 w-px bg-dod-lilac/20" />
+              <FilterDropdown
+                panelKey="year"
+                label="Year"
+                options={yearOptions.map((y) => ({ value: y, label: String(y), count: facetCounts.year[y] ?? 0 }))}
+                selected={yearSel}
+                onToggle={toggle(setYearSel)}
+                openPanel={openPanel}
+                onOpenPanel={setOpenPanel}
+                resultCount={items.length}
+              />
+            </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wide text-dod-white/50">Sort:</span>
-            <div className="relative inline-flex">
+            {/* Full "Sort: Newest First" control once there's room for it;
+                below that, the same compact icon-only control the mobile
+                bar uses, rather than letting the segments row wrap. */}
+            <div className="hidden items-center gap-2 xl:flex">
+              <span className="text-xs font-semibold uppercase tracking-wide text-dod-white/50">Sort:</span>
+              <div className="relative inline-flex">
+                <select
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value)}
+                  className="cursor-pointer appearance-none border border-dod-lilac/50 bg-transparent px-3 py-1.5 pr-7 text-xs font-semibold uppercase tracking-wide text-dod-lilac"
+                >
+                  <option className="bg-dod-black" value="newest">Newest First</option>
+                  <option className="bg-dod-black" value="oldest">Oldest First</option>
+                  <option className="bg-dod-black" value="az">A–Z</option>
+                </select>
+                <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-dod-lilac">
+                  <ChevronIcon open={false} />
+                </span>
+              </div>
+            </div>
+            <div className="relative flex xl:hidden">
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                className="cursor-pointer appearance-none border border-dod-lilac/50 bg-transparent px-3 py-1.5 pr-7 text-xs font-semibold uppercase tracking-wide text-dod-lilac"
+                aria-label="Sort"
+                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
               >
-                <option className="bg-dod-black" value="newest">Newest First</option>
-                <option className="bg-dod-black" value="oldest">Oldest First</option>
-                <option className="bg-dod-black" value="az">A–Z</option>
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="az">A–Z</option>
               </select>
-              <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-dod-lilac">
-                <ChevronIcon open={false} />
-              </span>
+              <div className="pointer-events-none flex h-full min-h-[38px] w-11 items-center justify-center border border-dod-lilac/50 text-dod-lilac">
+                <SortIcon />
+              </div>
             </div>
           </div>
-        </div>
 
-       <div className="h-[1px] w-full bg-dod-lilac/50"/>
+          <div className="h-[1px] w-full bg-dod-lilac/50" />
+
+          {hasFilters && (
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-semibold uppercase tracking-wide text-dod-white/50">Active Filters:</span>
+                {selectedChips.map((chip) => (
+                  <button
+                    key={chip.key}
+                    type="button"
+                    onClick={chip.onRemove}
+                    className="flex cursor-pointer items-center gap-1.5 border border-dod-lilac/50 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-dod-white transition-colors hover:border-dod-neon-mint hover:text-dod-neon-mint"
+                  >
+                    {chip.label}
+                    <span aria-hidden="true">✕</span>
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={clearAll}
+                  className="cursor-pointer px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-dod-neon-mint"
+                >
+                  Clear All
+                </button>
+              </div>
+              <span className="whitespace-nowrap text-xs font-semibold uppercase tracking-wide text-dod-neon-mint">
+                {items.length} Result{items.length === 1 ? "" : "s"}
+              </span>
+            </div>
+          )}
+        </div>
 
         {/* Grid */}
         {items.length > 0 ? (

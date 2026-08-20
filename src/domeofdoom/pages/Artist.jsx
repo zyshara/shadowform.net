@@ -11,7 +11,7 @@ import Button from "@/components/Button";
 import SpotifyIcon from "@/components/SpotifyIcon";
 import BandcampIcon from "@/components/BandcampIcon";
 import { ShowRow } from "@/pages/Shows";
-import { releaseSlug } from "@/pages/Discography";
+import { releaseSlug } from "@/utils/releaseSlug";
 import { artistSlug } from "@/utils/artistSlug";
 
 const PRIMARY = colors.accent;

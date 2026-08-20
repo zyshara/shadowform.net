@@ -114,16 +114,6 @@
   to   { transform: translateX(var(--marquee-shift, -50%)); }
 }
 
-@keyframes bgFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 0.5; }
-}
-
-@keyframes bgFadeOut {
-  from { opacity: 0.5; }
-  to   { opacity: 0; }
-}
-
 @keyframes navlinkFlash {
   0%, 100% { color: var(--dod-lilac); }
   50%      { color: #ffffff; }
@@ -196,94 +186,9 @@ body {
   color: #eee;
 }
 
-.disco-item-1a {
-  display: flex;
-  align-items: center;
-  padding: 13px 20px 13px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  cursor: pointer;
-  border-left: 3px solid transparent;
-  transition: all 0.15s;
-}
-.disco-item-1a.active {
-  background: oklch(from var(--dod-neon-mint) l c h / 0.08);
-  border-left-color: var(--dod-neon-mint);
-}
-.disco-item-1a:hover:not(.active) {
-  background: oklch(from var(--dod-neon-mint) l c h / 0.14);
-  border-left-color: oklch(from var(--dod-neon-mint) l c h / 0.7);
-}
-.disco-item-1a-title {
-  font: 400 11px/1 "Archivo", sans-serif;
-  font-stretch: expanded;
-  font-variation-settings: "wdth" 125;
-  letter-spacing: 0.01em;
-  text-transform: uppercase;
-  color: #e0dade;
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.disco-item-1a.active .disco-item-1a-title {
-  color: var(--dod-neon-mint);
-}
-.disco-item-1a:hover:not(.active) .disco-item-1a-title {
-  color: #ffffff;
-}
-.disco-item-1a-year {
-  font: 400 11px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: rgba(255, 255, 255, 0.28);
-  margin-right: 12px;
-  flex-shrink: 0;
-}
-.disco-tag {
-  font: 700 9px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 3px 6px;
-  border: 1px solid;
-  flex-shrink: 0;
-}
-.disco-tag-album {
-  color: rgba(255, 255, 255, 0.5);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-.disco-tag-ep {
-  color: rgba(255, 255, 255, 0.5);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-.disco-tag-single {
-  color: rgba(255, 255, 255, 0.35);
-  border-color: rgba(255, 255, 255, 0.12);
-}
-.disco-tag-remix {
-  color: var(--dod-neon-mint);
-  border-color: oklch(from var(--dod-neon-mint) l c h / 0.5);
-}
-.disco-tag-comp {
-  color: var(--dod-lilac);
-  border-color: oklch(from var(--dod-lilac) l c h / 0.4);
-}
-
-/* Always-visible sidebar scrollbar, aligned right, accent2-colored thumb. */
-.disco-sidebar-scroll {
-  scrollbar-width: thin;
-  scrollbar-color: var(--dod-lilac) transparent;
-}
-.disco-sidebar-scroll::-webkit-scrollbar {
-  width: 8px;
-}
-.disco-sidebar-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-.disco-sidebar-scroll::-webkit-scrollbar-thumb {
-  background: var(--dod-lilac);
-}
-
 /* CatalogItem tracklist — same always-visible (non-overlay) scrollbar
-   pattern as .disco-sidebar-scroll, just neon-mint instead of lilac.
-   scrollbar-gutter: stable reserves the thumb's track space up front so
+   pattern the old discography sidebar used, just neon-mint instead of
+   lilac. scrollbar-gutter: stable reserves the thumb's track space up front so
    the row content doesn't shift width the moment a release crosses the
    10-track threshold and becomes scrollable. */
 /* Native scrollbar hidden entirely - CatalogItem.jsx's TracklistScrollArea
@@ -322,15 +227,6 @@ body {
 
 .roster-carousel-card:hover img {
   transform: scale(1.1);
-}
-
-@keyframes discoCascadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.disco-cascade-item {
-  opacity: 0;
-  animation: discoCascadeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .disco-grid-img {
@@ -375,17 +271,17 @@ body {
    box's local space) into view as thin visible strips. --tilt-depth is the
    only knob that needs to move if the object should read thicker/thinner. */
 .tilted-cover-scene {
-  --tilt-depth: 20px;
+  --tilt-depth: 30px;
   width: 100%;
   aspect-ratio: 1 / 1;
-  perspective: 1800px;
+  perspective: 2000px;
 }
 .tilted-cover-rotor {
   position: relative;
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transform: rotateX(56deg) rotateZ(-38deg);
+  transform: rotateX(19deg) rotateZ(-9deg) rotateY(28deg);
 }
 .tilted-cover-face {
   position: absolute;
@@ -421,8 +317,10 @@ body {
   transform: rotateY(-90deg);
   background: linear-gradient(to bottom, #ddd9e2, #b6b1bd);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 14px 0;
 }
 .tilted-cover-left span {
   writing-mode: vertical-rl;

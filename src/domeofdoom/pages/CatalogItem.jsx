@@ -19,6 +19,8 @@ import DownloadIcon from "@/components/DownloadIcon";
 import VinylRecord from "@/components/VinylRecord";
 import CassetteTape from "@/components/CassetteTape";
 import StarIcon from "@/components/StarIcon";
+import GlobeIcon from "@/components/GlobeIcon";
+import ArrowButton from "@/components/ArrowButton";
 import { colors } from "@/tokens";
 
 // No genre field exists anywhere in the data pipeline yet (not on the
@@ -77,9 +79,14 @@ function trackDuration(track) {
 // includes a placeholder "Digital" entry even when digital purchase isn't
 // actually enabled - every field on it besides formatType is null, unlike
 // real packages which always carry a real availability value (same rule
-// backfillCatalogItems.js's computeFormatNames uses server-side). One
-// representative package per normalized format name, in a fixed display
-// order.
+// backfillCatalogItems.js's computeFormatNames uses server-side). Every
+// matching real package per normalized format name (not just one) - a
+// repress adds a second Cassette/Vinyl/etc package alongside the
+// original, and both should show up as separate cards, in a fixed
+// display order by format. Bandcamp's own package order is guaranteed
+// chronological with the newest first, so within a format group index 0
+// is the most recent press and the last index is the 1st press -
+// pressNumber below is derived from that, counting up from the oldest.
 const FORMAT_DISPLAY_ORDER = [
   { key: "digital", label: "Digital", match: "digital" },
   { key: "vinyl", label: "Vinyl", match: "vinyl" },
@@ -93,32 +100,31 @@ function realFormatsOf(packages) {
     if (p.availability == null) continue;
     const f = (p.formatType || "").toLowerCase();
     for (const { match } of FORMAT_DISPLAY_ORDER) {
-      if (f.includes(match) && !byMatch.has(match)) byMatch.set(match, p);
+      if (f.includes(match)) {
+        if (!byMatch.has(match)) byMatch.set(match, []);
+        byMatch.get(match).push(p);
+      }
     }
   }
-  return FORMAT_DISPLAY_ORDER.filter(({ match }) => byMatch.has(match)).map(({ key, label, match }) => ({
-    key,
-    label,
-    pkg: byMatch.get(match),
-  }));
+  return FORMAT_DISPLAY_ORDER.filter(({ match }) => byMatch.has(match)).flatMap(({ key, label, match }) => {
+    const pkgs = byMatch.get(match);
+    return pkgs.map((pkg, i) => ({
+      key: `${key}-${i}`,
+      formatKey: key,
+      label,
+      pkg,
+      // Only meaningful (and only shown) when a format has more than one
+      // press - a lone Digital/CD/etc doesn't need a "1st Press" tag.
+      pressNumber: pkgs.length > 1 ? pkgs.length - i : null,
+    }));
+  });
 }
 
-function formatPrice(pkg) {
-  if (typeof pkg.price !== "number") return null;
-  return `$${pkg.price.toFixed(2)} ${pkg.currency ?? "USD"}`;
-}
-
-// pkg.description is freeform text straight from the Bandcamp package
-// listing (e.g. "First Pressing of Alpha Dog by Great Dane on Vinyl\n500
-// copies on classic black wax") - split into lines the same way the mock
-// data rendered multiple description lines, falling back to the package
-// title alone when there's no longer description.
-function descriptionLinesOf(pkg) {
-  const lines = (pkg.description ?? pkg.title ?? "")
-    .split("\n")
-    .map((l) => l.trim())
-    .filter(Boolean);
-  return lines.length > 0 ? lines : [pkg.title].filter(Boolean);
+function pressLabel(n) {
+  if (n === 1) return "1st Press";
+  if (n === 2) return "2nd Press";
+  if (n === 3) return "3rd Press";
+  return `${n}th Press`;
 }
 
 // The small 2x2 dot mark next to "Tracklist"/"Formats" section labels.
@@ -139,32 +145,9 @@ const SectionLabel = ({ children }) => (
 );
 
 const InfoField = ({ label, value }) => (
-  <div className="grid grid-cols-[120px_1fr] gap-3 text-sm">
-    <span className="uppercase tracking-[0.1em] text-xs font-semibold text-dod-lilac">{label}</span>
+  <div className="grid grid-cols-[1fr_1fr] md:grid-cols-[134px_1fr] gap-3 text-md md:text-sm">
+    <span className="uppercase tracking-[0.1em] text-sm md:text-xs font-semibold text-dod-lilac">{label}</span>
     <span className="text-dod-white">{value ?? "—"}</span>
-  </div>
-);
-
-// Two label/value columns (4 rows each) rather than one 8-row column - see
-// the screenshot this was built from. formats is realFormatsOf(item.packages),
-// already computed once by the caller for the Formats section above.
-const ReleaseInfo = ({ item, formats }) => (
-  <div>
-    <SectionLabel>Release Info</SectionLabel>
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-3">
-      <div className="flex flex-col gap-3">
-        <InfoField label="Release Date" value={formatReleaseDate(item)} />
-        <InfoField label="Catalog Number" value={item.catalog_number} />
-        <InfoField label="Label Role" value={item.label_role} />
-        <InfoField label="Label" value="Dome of Doom" />
-      </div>
-      <div className="flex flex-col gap-3">
-        <InfoField label="Type" value={item.type} />
-        <InfoField label="Genre" value={GENRE_PLACEHOLDER} />
-        <InfoField label="Format" value={formats.length > 0 ? formats.map((f) => f.label).join(", ") : null} />
-        <InfoField label="Distribution" value="Worldwide" />
-      </div>
-    </div>
   </div>
 );
 
@@ -225,9 +208,6 @@ const ArtistCard = ({ artist, size = "small", className = "" }) => {
               siblings and the row looks misaligned. */}
           <div className="truncate text-xs text-dod-lilac text-wrap">{artist.location || " "}</div>
         </div>
-        <Button type="small" variant="secondary" to={to} style={{ maxHeight: "18px", fontSize:"7px", maxWidth: "fit-content" }}>
-          <span className="inline-flex items-center gap-1">View Artist ↗</span>
-        </Button>
       </div>
     </div>
   );
@@ -311,7 +291,7 @@ const TracklistScrollArea = ({ children, count }) => {
         <div
           ref={trackRef}
           onClick={handleTrackClick}
-          className="absolute right-[-4px] top-0 bottom-0 w-1.5 cursor-pointer bg-dod-lilac/15"
+          className="absolute right-[-8px] top-0 bottom-0 w-1.5 cursor-pointer bg-dod-lilac/15"
         >
           <div
             onPointerDown={handleThumbPointerDown}
@@ -326,6 +306,12 @@ const TracklistScrollArea = ({ children, count }) => {
 
 const CatalogItem = () => {
   const { catalogParam } = useParams();
+  // Toggled by the two ArrowButtons next to the Spotify/Bandcamp row -
+  // only two views right now (the tilted 3D cover vs. the flat artwork),
+  // so both arrows just flip between them rather than tracking an index.
+  // Declared before the `if (!item)` early return below since hooks can't
+  // follow a conditional return.
+  const [coverView, setCoverView] = useState("tilted");
 
   const allItems = readSeedData("catalog-items-data") ?? [];
   const item = findByCatalogParam(allItems, catalogParam);
@@ -338,7 +324,6 @@ const CatalogItem = () => {
     );
   }
 
-  const artistLabel = item.artists.length > 0 ? item.artists.join(", ") : "DOMEOFDOOM";
   const formats = realFormatsOf(item.packages);
 
   // item.artists (normalizeCatalogItem) is name-only - the richer profile
@@ -359,22 +344,59 @@ const CatalogItem = () => {
     linkedArtists = [...linkedArtists].sort((a, b) => a.name.localeCompare(b.name));
   }
 
+  // Solo/duo releases name the artist(s) directly (top panel + the
+  // TiltedCover spine below); anything bigger reads as a label release -
+  // built off linkedArtists (roster-confirmed), not the raw item.artists
+  // strings, so this only ever shows/links artists that actually exist on
+  // the roster.
+  const isSoloOrDuo = linkedArtists.length <= 2;
+  const artistLabel = isSoloOrDuo ? linkedArtists.map((a) => a.name).join(", ") : "DOMEOFDOOM";
+
   // Shared by every Release Info / Artists frame below - kept as one
   // constant so the two always stay visually identical bordered boxes.
   const FRAME_CLASS = "p-10 border border-dod-lilac/50 bg-black";
 
   return (
-    <div className="font-ppneue py-10 flex flex-col gap-8">
-      <div className="grid grid-cols-6 items-center justify-center w-full h-full">
-        <div className="flex flex-col gap-8 pr-2 col-start-1 col-span-3">
+    <div className="font-ppneue pt-10 flex flex-col gap-8">
+      <div className="grid gap-2 grid-cols-6 items-center justify-center w-full h-full">
+        <div className="pt-8 flex flex-col gap-8 col-start-1 col-span-6 md:col-span-3">
           <div className="flex flex-col gap-2">
-            <div className="text-[clamp(20px,3vw,8rem)] leading-[1.05] italic font-semibold uppercase text-dod-neon-mint">
+            {item.catalog_number && (
+              <div className="flex items-center gap-2 text-sm font-medium tracking-[0.15em] text-dod-lilac">
+                <GlobeIcon size={16} />
+                {item.catalog_number}
+                <div className="uppercase text-sm font-medium tracking-[0.15em] text-dod-white">
+                  · {item.type} {yearOf(item) ? `· ${yearOf(item)}` : ""}
+                </div>
+              </div>
+            )}
+            <div className="text-4xl md:text-[clamp(20px,3vw,8rem)] leading-[1.05] italic font-semibold uppercase text-dod-neon-mint">
               {item.title}
             </div>
-            <div className="text-xl text-dod-deep-purple font-medium">{artistLabel}</div>
-            <div className="uppercase text-sm font-medium tracking-[0.15em] text-dod-white">
-              {item.type} {yearOf(item) ? `· ${yearOf(item)}` : ""}
+            <div className="text-xl md:text-xl text-dod-deep-purple font-medium">
+              {isSoloOrDuo && linkedArtists.length > 0
+                ? linkedArtists.map((artist, i) => (
+                    <React.Fragment key={artist.name}>
+                      {i > 0 && ", "}
+                      <Link to={`/roster/${artistSlug(artist.name)}`} className="hover:underline">
+                        {artist.name}
+                      </Link>
+                    </React.Fragment>
+                  ))
+                : artistLabel}
             </div>
+            {!item.catalog_number && (
+              <div className="uppercase text-lg md:text-sm font-medium tracking-[0.15em] text-dod-white">
+                {item.type} {yearOf(item) ? `· ${yearOf(item)}` : ""}
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col gap-3">
+            <InfoField label="Catalog Number" value={item.catalog_number} />
+            <InfoField label="Release Date" value={formatReleaseDate(item)} />
+            <InfoField label="Label" value="Dome of Doom" />
+            <InfoField label="Format" value={formats.length > 0 ? [...new Set(formats.map((f) => f.label))].join(", ") : null} />
+            <InfoField label="Genre" value={GENRE_PLACEHOLDER} />
           </div>
           {item.description && (
             <div
@@ -382,40 +404,80 @@ const CatalogItem = () => {
               dangerouslySetInnerHTML={{ __html: item.description }}
             />
           )}
-          <div className="flex flex-col gap-3 lg:flex-row">
-            {item.spotify_url ? (
-              <Button type="thin" variant="primary" href={item.spotify_url} style={{ width: "100%" }}>
-                <span className="inline-flex items-center gap-[6px]">
-                  <SpotifyIcon size={14} />
-                  Spotify
-                </span>
-              </Button>
-            ) : (
-              <Button variant="disabled" type="thin" style={{ width: "100%" }}>
-                <span className="inline-flex items-center gap-[6px]">
-                  <SpotifyIcon size={14} />
-                  Not Available
-                </span>
-              </Button>
-            )}
-            {item.bandcamp_url && (
-              <Button type="thin" variant="secondary" href={item.bandcamp_url} style={{ width: "100%" }}>
-                <span className="inline-flex items-center gap-[6px]">
-                  <BandcampIcon size={14} />
-                  Bandcamp
-                </span>
-              </Button>
-            )}
-          </div>
         </div>
-        <div className="col-start-4 col-span-3 p-30 pt-0">
-          <TiltedCover
-            artworkUrl={item.artwork_url}
-            title={item.title}
-            artistLabel={artistLabel}
-            catalogNumber={item.catalog_number}
+        <div className="row-start-1 col-start-2 col-span-4 md:col-start-4 md:col-span-3">
+          {coverView === "tilted" ? (
+            <TiltedCover
+              className="md:p-[50px]"
+              artworkUrl={item.artwork_url}
+              title={item.title}
+              text={{
+                "tilted-cover-left": {
+                  first: item.catalog_number,
+                  middle: "DOMEOFDOOM",
+                  last: item.title,
+                },
+                "tilted-cover-bottom": {
+                  first: artistLabel,
+                },
+              }}
+            />
+          ) : (
+            item.artwork_url && (
+              <img src={item.artwork_url} alt={item.title} className="aspect-square w-full object-cover md:p-[50px]" />
+            )
+          )}
+        </div>
+
+        <div className="flex flex-col gap-3 lg:flex-row col-start-1 col-span-3">
+          {item.spotify_url ? (
+            <Button type="thin" variant="primary" href={item.spotify_url} style={{ width: "100%" }}>
+              <span className="inline-flex items-center gap-[6px]">
+                <SpotifyIcon size={14} />
+                Spotify
+              </span>
+            </Button>
+          ) : (
+            <Button variant="disabled" type="thin" style={{ width: "100%" }}>
+              <span className="inline-flex items-center gap-[6px]">
+                <SpotifyIcon size={14} />
+                Not Available
+              </span>
+            </Button>
+          )}
+          {item.bandcamp_url && (
+            <Button type="thin" variant="secondary" href={item.bandcamp_url} style={{ width: "100%" }}>
+              <span className="inline-flex items-center gap-[6px]">
+                <BandcampIcon size={14} />
+                Bandcamp
+              </span>
+            </Button>
+          )}
+        </div>
+
+        {/* Toggles the cover art between its tilted 3D presentation and
+            the flat artwork image - only two views, so both arrows just
+            flip coverView rather than tracking a real index/direction.
+            Falls into the same grid row as the Spotify/Bandcamp button
+            row above via plain CSS Grid auto-placement (its col-start-1
+            col-span-3 already fills row 2's first three columns, so this
+            next sibling with no explicit row lands in row 2 too, at
+            column 5). */}
+        <div className="col-start-1 row-start-1 md:row-start-2 col-span-6 md:col-start-5 md:col-span-1 flex items-center justify-between">
+          <ArrowButton
+            direction="left"
+            color="lilac"
+            size={40}
+            onClick={() => setCoverView((v) => (v === "tilted" ? "flat" : "tilted"))}
+          />
+          <ArrowButton
+            direction="right"
+            color="lilac"
+            size={40}
+            onClick={() => setCoverView((v) => (v === "tilted" ? "flat" : "tilted"))}
           />
         </div>
+
       </div>
 
       <div className="grid grid-rows-1 grid-cols-6 gap-10 p-10 border border-dod-lilac/50 min-h-126 bg-black">
@@ -457,24 +519,31 @@ const CatalogItem = () => {
                 <div
                   key={format.key}
                   className={`flex flex-col gap-3 border p-4 ${
-                    format.key === "digital" ? "border-dod-neon-mint" : "border-dod-lilac/30"
+                    format.formatKey === "digital" ? "border-dod-neon-mint" : "border-dod-lilac/30"
                   }`}
                 >
-                  <div className="text-xs font-semibold uppercase tracking-[0.1em] text-dod-white">
-                    {format.label}
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-semibold uppercase tracking-[0.1em] text-dod-white">
+                      {format.label}
+                    </span>
+                    {format.pressNumber != null && (
+                      <span className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.1em] text-dod-lilac">
+                        {pressLabel(format.pressNumber)}
+                      </span>
+                    )}
                   </div>
                   <div className="relative aspect-square xl:aspect-auto xl:flex-1 xl:min-h-0 overflow-hidden">
-                    {format.key === "digital" ? (
+                    {format.formatKey === "digital" ? (
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="aspect-square w-[70%] max-w-[160px] flex items-center justify-center border border-dashed border-dod-neon-mint/50 text-dod-neon-mint">
                           <DownloadIcon size={28} />
                         </div>
                       </div>
-                    ) : format.key === "vinyl" ? (
+                    ) : format.formatKey === "vinyl" ? (
                       <div className="absolute p-2 pb-0 inset-0 flex items-center justify-center">
                         <VinylRecord artwork={item.artwork_url} />
                       </div>
-                    ) : format.key === "cassette" ? (
+                    ) : format.formatKey === "cassette" ? (
                       <div className="absolute p-4 pb-0 inset-0 flex items-center justify-center">
                         <CassetteTape artwork={item.artwork_url} />
                       </div>
@@ -488,13 +557,8 @@ const CatalogItem = () => {
                       )
                     )}
                   </div>
-                  <div className="flex flex-col gap-0.5 text-xs text-dod-white/60">
-                    {descriptionLinesOf(format.pkg).map((line, i) => (
-                      <span key={i}>{line}</span>
-                    ))}
-                  </div>
-                  {formatPrice(format.pkg) && (
-                    <div className="text-sm font-semibold text-dod-white">{formatPrice(format.pkg)}</div>
+                  {format.formatKey !== "digital" && format.pkg.description && (
+                    <div className="whitespace-pre-line text-xs text-dod-white/60">{format.pkg.description}</div>
                   )}
                 </div>
               ))}
@@ -525,68 +589,43 @@ const CatalogItem = () => {
       </div>
 
       {/* ============================================================
-          RELEASE INFO / ARTISTS
+          ARTISTS
 
           Desktop-only layout (mobile falls back to stacked full-width -
-          not addressed yet, see conversation history). Column split
-          depends entirely on how many artists actually joined against
+          not addressed yet, see conversation history). Release Info used
+          to share this grid with Artists, but it's been hoisted up into
+          the hero - so an artist-less release just renders nothing here
+          now, and Artists is always the lone full-width frame rather
+          than sharing a row with anything. Card size/layout depends
+          entirely on how many artists actually joined against
           roster-data above:
 
-            0 artists  -> Release Info alone, full width
-            1 artist   -> Release Info + one (medium) artist card, side
-                          by side
-            2 artists  -> Release Info full width, then both artists
-                          (medium) side by side in their own row below it
-            3 artists  -> Release Info full width, then all 3 in their
-                          own row below it - the first (large) featured,
-                          the other two (small) stacked beside it
-            4+ artists -> Release Info full width, then every artist
-                          (small) in a plain 4-per-row grid below it
+            1 artist   -> one (large) artist card, full width
+            2 artists  -> both (large) side by side
+            3 artists  -> all 3 side by side, medium
+            4+ artists -> every artist (small) in a plain 4-per-row grid
           ============================================================ */}
 
-      {/* Release Info and Artists are two visually distinct bordered
-          frames (not one shared box like Tracklist/Formats above) - this
-          outer grid just controls their relative sizing/position, it
-          doesn't carry a border of its own. */}
-      <div className="grid grid-cols-6 gap-4">
-        {linkedArtists.length === 0 && (
-          <div className={`col-span-6 ${FRAME_CLASS}`}>
-            <ReleaseInfo item={item} formats={formats} />
-          </div>
-        )}
-
-        {linkedArtists.length === 1 && (
-          <>
-            <div className={`col-span-6 xl:col-span-4 ${FRAME_CLASS}`}>
-              <ReleaseInfo item={item} formats={formats} />
-            </div>
-            <div className={`col-span-6 xl:col-span-2 ${FRAME_CLASS}`}>
+      {linkedArtists.length > 0 && (
+        <div className="grid grid-cols-6 gap-4">
+          {linkedArtists.length === 1 && (
+            <div className={`col-span-6 ${FRAME_CLASS}`}>
               <SectionLabel>Artists</SectionLabel>
               <ArtistCard artist={linkedArtists[0]} size="large" />
             </div>
-          </>
-        )}
+          )}
 
-        {linkedArtists.length === 2 && (
-          <>
-            <div className={`col-span-6 ${FRAME_CLASS}`}>
-              <ReleaseInfo item={item} formats={formats} />
-            </div>
+          {linkedArtists.length === 2 && (
             <div className={`col-span-6 ${FRAME_CLASS}`}>
               <SectionLabel>Artists</SectionLabel>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <ArtistCard  artist={linkedArtists[0]} size="large" />
-                <ArtistCard  artist={linkedArtists[1]} size="large" />
+                <ArtistCard artist={linkedArtists[0]} size="large" />
+                <ArtistCard artist={linkedArtists[1]} size="large" />
               </div>
             </div>
-          </>
-        )}
+          )}
 
-        {linkedArtists.length === 3 && (
-          <>
-            <div className={`col-span-6 ${FRAME_CLASS}`}>
-              <ReleaseInfo item={item} formats={formats} />
-            </div>
+          {linkedArtists.length === 3 && (
             <div className={`col-span-6 ${FRAME_CLASS}`}>
               <SectionLabel>Artists</SectionLabel>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -595,14 +634,9 @@ const CatalogItem = () => {
                 <ArtistCard artist={linkedArtists[2]} size="medium" />
               </div>
             </div>
-          </>
-        )}
+          )}
 
-        {linkedArtists.length >= 4 && (
-          <>
-            <div className={`col-span-6 ${FRAME_CLASS}`}>
-              <ReleaseInfo item={item} formats={formats} />
-            </div>
+          {linkedArtists.length >= 4 && (
             <div className={`col-span-6 ${FRAME_CLASS}`}>
               <SectionLabel>Artists</SectionLabel>
               <div className="grid grid-cols-4 gap-12">
@@ -611,9 +645,9 @@ const CatalogItem = () => {
                 ))}
               </div>
             </div>
-          </>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

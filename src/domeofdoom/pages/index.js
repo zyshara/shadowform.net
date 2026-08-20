@@ -3,7 +3,6 @@ export { default as Artist } from "./Artist.jsx";
 export { default as Catalog } from "./Catalog.jsx";
 export { default as CatalogItem } from "./CatalogItem.jsx";
 export { default as Contact } from "./Contact.jsx";
-export { default as Discography } from "./Discography.jsx";
 export { default as Home } from "./Home.jsx";
 export { default as Merch } from "./Merch.jsx";
 export { default as NotFound } from "./NotFound.jsx";

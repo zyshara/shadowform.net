@@ -8,7 +8,6 @@ import {
   Catalog,
   CatalogItem,
   Contact,
-  Discography,
   Home,
   Merch,
   NotFound,
