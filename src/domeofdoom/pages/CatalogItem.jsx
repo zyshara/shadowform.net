@@ -358,9 +358,20 @@ const CatalogItem = () => {
 
   const formats = realFormatsOf(item.packages);
 
-  // Cover carousel slides: just the tilted 3D cover and the flat artwork
-  // for now.
-  const coverSlides = [{ type: "tilted" }, ...(item.artwork_url ? [{ type: "image", src: item.artwork_url }] : [])];
+  // Cover carousel slides: tilted 3D cover, flat artwork, then - only when
+  // a vinyl package has a manual disc-photo override (vinylDiscOverrides.js)
+  // - the same VinylRecord shown in Formats below, so the real dye-cut/
+  // colored disc gets a spot in the hero too, not just the format card.
+  const vinylOverridePkg = (item.packages ?? []).find(
+    (p) => (p.formatType || "").toLowerCase().includes("vinyl") && getVinylDiscOverride(p)
+  );
+  const vinylOverrideImages = vinylOverridePkg ? getVinylDiscOverride(vinylOverridePkg) : null;
+
+  const coverSlides = [
+    { type: "tilted" },
+    ...(item.artwork_url ? [{ type: "image", src: item.artwork_url }] : []),
+    ...(vinylOverrideImages ? [{ type: "vinyl", images: vinylOverrideImages }] : []),
+  ];
   const goToSlide = (direction) => {
     setSlideDirection(direction);
     setSlideIndex((i) => (i + direction + coverSlides.length) % coverSlides.length);
@@ -462,6 +473,10 @@ const CatalogItem = () => {
                   },
                 }}
               />
+            ) : coverSlides[slideIndex].type === "vinyl" ? (
+              <div className="md:p-[50px] lg:p-[60px]">
+                <VinylRecord artwork={item.artwork_url} discImages={coverSlides[slideIndex].images} />
+              </div>
             ) : (
               <img
                 src={coverSlides[slideIndex].src}

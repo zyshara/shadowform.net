@@ -128,6 +128,16 @@ body,
 #root {
   width: 100%;
   min-height: 100%;
+  /* Defensive: several components animate via CSS transform (the cover
+     carousel's translateX slide-in, TiltedCover/VinylRecord/CassetteTape's
+     3D rotateY, the Layout page-transition slide) - transformed content
+     can extend past its own layout box and grow the page's scrollable
+     width without Chrome's mobile emulation reproducing it (real mobile
+     Safari's viewport/overflow handling differs), showing up as blank
+     white space to the right of the page on an actual device. Clipping it
+     here is harmless since nothing on this site relies on horizontal
+     scroll. */
+  overflow-x: hidden;
 }
 
 body {
