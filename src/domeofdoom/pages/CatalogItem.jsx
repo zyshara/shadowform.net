@@ -120,6 +120,27 @@ function realFormatsOf(packages) {
   });
 }
 
+// Long titles ("The Family Of Things/This Home We Built") only get a
+// browser-native wrap opportunity at actual spaces - a slash-joined pair
+// of track names has no spaces around the slash, so it just runs past the
+// container instead of breaking there. <wbr/> after each break char adds
+// an optional break point without inserting a visible space/hyphen.
+const TITLE_BREAK_CHARS = ["/"];
+
+function withBreakOpportunities(text, breakChars = TITLE_BREAK_CHARS) {
+  const pattern = new RegExp(`([${breakChars.map((c) => `\\${c}`).join("")}])`);
+  return text.split(pattern).map((part, i) =>
+    breakChars.includes(part) ? (
+      <React.Fragment key={i}>
+        {part}
+        <wbr />
+      </React.Fragment>
+    ) : (
+      part
+    )
+  );
+}
+
 function pressLabel(n) {
   if (n === 1) return "1st Press";
   if (n === 2) return "2nd Press";
@@ -145,7 +166,7 @@ const SectionLabel = ({ children }) => (
 );
 
 const InfoField = ({ label, value }) => (
-  <div className="grid grid-cols-[1fr_1fr] md:grid-cols-[134px_1fr] gap-3 text-md md:text-sm">
+  <div className="grid grid-cols-[auto_auto] justify-between md:justify-center md:grid-cols-[134px_1fr] gap-3 text-md md:text-sm">
     <span className="uppercase tracking-[0.1em] text-sm md:text-xs font-semibold text-dod-lilac">{label}</span>
     <span className="text-dod-white">{value ?? "—"}</span>
   </div>
@@ -361,35 +382,31 @@ const CatalogItem = () => {
       <div className="grid gap-2 grid-cols-6 items-center justify-center w-full h-full">
         <div className="pt-8 flex flex-col gap-8 col-start-1 col-span-6 md:col-span-3">
           <div className="flex flex-col gap-2">
-            {item.catalog_number && (
-              <div className="flex items-center gap-2 text-sm font-medium tracking-[0.15em] text-dod-lilac">
-                <GlobeIcon size={16} />
-                {item.catalog_number}
-                <div className="uppercase text-sm font-medium tracking-[0.15em] text-dod-white">
-                  · {item.type} {yearOf(item) ? `· ${yearOf(item)}` : ""}
-                </div>
+            <div className="flex items-center gap-2 text-xs md:text-sm font-medium tracking-[0.15em] text-dod-lilac">
+              { item.catalog_number && (
+                <>
+                  <GlobeIcon size={16} /> {item.catalog_number} ·
+                </>
+              )}
+              <div className="uppercase text-xs md:text-sm font-medium tracking-[0.15em] text-dod-white">
+               {item.type} {yearOf(item) ? `· ${yearOf(item)}` : ""}
               </div>
-            )}
-            <div className="text-4xl md:text-[clamp(20px,3vw,8rem)] leading-[1.05] italic font-semibold uppercase text-dod-neon-mint">
-              {item.title}
             </div>
-            <div className="text-xl md:text-xl text-dod-deep-purple font-medium">
-              {isSoloOrDuo && linkedArtists.length > 0
+            <div className="text-5xl md:text-[clamp(20px,3vw,8rem)] leading-[1.05] italic font-semibold uppercase text-dod-neon-mint">
+              {withBreakOpportunities(item.title)}
+            </div>
+            <div className="text-xl text-dod-deep-purple font-medium">
+              { linkedArtists.length > 0
                 ? linkedArtists.map((artist, i) => (
                     <React.Fragment key={artist.name}>
                       {i > 0 && ", "}
-                      <Link to={`/roster/${artistSlug(artist.name)}`} className="hover:underline">
+                      <Link to={`/roster/${artistSlug(artist.name)}`} className="hover:text-dod-neon-mint transition-all underline">
                         {artist.name}
                       </Link>
                     </React.Fragment>
                   ))
-                : artistLabel}
+                : "DOMEOFDOOM"}
             </div>
-            {!item.catalog_number && (
-              <div className="uppercase text-lg md:text-sm font-medium tracking-[0.15em] text-dod-white">
-                {item.type} {yearOf(item) ? `· ${yearOf(item)}` : ""}
-              </div>
-            )}
           </div>
           <div className="flex flex-col gap-3">
             <InfoField label="Catalog Number" value={item.catalog_number} />
@@ -408,7 +425,7 @@ const CatalogItem = () => {
         <div className="row-start-1 col-start-2 col-span-4 md:col-start-4 md:col-span-3">
           {coverView === "tilted" ? (
             <TiltedCover
-              className="md:p-[50px]"
+              className="md:p-[50px] lg:p[60px]"
               artworkUrl={item.artwork_url}
               title={item.title}
               text={{
@@ -424,7 +441,7 @@ const CatalogItem = () => {
             />
           ) : (
             item.artwork_url && (
-              <img src={item.artwork_url} alt={item.title} className="aspect-square w-full object-cover md:p-[50px]" />
+              <img src={item.artwork_url} alt={item.title} className="aspect-square w-full object-cover md:p-[50px] lg:p[60px]" />
             )
           )}
         </div>
