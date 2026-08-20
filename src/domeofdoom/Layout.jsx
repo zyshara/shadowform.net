@@ -58,11 +58,20 @@ const Layout = () => {
           incoming page — still in normal flow, so it drives real page
           height/scroll — slides up underneath/over it. The relative
           wrapper gives that absolutely-positioned exit something to
-          anchor to. */}
-      <div className="relative col-start-1 col-span-6 lg:col-span-4 lg:col-start-2 px-8 lg:px-0">
+          anchor to.
+
+          px-8 lives on the motion.div itself, not this wrapper - an
+          absolutely-positioned child's left/right: 0 (the exit variant)
+          aligns to the parent's padding-BOX edge, i.e. it ignores the
+          parent's own padding and spans full width. Keeping the padding
+          on the animated element itself means both the normal-flow
+          entering page and the absolutely-positioned exiting page get
+          the same inset regardless of which positioning mode they're in. */}
+      <div className="relative col-start-1 col-span-6 lg:col-span-4 lg:col-start-2">
         <AnimatePresence>
           <motion.div
             key={location.pathname}
+            className="px-8 lg:px-0"
             initial={{ opacity: 0, y: "100vh" }}
             animate={{ opacity: 1, y: 0, position: "relative", zIndex: 1 }}
             exit={{ opacity: 0, position: "absolute", zIndex: 0, top: 0, left: 0, right: 0 }}

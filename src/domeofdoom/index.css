@@ -281,7 +281,12 @@ body {
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transform: rotateX(19deg) rotateZ(-9deg) rotateY(28deg);
+  transform: rotateX(19deg) rotateZ(-9deg) rotateY(28deg) translateX(10px);
+}
+@media (min-width: 768px) {
+  .tilted-cover-rotor {
+    transform: rotateX(19deg) rotateZ(-9deg) rotateY(28deg);
+  }
 }
 .tilted-cover-face {
   position: absolute;
@@ -359,6 +364,25 @@ body {
 .tilted-cover-bottom-catno {
   flex-shrink: 0;
   opacity: 0.7;
+}
+
+/* CatalogItem cover carousel (TiltedCover + flat artwork + package photos)
+   - only the incoming slide is ever mounted (see the key={slideIndex}
+   remount in CatalogItem.jsx), so this just animates it flying in from
+   whichever side the user tapped, over the container's overflow-hidden. */
+@keyframes coverSlideInFromRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+@keyframes coverSlideInFromLeft {
+  from { transform: translateX(-100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+.cover-slide-in-right {
+  animation: coverSlideInFromRight 0.35s ease-out;
+}
+.cover-slide-in-left {
+  animation: coverSlideInFromLeft 0.35s ease-out;
 }
 
 /* Rich-text description (catalogItem.js's blocksToHtml/plainTextToHtml

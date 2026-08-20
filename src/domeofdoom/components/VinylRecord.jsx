@@ -16,12 +16,41 @@
 // disc's intentional peek. cqw is a real length AND stays proportional to
 // however big this component is actually rendered, so the composition
 // holds together at any card size without a callsite-side transform:scale
-// hack. The front face is also sized to 80%/92% (not a full 100% inset)
-// so there's genuine room in the box for the disc's peek, rather than
-// relying on a razor-thin overflow tolerance.
+// hack. The sleeve/disc/spine are also sized to 70% (not a full 100%
+// inset) so there's genuine room in the box for the disc's peek, rather
+// than relying on a razor-thin overflow tolerance.
 import React from "react";
 
-const VinylRecord = ({ artwork }) => (
+// discImages (optional) - up to 2 real photographed disc images (dye-cut/
+// colored vinyl the CSS gradient can't represent), positioned/rotated
+// exactly like the default CSS disc so they drop in as a straight swap.
+// Extra discs beyond the first are pushed further right/back so more than
+// one peeks out from behind the sleeve rather than fully overlapping. No
+// images -> the original CSS-drawn disc (grooves + label + spindle hole).
+const DISC_RIGHT_STEP = 14; // % - how far each extra disc shifts right
+const DISC_DEPTH_STEP = 1.2; // multiplier step on --vr-depth per extra disc
+// Fixed `top` for a single photo disc (the CSS-drawn disc keeps its own
+// 4%, set on .vinyl-record-disc-css, regardless of this).
+const DISC_PHOTO_TOP_FRONT = "5%";
+
+// Exactly-2-photo-discs layout, tuned by hand (a plain right/depth stagger
+// like the single-disc formula below just made two discs blur into one
+// blob) - the front disc sits normally, the back one is pushed further
+// back, shifted down/left, and laid almost flat via rotateX so it reads
+// as its own distinct circle instead of a sliver peeking from behind the
+// first. Only kicks in for exactly 2 images; 0 or 1 use the generic path.
+const TWO_DISC_STYLES = [
+  { top: "5%", right: "-7%", transform: "translateZ(calc(var(--vr-depth) * 2))" },
+  {
+    top: "37%",
+    right: "24%",
+    transform: "translateZ(calc(var(--vr-depth) * 2)) rotateX(85deg)",
+    width: "75%",
+    height: "75%",
+  },
+];
+
+const VinylRecord = ({ artwork, discImages }) => (
   <>
     <style>{`
       .vinyl-record {
@@ -45,15 +74,26 @@ const VinylRecord = ({ artwork }) => (
          most of it hides behind the front/spine faces, with a crescent
          showing past the sleeve's own (already-inset) edge. Sized to stay
          within the scene's own box at rest, matching the front face's
-         inset so the whole composition never exceeds .vinyl-record. */
+         inset so the whole composition never exceeds .vinyl-record.
+         Position/depth vary per-disc (see DISC_RIGHT_STEP/DISC_DEPTH_STEP
+         and DISC_PHOTO_TOP below) so top/right/transform are set inline
+         rather than here; this rule only holds what's shared by both the
+         CSS-drawn and photo variants. */
       .vinyl-record-disc {
         position: absolute;
-        width: 92%;
-        height: 92%;
-        top: 4%;
-        right: 0%;
-        transform: translateZ(calc(var(--vr-depth) * -1.2));
+        width: 70%;
+        height: 70%;
         border-radius: 50%;
+        overflow: hidden;
+        box-shadow:
+          0 14px 30px rgba(0, 0, 0, 0.6),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+      }
+      /* CSS-drawn disc - grooves + label + spindle hole, used whenever no
+         real disc photo is supplied. Untouched by DISC_PHOTO_TOP below -
+         top stays put regardless of what the photo variant does. */
+      .vinyl-record-disc-css {
+        top: 4%;
         background:
           repeating-radial-gradient(
             circle at center,
@@ -62,11 +102,8 @@ const VinylRecord = ({ artwork }) => (
             #050505 2px,
             #050505 4px
           );
-        box-shadow:
-          0 14px 30px rgba(0, 0, 0, 0.6),
-          inset 0 0 0 1px rgba(255, 255, 255, 0.06);
       }
-      .vinyl-record-disc::before {
+      .vinyl-record-disc-css::before {
         content: "";
         position: absolute;
         left: 50%;
@@ -85,7 +122,7 @@ const VinylRecord = ({ artwork }) => (
         );
         box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
       }
-      .vinyl-record-disc::after {
+      .vinyl-record-disc-css::after {
         content: "";
         position: absolute;
         left: 50%;
@@ -96,6 +133,14 @@ const VinylRecord = ({ artwork }) => (
         border-radius: 50%;
         background: #050505;
       }
+      /* Photo disc - a real dye-cut/colored disc image, cropped to a
+         circle by the shared .vinyl-record-disc's overflow: hidden. */
+      .vinyl-record-disc-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
 
       /* Front cover face - deliberately not a full inset:0, see file
          header: leaves room on the right/top/bottom for the disc and
@@ -104,8 +149,8 @@ const VinylRecord = ({ artwork }) => (
         position: absolute;
         top: 4%;
         left: 0;
-        width: 80%;
-        height: 92%;
+        width: 70%;
+        height: 70%;
         overflow: hidden;
         background: #d8d8d8;
         transform: translateZ(0);
@@ -124,9 +169,9 @@ const VinylRecord = ({ artwork }) => (
       .vinyl-record-spine {
         position: absolute;
         top: 4%;
-        left: 80%;
+        left: 70%;
         width: var(--vr-depth);
-        height: 92%;
+        height: 70%;
         transform-origin: left center;
         transform: rotateY(90deg);
         background: linear-gradient(to right, #26262a, #08090a);
@@ -140,7 +185,7 @@ const VinylRecord = ({ artwork }) => (
         position: absolute;
         top: calc(4% - var(--vr-depth));
         left: 0;
-        width: 80%;
+        width: 70%;
         height: var(--vr-depth);
         transform-origin: bottom center;
         transform: rotateX(90deg);
@@ -150,7 +195,23 @@ const VinylRecord = ({ artwork }) => (
 
     <div className="vinyl-record">
       <div className="vinyl-record-rotor">
-        <div className="vinyl-record-disc" />
+        {(discImages && discImages.length > 0 ? discImages : [null]).map((src, i) => (
+          <div
+            key={src ?? "css-disc"}
+            className={`vinyl-record-disc ${src ? "vinyl-record-disc-photo" : "vinyl-record-disc-css"}`}
+            style={
+              src && discImages.length === 2
+                ? TWO_DISC_STYLES[i]
+                : {
+                    ...(src && { top: DISC_PHOTO_TOP_FRONT }),
+                    right: `${i * DISC_RIGHT_STEP}%`,
+                    transform: `translateZ(calc(var(--vr-depth) * ${-1.2 - i * DISC_DEPTH_STEP}))`,
+                  }
+            }
+          >
+            {src && <img src={src} alt="" />}
+          </div>
+        ))}
         <div className="vinyl-record-front">
           {artwork && <img src={artwork} alt="" />}
         </div>

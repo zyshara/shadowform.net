@@ -21,6 +21,7 @@ import CassetteTape from "@/components/CassetteTape";
 import StarIcon from "@/components/StarIcon";
 import GlobeIcon from "@/components/GlobeIcon";
 import ArrowButton from "@/components/ArrowButton";
+import { getVinylDiscOverride } from "@/data/vinylDiscOverrides";
 import { colors } from "@/tokens";
 
 // No genre field exists anywhere in the data pipeline yet (not on the
@@ -141,6 +142,15 @@ function withBreakOpportunities(text, breakChars = TITLE_BREAK_CHARS) {
   );
 }
 
+// Vinyl/cassette package descriptions are dod-bandcamp-scraper's
+// desc_pt1+desc_pt2 joined with a blank line (see buildPackages in
+// scraper.js) - desc_pt1 alone is the actual pressing summary (color/
+// pressing count/etc), desc_pt2 tends to run long (credits, liner notes),
+// which is too much for a small format card.
+function firstParagraph(text) {
+  return text?.split(/\n\s*\n/)[0] ?? text;
+}
+
 function pressLabel(n) {
   if (n === 1) return "1st Press";
   if (n === 2) return "2nd Press";
@@ -158,8 +168,8 @@ const SectionDots = () => (
   </svg>
 );
 
-const SectionLabel = ({ children }) => (
-  <div className="flex items-center gap-2 mb-6 text-sm font-semibold uppercase tracking-[0.15em] text-dod-neon-mint">
+const SectionLabel = ({ children, className }) => (
+  <div className={`flex items-center gap-2 mb-6 text-sm font-semibold uppercase tracking-[0.15em] text-dod-neon-mint ${className}`}>
     <SectionDots />
     {children}
   </div>
@@ -327,12 +337,13 @@ const TracklistScrollArea = ({ children, count }) => {
 
 const CatalogItem = () => {
   const { catalogParam } = useParams();
-  // Toggled by the two ArrowButtons next to the Spotify/Bandcamp row -
-  // only two views right now (the tilted 3D cover vs. the flat artwork),
-  // so both arrows just flip between them rather than tracking an index.
-  // Declared before the `if (!item)` early return below since hooks can't
-  // follow a conditional return.
-  const [coverView, setCoverView] = useState("tilted");
+  // Stepped through by the two ArrowButtons next to the Spotify/Bandcamp
+  // row - slideDirection just tracks which way the user last pressed, so
+  // the incoming slide (see the `key={slideIndex}` remount below) can
+  // animate in from the matching side. Declared before the `if (!item)`
+  // early return below since hooks can't follow a conditional return.
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState(1);
 
   const allItems = readSeedData("catalog-items-data") ?? [];
   const item = findByCatalogParam(allItems, catalogParam);
@@ -346,6 +357,14 @@ const CatalogItem = () => {
   }
 
   const formats = realFormatsOf(item.packages);
+
+  // Cover carousel slides: just the tilted 3D cover and the flat artwork
+  // for now.
+  const coverSlides = [{ type: "tilted" }, ...(item.artwork_url ? [{ type: "image", src: item.artwork_url }] : [])];
+  const goToSlide = (direction) => {
+    setSlideDirection(direction);
+    setSlideIndex((i) => (i + direction + coverSlides.length) % coverSlides.length);
+  };
 
   // item.artists (normalizeCatalogItem) is name-only - the richer profile
   // (photo, location) lives in roster-data instead (normalized
@@ -423,48 +442,55 @@ const CatalogItem = () => {
           )}
         </div>
         <div className="row-start-1 col-start-2 col-span-4 md:col-start-4 md:col-span-3">
-          {coverView === "tilted" ? (
-            <TiltedCover
-              className="md:p-[50px] lg:p[60px]"
-              artworkUrl={item.artwork_url}
-              title={item.title}
-              text={{
-                "tilted-cover-left": {
-                  first: item.catalog_number,
-                  middle: "DOMEOFDOOM",
-                  last: item.title,
-                },
-                "tilted-cover-bottom": {
-                  first: artistLabel,
-                },
-              }}
-            />
-          ) : (
-            item.artwork_url && (
-              <img src={item.artwork_url} alt={item.title} className="aspect-square w-full object-cover md:p-[50px] lg:p[60px]" />
-            )
-          )}
+          <div
+            key={slideIndex}
+            className={slideDirection === 1 ? "cover-slide-in-right" : "cover-slide-in-left"}
+          >
+            {coverSlides[slideIndex].type === "tilted" ? (
+              <TiltedCover
+                className="md:p-[50px] lg:p[60px]"
+                artworkUrl={item.artwork_url}
+                title={item.title}
+                text={{
+                  "tilted-cover-left": {
+                    first: item.catalog_number,
+                    middle: "DOMEOFDOOM",
+                    last: item.title,
+                  },
+                  "tilted-cover-bottom": {
+                    first: artistLabel,
+                  },
+                }}
+              />
+            ) : (
+              <img
+                src={coverSlides[slideIndex].src}
+                alt={item.title}
+                className="aspect-square w-full object-cover md:p-[50px] lg:p[60px]"
+              />
+            )}
+          </div>
         </div>
 
-        <div className="flex flex-col gap-3 lg:flex-row col-start-1 col-span-3">
+        <div className="mt-8 flex flex-col gap-4 lg:flex-row col-start-1 col-span-6 md:col-span-3">
           {item.spotify_url ? (
             <Button type="thin" variant="primary" href={item.spotify_url} style={{ width: "100%" }}>
-              <span className="inline-flex items-center gap-[6px]">
+              <span className="inline-flex items-center gap-[6px] leading-none">
                 <SpotifyIcon size={14} />
                 Spotify
               </span>
             </Button>
           ) : (
             <Button variant="disabled" type="thin" style={{ width: "100%" }}>
-              <span className="inline-flex items-center gap-[6px]">
+              <span className="inline-flex items-center gap-[6px] leading-none">
                 <SpotifyIcon size={14} />
-                Not Available
+                Spotify
               </span>
             </Button>
           )}
           {item.bandcamp_url && (
             <Button type="thin" variant="secondary" href={item.bandcamp_url} style={{ width: "100%" }}>
-              <span className="inline-flex items-center gap-[6px]">
+              <span className="inline-flex items-center gap-[6px] leading-none">
                 <BandcampIcon size={14} />
                 Bandcamp
               </span>
@@ -472,26 +498,28 @@ const CatalogItem = () => {
           )}
         </div>
 
-        {/* Toggles the cover art between its tilted 3D presentation and
-            the flat artwork image - only two views, so both arrows just
-            flip coverView rather than tracking a real index/direction.
-            Falls into the same grid row as the Spotify/Bandcamp button
-            row above via plain CSS Grid auto-placement (its col-start-1
-            col-span-3 already fills row 2's first three columns, so this
-            next sibling with no explicit row lands in row 2 too, at
-            column 5). */}
-        <div className="col-start-1 row-start-1 md:row-start-2 col-span-6 md:col-start-5 md:col-span-1 flex items-center justify-between">
+        {/* Steps through coverSlides (tilted cover, flat artwork, then any
+            scraped package photos). On mobile this sits in row 1 (same row
+            as the cover itself, per the grid's auto-placement/overlap) so
+            self-stretch + items-stretch lets each button's tap target fill
+            the whole cover height instead of just its own small icon box -
+            on desktop it drops into row 2 alongside the Spotify/Bandcamp
+            buttons (via the same auto-placement into column 5) at a normal
+            fixed 40px square. */}
+        <div className="col-start-1 row-start-1 md:row-start-2 col-span-6 md:col-start-5 md:col-span-1 self-stretch flex items-stretch md:items-center justify-between">
           <ArrowButton
             direction="left"
             color="lilac"
-            size={40}
-            onClick={() => setCoverView((v) => (v === "tilted" ? "flat" : "tilted"))}
+            className="w-10 h-full md:h-10"
+            iconClassName="w-[10px] h-[10px] md:w-4 md:h-4"
+            onClick={() => goToSlide(-1)}
           />
           <ArrowButton
             direction="right"
             color="lilac"
-            size={40}
-            onClick={() => setCoverView((v) => (v === "tilted" ? "flat" : "tilted"))}
+            className="w-10 h-full md:h-10"
+            iconClassName="w-[10px] h-[10px] md:w-4 md:h-4"
+            onClick={() => goToSlide(1)}
           />
         </div>
 
@@ -532,7 +560,9 @@ const CatalogItem = () => {
           <SectionLabel>Formats</SectionLabel>
           {formats.length > 0 ? (
             <div className="flex-1 grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {formats.map((format) => (
+              {formats.map((format) => {
+                const vinylDiscImages = format.formatKey === "vinyl" ? getVinylDiscOverride(format.pkg) : null;
+                return (
                 <div
                   key={format.key}
                   className={`flex flex-col gap-3 border p-4 ${
@@ -549,7 +579,7 @@ const CatalogItem = () => {
                       </span>
                     )}
                   </div>
-                  <div className="relative aspect-square xl:aspect-auto xl:flex-1 xl:min-h-0 overflow-hidden">
+                  <div className="relative aspect-square overflow-hidden">
                     {format.formatKey === "digital" ? (
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="aspect-square w-[70%] max-w-[160px] flex items-center justify-center border border-dashed border-dod-neon-mint/50 text-dod-neon-mint">
@@ -558,7 +588,7 @@ const CatalogItem = () => {
                       </div>
                     ) : format.formatKey === "vinyl" ? (
                       <div className="absolute p-2 pb-0 inset-0 flex items-center justify-center">
-                        <VinylRecord artwork={item.artwork_url} />
+                        <VinylRecord artwork={item.artwork_url} discImages={vinylDiscImages} />
                       </div>
                     ) : format.formatKey === "cassette" ? (
                       <div className="absolute p-4 pb-0 inset-0 flex items-center justify-center">
@@ -575,10 +605,15 @@ const CatalogItem = () => {
                     )}
                   </div>
                   {format.formatKey !== "digital" && format.pkg.description && (
-                    <div className="whitespace-pre-line text-xs text-dod-white/60">{format.pkg.description}</div>
+                    <div className="whitespace-pre-line text-xs text-dod-white/60">
+                      {format.formatKey === "vinyl" || format.formatKey === "cassette"
+                        ? firstParagraph(format.pkg.description)
+                        : format.pkg.description}
+                    </div>
                   )}
                 </div>
-              ))}
+                );
+              })}
               {/* Decorative filler for leftover grid columns (only exists at
                   md:grid-cols-4 - hidden below that, where the grid is only
                   2 columns and empty slots would just wrap to a new row). */}
@@ -624,12 +659,12 @@ const CatalogItem = () => {
           ============================================================ */}
 
       {linkedArtists.length > 0 && (
-        <div className="grid grid-cols-6 gap-4">
+        <div className={`grid grid-cols-6 gap-4 ${FRAME_CLASS}`}>
           {linkedArtists.length === 1 && (
-            <div className={`col-span-6 ${FRAME_CLASS}`}>
-              <SectionLabel>Artists</SectionLabel>
+            <>
+              <SectionLabel className="col-start-1 col-span-6">Artists</SectionLabel>
               <ArtistCard artist={linkedArtists[0]} size="large" />
-            </div>
+            </>
           )}
 
           {linkedArtists.length === 2 && (

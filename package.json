@@ -26,7 +26,7 @@
     "@tanstack/react-table": "^8.21.3",
     "atrament": "^5.1.0",
     "connect-history-api-fallback": "^2.0.0",
-    "dod-bandcamp-scraper": "git+ssh://git@github.com/zyshara/dod-bandcamp-scraper.git#main",
+    "dod-bandcamp-scraper": "github:zyshara/dod-bandcamp-scraper#main",
     "dotenv": "^17.4.0",
     "express": "^5.1.0",
     "framer-motion": "^12.23.26",
