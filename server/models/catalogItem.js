@@ -121,6 +121,7 @@ export function normalizeCatalogItem(raw) {
   return {
     uid: raw.documentId ?? raw.id,
     bandcamp_url: r.bandcamp_url ?? null,
+    spotify_url: r.spotify_url ?? "https://open.spotify.com", // TODO: remove test fallback
     title,
     description,
     artwork_url: artworkUrl,

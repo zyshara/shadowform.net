@@ -114,6 +114,11 @@
   to   { transform: translateX(var(--marquee-shift, -50%)); }
 }
 
+@keyframes marquee-vertical {
+  from { transform: translateY(0); }
+  to   { transform: translateY(var(--marquee-v-shift, -50%)); }
+}
+
 @keyframes navlinkFlash {
   0%, 100% { color: var(--dod-lilac); }
   50%      { color: #ffffff; }

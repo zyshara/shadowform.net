@@ -41,6 +41,7 @@ export function normalizeArtist(raw) {
     resolveMediaUrl(overrides.profile_picture) || derived.bandcamp_image || bandcampRaw.imageUrl || null;
   const location = overrides.location || bandcampRaw.location || null;
   const url = overrides.bandcamp_url || derived.bandcamp_url || bandcampRaw.bandcampUrl || null;
+  const spotify_url = overrides.spotify_url || derived.spotify_url || null;
 
   return {
     uid: raw.documentId ?? raw.id,
@@ -49,6 +50,7 @@ export function normalizeArtist(raw) {
     photo_src: photoSrc,
     location,
     url,
+    spotify_url,
   };
 }
 

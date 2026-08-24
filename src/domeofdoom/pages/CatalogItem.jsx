@@ -15,12 +15,19 @@ import TiltedCover from "@/components/TiltedCover";
 import Button from "@/components/Button";
 import SpotifyIcon from "@/components/SpotifyIcon";
 import BandcampIcon from "@/components/BandcampIcon";
+import BrutalistButton from "@/components/BrutalistButton";
+import GlobeSlideButton from "@/components/GlobeSlideButton";
+import ArrowUpRightIcon from "@/components/ArrowUpRightIcon";
+import ArrowRightIcon from "@/components/ArrowRightIcon";
 import DownloadIcon from "@/components/DownloadIcon";
 import VinylRecord from "@/components/VinylRecord";
 import CassetteTape from "@/components/CassetteTape";
 import StarIcon from "@/components/StarIcon";
 import GlobeIcon from "@/components/GlobeIcon";
 import ArrowButton from "@/components/ArrowButton";
+import ArtistCardSingle from "@/components/ArtistCardSingle";
+import ArtistCardDouble from "@/components/ArtistCardDouble";
+import SectionDots from "@/components/SectionDots";
 import { getVinylDiscOverride } from "@/data/vinylDiscOverrides";
 import { colors } from "@/tokens";
 
@@ -158,15 +165,6 @@ function pressLabel(n) {
   return `${n}th Press`;
 }
 
-// The small 2x2 dot mark next to "Tracklist"/"Formats" section labels.
-const SectionDots = () => (
-  <svg width="14" height="14" viewBox="0 0 14 14" className="flex-shrink-0">
-    <circle cx="3" cy="3" r="3" fill="var(--dod-lilac)" />
-    <circle cx="11" cy="3" r="3" fill="var(--dod-lilac)" />
-    <circle cx="3" cy="11" r="3" fill="var(--dod-lilac)" />
-    <circle cx="11" cy="11" r="3" fill="var(--dod-lilac)" />
-  </svg>
-);
 
 const SectionLabel = ({ children, className }) => (
   <div className={`flex items-center gap-2 mb-6 text-sm font-semibold uppercase tracking-[0.15em] text-dod-neon-mint ${className}`}>
@@ -410,7 +408,7 @@ const CatalogItem = () => {
   return (
     <div className="font-ppneue pt-10 flex flex-col gap-8">
       <div className="grid gap-2 grid-cols-6 items-center justify-center w-full h-full">
-        <div className="pt-8 flex flex-col gap-8 col-start-1 col-span-6 md:col-span-3">
+        <div className="flex flex-col gap-8 col-start-1 col-span-6 md:col-span-3">
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 text-xs md:text-sm font-medium tracking-[0.15em] text-dod-lilac">
               { item.catalog_number && (
@@ -487,29 +485,32 @@ const CatalogItem = () => {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-4 lg:flex-row col-start-1 col-span-6 md:col-span-3">
-          {item.spotify_url ? (
-            <Button type="thin" variant="primary" href={item.spotify_url} style={{ width: "100%" }}>
-              <span className="inline-flex items-center gap-[6px] leading-none">
-                <SpotifyIcon size={14} />
-                Spotify
-              </span>
-            </Button>
-          ) : (
-            <Button variant="disabled" type="thin" style={{ width: "100%" }}>
-              <span className="inline-flex items-center gap-[6px] leading-none">
-                <SpotifyIcon size={14} />
-                Spotify
-              </span>
-            </Button>
+        <div className="col-start-1 col-span-6 md:col-span-3 mt-8 flex flex-col gap-3 lg:flex-row lg:items-start">
+          {item.spotify_url && (
+            <GlobeSlideButton
+              text="Spotify"
+              leftIcon={<SpotifyIcon size={Math.round(18 * 1.1)} />}
+              icon={<ArrowUpRightIcon size={Math.round(18 * 1.1)} />}
+              size="md"
+              thickness="thin"
+              duration={520}
+              labelShift={26}
+              color="var(--dod-neon-mint)"
+              href={item.spotify_url}
+            />
           )}
           {item.bandcamp_url && (
-            <Button type="thin" variant="secondary" href={item.bandcamp_url} style={{ width: "100%" }}>
-              <span className="inline-flex items-center gap-[6px] leading-none">
-                <BandcampIcon size={14} />
-                Bandcamp
-              </span>
-            </Button>
+            <GlobeSlideButton
+              text="Bandcamp"
+              leftIcon={<BandcampIcon size={Math.round(18 * 1.1)} />}
+              icon={<ArrowUpRightIcon size={Math.round(18 * 1.1)} />}
+              size="md"
+              thickness="thin"
+              duration={520}
+              labelShift={26}
+              color="var(--dod-lilac)"
+              href={item.bandcamp_url}
+            />
           )}
         </div>
 
@@ -674,21 +675,22 @@ const CatalogItem = () => {
           ============================================================ */}
 
       {linkedArtists.length > 0 && (
-        <div className={`grid grid-cols-6 gap-4 ${FRAME_CLASS}`}>
+        // 1-artist skips FRAME_CLASS here - ArtistCardSingle already
+        // supplies its own border, so this outer frame would double it up.
+        <div className={`grid grid-cols-6 gap-4 ${linkedArtists.length > 2 ? FRAME_CLASS : ""}`}>
           {linkedArtists.length === 1 && (
-            <>
-              <SectionLabel className="col-start-1 col-span-6">Artists</SectionLabel>
-              <ArtistCard artist={linkedArtists[0]} size="large" />
-            </>
+            // ArtistCardSingle brings its own border/label-equivalent
+            // (see the reference mockups) - no FRAME_CLASS/SectionLabel
+            // wrapper here, unlike the other artist-count branches below,
+            // or it'd double up.
+            <div className="col-span-6">
+              <ArtistCardSingle artist={linkedArtists[0]} />
+            </div>
           )}
 
           {linkedArtists.length === 2 && (
-            <div className={`col-span-6 ${FRAME_CLASS}`}>
-              <SectionLabel>Artists</SectionLabel>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <ArtistCard artist={linkedArtists[0]} size="large" />
-                <ArtistCard artist={linkedArtists[1]} size="large" />
-              </div>
+            <div className="col-span-6">
+              <ArtistCardDouble artists={linkedArtists} />
             </div>
           )}
 
