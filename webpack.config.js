@@ -99,9 +99,10 @@ const fromMetadata = (metadata) => ({
   jsonLd: metadata.jsonLd ?? null,
 });
 
-const redspearMetadata   = loadMetadata(path.join(__dirname, "src/redspear/metadata.json"));
-const lowPolyMetadata    = loadMetadata(path.join(__dirname, "src/low-poly/metadata.json"));
-const domeofdoomMetadata = loadMetadata(path.join(__dirname, "src/domeofdoom/metadata.json"));
+const redspearMetadata      = loadMetadata(path.join(__dirname, "src/redspear/metadata.json"));
+const lowPolyMetadata       = loadMetadata(path.join(__dirname, "src/low-poly/metadata.json"));
+const domeofdoomMetadata    = loadMetadata(path.join(__dirname, "src/domeofdoom/metadata.json"));
+const hakubutsukanMetadata  = loadMetadata(path.join(__dirname, "src/hakubutsukan/metadata.json"));
 
 export default [
   makeConfig({
@@ -145,6 +146,16 @@ export default [
     umamiId: "cdea5119-53fc-4bbe-9c3a-4dc923b3489e",
     alias: {
       "@": path.resolve(__dirname, "src/main"),
+      "@shared": path.resolve(__dirname, "src/shared"),
+    },
+  }),
+  makeConfig({
+    entry: "./src/hakubutsukan/index.js",
+    outputPath: "dist/hakubutsukan",
+    publicPath: "/",
+    ...fromMetadata(hakubutsukanMetadata),
+    alias: {
+      "@": path.resolve(__dirname, "src/hakubutsukan"),
       "@shared": path.resolve(__dirname, "src/shared"),
     },
   }),

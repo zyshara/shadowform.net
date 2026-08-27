@@ -1,5 +1,3 @@
-// server/cron/syncDiscography.js
-//
 // Bandcamp is the source of truth for the release list; Strapi is where it
 // gets enriched (Spotify link + release type) and persisted. Flow: scrape
 // Bandcamp -> diff against what Strapi already has (by bandcamp_url) -> for
@@ -7,13 +5,13 @@
 // re-read everything from Strapi into the bandcampCache singleton the
 // frontend reads from.
 
-import { scrapeBandcampDiscography, scrapeBandcampReleaseDate } from "./scrapers/bandcamp.js";
-import { matchSpotifyRelease, classifyReleaseType } from "../lib/releaseMatching.js";
-import { strapiGet, strapiPost } from "../lib/strapi.js";
-import { splitArtistString, loadArtistCache, ensureArtist } from "../lib/artists.js";
-import { normalizeReleases } from "../models/release.js";
-import { setDiscography } from "../lib/bandcampCache.js";
-import { logger } from "../lib/logger.js";
+import { scrapeBandcampDiscography, scrapeBandcampReleaseDate } from "../scrapers/bandcamp.js";
+import { matchSpotifyRelease, classifyReleaseType } from "../../lib/releaseMatching.js";
+import { strapiGet, strapiPost } from "../../lib/strapi.js";
+import { splitArtistString, loadArtistCache, ensureArtist } from "../../lib/artists.js";
+import { normalizeReleases } from "../../models/release.js";
+import { setDiscography } from "../../lib/bandcampCache.js";
+import { logger } from "../../lib/logger.js";
 
 const RELEASES_PATH = "/api/dome-of-doom-releases";
 const PAGE_SIZE = 100;
@@ -65,8 +63,6 @@ async function processNewRelease(release, artistCache) {
     releaseDate = new Date(match.release_date).toISOString();
   }
 
-  // Bandcamp artist text can list multiple artists (e.g. "DMVU & FINNOH",
-  // "ZOF, DMVU, Babyweight") — split and link each to the Artists relation.
   const artistNames = splitArtistString(release.artist);
   const artistDocIds = [];
   for (const name of artistNames) {
@@ -115,7 +111,7 @@ export async function syncDiscography() {
       } catch (err) {
         logger.error(`[syncDiscography] failed to process "${release.release_name}":`, err.message);
       }
-      await sleep(250); // pace Spotify search + Strapi writes
+      await sleep(250);
     }
   }
 

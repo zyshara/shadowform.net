@@ -1,9 +1,7 @@
-// server/cron/syncAboutPage.js
-
-import { strapiGet } from "../lib/strapi.js";
-import { normalizeAboutPage } from "../models/aboutPage.js";
-import { setAboutPage } from "../lib/bandcampCache.js";
-import { logger } from "../lib/logger.js";
+import { strapiGet } from "../../lib/strapi.js";
+import { normalizeAboutPage } from "../../models/aboutPage.js";
+import { setAboutPage } from "../../lib/bandcampCache.js";
+import { logger } from "../../lib/logger.js";
 
 const ABOUT_PAGE_PATH = "/api/dome-of-doom-about-page";
 

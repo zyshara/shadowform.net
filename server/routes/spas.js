@@ -6,6 +6,7 @@ import { loadMetadata, resolvePageMetadata } from "../lib/metadata.js";
 import { getDiscography, getMerch, getShows, getAboutPage } from "../lib/bandcampCache.js";
 import { getCatalogItems } from "../lib/strapiCatalogCache.js";
 import { getArtists } from "../lib/strapiArtistCache.js";
+import { getMuseums, getExhibits, getHeroImages, getTags } from "../lib/hakubutsukanCache.js";
 import { withCacheBust } from "../lib/cacheBustToken.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -120,6 +121,22 @@ export function registerSpaRoutes(app) {
       html = injectJsonData(html, "shows-data", getShows());
       html = injectJsonData(html, "about-page-data", getAboutPage());
       html = injectJsonData(html, "catalog-items-data", getCatalogItems());
+      res.type("html").send(html);
+    });
+  });
+
+  /* ── Hakubutsukan SPA (subdomain) ── */
+  const hakubutsukanIndex  = path.join(root, "dist/hakubutsukan/index.html");
+  const hakubutsukanStatic = express.static(path.join(root, "dist/hakubutsukan"), { index: false });
+  app.use((req, res, next) => {
+    const host = req.header("host") || "";
+    if (!host.split(":")[0].startsWith("hakubutsukan-la.")) return next();
+    hakubutsukanStatic(req, res, () => {
+      let html = readFileSync(hakubutsukanIndex, "utf8");
+      html = injectJsonData(html, "museums-data",     getMuseums());
+      html = injectJsonData(html, "exhibits-data",    getExhibits());
+      html = injectJsonData(html, "hero-images-data", getHeroImages());
+      html = injectJsonData(html, "tags-data",        getTags());
       res.type("html").send(html);
     });
   });

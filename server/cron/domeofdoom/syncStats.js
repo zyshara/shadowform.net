@@ -1,8 +1,8 @@
-import { getArtists } from "../api/artists.js";
-import { scrapeSpotifyStats, scrapeSpotifyMonthlyListeners } from "./scrapers/spotify.js";
-import { scrapeInstagramFollowers } from "./scrapers/instagram.js";
-import { scrapeBandsintownShows } from "./scrapers/bandsintown.js";
-import { logger } from "../lib/logger.js";
+import { getArtists } from "../../api/artists.js";
+import { scrapeSpotifyStats, scrapeSpotifyMonthlyListeners } from "../scrapers/spotify.js";
+import { scrapeInstagramFollowers } from "../scrapers/instagram.js";
+import { scrapeBandsintownShows } from "../scrapers/bandsintown.js";
+import { logger } from "../../lib/logger.js";
 
 const STRAPI_URL   = process.env.STRAPI_API_URL  || "https://strapi-shadowform-52c53315c615.herokuapp.com";
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN || "";
@@ -52,9 +52,6 @@ export async function syncAllArtistStats() {
       scrapeInstagramFollowers(artist),
       scrapeBandsintownShows(artist),
     ]);
-
-    logger.debug(`[syncStats] ${artist.name}: monthly result:`, monthly);
-    logger.debug(`[syncStats] ${artist.name}: spotifyStats result:`, spotifyStats);
 
     const stats = {
       ...(monthly      ? monthly      : {}),
