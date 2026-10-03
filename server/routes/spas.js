@@ -141,6 +141,17 @@ export function registerSpaRoutes(app) {
     });
   });
 
+  /* ── jenis32 SPA (subdomain) ── */
+  const jenis32Index  = path.join(root, "dist/jenis32/index.html");
+  const jenis32Static = express.static(path.join(root, "dist/jenis32"));
+  app.use((req, res, next) => {
+    const host = req.header("host") || "";
+    if (!host.split(":")[0].startsWith("jenis32.")) return next();
+    jenis32Static(req, res, () => {
+      res.sendFile(jenis32Index);
+    });
+  });
+
   /* ── Swatchbook SPA ── */
   app.use("/creative/swatchbook", express.static(path.join(root, "dist/swatchbook")));
   app.use("/creative/swatchbook", (req, res, next) => {

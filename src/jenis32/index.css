@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Caveat";
+  src: url("./assets/fonts/Caveat-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Caveat";
+  src: url("./assets/fonts/Caveat-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Tailwind v4's JS theme.extend isn't loaded without an explicit @config
+   directive (this project doesn't use one) — register custom tokens here
+   instead, same approach as src/domeofdoom/index.css. */
+@theme {
+  --font-script: "Caveat";
+  --color-j32-bg: var(--j32-bg);
+  --color-j32-card: var(--j32-card);
+  --color-j32-border: var(--j32-border);
+  --color-j32-text: var(--j32-text);
+  --color-j32-heading: var(--j32-heading);
+  --color-j32-accent: var(--j32-accent);
+  --color-j32-accent-text: var(--j32-accent-text);
+  --color-j32-success: var(--j32-success);
+}
+
+/* Single source of truth for the palette — tokens.js re-exports these as
+   var() references so components reading `colors.accent` etc. track live
+   edits here (or in devtools) without a rebuild. */
+:root {
+  --j32-bg: #0e0c1a;
+  --j32-card: #181527;
+  --j32-border: #2a2538;
+  --j32-text: #c7c2d6;
+  --j32-heading: #ffffff;
+  --j32-accent: #f4a7c3;
+  --j32-accent-text: #241b22;
+  --j32-success: #7ee8a8;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  background: var(--j32-bg);
+  color: var(--j32-text);
+}

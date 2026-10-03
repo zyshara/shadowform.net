@@ -9,6 +9,7 @@ export { default as Enter } from "./Enter";
 export { default as Guestbook } from "./Guestbook";
 export { default as ArtistManagement } from "./ArtistManagement";
 export { default as NotFound } from "./NotFound";
+export { default as ResetPassword } from "./ResetPassword";
 export { default as Resume } from "./Resume";
 export { default as Shop } from "./Shop";
 export { default as UnderConstruction } from "./UnderConstruction";

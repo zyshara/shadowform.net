@@ -55,6 +55,7 @@ const makeConfig = ({
   jsonLd = null,
   siteName = null,
   preloadFonts = [],
+  robots = "index, follow",
 }) => ({
   entry,
   output: {
@@ -83,6 +84,7 @@ const makeConfig = ({
         isProd,
         umamiId,
         preloadFonts,
+        robots,
       },
     }),
   ],
@@ -97,12 +99,14 @@ const fromMetadata = (metadata) => ({
   ogImage: metadata.image ?? null,
   canonicalUrl: metadata.url ?? null,
   jsonLd: metadata.jsonLd ?? null,
+  robots: metadata.robots ?? "index, follow",
 });
 
 const redspearMetadata      = loadMetadata(path.join(__dirname, "src/redspear/metadata.json"));
 const lowPolyMetadata       = loadMetadata(path.join(__dirname, "src/low-poly/metadata.json"));
 const domeofdoomMetadata    = loadMetadata(path.join(__dirname, "src/domeofdoom/metadata.json"));
 const hakubutsukanMetadata  = loadMetadata(path.join(__dirname, "src/hakubutsukan/metadata.json"));
+const jenis32Metadata       = loadMetadata(path.join(__dirname, "src/jenis32/metadata.json"));
 
 export default [
   makeConfig({
@@ -156,6 +160,16 @@ export default [
     ...fromMetadata(hakubutsukanMetadata),
     alias: {
       "@": path.resolve(__dirname, "src/hakubutsukan"),
+      "@shared": path.resolve(__dirname, "src/shared"),
+    },
+  }),
+  makeConfig({
+    entry: "./src/jenis32/index.js",
+    outputPath: "dist/jenis32",
+    publicPath: "/",
+    ...fromMetadata(jenis32Metadata),
+    alias: {
+      "@": path.resolve(__dirname, "src/jenis32"),
       "@shared": path.resolve(__dirname, "src/shared"),
     },
   }),

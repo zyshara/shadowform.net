@@ -46,3 +46,33 @@ export function stripTrailingSlash(req, res, next) {
 
   next();
 }
+
+/* ───────────────────────────────────────────────
+   Require auth — forwards the caller's JWT to
+   Strapi's own GET /api/users/me rather than
+   verifying it locally, so there's no secret to
+   keep in sync between this app and Strapi's.
+   Attaches the Strapi user to req.user on success.
+─────────────────────────────────────────────── */
+const STRAPI_URL = process.env.STRAPI_API_URL || "https://strapi-shadowform-52c53315c615.herokuapp.com";
+
+export async function requireAuth(req, res, next) {
+  const header = req.headers.authorization;
+  if (!header?.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "unauthorized" });
+  }
+
+  try {
+    const meRes = await fetch(`${STRAPI_URL}/api/users/me`, {
+      headers: { Authorization: header },
+    });
+    if (!meRes.ok) {
+      return res.status(401).json({ error: "invalid or expired token" });
+    }
+    req.user = await meRes.json();
+    req.jwt = header.slice(7);
+    next();
+  } catch {
+    res.status(502).json({ error: "could not verify session" });
+  }
+}

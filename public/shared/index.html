@@ -22,7 +22,7 @@
     <% if (canonicalUrl) { %><meta name="twitter:url" content="<%= canonicalUrl %>" /><% } %>
     <% if (ogImage) { %><meta name="twitter:image" content="<%= ogImage %>" /><% } %>
 
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="<%= robots %>" />
     <% if (canonicalUrl) { %><link rel="canonical" href="<%= canonicalUrl %>" /><% } %>
     <% if (jsonLd) { %><script type="application/ld+json"><%= JSON.stringify(jsonLd) %></script><% } %>
 
