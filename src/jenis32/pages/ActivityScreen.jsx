@@ -6,12 +6,16 @@ import ProfileActivity from "@/components/activities/ProfileActivity";
 import TextActivity from "@/components/activities/TextActivity";
 import LongtextActivity from "@/components/activities/LongtextActivity";
 import MediaActivity from "@/components/activities/MediaActivity";
+import DrawingActivity from "@/components/activities/DrawingActivity";
+import AudioActivity from "@/components/activities/AudioActivity";
 import Button from "@/components/Button";
 
 const RENDERERS = {
   text: TextActivity,
   longtext: LongtextActivity,
   media: MediaActivity,
+  drawing: DrawingActivity,
+  audio: AudioActivity,
 };
 
 function findNextIncomplete(activities, isActivityDone, fromSlug) {
@@ -106,6 +110,18 @@ const ActivityScreenInner = ({ slug }) => {
                 activity={activity}
                 initialMedia={submissionBySlug[activity.slug]?.media ?? []}
                 initialCaption={submissionBySlug[activity.slug]?.caption}
+                onSave={handleMediaSaved}
+              />
+            ) : activity.type === "drawing" ? (
+              <Renderer
+                activity={activity}
+                initialStrokes={submissionBySlug[activity.slug]?.jsonValue?.strokes ?? null}
+                onSave={handleMediaSaved}
+              />
+            ) : activity.type === "audio" ? (
+              <Renderer
+                activity={activity}
+                initialMedia={submissionBySlug[activity.slug]?.media ?? []}
                 onSave={handleMediaSaved}
               />
             ) : (
