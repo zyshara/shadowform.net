@@ -7,6 +7,8 @@ import { useAuth } from "@/context/AuthContext";
 import { useAppData } from "@/context/AppDataContext";
 import heroDesktop from "@/assets/hero-goldshire-desktop.jpg";
 import heroMobile from "@/assets/hero-goldshire-mobile.jpg";
+import heroInsideDesktop from "@/assets/hero-goldshire-inside-desktop.jpg";
+import heroInsideMobile from "@/assets/hero-goldshire-inside-mobile.jpg";
 import controllerIcon from "@/assets/controller-icon.png";
 import photosIcon from "@/assets/photos-icon.png";
 import beerIcon from "@/assets/beer-icon.png";
@@ -205,9 +207,9 @@ const Home = () => {
   return (
     <main className="relative min-h-dvh overflow-hidden">
       <picture>
-        <source media="(min-width: 768px)" srcSet={heroDesktop} />
+        <source media="(min-width: 768px)" srcSet={isAuthenticated ? heroInsideDesktop : heroDesktop} />
         <img
-          src={heroMobile}
+          src={isAuthenticated ? heroInsideMobile : heroMobile}
           alt=""
           className="fixed inset-0 h-dvh w-screen object-cover"
           aria-hidden="true"
