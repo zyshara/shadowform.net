@@ -26,6 +26,11 @@ export function AuthProvider({ children }) {
     const next = { jwt: null, user: null, account: null };
     setAuth(next);
     localStorage.removeItem(STORAGE_KEY);
+    // Logging out swaps a long activity list for the much shorter marketing
+    // view — if you were scrolled down (the "Log out" link sits at the very
+    // bottom of the list), you'd land looking at blank space below the fold
+    // and it would look like nothing happened.
+    window.scrollTo(0, 0);
   }
 
   function setAccount(account) {
