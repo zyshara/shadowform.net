@@ -268,7 +268,9 @@ const Home = () => {
               <img
                 src={account?.avatar?.url || placeholderAvatar}
                 alt=""
-                className="w-12 h-12 p-2 rounded-full object-cover bg-j32-bg border border-j32-border"
+                className={`w-12 h-12 rounded-full object-cover bg-j32-bg border border-j32-border ${
+                  account?.avatar?.url ? "" : "p-2"
+                }`}
               />
             </nav>
           ) : (
