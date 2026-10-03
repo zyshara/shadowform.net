@@ -188,8 +188,7 @@ const Home = () => {
           aria-hidden="true"
         />
       </picture>
-      <div className="absolute inset-0 bg-j32-bg/80" />
-      <div className="absolute inset-0 bg-gradient-to-b from-j32-bg/40 via-j32-bg/70 to-j32-bg" />
+      <div className="absolute inset-0 bg-gradient-to-b from-j32-bg/25 via-j32-bg/55 to-j32-bg/95" />
 
       <div className="relative flex flex-col min-h-dvh">
         <header className="flex flex-wrap items-center justify-between gap-4 px-6 py-5 md:px-10">
