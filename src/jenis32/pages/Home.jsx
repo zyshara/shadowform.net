@@ -209,7 +209,7 @@ const Home = () => {
                   {label}
                 </Link>
               ))}
-              <Button to="/register" variant="primary">Get started</Button>
+              <Button to="/register" variant="primary">Register</Button>
             </nav>
           )}
         </header>
