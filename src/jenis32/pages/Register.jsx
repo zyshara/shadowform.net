@@ -4,6 +4,8 @@ import AuthLayout from "@/components/AuthLayout";
 import TextField from "@/components/TextField";
 import Button from "@/components/Button";
 import { useAuth } from "@/context/AuthContext";
+import heroDesktop from "@/assets/hero-stormwind-desktop.jpg";
+import heroMobile from "@/assets/hero-stormwind-mobile.jpg";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -39,6 +41,8 @@ const Register = () => {
 
   return (
     <AuthLayout
+      heroDesktop={heroDesktop}
+      heroMobile={heroMobile}
       topRight={
         <p className="text-sm text-j32-text">
           Already have an account?{" "}
