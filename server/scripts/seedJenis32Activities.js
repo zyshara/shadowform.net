@@ -50,8 +50,8 @@ const ACTIVITIES = [
   },
   {
     slug: "reminds-you-of-jen",
-    title: "Upload a gif that reminds you of Jen",
-    prompt: "Any picture, any reason.",
+    title: "Upload a gif",
+    prompt: "Pick your best twitter slop that reminds you of me",
     type: "media",
     config: { accept: ["gif"], allowMultiple: false },
     group: "anytime",
