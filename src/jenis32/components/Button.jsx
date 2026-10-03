@@ -7,7 +7,7 @@ const VARIANTS = {
 };
 
 const Button = ({ to, variant = "primary", className = "", children, ...props }) => {
-  const classes = `inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all ${VARIANTS[variant]} ${className}`;
+  const classes = `inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all cursor-pointer ${VARIANTS[variant]} ${className}`;
 
   if (to) {
     return (

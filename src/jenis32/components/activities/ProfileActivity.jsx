@@ -85,7 +85,7 @@ const ProfileActivity = ({ account, onSave }) => {
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="w-20 h-20 rounded-full bg-j32-card border border-j32-border overflow-hidden flex items-center justify-center shrink-0"
+          className="w-20 h-20 rounded-full bg-j32-card border border-j32-border overflow-hidden flex items-center justify-center shrink-0 cursor-pointer"
         >
           {avatarPreview ? (
             <img src={avatarPreview} alt="" className="w-full h-full object-cover" />
@@ -103,7 +103,7 @@ const ProfileActivity = ({ account, onSave }) => {
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="text-sm text-j32-accent hover:underline"
+          className="text-sm text-j32-accent hover:underline cursor-pointer"
         >
           {avatarPreview ? "Change photo" : "Upload a photo"}
         </button>

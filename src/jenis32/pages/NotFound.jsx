@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import Button from "@/components/Button";
 import Brand from "@/components/Brand";
 import { useAuth } from "@/context/AuthContext";
@@ -27,14 +26,12 @@ const NotFound = () => {
 
         {isAuthenticated ? (
           <nav className="flex flex-wrap items-center gap-5" aria-label="Primary">
-            <Button variant="ghost" onClick={logout} className="text-xs px-4 py-2">Log out</Button>
+            <Button variant="ghost" onClick={logout} className="text-sm px-5 py-2.5">Log out</Button>
           </nav>
         ) : (
           <nav className="flex flex-wrap items-center gap-5" aria-label="Primary">
-            <Link to="/login" className="text-sm text-j32-text hover:text-j32-heading transition-colors">
-              Log in
-            </Link>
-            <Button to="/register" variant="primary">Register</Button>
+            <Button to="/login" variant="ghost" className="text-sm px-5 py-2.5">Log in</Button>
+            <Button to="/register" variant="primary" className="text-sm px-5 py-2.5">Register</Button>
           </nav>
         )}
       </header>

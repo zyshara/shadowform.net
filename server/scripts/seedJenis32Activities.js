@@ -29,7 +29,7 @@ const ACTIVITIES = [
   {
     slug: "nickname-for-jen",
     title: "What's your nickname for Jen?",
-    prompt: "What's your nickname for Jen?",
+    prompt: "",
     type: "text",
     config: {},
     group: "anytime",

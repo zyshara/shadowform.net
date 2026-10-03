@@ -82,7 +82,7 @@ const Register = () => {
           <button
             type="button"
             onClick={() => setShowPassword((s) => !s)}
-            className="absolute right-3 top-[34px] text-xs text-j32-text/70 hover:text-j32-heading"
+            className="absolute right-3 top-[34px] text-xs text-j32-text/70 hover:text-j32-heading cursor-pointer"
           >
             {showPassword ? "Hide" : "Show"}
           </button>

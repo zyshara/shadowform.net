@@ -123,7 +123,7 @@ const MediaActivity = ({ activity, initialMedia = [], initialCaption, onSave }) 
                 type="button"
                 onClick={() => handleRemove(m.id)}
                 disabled={removingId === m.id}
-                className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/70 text-white text-xs flex items-center justify-center"
+                className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/70 text-white text-xs flex items-center justify-center cursor-pointer"
                 aria-label="Remove"
               >
                 {removingId === m.id ? "…" : "×"}
@@ -166,7 +166,7 @@ const MediaActivity = ({ activity, initialMedia = [], initialCaption, onSave }) 
         <p className="text-sm text-red-400">
           {error}{" "}
           {pendingFiles.length > 0 && (
-            <button type="button" onClick={handleUpload} className="underline">Retry</button>
+            <button type="button" onClick={handleUpload} className="underline cursor-pointer">Retry</button>
           )}
         </p>
       )}

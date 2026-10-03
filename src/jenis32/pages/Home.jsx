@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import Button from "@/components/Button";
 import Brand from "@/components/Brand";
@@ -11,10 +10,6 @@ import heroInsideDesktop from "@/assets/hero-goldshire-inside-desktop.jpg";
 import heroInsideMobile from "@/assets/hero-goldshire-inside-mobile.jpg";
 import placeholderAvatar from "@/assets/placeholder-avatar.png";
 import Lock from "@/components/icons/Lock";
-
-const NAV_LINKS = [
-  { to: "/login", label: "Log in" },
-];
 
 // Shared fade/slide-up entrance — direction and distance only; durations
 // below come from useStagger so reduced-motion users get near-instant
@@ -93,11 +88,15 @@ const ActivityRow = ({ activity, done, locked, variants }) => (
     className={`flex items-center justify-between gap-4 rounded-xl border border-j32-border bg-j32-card px-5 py-4 ${locked ? "opacity-50" : ""}`}
   >
     <div className="flex items-start gap-3">
-      <span className={`mt-0.5 w-5 h-5 rounded-full border flex items-center justify-center shrink-0 text-xs ${
-        done ? "bg-j32-success/20 border-j32-success text-j32-success" : "border-j32-border text-j32-text/50"
-      }`}>
-        {done ? "✓" : locked ? <Lock size={11} /> : ""}
-      </span>
+      {locked ? (
+        <Lock size={18} className="mt-0.5 shrink-0 text-j32-text/50" />
+      ) : (
+        <span className={`mt-0.5 w-5 h-5 rounded-full border flex items-center justify-center shrink-0 text-xs ${
+          done ? "bg-j32-success/20 border-j32-success text-j32-success" : "border-j32-border text-j32-text/50"
+        }`}>
+          {done ? "✓" : ""}
+        </span>
+      )}
       <div>
         <p className="text-sm font-semibold text-j32-heading">{activity.title}</p>
         {activity.prompt && <p className="text-xs text-j32-text/70 mt-0.5">{activity.prompt}</p>}
@@ -105,7 +104,7 @@ const ActivityRow = ({ activity, done, locked, variants }) => (
     </div>
     {locked ? (
       <span className="shrink-0 text-xs px-4 py-2 text-j32-text/50 flex items-center gap-1.5">
-        <Lock size={13} /> Locked
+        <Lock size={16} /> Locked
       </span>
     ) : (
       <Button to={`/activities/${activity.slug}`} variant={done ? "ghost" : "primary"} className="shrink-0 text-xs px-4 py-2">
@@ -265,25 +264,17 @@ const Home = () => {
 
           {isAuthenticated ? (
             <nav className="flex flex-wrap items-center gap-5" aria-label="Primary">
-              <Button variant="ghost" onClick={logout} className="text-xs px-4 py-2">Log out</Button>
+              <Button variant="ghost" onClick={logout} className="text-sm px-5 py-2.5">Log out</Button>
               <img
                 src={account?.avatar?.url || placeholderAvatar}
                 alt=""
-                className="w-10 h-10 rounded-full object-cover border border-j32-border"
+                className="w-12 h-12 p-2 rounded-full object-cover bg-j32-bg border border-j32-border"
               />
             </nav>
           ) : (
             <nav className="flex flex-wrap items-center gap-5" aria-label="Primary">
-              {NAV_LINKS.map(({ to, label }) => (
-                <Link
-                  key={to}
-                  to={to}
-                  className="text-sm text-j32-text hover:text-j32-heading transition-colors"
-                >
-                  {label}
-                </Link>
-              ))}
-              <Button to="/register" variant="primary">Register</Button>
+              <Button to="/login" variant="ghost" className="text-sm px-5 py-2.5">Log in</Button>
+              <Button to="/register" variant="primary" className="text-sm px-5 py-2.5">Register</Button>
             </nav>
           )}
         </motion.header>
