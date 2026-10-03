@@ -111,7 +111,7 @@ const MarketingContent = () => (
 );
 
 const ActivitiesContent = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { account, activities, isActivityDone, isProfileComplete, loading, config } = useAppData();
 
   if (loading) {
@@ -171,16 +171,12 @@ const ActivitiesContent = () => {
           </section>
         ) : null
       ))}
-
-      <button type="button" onClick={logout} className="self-start text-xs text-j32-text/60 hover:text-j32-heading underline">
-        Log out
-      </button>
     </div>
   );
 };
 
 const Home = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <main className="relative min-h-dvh overflow-hidden">
@@ -200,7 +196,11 @@ const Home = () => {
         <header className="flex flex-wrap items-center justify-between gap-4 px-6 py-5 md:px-10">
           <Brand />
 
-          {!isAuthenticated && (
+          {isAuthenticated ? (
+            <nav className="flex flex-wrap items-center gap-5" aria-label="Primary">
+              <Button variant="ghost" onClick={logout} className="text-xs px-4 py-2">Log out</Button>
+            </nav>
+          ) : (
             <nav className="flex flex-wrap items-center gap-5" aria-label="Primary">
               {NAV_LINKS.map(({ to, label }) => (
                 <Link
