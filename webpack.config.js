@@ -56,6 +56,7 @@ const makeConfig = ({
   siteName = null,
   preloadFonts = [],
   robots = "index, follow",
+  faviconHref = "/shared/favicon.png",
 }) => ({
   entry,
   output: {
@@ -85,6 +86,7 @@ const makeConfig = ({
         umamiId,
         preloadFonts,
         robots,
+        faviconHref,
       },
     }),
   ],
@@ -168,6 +170,7 @@ export default [
     outputPath: "dist/jenis32",
     publicPath: "/",
     ...fromMetadata(jenis32Metadata),
+    faviconHref: "/shared/jenis32-favicon.png",
     alias: {
       "@": path.resolve(__dirname, "src/jenis32"),
       "@shared": path.resolve(__dirname, "src/shared"),

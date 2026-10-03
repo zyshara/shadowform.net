@@ -46,7 +46,7 @@ const Login = () => {
         </p>
       }
     >
-      <h1 className="font-script font-bold text-3xl text-j32-heading">Log in</h1>
+      <h1 className="font-heading font-bold text-3xl text-j32-heading">Log in</h1>
       <p className="mt-1 text-sm text-j32-text">
         Already have a shadowform account from another project? It works here too.
       </p>

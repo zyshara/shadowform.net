@@ -1,16 +1,21 @@
 @import "tailwindcss";
 
+/* Gothicha is uppercase-only (no distinct lowercase glyphs), so it's
+   reserved for the big hero headline and short all-caps-friendly
+   moments — see font-script usage. Everything else that needs real
+   lowercase (activity titles, form headings, longer copy) uses
+   Kingthings Exeter instead — see font-heading usage. */
 @font-face {
-  font-family: "Caveat";
-  src: url("./assets/fonts/Caveat-SemiBold.woff2") format("woff2");
-  font-weight: 600;
+  font-family: "Gothicha";
+  src: url("./assets/fonts/Gothicha.ttf") format("truetype");
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Caveat";
-  src: url("./assets/fonts/Caveat-Bold.woff2") format("woff2");
-  font-weight: 700;
+  font-family: "Kingthings Exeter";
+  src: url("./assets/fonts/KingthingsExeter.ttf") format("truetype");
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
@@ -19,7 +24,8 @@
    directive (this project doesn't use one) — register custom tokens here
    instead, same approach as src/domeofdoom/index.css. */
 @theme {
-  --font-script: "Caveat";
+  --font-script: "Gothicha";
+  --font-heading: "Kingthings Exeter";
   --color-j32-bg: var(--j32-bg);
   --color-j32-card: var(--j32-card);
   --color-j32-border: var(--j32-border);

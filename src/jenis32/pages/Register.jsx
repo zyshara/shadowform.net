@@ -46,7 +46,7 @@ const Register = () => {
         </p>
       }
     >
-      <h1 className="font-script font-bold text-3xl text-j32-heading">Create your account</h1>
+      <h1 className="font-heading font-bold text-3xl text-j32-heading">Create your account</h1>
       <p className="mt-1 text-sm text-j32-text">
         Join the party and start your activities. It only takes a minute.
       </p>

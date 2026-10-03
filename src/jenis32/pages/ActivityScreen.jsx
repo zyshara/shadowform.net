@@ -65,7 +65,7 @@ const ActivityScreenInner = ({ slug }) => {
     return (
       <main className="min-h-dvh bg-j32-bg flex flex-col items-center justify-center gap-4 px-6 text-center">
         <span className="w-14 h-14 rounded-full bg-j32-success/20 text-j32-success flex items-center justify-center text-2xl">✓</span>
-        <h1 className="font-script font-bold text-4xl text-j32-heading">Nice!</h1>
+        <h1 className="font-heading font-bold text-4xl text-j32-heading">Nice!</h1>
         <p className="text-sm text-j32-text">Your submission has been saved.</p>
         <Button variant="primary" onClick={handleContinue}>Continue to next activity →</Button>
         <Link to="/activities" className="text-xs text-j32-text/70 hover:text-j32-heading">Back to list</Link>
@@ -83,7 +83,7 @@ const ActivityScreenInner = ({ slug }) => {
           <span className="text-xs text-j32-text/50">{stepIndex} of {activities.length}</span>
         </div>
 
-        <h1 className="font-script font-bold text-3xl text-j32-heading">{activity.title}</h1>
+        <h1 className="font-heading font-bold text-3xl text-j32-heading">{activity.title}</h1>
         {activity.prompt && <p className="mt-1 text-sm text-j32-text">{activity.prompt}</p>}
         {activity.helpText && <p className="mt-1 text-xs text-j32-text/60">{activity.helpText}</p>}
 

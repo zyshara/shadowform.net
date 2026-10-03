@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Button from "@/components/Button";
+import Brand from "@/components/Brand";
 import heroDesktop from "@/assets/hero-goldshire-desktop.jpg";
 import heroMobile from "@/assets/hero-goldshire-mobile.jpg";
 
 const NAV_LINKS = [
-  { to: "/about", label: "About" },
   { to: "/how-it-works", label: "How it works" },
   { to: "/login", label: "Log in" },
 ];
@@ -70,10 +70,7 @@ const Home = () => {
 
       <div className="relative flex flex-col min-h-dvh">
         <header className="flex flex-wrap items-center justify-between gap-4 px-6 py-5 md:px-10">
-          <Link to="/" className="leading-tight">
-            <span className="block font-bold text-xl text-j32-heading tracking-tight">jenis32</span>
-            <span className="block text-[11px] text-j32-text/70">shadowform.net</span>
-          </Link>
+          <Brand />
 
           <nav className="flex flex-wrap items-center gap-5" aria-label="Primary">
             {NAV_LINKS.map(({ to, label }) => (
@@ -117,7 +114,7 @@ const Home = () => {
             </Button>
           </div>
 
-          <p className="font-script text-xl sm:text-2xl text-j32-text/90 mt-10 leading-snug">
+          <p className="font-heading text-xl sm:text-2xl text-j32-text/90 mt-10 leading-snug">
             Answer questions. Draw things. Share photos. Record a message.
             <br />
             Help make Jennifer's 32nd unforgettable. ♡

@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import MarqueeBanner from "@/components/MarqueeBanner";
 import Footer from "@/components/Footer";
 import DODBadge from "@/components/DODBadge";
+import PoweredByLogo from "@shared/components/PoweredByLogo.jsx";
 import { colors } from "@/tokens";
 
 const SIDEBAR_TEXT = " DOMEOFDOOM · 15 Year Anniversary · ";
@@ -178,7 +179,8 @@ const Layout = () => {
         </AnimatePresence>
       </div>
       <Footer />
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+        <PoweredByLogo />
         <DODBadge color="var(--dod-neon-mint)" />
       </div>
     </div>

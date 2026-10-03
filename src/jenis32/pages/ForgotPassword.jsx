@@ -29,7 +29,7 @@ const ForgotPassword = () => {
   if (sent) {
     return (
       <AuthLayout>
-        <h1 className="font-script font-bold text-3xl text-j32-heading">Check your email</h1>
+        <h1 className="font-heading font-bold text-3xl text-j32-heading">Check your email</h1>
         <p className="mt-3 text-sm text-j32-text">
           If an account exists for <span className="text-j32-heading">{email}</span>, we've sent
           a link to reset your password.
@@ -49,7 +49,7 @@ const ForgotPassword = () => {
         </p>
       }
     >
-      <h1 className="font-script font-bold text-3xl text-j32-heading">Forgot your password?</h1>
+      <h1 className="font-heading font-bold text-3xl text-j32-heading">Forgot your password?</h1>
       <p className="mt-1 text-sm text-j32-text">
         We'll email you a link to reset it.
       </p>

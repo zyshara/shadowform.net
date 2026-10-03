@@ -2,7 +2,6 @@
 
 import { Link } from "react-router-dom";
 import { LOGO_URL } from "@/tokens";
-import PoweredByLogo from "@shared/components/PoweredByLogo.jsx";
 
 const FooterColumn = ({ title, children }) => (
   <div>
@@ -20,7 +19,6 @@ const Footer = () => (
       <div className="max-w-[220px] text-[13px] leading-relaxed text-white/45">
         © DOMEOFDOOM 2026, All Rights Reserved
       </div>
-      <PoweredByLogo />
     </div>
 
     <FooterColumn title="Label">

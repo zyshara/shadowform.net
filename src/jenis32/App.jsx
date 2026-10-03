@@ -1,11 +1,10 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
-import Layout from "@/Layout";
 import RequireAuth from "@/components/RequireAuth";
 import { AuthProvider } from "@/context/AuthContext";
 import { AppDataProvider } from "@/context/AppDataContext";
-import { About, Activities, ActivityScreen, ForgotPassword, Home, Login, NotFound, Register } from "@/pages";
+import { Activities, ActivityScreen, ForgotPassword, Home, Login, NotFound, Register } from "@/pages";
 
 const App = () => {
   return (
@@ -32,10 +31,7 @@ const App = () => {
               </RequireAuth>
             }
           />
-          <Route element={<Layout />}>
-            <Route path="/about" element={<About />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </AppDataProvider>
     </AuthProvider>

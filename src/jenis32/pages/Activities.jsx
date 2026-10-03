@@ -48,7 +48,7 @@ const Activities = () => {
       <div className="max-w-2xl mx-auto flex flex-col gap-8">
         <header className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="font-script font-bold text-4xl text-j32-heading">
+            <h1 className="font-heading font-bold text-4xl text-j32-heading">
               {isProfileComplete ? `Hey there, ${displayName}! 👋` : "Hey there! 👋"}
             </h1>
             <p className="mt-1 text-sm text-j32-text">

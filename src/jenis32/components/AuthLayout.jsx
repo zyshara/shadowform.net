@@ -1,13 +1,10 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import Brand from "@/components/Brand";
 
 const AuthLayout = ({ topRight, children }) => (
   <main className="min-h-dvh bg-j32-bg flex flex-col">
     <header className="flex items-center justify-between px-6 py-5 md:px-10">
-      <Link to="/" className="leading-tight">
-        <span className="block font-bold text-lg text-j32-heading tracking-tight">jenis32</span>
-        <span className="block text-[11px] text-j32-text/70">shadowform.net</span>
-      </Link>
+      <Brand />
       {topRight}
     </header>
 
