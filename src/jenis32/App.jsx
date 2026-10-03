@@ -5,6 +5,7 @@ import RequireAuth from "@/components/RequireAuth";
 import { AuthProvider } from "@/context/AuthContext";
 import { AppDataProvider } from "@/context/AppDataContext";
 import { Activities, ActivityScreen, ForgotPassword, Home, Login, NotFound, Register } from "@/pages";
+import PoweredByLogo from "@shared/components/PoweredByLogo.jsx";
 
 const App = () => {
   return (
@@ -33,6 +34,9 @@ const App = () => {
           />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <div className="fixed bottom-6 right-6 z-50">
+          <PoweredByLogo />
+        </div>
       </AppDataProvider>
     </AuthProvider>
   );
