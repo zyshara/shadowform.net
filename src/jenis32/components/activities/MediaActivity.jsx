@@ -30,12 +30,21 @@ function isImage(mime) {
   return mime?.startsWith("image/");
 }
 
+// "gif" is a stricter sibling of "image" in an activity's accept config —
+// restricts the file picker (and, server-side, the actual upload) to real
+// GIFs rather than any image type.
+const ACCEPT_MIME = {
+  image: "image/*",
+  video: "video/*",
+  gif: "image/gif",
+};
+
 const MediaActivity = ({ activity, initialMedia = [], initialCaption, onSave }) => {
   const { jwt, authFetch } = useAuth();
   const config = activity.config ?? {};
   const allowMultiple = Boolean(config.allowMultiple);
   const maxFiles = config.maxFiles ?? 1;
-  const acceptAttr = (config.accept ?? ["image"]).map((k) => `${k}/*`).join(",");
+  const acceptAttr = (config.accept ?? ["image"]).map((k) => ACCEPT_MIME[k] ?? `${k}/*`).join(",");
 
   const [media, setMedia] = useState(initialMedia);
   const [pendingFiles, setPendingFiles] = useState([]);

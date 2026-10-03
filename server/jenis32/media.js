@@ -35,6 +35,14 @@ function kindOf(mimetype) {
   return null;
 }
 
+// "gif" in an activity's accept config is a stricter sibling of "image" —
+// matched by exact mimetype rather than by broad kind, so an activity can
+// require an actual GIF (reminds-you-of-jen) without affecting the plain
+// "image" activities that are happy to take a GIF among other image types.
+function acceptsFile(accept, kind, mimetype) {
+  return accept.some((a) => (a === "gif" ? mimetype === "image/gif" : a === kind));
+}
+
 function maxBytesFor(kind) {
   return kind === "video" ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
 }
@@ -115,7 +123,7 @@ export function registerJenis32MediaRoutes(app) {
 
         for (const file of files) {
           const kind = kindOf(file.mimetype);
-          if (!kind || !accept.includes(kind)) {
+          if (!kind || !acceptsFile(accept, kind, file.mimetype)) {
             return res.status(400).json({ error: `${file.originalname}: unsupported file type` });
           }
           if (file.size > maxBytesFor(kind)) {
