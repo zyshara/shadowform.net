@@ -52,7 +52,7 @@ const Register = () => {
     >
       <h1 className="font-heading font-bold text-3xl text-j32-heading">Create your account</h1>
       <p className="mt-1 text-sm text-j32-text">
-        Join the party and start your activities. It only takes a minute.
+        Register to join the party and start your activities. It only takes a minute.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-5">
@@ -95,7 +95,7 @@ const Register = () => {
         </Button>
 
         <p className="text-center text-xs text-j32-text/60">
-          By creating an account, you agree to be part of this ridiculous birthday adventure.
+          just make the account please this website took me a long time
         </p>
       </form>
     </AuthLayout>
