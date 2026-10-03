@@ -131,7 +131,7 @@ const MarketingContent = () => {
 
       <motion.div variants={item} className="mt-10">
         <Button to="/register" variant="primary" className="text-base px-8 py-4">
-          Join the party →
+          Register to Participate →
         </Button>
       </motion.div>
 
