@@ -29,7 +29,7 @@ const Login = () => {
 
       login(data.jwt, data.user);
       await ensureAccount(data.jwt);
-      navigate(location.state?.from?.pathname || "/activities");
+      navigate(location.state?.from?.pathname || "/");
     } catch (err) {
       setError(err.message);
     } finally {

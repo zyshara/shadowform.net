@@ -3,9 +3,8 @@ import { Link } from "react-router-dom";
 import favicon from "@/assets/favicon.png";
 
 const Brand = ({ className = "" }) => (
-  <Link to="/" className={`flex items-center gap-3 ${className}`}>
-    <img src={favicon} alt="" className="w-14 h-14 rounded-lg" />
-    <span className="font-bold text-2xl text-j32-heading tracking-tight">Zy's 32nd Birthday</span>
+  <Link to="/" className={`flex items-center ${className}`}>
+    <img src={favicon} alt="Zy's 32nd Birthday" className="w-20 h-20 rounded-lg" />
   </Link>
 );
 

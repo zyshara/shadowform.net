@@ -38,7 +38,7 @@ const ActivityScreenInner = ({ slug }) => {
   if (loading) return null;
 
   const activity = activities.find((a) => a.slug === slug);
-  if (!activity) return <Navigate to="/activities" replace />;
+  if (!activity) return <Navigate to="/" replace />;
 
   // Everything but "introduce yourself" is gated behind a complete profile.
   if (activity.type !== "profile" && !isProfileComplete) {
@@ -68,7 +68,7 @@ const ActivityScreenInner = ({ slug }) => {
 
   const handleContinue = () => {
     const next = findNextIncomplete(activities, isActivityDone, slug);
-    navigate(next ? `/activities/${next.slug}` : "/activities");
+    navigate(next ? `/activities/${next.slug}` : "/");
   };
 
   if (success) {
@@ -78,7 +78,7 @@ const ActivityScreenInner = ({ slug }) => {
         <h1 className="font-heading font-bold text-4xl text-j32-heading">Nice!</h1>
         <p className="text-sm text-j32-text">Your submission has been saved.</p>
         <Button variant="primary" onClick={handleContinue}>Continue to next activity →</Button>
-        <Link to="/activities" className="text-xs text-j32-text/70 hover:text-j32-heading">Back to list</Link>
+        <Link to="/" className="text-xs text-j32-text/70 hover:text-j32-heading">Back to list</Link>
       </main>
     );
   }
@@ -89,7 +89,7 @@ const ActivityScreenInner = ({ slug }) => {
     <main className="min-h-dvh bg-j32-bg flex flex-col items-center px-6 py-10">
       <div className="w-full max-w-md">
         <div className="flex items-center justify-between mb-6">
-          <Link to="/activities" className="text-sm text-j32-text/70 hover:text-j32-heading">← Back</Link>
+          <Link to="/" className="text-sm text-j32-text/70 hover:text-j32-heading">← Back</Link>
           <span className="text-xs text-j32-text/50">{stepIndex} of {activities.length}</span>
         </div>
 

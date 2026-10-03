@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import RequireAuth from "@/components/RequireAuth";
 import { AuthProvider } from "@/context/AuthContext";
 import { AppDataProvider } from "@/context/AppDataContext";
-import { Activities, ActivityScreen, ForgotPassword, Home, Login, NotFound, Register } from "@/pages";
+import { ActivityScreen, ForgotPassword, Home, Login, NotFound, Register } from "@/pages";
 import PoweredByLogo from "@shared/components/PoweredByLogo.jsx";
 
 const App = () => {
@@ -16,14 +16,6 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route
-            path="/activities"
-            element={
-              <RequireAuth>
-                <Activities />
-              </RequireAuth>
-            }
-          />
           <Route
             path="/activities/:slug"
             element={

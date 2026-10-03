@@ -29,7 +29,7 @@ const Register = () => {
 
       login(data.jwt, data.user);
       await ensureAccount(data.jwt);
-      navigate("/activities");
+      navigate("/");
     } catch (err) {
       setError(err.message);
     } finally {
