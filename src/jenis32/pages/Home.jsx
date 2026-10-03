@@ -9,6 +9,8 @@ import heroDesktop from "@/assets/hero-goldshire-desktop.jpg";
 import heroMobile from "@/assets/hero-goldshire-mobile.jpg";
 import heroInsideDesktop from "@/assets/hero-goldshire-inside-desktop.jpg";
 import heroInsideMobile from "@/assets/hero-goldshire-inside-mobile.jpg";
+import placeholderAvatar from "@/assets/placeholder-avatar.png";
+import Lock from "@/components/icons/Lock";
 
 const NAV_LINKS = [
   { to: "/login", label: "Log in" },
@@ -85,25 +87,31 @@ const GROUP_LABELS = {
   party: { title: "During the party", help: "These make the most sense once we're all online" },
 };
 
-const ActivityRow = ({ activity, done, variants }) => (
+const ActivityRow = ({ activity, done, locked, variants }) => (
   <motion.div
     variants={variants}
-    className="flex items-center justify-between gap-4 rounded-xl border border-j32-border bg-j32-card px-5 py-4"
+    className={`flex items-center justify-between gap-4 rounded-xl border border-j32-border bg-j32-card px-5 py-4 ${locked ? "opacity-50" : ""}`}
   >
     <div className="flex items-start gap-3">
       <span className={`mt-0.5 w-5 h-5 rounded-full border flex items-center justify-center shrink-0 text-xs ${
-        done ? "bg-j32-success/20 border-j32-success text-j32-success" : "border-j32-border"
+        done ? "bg-j32-success/20 border-j32-success text-j32-success" : "border-j32-border text-j32-text/50"
       }`}>
-        {done ? "✓" : ""}
+        {done ? "✓" : locked ? <Lock size={11} /> : ""}
       </span>
       <div>
         <p className="text-sm font-semibold text-j32-heading">{activity.title}</p>
         {activity.prompt && <p className="text-xs text-j32-text/70 mt-0.5">{activity.prompt}</p>}
       </div>
     </div>
-    <Button to={`/activities/${activity.slug}`} variant={done ? "ghost" : "primary"} className="shrink-0 text-xs px-4 py-2">
-      {done ? "View / Edit" : "Start"}
-    </Button>
+    {locked ? (
+      <span className="shrink-0 text-xs px-4 py-2 text-j32-text/50 flex items-center gap-1.5">
+        <Lock size={13} /> Locked
+      </span>
+    ) : (
+      <Button to={`/activities/${activity.slug}`} variant={done ? "ghost" : "primary"} className="shrink-0 text-xs px-4 py-2">
+        {done ? "View / Edit" : "Start"}
+      </Button>
+    )}
   </motion.div>
 );
 
@@ -212,7 +220,13 @@ const ActivitiesContent = () => {
             </div>
             <motion.div variants={rows.container} initial="hidden" animate="visible" className="flex flex-col gap-3">
               {grouped[group].map((activity) => (
-                <ActivityRow key={activity.slug} activity={activity} done={isActivityDone(activity)} variants={rows.item} />
+                <ActivityRow
+                  key={activity.slug}
+                  activity={activity}
+                  done={isActivityDone(activity)}
+                  locked={activity.type !== "profile" && !isProfileComplete}
+                  variants={rows.item}
+                />
               ))}
             </motion.div>
           </motion.section>
@@ -224,6 +238,7 @@ const ActivitiesContent = () => {
 
 const Home = () => {
   const { isAuthenticated, logout } = useAuth();
+  const { account } = useAppData();
   const reduce = useReducedMotion();
 
   return (
@@ -251,6 +266,11 @@ const Home = () => {
           {isAuthenticated ? (
             <nav className="flex flex-wrap items-center gap-5" aria-label="Primary">
               <Button variant="ghost" onClick={logout} className="text-xs px-4 py-2">Log out</Button>
+              <img
+                src={account?.avatar?.url || placeholderAvatar}
+                alt=""
+                className="w-10 h-10 rounded-full object-cover border border-j32-border"
+              />
             </nav>
           ) : (
             <nav className="flex flex-wrap items-center gap-5" aria-label="Primary">
