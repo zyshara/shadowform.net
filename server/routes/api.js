@@ -8,6 +8,7 @@ import { registerAuthRoutes } from "../auth/index.js";
 import { registerJenis32AccountRoutes } from "../jenis32/account.js";
 import { registerJenis32BootstrapRoutes } from "../jenis32/bootstrap.js";
 import { registerJenis32SubmissionRoutes } from "../jenis32/submissions.js";
+import { registerJenis32MediaRoutes } from "../jenis32/media.js";
 
 export function registerApiRoutes(app, express) {
   registerGuestbookRoutes(app, express);
@@ -20,4 +21,5 @@ export function registerApiRoutes(app, express) {
   registerJenis32AccountRoutes(app);
   registerJenis32BootstrapRoutes(app);
   registerJenis32SubmissionRoutes(app);
+  registerJenis32MediaRoutes(app);
 }

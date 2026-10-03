@@ -70,6 +70,8 @@ export function registerJenis32BootstrapRoutes(app) {
           "filters[account][id][$eq]": account.id,
           "populate[activity][fields][0]": "slug",
           "populate[media][fields][0]": "url",
+          "populate[media][fields][1]": "mime",
+          "populate[media][fields][2]": "name",
           "populate[sourceMedia][fields][0]": "url",
           "pagination[pageSize]": 100,
         }, { noCache: true });

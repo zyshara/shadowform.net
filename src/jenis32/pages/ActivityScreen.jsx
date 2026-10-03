@@ -5,11 +5,13 @@ import { useAppData } from "@/context/AppDataContext";
 import ProfileActivity from "@/components/activities/ProfileActivity";
 import TextActivity from "@/components/activities/TextActivity";
 import LongtextActivity from "@/components/activities/LongtextActivity";
+import MediaActivity from "@/components/activities/MediaActivity";
 import Button from "@/components/Button";
 
 const RENDERERS = {
   text: TextActivity,
   longtext: LongtextActivity,
+  media: MediaActivity,
 };
 
 function findNextIncomplete(activities, isActivityDone, fromSlug) {
@@ -56,6 +58,14 @@ const ActivityScreenInner = ({ slug }) => {
     setSuccess(true);
   };
 
+  // MediaActivity does its own upload (raw XHR, for progress reporting) —
+  // by the time this fires the request has already succeeded, so this
+  // just needs to refresh app data and show the success screen.
+  const handleMediaSaved = async () => {
+    await refresh();
+    setSuccess(true);
+  };
+
   const handleContinue = () => {
     const next = findNextIncomplete(activities, isActivityDone, slug);
     navigate(next ? `/activities/${next.slug}` : "/activities");
@@ -91,6 +101,13 @@ const ActivityScreenInner = ({ slug }) => {
           {Renderer ? (
             activity.type === "profile" ? (
               <Renderer account={account} onSave={handleSave} />
+            ) : activity.type === "media" ? (
+              <Renderer
+                activity={activity}
+                initialMedia={submissionBySlug[activity.slug]?.media ?? []}
+                initialCaption={submissionBySlug[activity.slug]?.caption}
+                onSave={handleMediaSaved}
+              />
             ) : (
               <Renderer activity={activity} initialValue={submissionBySlug[activity.slug]?.textValue} onSave={handleSave} />
             )
