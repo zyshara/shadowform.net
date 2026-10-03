@@ -8,7 +8,6 @@ import heroDesktop from "@/assets/hero-goldshire-desktop.jpg";
 import heroMobile from "@/assets/hero-goldshire-mobile.jpg";
 
 const NAV_LINKS = [
-  { to: "/how-it-works", label: "How it works" },
   { to: "/login", label: "Log in" },
 ];
 
