@@ -81,8 +81,8 @@ const ActivityRow = ({ activity, done }) => (
 const MarketingContent = () => (
   <>
     <p className="mt-6 max-w-xl text-base sm:text-lg text-j32-text">
-      Same chaos. New character. An online birthday party with friends, games, and a
-      bunch of silly activities.
+      Greetings, traveler! I'm turning 32, so naturally I made a website about it.
+      Participation is technically optional. I also technically have your IP address. :)
     </p>
 
     <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl">
