@@ -104,7 +104,7 @@ const MarketingContent = () => (
     <p className="font-heading text-xl sm:text-2xl text-j32-text/90 mt-10 leading-snug">
       Answer questions. Draw things. Share photos. Record a message.
       <br />
-      Help make Jennifer's 32nd unforgettable. ♡
+      Do one. Do all. Leave evidence you were here.
     </p>
   </>
 );
