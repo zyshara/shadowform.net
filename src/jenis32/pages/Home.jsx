@@ -209,11 +209,11 @@ const Home = () => {
         <img
           src={heroMobile}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover"
+          className="fixed inset-0 h-dvh w-screen object-cover"
           aria-hidden="true"
         />
       </picture>
-      <div className="absolute inset-0 bg-gradient-to-b from-j32-bg/25 via-j32-bg/55 to-j32-bg/95" />
+      <div className="fixed inset-0 bg-gradient-to-b from-j32-bg/25 via-j32-bg/55 to-j32-bg/95" />
 
       <div className="relative flex flex-col min-h-dvh">
         <motion.header
