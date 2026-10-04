@@ -61,83 +61,77 @@
       },
       "skinTones": [
         {
-          "id": "rose_quartz",
-          "name": "Rose Quartz",
-          "target": "#E8C7C9",
-          "swatch": "#E8C7C9"
+          "id": "pale_peach",
+          "name": "Pale peach",
+          "target": "#D3B6A4",
+          "swatch": "#D3B6A4"
         },
         {
-          "id": "warm_ivory",
-          "name": "Warm Ivory",
-          "target": "#EACBC5",
-          "swatch": "#EACBC5"
+          "id": "moonstone",
+          "name": "Moonstone",
+          "target": "#C2ACA5",
+          "swatch": "#C2ACA5"
         },
         {
-          "id": "cool_blush",
-          "name": "Cool Blush",
-          "target": "#E2C3C8",
-          "swatch": "#E2C3C8"
-        },
-        {
-          "id": "moonlit_fair",
-          "name": "Moonlit Fair",
-          "target": "#EFD3D2",
-          "swatch": "#EFD3D2"
-        },
-        {
-          "id": "pale_frost",
-          "name": "Pale Frost",
-          "target": "#F2DAD8",
-          "swatch": "#F2DAD8"
+          "id": "pale_rose",
+          "name": "Pale rose",
+          "target": "#D0AAA9",
+          "swatch": "#D0AAA9"
         },
         {
           "id": "dusty_rose",
-          "name": "Dusty Rose",
-          "target": "#DFC0C3",
-          "swatch": "#DFC0C3"
+          "name": "Dusty rose",
+          "target": "#C2A2A2",
+          "swatch": "#C2A2A2"
         },
         {
-          "id": "sunkissed_fair",
-          "name": "Sunkissed Fair",
-          "target": "#E6BEB8",
-          "swatch": "#E6BEB8"
+          "id": "coral_blush",
+          "name": "Coral blush",
+          "target": "#D1A198",
+          "swatch": "#D1A198"
         },
         {
-          "id": "ashen_pink",
-          "name": "Ashen Pink",
-          "target": "#DAC0C5",
-          "swatch": "#DAC0C5"
+          "id": "rose",
+          "name": "Rose",
+          "target": "#C89197",
+          "swatch": "#C89197"
         },
         {
-          "id": "periwinkle",
-          "name": "Periwinkle",
-          "target": "#7D84B5",
-          "swatch": "#7D84B5"
+          "id": "mauve",
+          "name": "Mauve",
+          "target": "#B38A98",
+          "swatch": "#B38A98"
         },
         {
-          "id": "dusk_violet",
-          "name": "Dusk Violet",
-          "target": "#7A7FB0",
-          "swatch": "#7A7FB0"
+          "id": "silver_lilac",
+          "name": "Silver lilac",
+          "target": "#B6AEB9",
+          "swatch": "#B6AEB9"
         },
         {
-          "id": "orchid",
-          "name": "Orchid",
-          "target": "#9B7AA8",
-          "swatch": "#9B7AA8"
+          "id": "dusk_blue",
+          "name": "Dusk blue",
+          "target": "#566DA5",
+          "swatch": "#566DA4"
         },
         {
-          "id": "mauve_dusk",
-          "name": "Mauve Dusk",
-          "target": "#AD7A94",
-          "swatch": "#AD7A94"
+          "id": "indigo",
+          "name": "Indigo",
+          "target": "#5D5C9D",
+          "swatch": "#5D5C9B"
+        },
+        {
+          "id": "royal_purple",
+          "name": "Royal purple",
+          "target": "#714F80",
+          "swatch": "#714F80"
         }
       ],
       "base": "base/{ear}.webp",
       "defaultBrowColor": "#2B2338",
       "defaults": {
         "ear": "long",
-        "skinTone": "rose_quartz",
+        "skinTone": "mauve",
         "eyes": "eyes_1",
         "nose": "nose_1"
       },
