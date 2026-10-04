@@ -104,19 +104,22 @@
           "id": "dusk_blue",
           "name": "Dusk blue",
           "target": "#566DA5",
-          "swatch": "#566DA4"
+          "swatch": "#566DA4",
+          "skinShift": { "mouth.color": 0.55 }
         },
         {
           "id": "indigo",
           "name": "Indigo",
           "target": "#5D5C9D",
-          "swatch": "#5D5C9B"
+          "swatch": "#5D5C9B",
+          "skinShift": { "mouth.color": 0.55 }
         },
         {
           "id": "royal_purple",
           "name": "Royal purple",
           "target": "#714F80",
-          "swatch": "#714F80"
+          "swatch": "#714F80",
+          "skinShift": { "mouth.color": 0.55 }
         }
       ],
       "base": "base.webp",

@@ -139,7 +139,6 @@ export async function prepareLayers(character, state) {
   const eyeColor = findById(character.eyeColors ?? [], state.eyeColor);
   const hairColorHex = findById(character.hairColors ?? [], state.hairColor)?.color;
   const skinLayers = character.skinLayers ?? [];
-  const skinShift = character.skinShift ?? {};
   const partTypes = derivePartTypes(character);
 
   // One job per (partType, subLayer) that the chosen option actually has.
@@ -199,18 +198,24 @@ export async function prepareLayers(character, state) {
         image = recolorToCanvas(img, tone.target, character.skinReference);
         partSkinCache.set(key, image);
       }
-    } else if (skinShift[job.layerKey]) {
-      const amount = skinShift[job.layerKey];
-      // A null target ("as painted") skips the skin recolour entirely, but
-      // a shifted layer like the mouth still wants *some* lean toward the
-      // tone's own identity rather than going fully untouched — fall back
-      // to the tone's swatch (its own representative colour) in that case.
-      const shiftTarget = tone.target ?? tone.swatch;
-      const key = `${job.info.file}|${tone.id}|${amount}`;
-      image = shiftCache.get(key);
-      if (!image) {
-        image = shiftToCanvas(img, shiftTarget, character.skinReference, amount);
-        shiftCache.set(key, image);
+    } else {
+      // A skin tone can override the character-level shift amount for a
+      // given layer (e.g. a stronger lip-colour shift on the darker
+      // tones) — the tone's own skinShift wins when present.
+      const amount = tone.skinShift?.[job.layerKey] ?? character.skinShift?.[job.layerKey] ?? 0;
+      if (amount) {
+        // A null target ("as painted") skips the skin recolour entirely,
+        // but a shifted layer like the mouth still wants *some* lean
+        // toward the tone's own identity rather than going fully
+        // untouched — fall back to the tone's swatch (its own
+        // representative colour) in that case.
+        const shiftTarget = tone.target ?? tone.swatch;
+        const key = `${job.info.file}|${tone.id}|${amount}`;
+        image = shiftCache.get(key);
+        if (!image) {
+          image = shiftToCanvas(img, shiftTarget, character.skinReference, amount);
+          shiftCache.set(key, image);
+        }
       }
     }
     // else: a plain layer (e.g. eyes.color) — the loaded image as-is.
