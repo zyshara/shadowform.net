@@ -13,10 +13,9 @@ export function renderCharacter(ctx, state, manifest, layers) {
   ctx.imageSmoothingQuality = "high";
 
   const partStateFor = (layerKey) => {
-    const [partType] = layerKey.split(".");
-    if (partType === "eyes") return state.eyes;
-    if (partType === "nose") return state.nose;
-    return null;
+    const dot = layerKey.indexOf(".");
+    if (dot === -1) return null; // "base" has no part type, no transform
+    return state[layerKey.slice(0, dot)] ?? null;
   };
 
   for (const layerKey of character.layerOrder) {

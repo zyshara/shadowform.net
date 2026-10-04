@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 5,
   "canvas": {
     "width": 1024,
     "height": 1536
@@ -133,20 +133,23 @@
         "ear": "long",
         "skinTone": "mauve",
         "eyes": "eyes_1",
-        "nose": "nose_1"
+        "nose": "nose_1",
+        "mouth": "mouth_1"
       },
       "layerOrder": [
         "base",
         "eyes.skin",
         "eyes.color",
         "eyes.tint",
+        "mouth.color",
         "nose.skin",
         "nose.color"
       ],
       "skinLayers": [
         "base",
         "eyes.skin",
-        "nose.skin"
+        "nose.skin",
+        "nose.color"
       ],
       "eyes": [
         {
@@ -471,7 +474,192 @@
             "height": 124
           }
         }
-      ]
+      ],
+      "mouth": [
+        {
+          "id": "mouth_1",
+          "name": "Mouth 1",
+          "pivot": [
+            758,
+            1004
+          ],
+          "color": {
+            "file": "mouth/1_color.png",
+            "x": 675,
+            "y": 968,
+            "width": 145,
+            "height": 77
+          }
+        },
+        {
+          "id": "mouth_2",
+          "name": "Mouth 2",
+          "pivot": [
+            757,
+            997
+          ],
+          "color": {
+            "file": "mouth/2_color.png",
+            "x": 675,
+            "y": 962,
+            "width": 156,
+            "height": 77
+          }
+        },
+        {
+          "id": "mouth_3",
+          "name": "Mouth 3",
+          "pivot": [
+            770,
+            993
+          ],
+          "color": {
+            "file": "mouth/3_color.png",
+            "x": 684,
+            "y": 956,
+            "width": 148,
+            "height": 79
+          }
+        },
+        {
+          "id": "mouth_4",
+          "name": "Mouth 4",
+          "pivot": [
+            762,
+            1004
+          ],
+          "color": {
+            "file": "mouth/4_color.png",
+            "x": 681,
+            "y": 964,
+            "width": 148,
+            "height": 83
+          }
+        },
+        {
+          "id": "mouth_5",
+          "name": "Mouth 5",
+          "pivot": [
+            769,
+            1001
+          ],
+          "color": {
+            "file": "mouth/5_color.png",
+            "x": 696,
+            "y": 954,
+            "width": 126,
+            "height": 96
+          }
+        },
+        {
+          "id": "mouth_6",
+          "name": "Mouth 6",
+          "pivot": [
+            766,
+            1003
+          ],
+          "color": {
+            "file": "mouth/6_color.png",
+            "x": 693,
+            "y": 969,
+            "width": 134,
+            "height": 75
+          }
+        },
+        {
+          "id": "mouth_7",
+          "name": "Mouth 7",
+          "pivot": [
+            756,
+            1001
+          ],
+          "color": {
+            "file": "mouth/7_color.png",
+            "x": 675,
+            "y": 969,
+            "width": 151,
+            "height": 71
+          }
+        },
+        {
+          "id": "mouth_8",
+          "name": "Mouth 8",
+          "pivot": [
+            756,
+            996
+          ],
+          "color": {
+            "file": "mouth/8_color.png",
+            "x": 660,
+            "y": 960,
+            "width": 168,
+            "height": 80
+          }
+        },
+        {
+          "id": "mouth_9",
+          "name": "Mouth 9",
+          "pivot": [
+            757,
+            1005
+          ],
+          "color": {
+            "file": "mouth/9_color.png",
+            "x": 661,
+            "y": 964,
+            "width": 170,
+            "height": 88
+          }
+        },
+        {
+          "id": "mouth_10",
+          "name": "Mouth 10",
+          "pivot": [
+            763,
+            1002
+          ],
+          "color": {
+            "file": "mouth/10_color.png",
+            "x": 665,
+            "y": 958,
+            "width": 177,
+            "height": 87
+          }
+        },
+        {
+          "id": "mouth_11",
+          "name": "Mouth 11",
+          "pivot": [
+            767,
+            1001
+          ],
+          "color": {
+            "file": "mouth/11_color.png",
+            "x": 690,
+            "y": 946,
+            "width": 134,
+            "height": 111
+          }
+        },
+        {
+          "id": "mouth_12",
+          "name": "Mouth 12",
+          "pivot": [
+            758,
+            1003
+          ],
+          "color": {
+            "file": "mouth/12_color.png",
+            "x": 656,
+            "y": 955,
+            "width": 177,
+            "height": 101
+          }
+        }
+      ],
+      "skinShift": {
+        "mouth.color": 0.15
+      }
     }
   }
 }

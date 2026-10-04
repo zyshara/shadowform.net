@@ -88,6 +88,43 @@ function recolorSkin(data, targetHex, ref) {
 }
 
 /**
+ * Nudge a non-skin layer (lips) part of the way toward the skin tone, in place.
+ * data:      Uint8ClampedArray of RGBA pixels
+ * targetHex: the skin tone's "target" from the manifest. null/undefined = no change.
+ * ref:       the character's "skinReference" from the manifest
+ * amount:    0 = untouched, 1 = fully recoloured as skin. Use the layer's value from "skinShift" in the manifest.
+ *
+ * The layer keeps its own colour and shading; its hue leans toward the skin and its
+ * brightness follows the skin by half as much.
+ */
+function shiftTowardSkin(data, targetHex, ref, amount) {
+  if (!targetHex || !amount) return data;
+  const [tr, tg, tb] = hexToRgb(targetHex);
+  const [tL, ta, tbb] = rgbToLab(tr, tg, tb);
+  const lGain = 1 + (tL / ref.L - 1) * amount * 0.5;
+  const cRef = Math.max(ref.C, 10);
+  for (let i = 0; i < data.length; i += 4) {
+    if (data[i + 3] === 0) continue;
+    const R = SRGB_TO_LINEAR[data[i]], G = SRGB_TO_LINEAR[data[i + 1]], B = SRGB_TO_LINEAR[data[i + 2]];
+    const fx0 = labF((0.412453 * R + 0.357580 * G + 0.180423 * B) / Xn);
+    const fy0 = labF(0.212671 * R + 0.715160 * G + 0.072169 * B);
+    const fz0 = labF((0.019334 * R + 0.119193 * G + 0.950227 * B) / Zn);
+    let L = (116 * fy0 - 16) * lGain;
+    if (L < 0) L = 0; else if (L > 100) L = 100;
+    const a0 = 500 * (fx0 - fy0), b0 = 200 * (fy0 - fz0);
+    let k = Math.sqrt(a0 * a0 + b0 * b0) / cRef;
+    if (k < 0.45) k = 0.45; else if (k > 1.5) k = 1.5;
+    const a1 = a0 + (ta * k - a0) * amount, b1 = b0 + (tbb * k - b0) * amount;
+    const fy = (L + 16) / 116, fx = fy + a1 / 500, fz = fy - b1 / 200;
+    const x = labFInv(fx) * Xn, y = labFInv(fy), z = Math.max(labFInv(fz), 0) * Zn;
+    data[i] = toByte(3.240479 * x - 1.537150 * y - 0.498535 * z);
+    data[i + 1] = toByte(-0.969256 * x + 1.875991 * y + 0.041556 * z);
+    data[i + 2] = toByte(0.055648 * x - 0.204043 * y + 1.057311 * z);
+  }
+  return data;
+}
+
+/**
  * Colour a greyscale "tint" layer (eyebrows) in place.
  * Mid-grey (127.5) becomes the colour itself; lighter is highlight, darker is shadow.
  */
@@ -103,4 +140,4 @@ function tintLayer(data, colorHex) {
   return data;
 }
 
-if (typeof module !== 'undefined') module.exports = { recolorSkin, tintLayer, rgbToLab, labToRgb, hexToRgb };
+if (typeof module !== 'undefined') module.exports = { recolorSkin, shiftTowardSkin, tintLayer, rgbToLab, labToRgb, hexToRgb };

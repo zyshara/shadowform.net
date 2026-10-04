@@ -3,7 +3,7 @@
   "bodyType": "fem",
   "race": "nightelf",
   "ear": "long",
-  "skinTone": "default",
+  "skinTone": "mauve",
   "browColor": "#2B2338",
   "eyes": {
     "id": "eyes_1",
@@ -14,6 +14,13 @@
   },
   "nose": {
     "id": "nose_1",
+    "x": 0,
+    "y": 0,
+    "scale": 1,
+    "rotation": 0
+  },
+  "mouth": {
+    "id": "mouth_1",
     "x": 0,
     "y": 0,
     "scale": 1,

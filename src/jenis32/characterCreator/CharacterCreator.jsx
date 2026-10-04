@@ -3,6 +3,21 @@ import { prepareLayers } from "./layerCache.js";
 import { renderCharacter } from "./renderer.js";
 import { SLIDERS, DEFAULT_PART_STATE } from "./sliderConfig.js";
 import { getCharacter, randomStateFor } from "./state.js";
+import { derivePartTypes } from "./parts.js";
+
+// Draw order (from the manifest's layerOrder) isn't necessarily the order
+// controls should appear in — eyes draw below the mouth but the mouths
+// addendum asks for the Mouth picker after Nose. This is a UI-only
+// preference; any part type not listed here still renders, just appended
+// at the end, so a future part type works without editing this list.
+const PART_UI_ORDER = ["eyes", "nose", "mouth"];
+
+function uiPartTypes(character) {
+  const all = derivePartTypes(character);
+  return [...PART_UI_ORDER.filter((p) => all.includes(p)), ...all.filter((p) => !PART_UI_ORDER.includes(p))];
+}
+
+const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 // Deliberately rudimentary (gameplan section 8): native controls, a
 // neutral grey/white palette independent of the site's own theme tokens,
@@ -62,6 +77,7 @@ const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = fals
   stateRef.current = value;
 
   const character = getCharacter(manifest, value.bodyType, value.race);
+  const partTypes = character ? uiPartTypes(character) : [];
 
   function scheduleRedraw() {
     if (rafRef.current != null) return;
@@ -98,12 +114,12 @@ const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = fals
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [character, value.ear, value.skinTone, value.eyes.id, value.nose.id, value.browColor]);
+  }, [character, value.ear, value.skinTone, value.browColor, ...partTypes.map((p) => value[p]?.id)]);
 
   useEffect(() => {
     scheduleRedraw();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value.eyes.x, value.eyes.y, value.eyes.scale, value.eyes.rotation, value.nose.x, value.nose.y, value.nose.scale, value.nose.rotation]);
+  }, partTypes.flatMap((p) => [value[p]?.x, value[p]?.y, value[p]?.scale, value[p]?.rotation]));
 
   if (!character) {
     return <p className="text-sm text-red-600">This character isn't available yet.</p>;
@@ -127,16 +143,18 @@ const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = fals
   }
 
   function handleResetAll() {
-    onChange({
+    const next = {
       version: 1,
       bodyType: value.bodyType,
       race: value.race,
       ear: character.defaults.ear,
       skinTone: character.defaults.skinTone,
       browColor: character.defaultBrowColor,
-      eyes: { id: character.defaults.eyes, ...DEFAULT_PART_STATE },
-      nose: { id: character.defaults.nose, ...DEFAULT_PART_STATE },
-    });
+    };
+    for (const partType of partTypes) {
+      next[partType] = { id: character.defaults[partType], ...DEFAULT_PART_STATE };
+    }
+    onChange(next);
   }
 
   async function handleCreate() {
@@ -237,29 +255,32 @@ const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = fals
             </div>
           </div>
 
-          <div className={sectionBox}>
-            <p className={fieldLabel}>Eyes</p>
-            <div className="flex gap-2 flex-wrap">
-              {character.eyes.map((e) => (
-                <button key={e.id} type="button" onClick={() => setPartField("eyes", "id", e.id)} className={optionBtn(value.eyes.id === e.id)}>
-                  {e.name}
-                </button>
-              ))}
-            </div>
-          </div>
-          <PartSliders title="Adjust eyes" part="eyes" value={value.eyes} onChange={setPartField} onReset={() => resetPart("eyes")} />
-
-          <div className={sectionBox}>
-            <p className={fieldLabel}>Nose</p>
-            <div className="flex gap-2 flex-wrap">
-              {character.nose.map((n) => (
-                <button key={n.id} type="button" onClick={() => setPartField("nose", "id", n.id)} className={optionBtn(value.nose.id === n.id)}>
-                  {n.name}
-                </button>
-              ))}
-            </div>
-          </div>
-          <PartSliders title="Adjust nose" part="nose" value={value.nose} onChange={setPartField} onReset={() => resetPart("nose")} />
+          {partTypes.map((partType) => (
+            <React.Fragment key={partType}>
+              <div className={sectionBox}>
+                <p className={fieldLabel}>{capitalize(partType)}</p>
+                <div className="flex gap-2 flex-wrap">
+                  {(character[partType] ?? []).map((opt) => (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => setPartField(partType, "id", opt.id)}
+                      className={optionBtn(value[partType]?.id === opt.id)}
+                    >
+                      {opt.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <PartSliders
+                title={`Adjust ${partType}`}
+                part={partType}
+                value={value[partType]}
+                onChange={setPartField}
+                onReset={() => resetPart(partType)}
+              />
+            </React.Fragment>
+          ))}
 
           <div className="flex items-center gap-3 flex-wrap pt-1">
             <button type="button" onClick={handleRandomize} className={optionBtn(false)}>

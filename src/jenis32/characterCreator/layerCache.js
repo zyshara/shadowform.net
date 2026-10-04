@@ -1,18 +1,23 @@
 // Asset loading + per-(file, variant) preparation cache for the character
 // creator (gameplan section 4.5). Keeps every prepared layer keyed so
-// switching eyes/nose/sliders never re-triggers a recolour, and only the
-// three layers currently on screen (base, chosen eyes skin, chosen nose
-// skin) are recoloured when the skin tone changes — everything else is
-// prepared lazily, the first time it's actually selected.
+// switching a part's option/sliders never re-triggers a recolour, and only
+// the layers currently on screen are recoloured when the skin tone
+// changes — everything else is prepared lazily, the first time it's
+// actually selected.
+//
+// Which layers get recoloured, shifted, or tinted is driven entirely by
+// the manifest's skinLayers / skinShift / "*.tint" suffix (mouths
+// addendum, section 3.2) — not by hardcoding eyes/nose/mouth by name.
 
-import { recolorSkin, tintLayer } from "./recolor.js";
+import { recolorSkin, shiftTowardSkin, tintLayer } from "./recolor.js";
+import { derivePartTypes, SUB_LAYERS } from "./parts.js";
 
 const ASSET_BASE = "/character-assets";
 
 // The full-canvas base recolour is the expensive one (~6MB each) — cap how
 // many stay resident and evict the least recently used. Small part layers
-// (eyes/nose skin, eyebrow tint) are cheap and numerous combinations are
-// plausible during a session, so they're left unbounded.
+// (eyes/nose/mouth skin & color, eyebrow tint) are cheap and numerous
+// combinations are plausible during a session, so they're left unbounded.
 const MAX_BASE_CACHE = 4;
 
 class LRUCache {
@@ -39,6 +44,7 @@ class LRUCache {
 const imageCache = new Map(); // url -> Promise<HTMLImageElement>
 const baseSkinCache = new LRUCache(MAX_BASE_CACHE); // "file|toneId" -> HTMLCanvasElement
 const partSkinCache = new Map(); // "file|toneId" -> HTMLCanvasElement
+const shiftCache = new Map(); // "file|toneId|amount" -> HTMLCanvasElement
 const tintCache = new Map(); // "file|color" -> HTMLCanvasElement
 
 export function assetUrl(characterPath, relativeFile) {
@@ -86,6 +92,15 @@ function recolorToCanvas(img, targetHex, skinReference) {
   return canvas;
 }
 
+function shiftToCanvas(img, targetHex, skinReference, amount) {
+  if (!targetHex || !amount) return img;
+  const { canvas, ctx } = toCanvas(img);
+  const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  shiftTowardSkin(pixels.data, targetHex, skinReference, amount);
+  ctx.putImageData(pixels, 0, 0);
+  return canvas;
+}
+
 function tintToCanvas(img, colorHex) {
   const { canvas, ctx } = toCanvas(img);
   const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -102,21 +117,36 @@ function findById(list, id) {
  * Resolve and prepare every layer a given state needs, returning a map
  * keyed by the character's layerOrder entries ("base", "eyes.skin", ...)
  * to { image, x, y, pivot? } ready for renderCharacter to draw.
+ *
+ * Generic over part types and their sub-layers: a part type is any key
+ * appearing in layerOrder before the dot (derivePartTypes), and a part
+ * may have any subset of skin/color/tint layers — whichever its chosen
+ * option actually defines.
  */
 export async function prepareLayers(character, state) {
   const path = character.path;
   const baseFile = character.base.replace("{ear}", state.ear);
-  const eyesDef = findById(character.eyes, state.eyes.id);
-  const noseDef = findById(character.nose, state.nose.id);
   const tone = findById(character.skinTones, state.skinTone);
+  const skinLayers = character.skinLayers ?? [];
+  const skinShift = character.skinShift ?? {};
+  const partTypes = derivePartTypes(character);
 
-  const [baseImg, eyesSkinImg, eyesColorImg, eyesTintImg, noseSkinImg, noseColorImg] = await Promise.all([
+  // One job per (partType, subLayer) that the chosen option actually has.
+  const jobs = [];
+  for (const partType of partTypes) {
+    const options = character[partType] ?? [];
+    const def = findById(options, state[partType]?.id);
+    if (!def) continue;
+    for (const sub of SUB_LAYERS) {
+      const info = def[sub];
+      if (!info) continue;
+      jobs.push({ layerKey: `${partType}.${sub}`, sub, info, pivot: def.pivot });
+    }
+  }
+
+  const [baseImg, ...jobImgs] = await Promise.all([
     loadImage(assetUrl(path, baseFile)),
-    loadImage(assetUrl(path, eyesDef.skin.file)),
-    loadImage(assetUrl(path, eyesDef.color.file)),
-    loadImage(assetUrl(path, eyesDef.tint.file)),
-    loadImage(assetUrl(path, noseDef.skin.file)),
-    loadImage(assetUrl(path, noseDef.color.file)),
+    ...jobs.map((j) => loadImage(assetUrl(path, j.info.file))),
   ]);
 
   const baseKey = `${baseFile}|${tone.id}`;
@@ -126,33 +156,39 @@ export async function prepareLayers(character, state) {
     baseSkinCache.set(baseKey, baseImage);
   }
 
-  const eyesSkinKey = `${eyesDef.skin.file}|${tone.id}`;
-  let eyesSkinImage = partSkinCache.get(eyesSkinKey);
-  if (!eyesSkinImage) {
-    eyesSkinImage = recolorToCanvas(eyesSkinImg, tone.target, character.skinReference);
-    partSkinCache.set(eyesSkinKey, eyesSkinImage);
-  }
+  const layers = { base: { image: baseImage, x: 0, y: 0 } };
 
-  const noseSkinKey = `${noseDef.skin.file}|${tone.id}`;
-  let noseSkinImage = partSkinCache.get(noseSkinKey);
-  if (!noseSkinImage) {
-    noseSkinImage = recolorToCanvas(noseSkinImg, tone.target, character.skinReference);
-    partSkinCache.set(noseSkinKey, noseSkinImage);
-  }
+  jobs.forEach((job, i) => {
+    const img = jobImgs[i];
+    let image = img;
 
-  const tintKey = `${eyesDef.tint.file}|${state.browColor}`;
-  let eyesTintImage = tintCache.get(tintKey);
-  if (!eyesTintImage) {
-    eyesTintImage = tintToCanvas(eyesTintImg, state.browColor);
-    tintCache.set(tintKey, eyesTintImage);
-  }
+    if (job.sub === "tint") {
+      const key = `${job.info.file}|${state.browColor}`;
+      image = tintCache.get(key);
+      if (!image) {
+        image = tintToCanvas(img, state.browColor);
+        tintCache.set(key, image);
+      }
+    } else if (skinLayers.includes(job.layerKey)) {
+      const key = `${job.info.file}|${tone.id}`;
+      image = partSkinCache.get(key);
+      if (!image) {
+        image = recolorToCanvas(img, tone.target, character.skinReference);
+        partSkinCache.set(key, image);
+      }
+    } else if (skinShift[job.layerKey]) {
+      const amount = skinShift[job.layerKey];
+      const key = `${job.info.file}|${tone.id}|${amount}`;
+      image = shiftCache.get(key);
+      if (!image) {
+        image = shiftToCanvas(img, tone.target, character.skinReference, amount);
+        shiftCache.set(key, image);
+      }
+    }
+    // else: a plain layer (e.g. eyes.color) — the loaded image as-is.
 
-  return {
-    base: { image: baseImage, x: 0, y: 0 },
-    "eyes.skin": { image: eyesSkinImage, x: eyesDef.skin.x, y: eyesDef.skin.y, pivot: eyesDef.pivot },
-    "eyes.color": { image: eyesColorImg, x: eyesDef.color.x, y: eyesDef.color.y, pivot: eyesDef.pivot },
-    "eyes.tint": { image: eyesTintImage, x: eyesDef.tint.x, y: eyesDef.tint.y, pivot: eyesDef.pivot },
-    "nose.skin": { image: noseSkinImage, x: noseDef.skin.x, y: noseDef.skin.y, pivot: noseDef.pivot },
-    "nose.color": { image: noseColorImg, x: noseDef.color.x, y: noseDef.color.y, pivot: noseDef.pivot },
-  };
+    layers[job.layerKey] = { image, x: job.info.x, y: job.info.y, pivot: job.pivot };
+  });
+
+  return layers;
 }
