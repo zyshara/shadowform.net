@@ -81,6 +81,11 @@ export function registerSpaRoutes(app) {
   // Shared static assets (served at root)
   app.use("/shared", express.static(path.join(root, "public/shared")));
 
+  // jenis32 character creator assets (manifest, part images, reference
+  // renders) — large binary art, served as-is rather than run through
+  // webpack like src/jenis32/assets.
+  app.use("/character-assets", express.static(path.join(root, "public/character-assets")));
+
   /* ── Redspear SPA (subdomain) ── */
   const redspearIndex  = path.join(root, "dist/redspear/index.html");
   const redspearStatic = express.static(path.join(root, "dist/redspear"));

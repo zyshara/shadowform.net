@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import RequireAuth from "@/components/RequireAuth";
 import { AuthProvider } from "@/context/AuthContext";
 import { AppDataProvider } from "@/context/AppDataContext";
-import { ActivityScreen, ForgotPassword, Home, Login, NotFound, Register } from "@/pages";
+import { ActivityScreen, CharacterCreatorCheck, CharacterCreatorDev, ForgotPassword, Home, Login, NotFound, Register } from "@/pages";
 import PoweredByLogo from "@shared/components/PoweredByLogo.jsx";
 
 const App = () => {
@@ -21,6 +21,22 @@ const App = () => {
             element={
               <RequireAuth>
                 <ActivityScreen />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/character"
+            element={
+              <RequireAuth>
+                <CharacterCreatorDev />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/character/check"
+            element={
+              <RequireAuth>
+                <CharacterCreatorCheck />
               </RequireAuth>
             }
           />

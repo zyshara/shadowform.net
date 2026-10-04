@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "bodyType": "fem",
+  "race": "nightelf",
+  "ear": "medium",
+  "skinTone": "deep_purple",
+  "browColor": "#2B2338",
+  "eyes": {
+    "id": "eyes_7",
+    "x": 0,
+    "y": 0,
+    "scale": 1,
+    "rotation": 0
+  },
+  "nose": {
+    "id": "nose_3",
+    "x": 0,
+    "y": 0,
+    "scale": 1,
+    "rotation": 0
+  }
+}

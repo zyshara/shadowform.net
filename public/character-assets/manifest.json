@@ -1,0 +1,447 @@
+{
+  "version": 2,
+  "canvas": {
+    "width": 1024,
+    "height": 1536
+  },
+  "bodyTypes": [
+    {
+      "id": "masc",
+      "name": "Masculine",
+      "enabled": false
+    },
+    {
+      "id": "fem",
+      "name": "Feminine",
+      "enabled": true
+    }
+  ],
+  "races": [
+    {
+      "id": "human",
+      "name": "Human",
+      "enabled": false
+    },
+    {
+      "id": "nightelf",
+      "name": "Night Elf",
+      "enabled": true
+    },
+    {
+      "id": "orc",
+      "name": "Orc",
+      "enabled": false
+    },
+    {
+      "id": "undead",
+      "name": "Undead",
+      "enabled": false
+    }
+  ],
+  "characters": {
+    "nightelf_fem": {
+      "path": "nightelf_fem",
+      "ears": [
+        {
+          "id": "short",
+          "name": "Short"
+        },
+        {
+          "id": "medium",
+          "name": "Medium"
+        },
+        {
+          "id": "long",
+          "name": "Long"
+        }
+      ],
+      "skinReference": {
+        "L": 56.441,
+        "C": 13.571
+      },
+      "skinTones": [
+        {
+          "id": "default",
+          "name": "Twilight",
+          "target": null,
+          "swatch": "#958195"
+        },
+        {
+          "id": "pale_lilac",
+          "name": "Pale lilac",
+          "target": "#C9B4E0",
+          "swatch": "#C9B4DF"
+        },
+        {
+          "id": "lavender_blue",
+          "name": "Lavender blue",
+          "target": "#9FA4DC",
+          "swatch": "#9FA4DB"
+        },
+        {
+          "id": "pink",
+          "name": "Dusk pink",
+          "target": "#D8A6C8",
+          "swatch": "#D7A6C8"
+        },
+        {
+          "id": "grey_blue",
+          "name": "Grey blue",
+          "target": "#8E9AB8",
+          "swatch": "#8E9AB8"
+        },
+        {
+          "id": "deep_purple",
+          "name": "Deep purple",
+          "target": "#6B4E96",
+          "swatch": "#6B4E95"
+        }
+      ],
+      "base": "base/{ear}.webp",
+      "defaultBrowColor": "#2B2338",
+      "defaults": {
+        "ear": "long",
+        "skinTone": "default",
+        "eyes": "eyes_1",
+        "nose": "nose_1"
+      },
+      "layerOrder": [
+        "base",
+        "eyes.skin",
+        "eyes.color",
+        "eyes.tint",
+        "nose.skin",
+        "nose.color"
+      ],
+      "skinLayers": [
+        "base",
+        "eyes.skin",
+        "nose.skin"
+      ],
+      "eyes": [
+        {
+          "id": "eyes_1",
+          "name": "Eyes 1",
+          "pivot": [
+            698,
+            755
+          ],
+          "skin": {
+            "file": "eyes/1_skin.png",
+            "x": 461,
+            "y": 611,
+            "width": 479,
+            "height": 257
+          },
+          "color": {
+            "file": "eyes/1_color.png",
+            "x": 556,
+            "y": 690,
+            "width": 331,
+            "height": 165
+          },
+          "tint": {
+            "file": "eyes/1_tint.png",
+            "x": 465,
+            "y": 616,
+            "width": 473,
+            "height": 141
+          }
+        },
+        {
+          "id": "eyes_2",
+          "name": "Eyes 2",
+          "pivot": [
+            707,
+            741
+          ],
+          "skin": {
+            "file": "eyes/2_skin.png",
+            "x": 466,
+            "y": 591,
+            "width": 478,
+            "height": 254
+          },
+          "color": {
+            "file": "eyes/2_color.png",
+            "x": 576,
+            "y": 688,
+            "width": 308,
+            "height": 146
+          },
+          "tint": {
+            "file": "eyes/2_tint.png",
+            "x": 469,
+            "y": 595,
+            "width": 472,
+            "height": 160
+          }
+        },
+        {
+          "id": "eyes_3",
+          "name": "Eyes 3",
+          "pivot": [
+            703,
+            722
+          ],
+          "skin": {
+            "file": "eyes/3_skin.png",
+            "x": 453,
+            "y": 593,
+            "width": 497,
+            "height": 258
+          },
+          "color": {
+            "file": "eyes/3_color.png",
+            "x": 564,
+            "y": 654,
+            "width": 326,
+            "height": 184
+          },
+          "tint": {
+            "file": "eyes/3_tint.png",
+            "x": 456,
+            "y": 596,
+            "width": 494,
+            "height": 137
+          }
+        },
+        {
+          "id": "eyes_4",
+          "name": "Eyes 4",
+          "pivot": [
+            704,
+            719
+          ],
+          "skin": {
+            "file": "eyes/4_skin.png",
+            "x": 473,
+            "y": 580,
+            "width": 468,
+            "height": 250
+          },
+          "color": {
+            "file": "eyes/4_color.png",
+            "x": 563,
+            "y": 653,
+            "width": 332,
+            "height": 165
+          },
+          "tint": {
+            "file": "eyes/4_tint.png",
+            "x": 475,
+            "y": 583,
+            "width": 464,
+            "height": 146
+          }
+        },
+        {
+          "id": "eyes_5",
+          "name": "Eyes 5",
+          "pivot": [
+            692,
+            741
+          ],
+          "skin": {
+            "file": "eyes/5_skin.png",
+            "x": 453,
+            "y": 570,
+            "width": 494,
+            "height": 280
+          },
+          "color": {
+            "file": "eyes/5_color.png",
+            "x": 559,
+            "y": 678,
+            "width": 337,
+            "height": 158
+          },
+          "tint": {
+            "file": "eyes/5_tint.png",
+            "x": 457,
+            "y": 574,
+            "width": 489,
+            "height": 192
+          }
+        },
+        {
+          "id": "eyes_6",
+          "name": "Eyes 6",
+          "pivot": [
+            703,
+            727
+          ],
+          "skin": {
+            "file": "eyes/6_skin.png",
+            "x": 447,
+            "y": 586,
+            "width": 493,
+            "height": 243
+          },
+          "color": {
+            "file": "eyes/6_color.png",
+            "x": 568,
+            "y": 664,
+            "width": 326,
+            "height": 152
+          },
+          "tint": {
+            "file": "eyes/6_tint.png",
+            "x": 446,
+            "y": 590,
+            "width": 492,
+            "height": 144
+          }
+        },
+        {
+          "id": "eyes_7",
+          "name": "Eyes 7",
+          "pivot": [
+            695,
+            736
+          ],
+          "skin": {
+            "file": "eyes/7_skin.png",
+            "x": 451,
+            "y": 619,
+            "width": 481,
+            "height": 215
+          },
+          "color": {
+            "file": "eyes/7_color.png",
+            "x": 551,
+            "y": 690,
+            "width": 325,
+            "height": 132
+          },
+          "tint": {
+            "file": "eyes/7_tint.png",
+            "x": 456,
+            "y": 620,
+            "width": 474,
+            "height": 118
+          }
+        },
+        {
+          "id": "eyes_8",
+          "name": "Eyes 8",
+          "pivot": [
+            711,
+            732
+          ],
+          "skin": {
+            "file": "eyes/8_skin.png",
+            "x": 459,
+            "y": 585,
+            "width": 497,
+            "height": 246
+          },
+          "color": {
+            "file": "eyes/8_color.png",
+            "x": 584,
+            "y": 686,
+            "width": 313,
+            "height": 134
+          },
+          "tint": {
+            "file": "eyes/8_tint.png",
+            "x": 464,
+            "y": 586,
+            "width": 490,
+            "height": 172
+          }
+        }
+      ],
+      "nose": [
+        {
+          "id": "nose_1",
+          "name": "Nose 1",
+          "pivot": [
+            784,
+            864
+          ],
+          "skin": {
+            "file": "nose/1_skin.png",
+            "x": 678,
+            "y": 726,
+            "width": 181,
+            "height": 246
+          },
+          "color": {
+            "file": "nose/1_color.png",
+            "x": 760,
+            "y": 886,
+            "width": 89,
+            "height": 59
+          }
+        },
+        {
+          "id": "nose_2",
+          "name": "Nose 2",
+          "pivot": [
+            782,
+            867
+          ],
+          "skin": {
+            "file": "nose/2_skin.png",
+            "x": 679,
+            "y": 722,
+            "width": 178,
+            "height": 252
+          },
+          "color": {
+            "file": "nose/2_color.png",
+            "x": 753,
+            "y": 903,
+            "width": 90,
+            "height": 46
+          }
+        },
+        {
+          "id": "nose_3",
+          "name": "Nose 3",
+          "pivot": [
+            787,
+            877
+          ],
+          "skin": {
+            "file": "nose/3_skin.png",
+            "x": 711,
+            "y": 748,
+            "width": 155,
+            "height": 241
+          },
+          "color": {
+            "file": "nose/3_color.png",
+            "x": 752,
+            "y": 917,
+            "width": 96,
+            "height": 44
+          }
+        },
+        {
+          "id": "nose_4",
+          "name": "Nose 4",
+          "pivot": [
+            778,
+            852
+          ],
+          "skin": {
+            "file": "nose/4_skin.png",
+            "x": 704,
+            "y": 700,
+            "width": 137,
+            "height": 270
+          },
+          "color": {
+            "file": "nose/4_color.png",
+            "x": 755,
+            "y": 796,
+            "width": 83,
+            "height": 124
+          }
+        }
+      ]
+    }
+  }
+}
