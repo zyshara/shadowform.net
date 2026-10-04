@@ -8,7 +8,7 @@
 // key (created before that part type existed) loads with that part's
 // default id and zeroed sliders, the same fallback as an unknown id.
 
-import { SLIDERS, DEFAULT_PART_STATE, clampSliderValue } from "./sliderConfig.js";
+import { SLIDERS, DEFAULT_PART_STATE, RANDOMIZE_RANGES, clampSliderValue } from "./sliderConfig.js";
 import { derivePartTypes } from "./parts.js";
 
 function firstEnabled(list) {
@@ -84,8 +84,10 @@ function randomFrom(list) {
 
 function randomSliderValue(key) {
   const config = SLIDERS.find((s) => s.key === key);
-  const steps = Math.round((config.max - config.min) / config.step);
-  const raw = config.min + Math.round(Math.random() * steps) * config.step;
+  const range = RANDOMIZE_RANGES[key];
+  if (!range) return config.default; // not randomized (e.g. rotation) — stays at default
+  const steps = Math.round((range.max - range.min) / config.step);
+  const raw = range.min + Math.round(Math.random() * steps) * config.step;
   return clampSliderValue(key, Math.round(raw * 100) / 100);
 }
 
