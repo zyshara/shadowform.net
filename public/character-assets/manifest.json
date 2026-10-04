@@ -61,6 +61,12 @@
       },
       "skinTones": [
         {
+          "id": "default",
+          "name": "Twilight",
+          "target": null,
+          "swatch": "#958195"
+        },
+        {
           "id": "pale_peach",
           "name": "Pale peach",
           "target": "#D3B6A4",
