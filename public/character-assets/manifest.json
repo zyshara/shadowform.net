@@ -739,20 +739,6 @@
           "core": "#E4F6FF",
           "edge": "#6CC4FF",
           "swatch": "#A9DDFF"
-        },
-        {
-          "id": "red",
-          "name": "Red",
-          "core": "#FF8A70",
-          "edge": "#D4140A",
-          "swatch": "#E23A2A"
-        },
-        {
-          "id": "black",
-          "name": "Black",
-          "core": "#050508",
-          "edge": "#2B2540",
-          "swatch": "#15131F"
         }
       ],
       "hair": [
