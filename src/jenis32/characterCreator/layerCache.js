@@ -178,10 +178,15 @@ export async function prepareLayers(character, state) {
       }
     } else if (skinShift[job.layerKey]) {
       const amount = skinShift[job.layerKey];
+      // A null target ("as painted") skips the skin recolour entirely, but
+      // a shifted layer like the mouth still wants *some* lean toward the
+      // tone's own identity rather than going fully untouched — fall back
+      // to the tone's swatch (its own representative colour) in that case.
+      const shiftTarget = tone.target ?? tone.swatch;
       const key = `${job.info.file}|${tone.id}|${amount}`;
       image = shiftCache.get(key);
       if (!image) {
-        image = shiftToCanvas(img, tone.target, character.skinReference, amount);
+        image = shiftToCanvas(img, shiftTarget, character.skinReference, amount);
         shiftCache.set(key, image);
       }
     }
