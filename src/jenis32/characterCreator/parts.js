@@ -2,7 +2,8 @@
 // generically from the manifest instead of hardcoding each one —
 // per the mouths addendum, section 3.1: "a part type is any key that
 // appears in layerOrder before the dot, and a part may have any subset
-// of skin, color, and tint layers."
+// of skin, color, tint, and glow layers" (glow added by the eye-colours
+// addendum).
 
 export function derivePartTypes(character) {
   const types = [];
@@ -15,4 +16,4 @@ export function derivePartTypes(character) {
   return types;
 }
 
-export const SUB_LAYERS = ["skin", "color", "tint"];
+export const SUB_LAYERS = ["skin", "color", "tint", "glow"];
