@@ -1,10 +1,13 @@
 {
-  "version": 1,
+  "version": 2,
   "bodyType": "fem",
   "race": "nightelf",
-  "ear": "medium",
   "skinTone": "royal_purple",
-  "browColor": "#2B2338",
+  "eyeColor": "amber",
+  "hairColor": "turquoise",
+  "hair": {
+    "id": "hair_1"
+  },
   "eyes": {
     "id": "eyes_7",
     "x": 0,

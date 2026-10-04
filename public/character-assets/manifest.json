@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 9,
   "canvas": {
     "width": 1024,
     "height": 1536
@@ -41,20 +41,6 @@
   "characters": {
     "nightelf_fem": {
       "path": "nightelf_fem",
-      "ears": [
-        {
-          "id": "short",
-          "name": "Short"
-        },
-        {
-          "id": "medium",
-          "name": "Medium"
-        },
-        {
-          "id": "long",
-          "name": "Long"
-        }
-      ],
       "skinReference": {
         "L": 56.441,
         "C": 13.571
@@ -133,23 +119,26 @@
           "swatch": "#714F80"
         }
       ],
-      "base": "base/{ear}.webp",
-      "defaultBrowColor": "#2B2338",
+      "base": "base.webp",
       "defaults": {
-        "ear": "long",
         "skinTone": "mauve",
         "eyes": "eyes_1",
         "nose": "nose_1",
-        "mouth": "mouth_1"
+        "mouth": "mouth_1",
+        "eyeColor": "silver",
+        "hair": "hair_1",
+        "hairColor": "white"
       },
       "layerOrder": [
         "base",
         "eyes.skin",
+        "eyes.glow",
         "eyes.color",
         "eyes.tint",
         "mouth.color",
         "nose.skin",
-        "nose.color"
+        "nose.color",
+        "hair.tint"
       ],
       "skinLayers": [
         "base",
@@ -170,14 +159,21 @@
             "x": 461,
             "y": 611,
             "width": 479,
-            "height": 257
+            "height": 260
+          },
+          "glow": {
+            "file": "eyes/1_glow.png",
+            "x": 629,
+            "y": 754,
+            "width": 266,
+            "height": 104
           },
           "color": {
             "file": "eyes/1_color.png",
             "x": 556,
             "y": 690,
             "width": 331,
-            "height": 165
+            "height": 139
           },
           "tint": {
             "file": "eyes/1_tint.png",
@@ -199,14 +195,21 @@
             "x": 466,
             "y": 591,
             "width": 478,
-            "height": 254
+            "height": 252
+          },
+          "glow": {
+            "file": "eyes/2_glow.png",
+            "x": 640,
+            "y": 728,
+            "width": 258,
+            "height": 113
           },
           "color": {
             "file": "eyes/2_color.png",
             "x": 576,
             "y": 688,
             "width": 308,
-            "height": 146
+            "height": 121
           },
           "tint": {
             "file": "eyes/2_tint.png",
@@ -228,14 +231,21 @@
             "x": 453,
             "y": 593,
             "width": 497,
-            "height": 258
+            "height": 259
+          },
+          "glow": {
+            "file": "eyes/3_glow.png",
+            "x": 652,
+            "y": 716,
+            "width": 249,
+            "height": 127
           },
           "color": {
             "file": "eyes/3_color.png",
             "x": 564,
             "y": 654,
             "width": 326,
-            "height": 184
+            "height": 152
           },
           "tint": {
             "file": "eyes/3_tint.png",
@@ -257,14 +267,21 @@
             "x": 473,
             "y": 580,
             "width": 468,
-            "height": 250
+            "height": 252
+          },
+          "glow": {
+            "file": "eyes/4_glow.png",
+            "x": 636,
+            "y": 716,
+            "width": 269,
+            "height": 108
           },
           "color": {
             "file": "eyes/4_color.png",
             "x": 563,
             "y": 653,
             "width": 332,
-            "height": 165
+            "height": 145
           },
           "tint": {
             "file": "eyes/4_tint.png",
@@ -286,14 +303,21 @@
             "x": 453,
             "y": 570,
             "width": 494,
-            "height": 280
+            "height": 283
+          },
+          "glow": {
+            "file": "eyes/5_glow.png",
+            "x": 626,
+            "y": 731,
+            "width": 278,
+            "height": 109
           },
           "color": {
             "file": "eyes/5_color.png",
             "x": 559,
             "y": 678,
             "width": 337,
-            "height": 158
+            "height": 131
           },
           "tint": {
             "file": "eyes/5_tint.png",
@@ -315,14 +339,21 @@
             "x": 447,
             "y": 586,
             "width": 493,
-            "height": 243
+            "height": 244
+          },
+          "glow": {
+            "file": "eyes/6_glow.png",
+            "x": 642,
+            "y": 715,
+            "width": 260,
+            "height": 107
           },
           "color": {
             "file": "eyes/6_color.png",
             "x": 568,
             "y": 664,
             "width": 326,
-            "height": 152
+            "height": 129
           },
           "tint": {
             "file": "eyes/6_tint.png",
@@ -344,14 +375,21 @@
             "x": 451,
             "y": 619,
             "width": 481,
-            "height": 215
+            "height": 216
+          },
+          "glow": {
+            "file": "eyes/7_glow.png",
+            "x": 624,
+            "y": 736,
+            "width": 267,
+            "height": 91
           },
           "color": {
             "file": "eyes/7_color.png",
             "x": 551,
             "y": 690,
             "width": 325,
-            "height": 132
+            "height": 105
           },
           "tint": {
             "file": "eyes/7_tint.png",
@@ -373,14 +411,21 @@
             "x": 459,
             "y": 585,
             "width": 497,
-            "height": 246
+            "height": 251
+          },
+          "glow": {
+            "file": "eyes/8_glow.png",
+            "x": 653,
+            "y": 729,
+            "width": 251,
+            "height": 93
           },
           "color": {
             "file": "eyes/8_color.png",
             "x": 584,
             "y": 686,
             "width": 313,
-            "height": 134
+            "height": 108
           },
           "tint": {
             "file": "eyes/8_tint.png",
@@ -665,7 +710,109 @@
       ],
       "skinShift": {
         "mouth.color": 0.15
-      }
+      },
+      "eyeColors": [
+        {
+          "id": "silver",
+          "name": "Silver",
+          "core": "#FFFFFF",
+          "edge": "#BCC8EC",
+          "swatch": "#E6ECF8"
+        },
+        {
+          "id": "amber",
+          "name": "Amber",
+          "core": "#FFE58A",
+          "edge": "#F08C00",
+          "swatch": "#F7B733"
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "core": "#A8D4FF",
+          "edge": "#1F62E8",
+          "swatch": "#4C8DF5"
+        },
+        {
+          "id": "light_blue",
+          "name": "Light blue",
+          "core": "#E4F6FF",
+          "edge": "#6CC4FF",
+          "swatch": "#A9DDFF"
+        },
+        {
+          "id": "red",
+          "name": "Red",
+          "core": "#FF8A70",
+          "edge": "#D4140A",
+          "swatch": "#E23A2A"
+        },
+        {
+          "id": "black",
+          "name": "Black",
+          "core": "#050508",
+          "edge": "#2B2540",
+          "swatch": "#15131F"
+        }
+      ],
+      "hair": [
+        {
+          "id": "hair_1",
+          "name": "Hair 1",
+          "tint": {
+            "file": "hair/1_tint.png",
+            "x": 0,
+            "y": 203,
+            "width": 982,
+            "height": 1333
+          }
+        }
+      ],
+      "hairColors": [
+        {
+          "id": "grass_green",
+          "name": "Grass green",
+          "color": "#789032"
+        },
+        {
+          "id": "emerald",
+          "name": "Emerald",
+          "color": "#44934D"
+        },
+        {
+          "id": "deep_teal",
+          "name": "Deep teal",
+          "color": "#317053"
+        },
+        {
+          "id": "turquoise",
+          "name": "Turquoise",
+          "color": "#58B1A1"
+        },
+        {
+          "id": "white",
+          "name": "White",
+          "color": "#C4CDCF"
+        },
+        {
+          "id": "ocean_blue",
+          "name": "Ocean blue",
+          "color": "#467FA2"
+        },
+        {
+          "id": "midnight_blue",
+          "name": "Midnight blue",
+          "color": "#323D7C"
+        },
+        {
+          "id": "violet",
+          "name": "Violet",
+          "color": "#6B3C9A"
+        }
+      ],
+      "optionalParts": [
+        "hair"
+      ]
     }
   }
 }

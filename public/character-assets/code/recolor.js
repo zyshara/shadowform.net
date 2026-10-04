@@ -140,4 +140,23 @@ function tintLayer(data, colorHex) {
   return data;
 }
 
-if (typeof module !== 'undefined') module.exports = { recolorSkin, shiftTowardSkin, tintLayer, rgbToLab, labToRgb, hexToRgb };
+/**
+ * Colour an eye "glow" layer in place.
+ * The layer is greyscale with alpha: white = the hot centre of the eye, darker = its rim and outer glow.
+ * coreHex / edgeHex come from the chosen entry in the manifest's "eyeColors".
+ * White pixels become the core colour, black pixels the edge colour, with a straight blend between.
+ */
+function tintGlow(data, coreHex, edgeHex) {
+  const [cr, cg, cb] = hexToRgb(coreHex);
+  const [er, eg, eb] = hexToRgb(edgeHex);
+  for (let i = 0; i < data.length; i += 4) {
+    if (data[i + 3] === 0) continue;
+    const t = data[i] / 255;
+    data[i] = Math.round(er + (cr - er) * t);
+    data[i + 1] = Math.round(eg + (cg - eg) * t);
+    data[i + 2] = Math.round(eb + (cb - eb) * t);
+  }
+  return data;
+}
+
+if (typeof module !== 'undefined') module.exports = { recolorSkin, shiftTowardSkin, tintLayer, tintGlow, rgbToLab, labToRgb, hexToRgb };

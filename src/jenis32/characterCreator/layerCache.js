@@ -9,7 +9,7 @@
 // the manifest's skinLayers / skinShift / "*.tint" suffix (mouths
 // addendum, section 3.2) — not by hardcoding eyes/nose/mouth by name.
 
-import { recolorSkin, shiftTowardSkin, tintLayer } from "./recolor.js";
+import { recolorSkin, shiftTowardSkin, tintLayer, tintGlow } from "./recolor.js";
 import { derivePartTypes, SUB_LAYERS } from "./parts.js";
 
 const ASSET_BASE = "/character-assets";
@@ -46,6 +46,7 @@ const baseSkinCache = new LRUCache(MAX_BASE_CACHE); // "file|toneId" -> HTMLCanv
 const partSkinCache = new Map(); // "file|toneId" -> HTMLCanvasElement
 const shiftCache = new Map(); // "file|toneId|amount" -> HTMLCanvasElement
 const tintCache = new Map(); // "file|color" -> HTMLCanvasElement
+const glowCache = new Map(); // "file|eyeColorId" -> HTMLCanvasElement
 
 export function assetUrl(characterPath, relativeFile) {
   return `${ASSET_BASE}/${characterPath}/${relativeFile}`;
@@ -109,6 +110,14 @@ function tintToCanvas(img, colorHex) {
   return canvas;
 }
 
+function glowToCanvas(img, coreHex, edgeHex) {
+  const { canvas, ctx } = toCanvas(img);
+  const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  tintGlow(pixels.data, coreHex, edgeHex);
+  ctx.putImageData(pixels, 0, 0);
+  return canvas;
+}
+
 function findById(list, id) {
   return list.find((item) => item.id === id) ?? list[0];
 }
@@ -120,22 +129,28 @@ function findById(list, id) {
  *
  * Generic over part types and their sub-layers: a part type is any key
  * appearing in layerOrder before the dot (derivePartTypes), and a part
- * may have any subset of skin/color/tint layers — whichever its chosen
- * option actually defines.
+ * may have any subset of skin/color/tint/glow layers — whichever its
+ * chosen option actually defines. A part type whose state is null (an
+ * optional part set to "none", e.g. hair) contributes no layers at all.
  */
 export async function prepareLayers(character, state) {
   const path = character.path;
-  const baseFile = character.base.replace("{ear}", state.ear);
   const tone = findById(character.skinTones, state.skinTone);
+  const eyeColor = findById(character.eyeColors ?? [], state.eyeColor);
+  const hairColorHex = findById(character.hairColors ?? [], state.hairColor)?.color;
   const skinLayers = character.skinLayers ?? [];
   const skinShift = character.skinShift ?? {};
   const partTypes = derivePartTypes(character);
 
   // One job per (partType, subLayer) that the chosen option actually has.
+  // A part whose state is explicitly null (optional, set to "none")
+  // contributes nothing.
   const jobs = [];
   for (const partType of partTypes) {
+    const partState = state[partType];
+    if (!partState) continue;
     const options = character[partType] ?? [];
-    const def = findById(options, state[partType]?.id);
+    const def = findById(options, partState.id);
     if (!def) continue;
     for (const sub of SUB_LAYERS) {
       const info = def[sub];
@@ -145,11 +160,11 @@ export async function prepareLayers(character, state) {
   }
 
   const [baseImg, ...jobImgs] = await Promise.all([
-    loadImage(assetUrl(path, baseFile)),
+    loadImage(assetUrl(path, character.base)),
     ...jobs.map((j) => loadImage(assetUrl(path, j.info.file))),
   ]);
 
-  const baseKey = `${baseFile}|${tone.id}`;
+  const baseKey = `${character.base}|${tone.id}`;
   let baseImage = baseSkinCache.get(baseKey);
   if (!baseImage) {
     baseImage = recolorToCanvas(baseImg, tone.target, character.skinReference);
@@ -162,11 +177,19 @@ export async function prepareLayers(character, state) {
     const img = jobImgs[i];
     let image = img;
 
-    if (job.sub === "tint") {
-      const key = `${job.info.file}|${state.browColor}`;
+    if (job.sub === "glow") {
+      const key = `${job.info.file}|${eyeColor.id}`;
+      image = glowCache.get(key);
+      if (!image) {
+        image = glowToCanvas(img, eyeColor.core, eyeColor.edge);
+        glowCache.set(key, image);
+      }
+    } else if (job.sub === "tint") {
+      // Eyebrows and hair share one colour source (the chosen hair colour).
+      const key = `${job.info.file}|${state.hairColor}`;
       image = tintCache.get(key);
       if (!image) {
-        image = tintToCanvas(img, state.browColor);
+        image = tintToCanvas(img, hairColorHex);
         tintCache.set(key, image);
       }
     } else if (skinLayers.includes(job.layerKey)) {
@@ -196,4 +219,17 @@ export async function prepareLayers(character, state) {
   });
 
   return layers;
+}
+
+// "Clear any cached recoloured or tinted layers" — an escape hatch for a
+// long-lived tab that shouldn't trust stale canvases after the manifest or
+// art changes underneath it. Not needed for a normal page load (the caches
+// are plain module-level Maps, gone on reload) but cheap to expose.
+export function clearLayerCaches() {
+  imageCache.clear();
+  baseSkinCache.map.clear();
+  partSkinCache.clear();
+  shiftCache.clear();
+  tintCache.clear();
+  glowCache.clear();
 }

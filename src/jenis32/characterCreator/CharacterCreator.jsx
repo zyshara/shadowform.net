@@ -2,19 +2,17 @@ import React, { useEffect, useRef, useState } from "react";
 import { prepareLayers } from "./layerCache.js";
 import { renderCharacter } from "./renderer.js";
 import { SLIDERS, DEFAULT_PART_STATE } from "./sliderConfig.js";
-import { getCharacter, randomStateFor } from "./state.js";
-import { derivePartTypes } from "./parts.js";
+import { getCharacter, randomStateFor, slottedPartTypes, simplePartTypes, isOptional } from "./state.js";
 
 // Draw order (from the manifest's layerOrder) isn't necessarily the order
-// controls should appear in — eyes draw below the mouth but the mouths
-// addendum asks for the Mouth picker after Nose. This is a UI-only
+// controls should appear in — hair draws on top of everything but the
+// hair addendum asks for its picker after Mouth. This is a UI-only
 // preference; any part type not listed here still renders, just appended
 // at the end, so a future part type works without editing this list.
-const PART_UI_ORDER = ["eyes", "nose", "mouth"];
+const PART_UI_ORDER = ["eyes", "nose", "mouth", "hair"];
 
-function uiPartTypes(character) {
-  const all = derivePartTypes(character);
-  return [...PART_UI_ORDER.filter((p) => all.includes(p)), ...all.filter((p) => !PART_UI_ORDER.includes(p))];
+function orderForUi(types) {
+  return [...PART_UI_ORDER.filter((p) => types.includes(p)), ...types.filter((p) => !PART_UI_ORDER.includes(p))];
 }
 
 const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -66,6 +64,27 @@ function PartSliders({ title, part, value, onChange, onReset }) {
   );
 }
 
+function ColorSwatches({ label, options, selectedId, onSelect, swatchOf = (o) => o.swatch }) {
+  return (
+    <div className={sectionBox}>
+      <p className={fieldLabel}>{label}</p>
+      <div className="flex gap-2 flex-wrap">
+        {options.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            onClick={() => onSelect(o.id)}
+            title={o.name}
+            aria-label={o.name}
+            className={`w-8 h-8 rounded-full border-2 cursor-pointer ${selectedId === o.id ? "border-gray-900 scale-110" : "border-gray-300"}`}
+            style={{ backgroundColor: swatchOf(o) }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = false, createLabel = "Create", createError = null }) => {
   const canvasRef = useRef(null);
   const layersRef = useRef(null);
@@ -77,7 +96,9 @@ const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = fals
   stateRef.current = value;
 
   const character = getCharacter(manifest, value.bodyType, value.race);
-  const partTypes = character ? uiPartTypes(character) : [];
+  const slotted = character ? orderForUi(slottedPartTypes(character)) : [];
+  const simple = character ? orderForUi(simplePartTypes(character)) : [];
+  const allParts = [...slotted, ...simple];
 
   function scheduleRedraw() {
     if (rafRef.current != null) return;
@@ -90,9 +111,10 @@ const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = fals
   }
 
   // Layer preparation is async (image loads + recolours) and only depends
-  // on which images are needed — switching eyes/nose ids, skin tone, ear,
-  // or brow colour. Slider values don't change which images are needed, so
-  // they're handled by scheduleRedraw() below without re-running this.
+  // on which images are needed — switching a part's id, skin tone, eye
+  // colour, or hair colour. Slider values don't change which images are
+  // needed, so they're handled by scheduleRedraw() below without re-running
+  // this.
   useEffect(() => {
     if (!character) return;
     let cancelled = false;
@@ -114,12 +136,12 @@ const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = fals
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [character, value.ear, value.skinTone, value.browColor, ...partTypes.map((p) => value[p]?.id)]);
+  }, [character, value.skinTone, value.eyeColor, value.hairColor, ...allParts.map((p) => value[p]?.id)]);
 
   useEffect(() => {
     scheduleRedraw();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, partTypes.flatMap((p) => [value[p]?.x, value[p]?.y, value[p]?.scale, value[p]?.rotation]));
+  }, slotted.flatMap((p) => [value[p]?.x, value[p]?.y, value[p]?.scale, value[p]?.rotation]));
 
   if (!character) {
     return <p className="text-sm text-red-600">This character isn't available yet.</p>;
@@ -133,6 +155,10 @@ const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = fals
     onChange({ ...value, [part]: { ...value[part], [key]: val } });
   }
 
+  function setSimplePart(part, id) {
+    onChange({ ...value, [part]: id ? { id } : null });
+  }
+
   function resetPart(part) {
     onChange({ ...value, [part]: { id: value[part].id, ...DEFAULT_PART_STATE } });
   }
@@ -144,15 +170,19 @@ const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = fals
 
   function handleResetAll() {
     const next = {
-      version: 1,
+      version: 2,
       bodyType: value.bodyType,
       race: value.race,
-      ear: character.defaults.ear,
       skinTone: character.defaults.skinTone,
-      browColor: character.defaultBrowColor,
+      eyeColor: character.defaults.eyeColor,
+      hairColor: character.defaults.hairColor,
     };
-    for (const partType of partTypes) {
+    for (const partType of slotted) {
       next[partType] = { id: character.defaults[partType], ...DEFAULT_PART_STATE };
+    }
+    for (const partType of simple) {
+      const d = character.defaults[partType];
+      next[partType] = d ? { id: d } : null;
     }
     onChange(next);
   }
@@ -227,35 +257,14 @@ const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = fals
         <div className="flex-1 flex flex-col gap-4">
           <p className={fieldLabel}>3. Customize</p>
 
-          <div className={sectionBox}>
-            <p className={fieldLabel}>Ear length</p>
-            <div className="flex gap-2 flex-wrap">
-              {character.ears.map((e) => (
-                <button key={e.id} type="button" onClick={() => set({ ear: e.id })} className={optionBtn(value.ear === e.id)}>
-                  {e.name}
-                </button>
-              ))}
-            </div>
-          </div>
+          <ColorSwatches
+            label="Skin tone"
+            options={character.skinTones}
+            selectedId={value.skinTone}
+            onSelect={(id) => set({ skinTone: id })}
+          />
 
-          <div className={sectionBox}>
-            <p className={fieldLabel}>Skin tone</p>
-            <div className="flex gap-2 flex-wrap">
-              {character.skinTones.map((t) => (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => set({ skinTone: t.id })}
-                  title={t.name}
-                  aria-label={t.name}
-                  className={`w-8 h-8 rounded-full border-2 cursor-pointer ${value.skinTone === t.id ? "border-gray-900 scale-110" : "border-gray-300"}`}
-                  style={{ backgroundColor: t.swatch }}
-                />
-              ))}
-            </div>
-          </div>
-
-          {partTypes.map((partType) => (
+          {slotted.map((partType) => (
             <React.Fragment key={partType}>
               <div className={sectionBox}>
                 <p className={fieldLabel}>{capitalize(partType)}</p>
@@ -272,6 +281,16 @@ const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = fals
                   ))}
                 </div>
               </div>
+
+              {partType === "eyes" && character.eyeColors && (
+                <ColorSwatches
+                  label="Eye colour"
+                  options={character.eyeColors}
+                  selectedId={value.eyeColor}
+                  onSelect={(id) => set({ eyeColor: id })}
+                />
+              )}
+
               <PartSliders
                 title={`Adjust ${partType}`}
                 part={partType}
@@ -281,6 +300,46 @@ const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = fals
               />
             </React.Fragment>
           ))}
+
+          {simple.map((partType) => {
+            const optional = isOptional(character, partType);
+            return (
+              <div key={partType} className={sectionBox}>
+                <p className={fieldLabel}>{capitalize(partType)}</p>
+                <div className="flex gap-2 flex-wrap">
+                  {(character[partType] ?? []).map((opt) => (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => setSimplePart(partType, opt.id)}
+                      className={optionBtn(value[partType]?.id === opt.id)}
+                    >
+                      {opt.name}
+                    </button>
+                  ))}
+                  {optional && (
+                    <button
+                      type="button"
+                      onClick={() => setSimplePart(partType, null)}
+                      className={optionBtn(!value[partType])}
+                    >
+                      None
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+
+          {character.hairColors && (
+            <ColorSwatches
+              label="Hair colour"
+              options={character.hairColors}
+              selectedId={value.hairColor}
+              onSelect={(id) => set({ hairColor: id })}
+              swatchOf={(o) => o.color}
+            />
+          )}
 
           <div className="flex items-center gap-3 flex-wrap pt-1">
             <button type="button" onClick={handleRandomize} className={optionBtn(false)}>

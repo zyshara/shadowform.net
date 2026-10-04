@@ -3,13 +3,23 @@
 // versioned, addressed by id rather than array index so adding or
 // reordering assets in the manifest never breaks a saved character.
 //
-// Generic over part types (eyes, nose, mouth, ...) via derivePartTypes —
-// see the mouths addendum, section 3.5: a saved character missing a part
-// key (created before that part type existed) loads with that part's
-// default id and zeroed sliders, the same fallback as an unknown id.
+// Generic over part types (eyes, nose, mouth, hair, ...) via
+// derivePartTypes. Two shapes of part exist:
+//   - "slotted" parts (any option has a pivot): id + the four sliders,
+//     e.g. eyes, nose, mouth.
+//   - "simple" parts (no option has a pivot): just an id, no sliders,
+//     e.g. hair — and, per the hair addendum, nullable ("none"/bald) when
+//     the part type is listed in the manifest's optionalParts.
+// A saved character missing a part key entirely (created before that part
+// type existed) loads with that part's default id and zeroed sliders (or
+// its default id for a simple part) — the same fallback as an unknown id.
+// Extra keys from an older save shape (ear, browColor) are simply never
+// read, so they're harmlessly ignored rather than needing to be stripped.
 
 import { SLIDERS, DEFAULT_PART_STATE, RANDOMIZE_RANGES, clampSliderValue } from "./sliderConfig.js";
 import { derivePartTypes } from "./parts.js";
+
+const STATE_VERSION = 2;
 
 function firstEnabled(list) {
   return (list.find((item) => item.enabled) ?? list[0])?.id;
@@ -23,20 +33,39 @@ export function getCharacter(manifest, bodyType, race) {
   return manifest.characters[characterKey(bodyType, race)] ?? null;
 }
 
+function hasPivot(character, partType) {
+  return (character[partType] ?? []).some((o) => o.pivot);
+}
+
+export function slottedPartTypes(character) {
+  return derivePartTypes(character).filter((p) => hasPivot(character, p));
+}
+
+export function simplePartTypes(character) {
+  return derivePartTypes(character).filter((p) => !hasPivot(character, p));
+}
+
+export function isOptional(character, partType) {
+  return (character.optionalParts ?? []).includes(partType);
+}
+
 export function defaultStateFor(manifest, bodyType, race) {
   const character = getCharacter(manifest, bodyType, race);
   if (!character) return null;
   const d = character.defaults;
   const state = {
-    version: 1,
+    version: STATE_VERSION,
     bodyType,
     race,
-    ear: d.ear,
     skinTone: d.skinTone,
-    browColor: character.defaultBrowColor,
+    eyeColor: d.eyeColor,
+    hairColor: d.hairColor,
   };
-  for (const partType of derivePartTypes(character)) {
+  for (const partType of slottedPartTypes(character)) {
     state[partType] = { id: d[partType], ...DEFAULT_PART_STATE };
+  }
+  for (const partType of simplePartTypes(character)) {
+    state[partType] = d[partType] ? { id: d[partType] } : null;
   }
   return state;
 }
@@ -66,15 +95,31 @@ export function sanitizeState(manifest, raw) {
   const character = getCharacter(manifest, bodyType, race);
   if (!character) return null;
 
-  const ear = character.ears.some((e) => e.id === raw?.ear) ? raw.ear : character.defaults.ear;
   const skinTone = character.skinTones.some((t) => t.id === raw?.skinTone) ? raw.skinTone : character.defaults.skinTone;
-  const browColor = typeof raw?.browColor === "string" ? raw.browColor : character.defaultBrowColor;
+  const eyeColor = (character.eyeColors ?? []).some((c) => c.id === raw?.eyeColor) ? raw.eyeColor : character.defaults.eyeColor;
+  const hairColor = (character.hairColors ?? []).some((c) => c.id === raw?.hairColor) ? raw.hairColor : character.defaults.hairColor;
 
-  const state = { version: 1, bodyType, race, ear, skinTone, browColor };
-  for (const partType of derivePartTypes(character)) {
+  const state = { version: STATE_VERSION, bodyType, race, skinTone, eyeColor, hairColor };
+
+  for (const partType of slottedPartTypes(character)) {
     const options = character[partType] ?? [];
     state[partType] = sanitizePartState(raw?.[partType], options.map((o) => o.id), character.defaults[partType]);
   }
+
+  for (const partType of simplePartTypes(character)) {
+    const options = character[partType] ?? [];
+    // An optional part can be deliberately null ("none") — that's only a
+    // valid choice when explicitly saved as null; a missing key (older
+    // save, part type didn't exist yet) falls back to the default instead.
+    if (isOptional(character, partType) && raw?.[partType] === null) {
+      state[partType] = null;
+      continue;
+    }
+    const rawId = raw?.[partType]?.id;
+    const id = options.some((o) => o.id === rawId) ? rawId : character.defaults[partType];
+    state[partType] = id ? { id } : null;
+  }
+
   return state;
 }
 
@@ -94,21 +139,27 @@ function randomSliderValue(key) {
 export function randomStateFor(manifest, bodyType, race) {
   const character = getCharacter(manifest, bodyType, race);
   if (!character) return null;
-  const makePart = (list) => {
+  const makeSlotted = (list) => {
     const out = { id: randomFrom(list).id };
     for (const s of SLIDERS) out[s.key] = randomSliderValue(s.key);
     return out;
   };
   const state = {
-    version: 1,
+    version: STATE_VERSION,
     bodyType,
     race,
-    ear: randomFrom(character.ears).id,
     skinTone: randomFrom(character.skinTones).id,
-    browColor: character.defaultBrowColor,
+    eyeColor: randomFrom(character.eyeColors ?? [{ id: character.defaults.eyeColor }]).id,
+    hairColor: randomFrom(character.hairColors ?? [{ id: character.defaults.hairColor }]).id,
   };
-  for (const partType of derivePartTypes(character)) {
-    state[partType] = makePart(character[partType] ?? []);
+  for (const partType of slottedPartTypes(character)) {
+    state[partType] = makeSlotted(character[partType] ?? []);
+  }
+  for (const partType of simplePartTypes(character)) {
+    const options = character[partType] ?? [];
+    const choices = isOptional(character, partType) ? [...options, null] : options;
+    const picked = randomFrom(choices);
+    state[partType] = picked ? { id: picked.id } : null;
   }
   return state;
 }

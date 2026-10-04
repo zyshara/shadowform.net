@@ -1,10 +1,11 @@
 {
-  "version": 1,
+  "version": 2,
   "bodyType": "fem",
   "race": "nightelf",
-  "ear": "short",
   "skinTone": "dusk_blue",
-  "browColor": "#2B2338",
+  "eyeColor": "blue",
+  "hairColor": "violet",
+  "hair": null,
   "eyes": {
     "id": "eyes_5",
     "x": -18,

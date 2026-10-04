@@ -130,7 +130,7 @@ export function shiftTowardSkin(data, targetHex, ref, amount) {
 }
 
 /**
- * Colour a greyscale "tint" layer (eyebrows) in place.
+ * Colour a greyscale "tint" layer (eyebrows, hair) in place.
  * Mid-grey (127.5) becomes the colour itself; lighter is highlight, darker is shadow.
  */
 export function tintLayer(data, colorHex) {
@@ -141,6 +141,25 @@ export function tintLayer(data, colorHex) {
     data[i] = Math.min(255, Math.round(cr * g));
     data[i + 1] = Math.min(255, Math.round(cg * g));
     data[i + 2] = Math.min(255, Math.round(cb * g));
+  }
+  return data;
+}
+
+/**
+ * Colour an eye "glow" layer in place.
+ * The layer is greyscale with alpha: white = the hot centre of the eye, darker = its rim and outer glow.
+ * coreHex / edgeHex come from the chosen entry in the manifest's "eyeColors".
+ * White pixels become the core colour, black pixels the edge colour, with a straight blend between.
+ */
+export function tintGlow(data, coreHex, edgeHex) {
+  const [cr, cg, cb] = hexToRgb(coreHex);
+  const [er, eg, eb] = hexToRgb(edgeHex);
+  for (let i = 0; i < data.length; i += 4) {
+    if (data[i + 3] === 0) continue;
+    const t = data[i] / 255;
+    data[i] = Math.round(er + (cr - er) * t);
+    data[i + 1] = Math.round(eg + (cg - eg) * t);
+    data[i + 2] = Math.round(eb + (cb - eb) * t);
   }
   return data;
 }
