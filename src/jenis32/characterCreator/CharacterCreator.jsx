@@ -85,6 +85,61 @@ function ColorSwatches({ label, options, selectedId, onSelect, swatchOf = (o) =>
   );
 }
 
+const checker = "bg-[conic-gradient(#e5e5e5_90deg,#fff_90deg_180deg,#e5e5e5_180deg_270deg,#fff_270deg)] bg-[length:10px_10px]";
+const thumbBtn = (active) =>
+  `w-12 h-12 rounded border-2 overflow-hidden shrink-0 cursor-pointer ${active ? "border-gray-900 scale-110" : "border-gray-300"}`;
+
+// Pictures first, then plain colours (backgrounds addendum section 3.2),
+// plus None since a background is optional.
+function BackgroundPicker({ backgrounds, selectedId, onSelect }) {
+  const pictures = backgrounds.filter((b) => b.file);
+  const colors = backgrounds.filter((b) => b.color);
+  return (
+    <div className={sectionBox}>
+      <p className={fieldLabel}>Background</p>
+      <div className="flex gap-2 flex-wrap items-center">
+        <button type="button" onClick={() => onSelect(null)} className={optionBtn(!selectedId)}>
+          None
+        </button>
+        {pictures.map((b) => (
+          <button key={b.id} type="button" onClick={() => onSelect(b.id)} title={b.name} className={thumbBtn(selectedId === b.id)}>
+            <img src={`/character-assets/${b.file}`} alt={b.name} className="w-full h-full object-cover" />
+          </button>
+        ))}
+        {colors.map((b) => (
+          <button
+            key={b.id}
+            type="button"
+            onClick={() => onSelect(b.id)}
+            title={b.name}
+            aria-label={b.name}
+            className={`w-8 h-8 rounded-full border-2 cursor-pointer ${selectedId === b.id ? "border-gray-900 scale-110" : "border-gray-300"}`}
+            style={{ backgroundColor: b.color }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function FramePicker({ frames, selectedId, onSelect }) {
+  return (
+    <div className={sectionBox}>
+      <p className={fieldLabel}>Frame</p>
+      <div className="flex gap-2 flex-wrap items-center">
+        <button type="button" onClick={() => onSelect(null)} className={optionBtn(!selectedId)}>
+          None
+        </button>
+        {frames.map((f) => (
+          <button key={f.id} type="button" onClick={() => onSelect(f.id)} title={f.name} className={`${thumbBtn(selectedId === f.id)} ${checker}`}>
+            <img src={`/character-assets/${f.file}`} alt={f.name} className="w-full h-full object-contain" />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = false, createLabel = "Create", createError = null }) => {
   const canvasRef = useRef(null);
   const layersRef = useRef(null);
@@ -120,7 +175,7 @@ const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = fals
     let cancelled = false;
     setPreviewLoading(true);
     setPreviewError(null);
-    prepareLayers(character, value)
+    prepareLayers(manifest, character, value)
       .then((prepared) => {
         if (cancelled) return;
         layersRef.current = prepared;
@@ -136,7 +191,7 @@ const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = fals
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [character, value.skinTone, value.eyeColor, value.hairColor, ...allParts.map((p) => value[p]?.id)]);
+  }, [character, value.skinTone, value.eyeColor, value.hairColor, value.background, value.frame, ...allParts.map((p) => value[p]?.id)]);
 
   useEffect(() => {
     scheduleRedraw();
@@ -164,15 +219,17 @@ const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = fals
   }
 
   function handleRandomize() {
-    const next = randomStateFor(manifest, value.bodyType, value.race);
+    const next = randomStateFor(manifest, value.bodyType, value.race, value.frame);
     if (next) onChange(next);
   }
 
   function handleResetAll() {
     const next = {
-      version: 2,
+      version: 4,
       bodyType: value.bodyType,
       race: value.race,
+      background: manifest.defaultBackground ?? null,
+      frame: manifest.defaultFrame ?? null,
       skinTone: character.defaults.skinTone,
       eyeColor: character.defaults.eyeColor,
       hairColor: character.defaults.hairColor,
@@ -339,6 +396,18 @@ const CharacterCreator = ({ manifest, value, onChange, onCreate, creating = fals
               onSelect={(id) => set({ hairColor: id })}
               swatchOf={(o) => o.color}
             />
+          )}
+
+          {manifest.backgrounds && (
+            <BackgroundPicker
+              backgrounds={manifest.backgrounds}
+              selectedId={value.background}
+              onSelect={(id) => set({ background: id })}
+            />
+          )}
+
+          {manifest.frames && (
+            <FramePicker frames={manifest.frames} selectedId={value.frame} onSelect={(id) => set({ frame: id })} />
           )}
 
           <div className="flex items-center gap-3 flex-wrap pt-1">

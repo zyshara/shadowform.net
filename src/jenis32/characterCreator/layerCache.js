@@ -52,6 +52,13 @@ export function assetUrl(characterPath, relativeFile) {
   return `${ASSET_BASE}/${characterPath}/${relativeFile}`;
 }
 
+// Backgrounds and frames live at the asset root (character-assets/), not
+// nested under a character's own folder — their manifest "file" is already
+// relative to that root.
+export function rootAssetUrl(relativeFile) {
+  return `${ASSET_BASE}/${relativeFile}`;
+}
+
 export function manifestUrl() {
   return `${ASSET_BASE}/manifest.json`;
 }
@@ -123,23 +130,32 @@ function findById(list, id) {
 }
 
 /**
- * Resolve and prepare every layer a given state needs, returning a map
- * keyed by the character's layerOrder entries ("base", "eyes.skin", ...)
- * to { image, x, y, pivot? } ready for renderCharacter to draw.
+ * Resolve and prepare everything a given state needs to render: the
+ * character's layers (keyed by its layerOrder entries, e.g. "base",
+ * "eyes.skin", ...) plus the manifest-level background and frame, if any.
+ * Returns { parts, background, frame } ready for renderer.js.
  *
  * Generic over part types and their sub-layers: a part type is any key
  * appearing in layerOrder before the dot (derivePartTypes), and a part
  * may have any subset of skin/color/tint/glow layers — whichever its
  * chosen option actually defines. A part type whose state is null (an
  * optional part set to "none", e.g. hair) contributes no layers at all.
+ *
+ * Backgrounds and frames are manifest-level (shared across characters,
+ * not nested under one), never recoloured/tinted — just loaded and drawn
+ * as-is — so they need no canvas-copy caching beyond the plain
+ * URL-keyed image cache every other asset already uses.
  */
-export async function prepareLayers(character, state) {
+export async function prepareLayers(manifest, character, state) {
   const path = character.path;
   const tone = findById(character.skinTones, state.skinTone);
   const eyeColor = findById(character.eyeColors ?? [], state.eyeColor);
   const hairColorHex = findById(character.hairColors ?? [], state.hairColor)?.color;
   const skinLayers = character.skinLayers ?? [];
   const partTypes = derivePartTypes(character);
+
+  const bgEntry = (manifest.backgrounds ?? []).find((b) => b.id === state.background) ?? null;
+  const frameEntry = (manifest.frames ?? []).find((f) => f.id === state.frame) ?? null;
 
   // One job per (partType, subLayer) that the chosen option actually has.
   // A part whose state is explicitly null (optional, set to "none")
@@ -158,8 +174,10 @@ export async function prepareLayers(character, state) {
     }
   }
 
-  const [baseImg, ...jobImgs] = await Promise.all([
+  const [baseImg, bgImg, frameImg, ...jobImgs] = await Promise.all([
     loadImage(assetUrl(path, character.base)),
+    bgEntry?.file ? loadImage(rootAssetUrl(bgEntry.file)) : Promise.resolve(null),
+    frameEntry?.file ? loadImage(rootAssetUrl(frameEntry.file)) : Promise.resolve(null),
     ...jobs.map((j) => loadImage(assetUrl(path, j.info.file))),
   ]);
 
@@ -223,7 +241,10 @@ export async function prepareLayers(character, state) {
     layers[job.layerKey] = { image, x: job.info.x, y: job.info.y, pivot: job.pivot };
   });
 
-  return layers;
+  const background = bgEntry ? { color: bgEntry.color ?? null, image: bgEntry.file ? bgImg : null } : null;
+  const frame = frameEntry ? { image: frameImg, window: frameEntry.window } : null;
+
+  return { parts: layers, background, frame };
 }
 
 // "Clear any cached recoloured or tinted layers" — an escape hatch for a

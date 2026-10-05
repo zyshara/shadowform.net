@@ -1,5 +1,7 @@
 {
-  "version": 2,
+  "version": 4,
+  "background": "solid_plum",
+  "frame": null,
   "bodyType": "fem",
   "race": "nightelf",
   "skinTone": "dusk_blue",

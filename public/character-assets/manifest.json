@@ -1,5 +1,5 @@
 {
-  "version": 12,
+  "version": 18,
   "canvas": {
     "width": 1024,
     "height": 1536
@@ -779,9 +779,9 @@
           "tint": {
             "file": "hair/3_tint.png",
             "x": 0,
-            "y": 330,
+            "y": 329,
             "width": 993,
-            "height": 1206
+            "height": 1175
           }
         },
         {
@@ -790,9 +790,42 @@
           "tint": {
             "file": "hair/4_tint.png",
             "x": 0,
-            "y": 197,
-            "width": 1006,
-            "height": 1339
+            "y": 148,
+            "width": 1012,
+            "height": 1388
+          }
+        },
+        {
+          "id": "hair_5",
+          "name": "Shoulder-length waves",
+          "tint": {
+            "file": "hair/5_tint.png",
+            "x": 80,
+            "y": 304,
+            "width": 917,
+            "height": 1197
+          }
+        },
+        {
+          "id": "hair_6",
+          "name": "Double buns",
+          "tint": {
+            "file": "hair/6_tint.png",
+            "x": 28,
+            "y": 187,
+            "width": 965,
+            "height": 1315
+          }
+        },
+        {
+          "id": "hair_7",
+          "name": "Short ponytail",
+          "tint": {
+            "file": "hair/7_tint.png",
+            "x": 44,
+            "y": 337,
+            "width": 949,
+            "height": 1151
           }
         }
       ],
@@ -842,5 +875,121 @@
         "hair"
       ]
     }
-  }
+  },
+  "backgrounds": [
+    {
+      "id": "nightelf_forest",
+      "name": "Moonlit forest",
+      "file": "backgrounds/nightelf_forest.webp"
+    },
+    {
+      "id": "nightelf_temple",
+      "name": "Moonlit temple",
+      "file": "backgrounds/nightelf_temple.webp"
+    },
+    {
+      "id": "village_inn",
+      "name": "Village inn",
+      "file": "backgrounds/village_inn.webp"
+    },
+    {
+      "id": "solid_midnight",
+      "name": "Midnight",
+      "color": "#1B1A3A"
+    },
+    {
+      "id": "solid_indigo",
+      "name": "Indigo",
+      "color": "#2E2A6B"
+    },
+    {
+      "id": "solid_plum",
+      "name": "Plum",
+      "color": "#3B2548"
+    },
+    {
+      "id": "solid_teal",
+      "name": "Deep teal",
+      "color": "#16414A"
+    },
+    {
+      "id": "solid_forest",
+      "name": "Forest",
+      "color": "#1F3A2B"
+    },
+    {
+      "id": "solid_slate",
+      "name": "Slate",
+      "color": "#4C4A5E"
+    },
+    {
+      "id": "solid_rose",
+      "name": "Dusty rose",
+      "color": "#A8727F"
+    },
+    {
+      "id": "solid_moonlight",
+      "name": "Moonlight",
+      "color": "#C9D2E8"
+    }
+  ],
+  "defaultBackground": "nightelf_forest",
+  "frames": [
+    {
+      "id": "moonsilver",
+      "name": "Moonsilver",
+      "file": "frames/moonsilver.png",
+      "window": {
+        "x": 42,
+        "y": 52,
+        "width": 940,
+        "height": 1415
+      }
+    },
+    {
+      "id": "royal",
+      "name": "Royal",
+      "file": "frames/royal.png",
+      "window": {
+        "x": 59,
+        "y": 64,
+        "width": 906,
+        "height": 1409
+      }
+    },
+    {
+      "id": "tavern",
+      "name": "Tavern",
+      "file": "frames/tavern.png",
+      "window": {
+        "x": 47,
+        "y": 51,
+        "width": 929,
+        "height": 1431
+      }
+    },
+    {
+      "id": "stone",
+      "name": "Stone",
+      "file": "frames/stone.png",
+      "window": {
+        "x": 46,
+        "y": 51,
+        "width": 932,
+        "height": 1427
+      }
+    },
+    {
+      "id": "arcane",
+      "name": "Arcane",
+      "file": "frames/arcane.png",
+      "window": {
+        "x": 44,
+        "y": 52,
+        "width": 937,
+        "height": 1430
+      }
+    }
+  ],
+  "defaultFrame": "moonsilver"
 }

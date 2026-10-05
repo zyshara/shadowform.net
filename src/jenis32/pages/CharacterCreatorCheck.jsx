@@ -58,11 +58,11 @@ const CharacterCreatorCheck = () => {
           const rawState = await stateRes.json();
           const state = sanitizeState(m, rawState);
           const character = getCharacter(m, state.bodyType, state.race);
-          const layers = await prepareLayers(character, state);
+          const prepared = await prepareLayers(m, character, state);
 
           const canvas = canvasRefs.current[name];
           const ctx = canvas.getContext("2d");
-          renderCharacter(ctx, state, m, layers);
+          renderCharacter(ctx, state, m, prepared);
 
           const refImg = await loadImage(`/character-assets/reference/${name}.png`);
           const refCanvas = refCanvasRefs.current[name];

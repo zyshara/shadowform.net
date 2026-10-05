@@ -19,7 +19,7 @@
 import { SLIDERS, DEFAULT_PART_STATE, RANDOMIZE_RANGES, clampSliderValue } from "./sliderConfig.js";
 import { derivePartTypes } from "./parts.js";
 
-const STATE_VERSION = 2;
+const STATE_VERSION = 4;
 
 function firstEnabled(list) {
   return (list.find((item) => item.enabled) ?? list[0])?.id;
@@ -57,6 +57,8 @@ export function defaultStateFor(manifest, bodyType, race) {
     version: STATE_VERSION,
     bodyType,
     race,
+    background: manifest.defaultBackground ?? null,
+    frame: manifest.defaultFrame ?? null,
     skinTone: d.skinTone,
     eyeColor: d.eyeColor,
     hairColor: d.hairColor,
@@ -98,8 +100,14 @@ export function sanitizeState(manifest, raw) {
   const skinTone = character.skinTones.some((t) => t.id === raw?.skinTone) ? raw.skinTone : character.defaults.skinTone;
   const eyeColor = (character.eyeColors ?? []).some((c) => c.id === raw?.eyeColor) ? raw.eyeColor : character.defaults.eyeColor;
   const hairColor = (character.hairColors ?? []).some((c) => c.id === raw?.hairColor) ? raw.hairColor : character.defaults.hairColor;
+  // Unlike every other field, a missing or unknown background/frame falls
+  // back to none rather than the manifest default — an older save (no
+  // background/frame key at all) should look the same as when it was
+  // saved, not suddenly grow a background it never had.
+  const background = (manifest.backgrounds ?? []).some((b) => b.id === raw?.background) ? raw.background : null;
+  const frame = (manifest.frames ?? []).some((f) => f.id === raw?.frame) ? raw.frame : null;
 
-  const state = { version: STATE_VERSION, bodyType, race, skinTone, eyeColor, hairColor };
+  const state = { version: STATE_VERSION, bodyType, race, background, frame, skinTone, eyeColor, hairColor };
 
   for (const partType of slottedPartTypes(character)) {
     const options = character[partType] ?? [];
@@ -136,7 +144,10 @@ function randomSliderValue(key) {
   return clampSliderValue(key, Math.round(raw * 100) / 100);
 }
 
-export function randomStateFor(manifest, bodyType, race) {
+// currentFrame is passed through unchanged — "Randomise leaves the frame
+// as it is" (the frames addendum). Everything else, including the
+// background, is freshly randomized.
+export function randomStateFor(manifest, bodyType, race, currentFrame = null) {
   const character = getCharacter(manifest, bodyType, race);
   if (!character) return null;
   const makeSlotted = (list) => {
@@ -144,10 +155,13 @@ export function randomStateFor(manifest, bodyType, race) {
     for (const s of SLIDERS) out[s.key] = randomSliderValue(s.key);
     return out;
   };
+  const backgroundChoices = [...(manifest.backgrounds ?? []), { id: null }];
   const state = {
     version: STATE_VERSION,
     bodyType,
     race,
+    background: randomFrom(backgroundChoices).id,
+    frame: currentFrame,
     skinTone: randomFrom(character.skinTones).id,
     eyeColor: randomFrom(character.eyeColors ?? [{ id: character.defaults.eyeColor }]).id,
     hairColor: randomFrom(character.hairColors ?? [{ id: character.defaults.hairColor }]).id,
