@@ -261,7 +261,7 @@ const FilterBar = ({ groups, sortOptions, sortValue, onSortChange, resultCount, 
       </div>
 
       {/* ---- Desktop bar (hidden below md) ---- */}
-      <div ref={barRef} className="hidden md:flex items-end justify-between gap-6 border-b border-dod-lilac/20 pb-4">
+      <div ref={barRef} className="hidden md:flex items-end justify-between gap-6 border-b border-dod-lilac/50 pb-3">
         <div className="flex items-end gap-8">
           {groups.map((g, i) => (
             <React.Fragment key={g.key}>
