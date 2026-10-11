@@ -10,15 +10,19 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const env = Object.fromEntries(
-  readFileSync(path.join(__dirname, "../.env"), "utf8")
-    .split("\n")
-    .filter((l) => l.includes("=") && !l.startsWith("#"))
-    .map((l) => { const i = l.indexOf("="); return [l.slice(0, i).trim(), l.slice(i + 1).trim()]; })
-);
+const envPath = path.join(__dirname, "../.env");
+let fileEnv = {};
+try {
+  fileEnv = Object.fromEntries(
+    readFileSync(envPath, "utf8")
+      .split("\n")
+      .filter((l) => l.includes("=") && !l.startsWith("#"))
+      .map((l) => { const i = l.indexOf("="); return [l.slice(0, i).trim(), l.slice(i + 1).trim()]; })
+  );
+} catch { /* no .env file — rely on process.env (e.g. Heroku config vars) */ }
 
-const STRAPI_URL   = env.STRAPI_API_URL;
-const STRAPI_TOKEN = env.STRAPI_API_TOKEN;
+const STRAPI_URL   = fileEnv.STRAPI_API_URL   ?? process.env.STRAPI_API_URL;
+const STRAPI_TOKEN = fileEnv.STRAPI_API_TOKEN ?? process.env.STRAPI_API_TOKEN;
 const SITE_ROOT    = "https://www.domeofdoom.org";
 
 function artistSlug(name) {
