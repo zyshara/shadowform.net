@@ -119,7 +119,7 @@ const Contact = () => {
           <div className="absolute inset-0 w-full h-full flex justify-center items-center">
             <img
               className="absolute object-cover"
-              src="https://res.cloudinary.com/dfeyhbxeg/image/upload/v1786587597/distressed_texture_c11a949095.png"
+              src="https://res.cloudinary.com/dfeyhbxeg/image/upload/f_auto,q_auto,w_1200/v1786587597/distressed_texture_c11a949095.png"
               alt=""
             />
             <StarIcon

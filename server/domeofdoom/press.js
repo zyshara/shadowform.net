@@ -1,6 +1,7 @@
 // server/domeofdoom/press.js
 import { strapiGet } from "../lib/strapi.js";
 import { logger } from "../lib/logger.js";
+import { cdnImg } from "../utils/cloudinary.js";
 
 function blocksToText(blocks) {
   if (!Array.isArray(blocks)) return null;
@@ -29,9 +30,9 @@ function normalizeItem(item) {
     date:      item.date ?? null,
     url:       item.url ?? null,
     excerpt:   blocksToText(item.summary),
-    ogImage:   item.ogImage ?? null,
+    ogImage:   cdnImg(item.ogImage ?? null, 400),
     imageMode: item.imageMode ?? "og",
-    thumbnail: item.thumbnail?.url ?? null,
+    thumbnail: cdnImg(item.thumbnail?.url ?? null, 400),
     outlet:    normalizeOutlet(item.outlet),
   };
 }

@@ -18,6 +18,8 @@
 // through to the next fallback) but they won't actually DO anything until
 // added to Strapi, same as slug needed to be added before it was usable.
 
+import { cdnImg } from "../utils/cloudinary.js";
+
 function resolveMediaUrl(media) {
   const url = media?.url;
   if (!url) return null;
@@ -47,7 +49,7 @@ export function normalizeArtist(raw) {
     uid: raw.documentId ?? raw.id,
     name,
     slug: r.slug ?? null,
-    photo_src: photoSrc,
+    photo_src: cdnImg(photoSrc, 400),
     location,
     url,
     spotify_url,

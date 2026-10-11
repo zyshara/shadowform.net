@@ -1,4 +1,5 @@
 // server/models/catalogItem.js
+import { cdnImg } from "../utils/cloudinary.js";
 
 const TYPE_LABELS = {
   album: "Album",
@@ -124,7 +125,7 @@ export function normalizeCatalogItem(raw) {
     spotify_url: r.spotify_url ?? "https://open.spotify.com", // TODO: remove test fallback
     title,
     description,
-    artwork_url: artworkUrl,
+    artwork_url: cdnImg(artworkUrl, 400),
     type: TYPE_LABELS[rawType] ?? rawType,
     label_role: labelRole,
     catalog_number: catalogNumber,

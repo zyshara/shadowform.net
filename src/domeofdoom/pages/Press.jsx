@@ -250,7 +250,7 @@ export default function Press() {
           <div className="absolute inset-0 w-full h-full flex justify-center items-center filter-[saturate(2)]">
             <img
               className="absolute object-cover transition-all"
-              src="https://res.cloudinary.com/dfeyhbxeg/image/upload/v1786587597/distressed_texture_c11a949095.png"
+              src="https://res.cloudinary.com/dfeyhbxeg/image/upload/f_auto,q_auto,w_1200/v1786587597/distressed_texture_c11a949095.png"
             />
             <StarIcon
               size={300}
