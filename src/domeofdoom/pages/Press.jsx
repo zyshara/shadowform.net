@@ -1,9 +1,10 @@
 // src/domeofdoom/pages/Press.jsx
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { colors } from "@/tokens";
 import WarpedGrid from "@/components/WarpedGrid";
+import WormholeGrid from "@/components/WormholeGrid";
 import StarIcon from "@/components/StarIcon";
 import PressCardSkeleton from "@/components/ImageSkeleton";
 import FilterBar from "@/components/FilterBar";
@@ -153,7 +154,7 @@ const PressCard = ({ item }) => {
             <p className="text-[11px] text-dod-lilac/60 leading-relaxed">
               {item.excerpt}
             </p>
-            <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-[#0d0f10] to-transparent group-hover:from-[#181c1e] transition-colors duration-200 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-[#0d0f10] to-transparent group-hover:opacity-0 transition-opacity duration-500 pointer-events-none" />
           </div>
         )}
 
@@ -178,6 +179,7 @@ export default function Press() {
   const [items, setItems]       = useState([]);
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState(null);
+  const descriptionRef = useRef(null);
 
   const [yearSel,   setYearSel]   = useState(new Set());
   const [outletSel, setOutletSel] = useState(new Set());
@@ -242,25 +244,42 @@ export default function Press() {
             <span className="text-dod-lilac font-bold">{filtered.length}</span>
             {" "}of {items.length} items
           </div>
-          <p className="text-xl text-dod-lilac">
+          <p ref={descriptionRef} className="text-xl text-dod-lilac">
             Articles, features, interviews, and coverage from around the world.
           </p>
         </div>
         <div className="relative overflow-hidden min-h-[110px]">
           <div className="absolute inset-0 w-full h-full flex justify-center items-center filter-[saturate(2)]">
+            <WormholeGrid
+              colorOuter={colors.deep_purple}
+              colorMid={colors.lilac}
+              colorInner={colors.neon_mint}
+              throatGlowColor={colors.lilac}
+              throatGlowIntensity={0.23}
+              throatGlowReach={0.9}
+              throatGlowSpread={4.8}
+              scale={2.0}
+              ringCount={20}
+              spokeCount={44}
+              perspective={0.47}
+              gapEase={3.5}
+              depth={378}
+              tiltDeg={180}
+              strokeWidth={0.4}
+              strokeOpacity={0.69}
+              warpStrength={0}
+              solid
+              showGlow
+              showStars={false}
+              showStar={false}
+              showBackground={false}
+              preserveAspectRatio="xMidYMid slice"
+              className="absolute inset-0 w-full h-full"
+            />
             <img
               className="absolute object-cover transition-all"
               src="https://res.cloudinary.com/dfeyhbxeg/image/upload/f_auto,q_auto,w_1200/v1786587597/distressed_texture_c11a949095.png"
             />
-            <StarIcon
-              size={300}
-              gradientFrom={colors.deep_purple}
-              gradientTo={colors.neon_mint}
-              showGlow={true}
-              showBackground={false}
-              className="absolute transform-[rotateY(4deg)_rotateZ(-30deg)_scaleX(1.05)] animate-[star-hover_6s_ease-in-out_infinite]"
-            />
-            <WarpedGrid />
           </div>
         </div>
       </div>
@@ -279,6 +298,7 @@ export default function Press() {
         onSortChange={setSortOrder}
         resultCount={filtered.length}
         onClearAll={() => { setYearSel(new Set()); setOutletSel(new Set()); }}
+        panelTopRef={descriptionRef}
       />
 
       {/* Grid */}

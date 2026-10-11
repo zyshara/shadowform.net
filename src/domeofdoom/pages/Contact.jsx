@@ -4,8 +4,7 @@ import GlobeSlideButton from "@/components/GlobeSlideButton";
 import ArrowUpRightIcon from "@/components/ArrowUpRightIcon";
 import SectionDots from "@/components/SectionDots";
 import WarpedGrid from "@/components/WarpedGrid";
-import StarIcon from "@/components/StarIcon";
-import { colors } from "@/tokens";
+import GlobeRings from "@/components/GlobeRings";
 
 // Strip HTML tags and null bytes — mirrors server-side sanitize in api/contact.js
 function sanitize(val) {
@@ -122,13 +121,26 @@ const Contact = () => {
               src="https://res.cloudinary.com/dfeyhbxeg/image/upload/f_auto,q_auto,w_1200/v1786587597/distressed_texture_c11a949095.png"
               alt=""
             />
-            <StarIcon
-              size={300}
-              gradientFrom={colors.deep_purple}
-              gradientTo={colors.neon_mint}
-              showGlow={true}
-              showBackground={false}
-              className="absolute transform-[rotateY(4deg)_rotateZ(-30deg)_scaleX(1.05)] animate-[star-hover_6s_ease-in-out_infinite]"
+            <GlobeRings
+              size={420}
+              radius={93}
+              meridianCount={6}
+              parallelCount={6}
+              tilt={0.1}
+              rotation={-10}
+              strokeWidth={0.5}
+              gradientFrom="#5eead4"
+              gradientTo="#5eead4"
+              glowColor="#b8b2d7"
+              glowIntensity={14}
+              showFill={true}
+              fillColor="#0a0812"
+              fillOpacity={1}
+              rings={[
+                { angle: -26, rx: 173, ry: 43, colorFrom: "#8b7cf6", colorTo: "#8b7cf6", glowColor: "#8b7cf6", glowIntensity: 5, thickness: 0.9 },
+                { angle: -5, rx: 175, ry: 40, colorFrom: "#5eead4", colorTo: "#5eead4", glowColor: "#5eead4", glowIntensity: 11, thickness: 1.2 },
+              ]}
+              className="absolute animate-[star-hover_6s_ease-in-out_infinite]"
             />
             <WarpedGrid />
           </div>

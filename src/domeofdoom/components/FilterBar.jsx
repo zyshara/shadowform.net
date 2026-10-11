@@ -153,11 +153,16 @@ const MobileFilterSection = ({ label, options, selected, onToggle, isOpen, onTog
 //   onClearAll    — optional; shows "Clear All" in mobile panel when provided
 // ---------------------------------------------------------------------------
 
-const FilterBar = ({ groups, sortOptions, sortValue, onSortChange, resultCount, onClearAll }) => {
+// panelTopRef: optional ref to the element the panel's top edge should
+// align with when open (same pull-up technique as Catalog's filter panel).
+const FilterBar = ({ groups, sortOptions, sortValue, onSortChange, resultCount, onClearAll, panelTopRef }) => {
   const [openPanel, setOpenPanel] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileSection, setMobileSection] = useState(groups[0]?.key ?? null);
   const [panelMounted, setPanelMounted] = useState(false);
+  const [panelPullUp, setPanelPullUp] = useState(null);
+  const [panelMaxHeight, setPanelMaxHeight] = useState(null);
+  const mobileBarWrapperRef = useRef(null);
 
   const activeFilterCount = groups.reduce((sum, g) => sum + g.selected.size, 0);
   const hasFilters = activeFilterCount > 0;
@@ -165,7 +170,7 @@ const FilterBar = ({ groups, sortOptions, sortValue, onSortChange, resultCount, 
   // Mount immediately on open; unmount after close animation
   useEffect(() => {
     if (mobileOpen) { setPanelMounted(true); return; }
-    const t = setTimeout(() => setPanelMounted(false), PANEL_ANIMATION_MS);
+    const t = setTimeout(() => { setPanelMounted(false); setPanelPullUp(null); setPanelMaxHeight(null); }, PANEL_ANIMATION_MS);
     return () => clearTimeout(t);
   }, [mobileOpen]);
 
@@ -176,6 +181,26 @@ const FilterBar = ({ groups, sortOptions, sortValue, onSortChange, resultCount, 
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = prev; };
   }, [mobileOpen]);
+
+  // Pull-up measurement — mirrors Catalog's approach exactly.
+  // Scroll to top, then compute how far to translate the panel so its top
+  // aligns with panelTopRef (the page's description element).
+  useEffect(() => {
+    if (!mobileOpen || !panelMounted) return;
+    if (!mobileBarWrapperRef.current || !panelTopRef?.current) return;
+
+    const measure = () => {
+      const panelDocTop = mobileBarWrapperRef.current.getBoundingClientRect().top + window.scrollY;
+      const targetDocTop = panelTopRef.current.getBoundingClientRect().top + window.scrollY;
+      setPanelPullUp(Math.max(0, panelDocTop - targetDocTop));
+      setPanelMaxHeight(Math.max(0, window.innerHeight - targetDocTop - 10));
+    };
+
+    window.scrollTo(0, 0);
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [mobileOpen, panelMounted, panelTopRef]);
 
   // Close desktop popovers on outside click
   const barRef = useRef(null);
@@ -190,7 +215,7 @@ const FilterBar = ({ groups, sortOptions, sortValue, onSortChange, resultCount, 
   return (
     <div className="font-sans">
       {/* ---- Mobile bar (hidden on md+) ---- */}
-      <div className="md:hidden">
+      <div ref={mobileBarWrapperRef} className="relative md:hidden">
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -221,12 +246,15 @@ const FilterBar = ({ groups, sortOptions, sortValue, onSortChange, resultCount, 
           </div>
         </div>
 
-        {/* Fixed bottom-sheet panel — slides up from below the viewport */}
+        {/* Slide-up panel — absolute, anchored to mobileBarWrapperRef, pulled
+            up to align with panelTopRef (same technique as Catalog). */}
         {panelMounted && (
           <div
-            className={`fixed inset-x-0 bottom-0 z-40 max-h-[75vh] overflow-y-auto overscroll-contain border-t border-dod-lilac/50 bg-dod-black p-4 shadow-xl transition-transform duration-500 ${
-              mobileOpen ? "translate-y-0" : "translate-y-full"
-            }`}
+            style={{
+              transform: panelPullUp != null ? `translateY(${-panelPullUp}px)` : "translateY(50vh)",
+              height: panelMaxHeight != null ? `${panelMaxHeight}px` : undefined,
+            }}
+            className="absolute inset-x-0 top-0 z-40 max-h-[75vh] overflow-y-auto overscroll-contain border border-dod-lilac/50 bg-dod-black p-4 shadow-xl transition-all duration-500"
           >
             <div className="flex items-center justify-between border-b border-dod-lilac/20 pb-4">
               <span className="text-sm font-semibold uppercase tracking-wide text-dod-white">Filters</span>
