@@ -83,6 +83,23 @@ const Artist = () => {
     );
   }
 
+  // TODO: remove when artist pages are ready to ship
+  return (
+    <div className="mx-auto max-w-[1400px] px-10 py-10 lg:py-[70px]">
+      <div className="flex flex-col gap-6 border border-dod-lilac/20 p-10 lg:p-16">
+        <span className="text-xs font-semibold uppercase tracking-widest text-dod-lilac/60">Artist</span>
+        <h1 className="text-[clamp(2.5rem,5vw,4rem)] font-semibold italic text-dod-neon-mint leading-none uppercase">
+          {artist.name}
+        </h1>
+        <p className="text-dod-lilac/60 text-sm uppercase tracking-widest">Page coming soon</p>
+        <Link to="/roster" className="text-xs font-semibold uppercase tracking-widest text-dod-lilac hover:text-dod-white transition-colors">
+          ← Back to Roster
+        </Link>
+      </div>
+    </div>
+  );
+
+  /* Full artist page — restore by removing the early return above
   return (
     <div className="mx-auto max-w-[1400px] px-10 py-10 lg:py-[70px]">
         <div className="flex flex-col sm:flex-row gap-20">
@@ -233,6 +250,7 @@ const Artist = () => {
       </div>
     </div>
   );
+  */
 };
 
 export default Artist;
