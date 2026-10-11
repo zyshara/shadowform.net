@@ -640,7 +640,7 @@ const Catalog = () => {
             filters" row of removable chips only shows once something's
             actually selected. */}
         <div ref={filterBarRef} className="hidden flex-col gap-3 font-sans md:flex">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-end justify-between gap-3">
             <div className="flex flex-wrap items-stretch">
               <FilterDropdown
                 panelKey="format"
