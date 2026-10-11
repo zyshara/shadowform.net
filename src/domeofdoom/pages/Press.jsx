@@ -1,78 +1,24 @@
 // src/domeofdoom/pages/Press.jsx
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { colors } from "@/tokens";
 import WarpedGrid from "@/components/WarpedGrid";
 import StarIcon from "@/components/StarIcon";
+import PressCardSkeleton from "@/components/ImageSkeleton";
+import FilterBar from "@/components/FilterBar";
 
 // ---------------------------------------------------------------------------
 // Icons
 // ---------------------------------------------------------------------------
 
-const ChevronIcon = ({ open }) => (
-  <svg viewBox="0 0 10 10" width="12" height="12"
-    className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`}>
-    <polyline points="2,3 5,7 8,3" fill="none" stroke="currentColor" strokeWidth="2" />
-  </svg>
-);
-
 const ArrowUpRightIcon = () => (
-  <svg viewBox="0 0 16 16" width="14" height="14" fill="none"
+  <svg viewBox="0 0 16 16" width="10" height="10" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <line x1="3" y1="13" x2="13" y2="3" />
     <polyline points="6,3 13,3 13,10" />
   </svg>
 );
-
-// ---------------------------------------------------------------------------
-// FilterDropdown — same pattern as Catalog
-// ---------------------------------------------------------------------------
-
-const FilterDropdown = ({ panelKey, label, options, selected, onToggle, openPanel, onOpenPanel, resultCount }) => {
-  const isOpen = openPanel === panelKey;
-  const activeCount = selected.size;
-  const valueText =
-    activeCount === 0
-      ? `All ${label}s`
-      : options.filter((o) => selected.has(o.value)).map((o) => o.label).join(", ");
-
-  return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => onOpenPanel(isOpen ? null : panelKey)}
-        className="flex cursor-pointer flex-col items-start gap-1 py-1 text-left"
-      >
-        <span className={`text-xs font-semibold uppercase tracking-wide ${activeCount > 0 ? "text-dod-neon-mint" : "text-dod-lilac"}`}>
-          {label}
-        </span>
-        <span className="flex items-center gap-2 whitespace-nowrap text-sm font-semibold text-dod-white">
-          <span className="max-w-[220px] truncate">{valueText}</span>
-          <span className="text-dod-lilac/60">{resultCount}</span>
-          <ChevronIcon open={isOpen} />
-        </span>
-      </button>
-
-      {isOpen && (
-        <div className="absolute top-full left-0 z-30 mt-2 max-h-[280px] min-w-[220px] overflow-y-auto border border-dod-lilac/50 bg-dod-black p-2 shadow-xl">
-          {options.map(({ value, label: optLabel, count }) => {
-            const isSel = selected.has(value);
-            return (
-              <div key={value} onClick={() => onToggle(value)}
-                className="flex cursor-pointer items-center justify-between gap-3 px-2 py-1.5 hover:bg-dod-lilac/10">
-                <span className={`flex items-center gap-2 text-sm ${isSel ? "text-dod-neon-mint" : "text-dod-white"}`}>
-                  <span className={`h-3 w-3 flex-shrink-0 border ${isSel ? "border-dod-neon-mint bg-dod-neon-mint" : "border-dod-lilac/50"}`} />
-                  {optLabel}
-                </span>
-                <span className="text-xs text-dod-lilac/60">{count}</span>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-};
 
 // ---------------------------------------------------------------------------
 // Press card
@@ -96,35 +42,48 @@ function outletInitials(name) {
   return name.split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
 
-function PressCardImage({ item }) {
+function PressCardImage({ item, onLoad }) {
   const mode   = item.imageMode ?? "og";
   const imgSrc = mode === "override" ? item.thumbnail
                : mode === "og"       ? item.ogImage
                : null;
 
-  if (imgSrc) {
+  const [errored, setErrored] = React.useState(false);
+  const hasImage = Boolean(imgSrc) && !errored;
+
+  // When there's nothing to load (no src or broken src), reveal the card immediately.
+  // Must be unconditional — no returns before this.
+  React.useEffect(() => {
+    if (!hasImage) onLoad?.();
+  }, [hasImage]);
+
+  if (hasImage) {
     return (
       <img
         src={imgSrc}
         alt={item.title}
+        loading="lazy"
+        decoding="async"
+        onLoad={onLoad}
+        onError={() => setErrored(true)}
         className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
       />
     );
   }
 
-  // Placeholder — matches Roster page: StarIcon + WarpedGrid on dod-black
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-dod-black">
       <StarIcon
-        size={60}
+        size={96}
         gradientFrom={colors.deep_purple}
         gradientTo={colors.deep_purple}
         glowColor={colors.lilac}
         showGlow={true}
         showBackground={false}
       />
-      <div className="absolute inset-0 bg-dod-deep-purple/40 mix-blend-overlay" />
-      <WarpedGrid className="absolute w-full h-full" />
+      <div className="absolute inset-0 bg-[linear-gradient(0deg,_var(--dod-black)_0%,_transparent_40%)]" />
+      <div className="absolute inset-0 bg-dod-deep-purple/50 mix-blend-overlay saturate-200" />
+      <WarpedGrid density={0.5} className="absolute w-full h-full scale-125" />
     </div>
   );
 }
@@ -136,15 +95,26 @@ const PressCard = ({ item }) => {
     ? { href, target: "_blank", rel: "noreferrer noopener" }
     : {};
 
+  const mode = item.imageMode ?? "og";
+  const hasSrc = Boolean(mode === "override" ? item.thumbnail : mode === "og" ? item.ogImage : null);
+  const [loaded, setLoaded] = React.useState(!hasSrc);
+
   return (
-    <Tag
-      {...linkProps}
-      className={`group flex flex-row bg-[#0d0f10] hover:bg-[#181c1e] border border-dod-lilac/20 hover:border-dod-neon-mint/50 transition-colors duration-200 overflow-hidden h-[220px] ${href ? "cursor-pointer" : ""}`}
-    >
+    <div className="relative border border-dod-lilac/20 hover:border-dod-neon-mint/50 transition-colors duration-200 overflow-hidden h-[220px]">
+      {/* Skeleton shown until image resolves */}
+      {!loaded && (
+        <div className="absolute inset-0 z-10 bg-[#0d0f10]">
+          <PressCardSkeleton />
+        </div>
+      )}
+      <Tag
+        {...linkProps}
+        className={`group flex flex-row bg-[#0d0f10] hover:bg-[#181c1e] transition-[opacity,background-color] duration-500 overflow-hidden h-full ${href ? "cursor-pointer" : ""} ${loaded ? "opacity-100" : "opacity-0"}`}
+      >
       {/* Thumbnail */}
       <div className="w-2/5 flex-shrink-0 p-3">
         <div className="relative h-full overflow-hidden">
-          <PressCardImage item={item} />
+          <PressCardImage item={item} onLoad={() => setLoaded(true)} />
         </div>
       </div>
 
@@ -156,6 +126,8 @@ const PressCard = ({ item }) => {
             <img
               src={item.outlet.logo}
               alt={item.outlet.name}
+              loading="lazy"
+              decoding="async"
               className="h-8 w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity max-w-16"
             />
           ) : (
@@ -177,9 +149,12 @@ const PressCard = ({ item }) => {
 
         {/* Excerpt */}
         {item.excerpt && (
-          <p className="text-[11px] text-dod-lilac/60 leading-relaxed line-clamp-2 flex-1">
-            {item.excerpt}
-          </p>
+          <div className="relative flex-1 overflow-hidden min-h-0">
+            <p className="text-[11px] text-dod-lilac/60 leading-relaxed">
+              {item.excerpt}
+            </p>
+            <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-[#0d0f10] to-transparent group-hover:from-[#181c1e] transition-colors duration-200 pointer-events-none" />
+          </div>
         )}
 
         {/* Read link */}
@@ -189,7 +164,8 @@ const PressCard = ({ item }) => {
           </div>
         )}
       </div>
-    </Tag>
+      </Tag>
+    </div>
   );
 };
 
@@ -206,15 +182,6 @@ export default function Press() {
   const [yearSel,   setYearSel]   = useState(new Set());
   const [outletSel, setOutletSel] = useState(new Set());
   const [sortOrder, setSortOrder] = useState("newest");
-  const [openPanel, setOpenPanel] = useState(null);
-
-  // Close dropdown when clicking outside
-  const barRef = useRef(null);
-  useEffect(() => {
-    const handler = (e) => { if (!barRef.current?.contains(e.target)) setOpenPanel(null); };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
 
   useEffect(() => {
     fetch("/api/domeofdoom/press")
@@ -263,6 +230,8 @@ export default function Press() {
     return list;
   }, [items, yearSel, outletSel, sortOrder]);
 
+  const { visibleItems, sentinelRef, hasMore } = useInfiniteScroll(filtered, 30);
+
   return (
     <div className="flex flex-col gap-10">
       {/* Header */}
@@ -297,47 +266,20 @@ export default function Press() {
       </div>
 
       {/* Filter bar */}
-      <div ref={barRef} className="flex items-end justify-between gap-6 border-b border-dod-lilac/20 pb-4">
-        <div className="flex items-end gap-8">
-          <FilterDropdown
-            panelKey="year"
-            label="Year"
-            options={yearOptions}
-            selected={yearSel}
-            onToggle={toggle(setYearSel)}
-            openPanel={openPanel}
-            onOpenPanel={setOpenPanel}
-            resultCount={yearSel.size === 0 ? items.length : filtered.length}
-          />
-          <FilterDropdown
-            panelKey="outlet"
-            label="Outlet"
-            options={outletOptions}
-            selected={outletSel}
-            onToggle={toggle(setOutletSel)}
-            openPanel={openPanel}
-            onOpenPanel={setOpenPanel}
-            resultCount={outletSel.size === 0 ? items.length : filtered.length}
-          />
-        </div>
-
-        {/* Sort */}
-        <div className="relative flex-shrink-0">
-          <select
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-            className="absolute inset-0 w-full h-full cursor-pointer opacity-0"
-          >
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-          </select>
-          <div className="pointer-events-none flex items-center gap-2 border border-dod-lilac/50 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-dod-white">
-            <span className="text-dod-lilac">Sort:</span>
-            {sortOrder === "newest" ? "Newest First" : "Oldest First"}
-            <ChevronIcon open={false} />
-          </div>
-        </div>
-      </div>
+      <FilterBar
+        groups={[
+          { key: "year",   label: "Year",   options: yearOptions,   selected: yearSel,   onToggle: toggle(setYearSel)   },
+          { key: "outlet", label: "Outlet", options: outletOptions, selected: outletSel, onToggle: toggle(setOutletSel) },
+        ]}
+        sortOptions={[
+          { value: "newest", label: "Newest First" },
+          { value: "oldest", label: "Oldest First" },
+        ]}
+        sortValue={sortOrder}
+        onSortChange={setSortOrder}
+        resultCount={filtered.length}
+        onClearAll={() => { setYearSel(new Set()); setOutletSel(new Set()); }}
+      />
 
       {/* Grid */}
       {loading && (
@@ -350,9 +292,12 @@ export default function Press() {
         <p className="text-dod-lilac/60 text-sm py-10 text-center">No results.</p>
       )}
       {!loading && !error && filtered.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-20">
-          {filtered.map((item) => <PressCard key={item.id} item={item} />)}
-        </div>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {visibleItems.map((item) => <PressCard key={item.id} item={item} />)}
+          </div>
+          <div ref={sentinelRef} className="pb-20" />
+        </>
       )}
     </div>
   );

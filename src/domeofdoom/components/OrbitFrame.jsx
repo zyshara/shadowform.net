@@ -1,6 +1,6 @@
 // src/domeofdoom/components/OrbitFrame.jsx
 
-import React, { useId, useRef, useEffect } from "react";
+import React, { useId, useRef, useEffect, useState } from "react";
 import StarIcon from "./StarIcon";
 
 // The front ring's hand-tuned clip wedge, as raw [x%, y%] points, so
@@ -177,6 +177,22 @@ const OrbitFrame = ({
    */
   const starRefs = useRef([]);
   const startTimeRef = useRef(null);
+  const rootRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setIsVisible(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { rootMargin: "100px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   // Standard sign-of-area point-in-triangle test (effectiveFrontWedge
   // is always a 3-point polygon).
@@ -198,6 +214,8 @@ const OrbitFrame = ({
   const getStagger = (i) => -((i / stars.length) * duration);
 
   useEffect(() => {
+    if (!isVisible) return;
+
     /*
      * project(0) - the mathematical start of the loop, t=0 - lands
      * inside the front wedge for this geometry (not by design, just
@@ -255,7 +273,7 @@ const OrbitFrame = ({
 
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
-  }, [stars, duration]);
+  }, [stars, duration, isVisible]);
 
   /*
    * The star used to live inside the ring's masked/clipped groups, so
@@ -283,7 +301,7 @@ const OrbitFrame = ({
   const glowFilter = `drop-shadow(0px 0px 6px ${glowColor}) drop-shadow(0px 0px 0px ${glowColor})`;
 
   return (
-    <div className="orbit-frame" aria-hidden="true">
+    <div className="orbit-frame" aria-hidden="true" ref={rootRef}>
       {/* ============================================================
           BACK RING
 

@@ -211,42 +211,17 @@ const Home = () => {
       )}
 
       {/* SHOWS */}
-      <div className="mx-auto max-w-[1400px] px-10 pb-[90px]" style={{ display: "none" }}>
+      {/* Upcoming Shows + Merch teaser — hidden until ready, removed from render to avoid loading images */}
+      {/* TODO: restore when sections are ready to ship
+      <div className="mx-auto max-w-[1400px] px-10 pb-[90px]">
         <SectionHeader title="Upcoming Shows" linkTo="/shows" linkText="Past Shows" />
-        <div style={{ borderTop: "1px solid rgba(255,255,255,.08)" }}>
-          {upcomingShows.length === 0 ? (
-            <div className="py-10 text-center text-[14px] text-white/45">No upcoming shows announced yet — check back soon.</div>
-          ) : (
-            upcomingShows.map((show, i) => <ShowRow key={i} show={show} />)
-          )}
-        </div>
+        ...
       </div>
-
-      {/* MERCH TEASER */}
-      {merchTeaser.length > 0 && (
-        <div className="mx-auto max-w-[1400px] px-10 pb-[100px]" style={{ display: "none" }}>
-          <SectionHeader title="Merch" linkTo="/merch" linkText="Shop All" />
-          <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
-            {merchTeaser.map((item, i) => (
-              <Link key={i} to="/merch" className="group block">
-                  <div className="mb-3.5 aspect-square overflow-hidden" style={{ background: colors.bg }}>
-                    <PosterFrame clickable>
-                      <img
-                        src={item.cover_art_src.replace("_10", "_2")}
-                        alt={item.item_name}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.2]"
-                      />
-                    </PosterFrame>
-                  </div>
-                  <div className="truncate text-[14px] font-bold uppercase">{item.item_name}</div>
-                  <div className="mt-0.5 text-[13px] font-medium text-white/50">
-                    {item.sold_out ? "Sold Out" : `$${item.price} ${item.currency}`}
-                  </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+      <div className="mx-auto max-w-[1400px] px-10 pb-[100px]">
+        <SectionHeader title="Merch" linkTo="/merch" linkText="Shop All" />
+        ...
+      </div>
+      */}
     </div>
   );
 };

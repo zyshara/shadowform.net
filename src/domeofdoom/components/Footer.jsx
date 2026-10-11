@@ -15,14 +15,6 @@ const linkClass = "transition-colors hover:text-[var(--dod-accent)]";
 
 const Footer = () => (
   <div className="col-start-1 col-span-6 lg:col-span-4 lg:col-start-2 grid grid-cols-2 gap-8 border-t border-white/10 px-10 py-[50px] sm:grid-cols-4 mt-10">
-    <div className="col-span-2 sm:col-span-1 flex flex-col justify-between">
-      <img src={LOGO_URL} alt="Dome of Doom" className="mb-3.5 h-11 w-fit" />
-      <div className="max-w-[220px] text-[13px] leading-relaxed text-white/45">
-        © DOMEOFDOOM 2026, All Rights Reserved
-      </div>
-      <PoweredByLogo />
-    </div>
-
     <FooterColumn title="Label">
       <Link to="/catalog" className={linkClass}>Catalog</Link>
       <Link to="/roster" className={linkClass}>Roster</Link>
@@ -43,6 +35,14 @@ const Footer = () => (
       <a href="https://x.com/domeofdoom" target="_blank" rel="noreferrer" className={linkClass}>X</a>
       <a href="https://www.youtube.com/domeofdoomrecords" target="_blank" rel="noreferrer" className={linkClass}>YouTube</a>
     </FooterColumn>
+
+    <div className="col-span-2 sm:col-span-1 sm:order-first flex flex-col justify-between">
+      <img src={LOGO_URL} alt="Dome of Doom" className="mb-3.5 h-11 w-fit" />
+      <div className="max-w-[220px] text-[13px] leading-relaxed text-white/45">
+        © DOMEOFDOOM 2026, All Rights Reserved
+      </div>
+      <PoweredByLogo />
+    </div>
   </div>
 );
 

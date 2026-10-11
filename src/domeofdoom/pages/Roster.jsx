@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { readSeedData } from "@/utils/readSeedData";
 import { colors } from "@/tokens";
 import OrbitFrame from "@/components/OrbitFrame";
@@ -152,6 +153,8 @@ const Roster = () => {
     );
   }, [allArtists, searchQuery, sortOrder]);
 
+  const { visibleItems: visibleArtists, sentinelRef } = useInfiniteScroll(artists, 24);
+
   return (
     <>
       {/* Header */}
@@ -183,8 +186,8 @@ const Roster = () => {
       </div>
 
       {/* Roster Grid */}
-      <div className="mb-10 grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
-        {artists.map((artist) => (
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+        {visibleArtists.map((artist) => (
           <div
             key={artist.name}
             className="
@@ -213,6 +216,8 @@ const Roster = () => {
                   className="absolute inset-0 h-full w-full object-cover grayscale group transition-all group-hover:scale-110 group-hover:grayscale-0 duration-500"
                   src={artist.photo_src}
                   alt={artist.name}
+                  loading="lazy"
+                  decoding="async"
                 />
               ) : (
                 // No scraped Bandcamp photo (e.g. artists created directly
@@ -275,11 +280,12 @@ const Roster = () => {
              <OrbitFrame
                key={orbitPropsByName[artist.name].corner}
                {...orbitPropsByName[artist.name]}
-               className={`transition-all duration-500 opacity-0 group-hover:opacity-100 ${orbitPropsByName[artist.name].corner.includes("top") ? "mt-[-100px] group-hover:mt-0" : "mt-[100px] group-hover:mt-0"}`}
+               className={`transition-all duration-500 opacity-0 group-hover:opacity-100 ${orbitPropsByName[artist.name].corner.includes("top") ? "-translate-y-[100px] group-hover:translate-y-0" : "translate-y-[100px] group-hover:translate-y-0"}`}
              />
           </div>
         ))}
       </div>
+      <div ref={sentinelRef} className="mb-10" />
     </>
   );
 };

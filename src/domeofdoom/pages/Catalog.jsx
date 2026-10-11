@@ -23,6 +23,7 @@ import { STARBURST_DECOR } from "@/tokens";
 import { colors } from "@/tokens";
 import WarpedGrid from "@/components/WarpedGrid";
 import StarIcon from "@/components/StarIcon";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 
 // value = the real stored format name (must match derived.formats exactly
 // for filtering to work); label = what the dropdown displays. These differ
@@ -242,6 +243,8 @@ const CatalogCard = ({ item }) => (
       <img
         src={item.artwork_url}
         alt={item.title}
+        loading="lazy"
+        decoding="async"
         className="absolute bottom-0 aspect-square w-full object-cover transition-[filter_transform] group-hover:scale-105 group-hover:brightness-[1.2] group-hover:saturate-[1.5] duration-300"
       />
     )}
@@ -498,6 +501,8 @@ const Catalog = () => {
     return list;
   }, [allItems, formatSel, typeSel, originSel, yearSel, sortOrder]);
 
+  const { visibleItems, sentinelRef } = useInfiniteScroll(items, 24);
+
   return (
     <div className="flex flex-col gap-10">
       <div className="border-b border-dod-lilac/50 gap-4 lg:gap-0 grid grid-cols-1 md:grid-cols-2">
@@ -753,11 +758,14 @@ const Catalog = () => {
 
         {/* Grid */}
         {items.length > 0 ? (
-          <div className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-3 xl:grid-cols-4">
-            {items.map((item) => (
-              <CatalogCard key={item.uid} item={item} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-3 xl:grid-cols-4">
+              {visibleItems.map((item) => (
+                <CatalogCard key={item.uid} item={item} />
+              ))}
+            </div>
+            <div ref={sentinelRef} className="pb-20" />
+          </>
         ) : (
           <div className="py-16 text-center font-sans text-dod-lilac/60">
             No releases match the current filters.
