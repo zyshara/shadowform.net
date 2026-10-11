@@ -1,4 +1,5 @@
 import React from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { useParams, Link } from "react-router-dom";
 import { readSeedData } from "@/utils/readSeedData";
 import { colors } from "@/tokens";
@@ -52,6 +53,7 @@ const Artist = () => {
 
   const allArtists = (readSeedData("roster-data") ?? []).filter((a) => a?.name);
   const artist = allArtists.find((a) => artistSlug(a.name) === slugParam);
+  usePageTitle(artist?.name);
 
   const allReleases = readSeedData("discography-data") ?? [];
   const releases = artist

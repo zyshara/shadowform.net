@@ -1,4 +1,5 @@
 export { default as About } from "./About.jsx";
+export { default as Licensing } from "./Licensing.jsx";
 export { default as Artist } from "./Artist.jsx";
 export { default as Catalog } from "./Catalog.jsx";
 export { default as CatalogItem } from "./CatalogItem.jsx";

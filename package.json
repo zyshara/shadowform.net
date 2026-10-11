@@ -15,7 +15,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --config webpack.config.js --mode production",
+    "build": "webpack --config webpack.config.js --mode production && node scripts/generate-sitemap.mjs",
     "start": "node server.js",
     "dev": "concurrently -k \"webpack --config webpack.config.js --watch --mode development\" \"nodemon server.js\"",
     "test": "vitest run",
@@ -33,6 +33,7 @@
     "googleapis": "^173.0.0",
     "multer": "^2.4.0",
     "node-cron": "^4.6.0",
+    "nodemailer": "^10.0.12",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.4"

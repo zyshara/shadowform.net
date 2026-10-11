@@ -6,6 +6,7 @@
 // the shared resolution logic used by both this page and the Catalog grid's
 // card links.
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { useParams, Link } from "react-router-dom";
 import { readSeedData } from "@/utils/readSeedData";
 import { findByCatalogParam } from "@/utils/catalogItemSlug";
@@ -345,6 +346,7 @@ const CatalogItem = () => {
 
   const allItems = readSeedData("catalog-items-data") ?? [];
   const item = findByCatalogParam(allItems, catalogParam);
+  usePageTitle(item?.title);
 
   if (!item) {
     return (

@@ -1,8 +1,13 @@
 import React from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { readSeedData } from "@/utils/readSeedData";
 import SubpageHeader from "@/components/SubpageHeader";
+import UnderConstruction from "@/components/UnderConstruction";
 
 const Merch = () => {
+  usePageTitle("Merch");
+  // TODO: remove — temporarily hidden
+  return <UnderConstruction />;
   const items = readSeedData("merch-data") ?? [];
 
   return (

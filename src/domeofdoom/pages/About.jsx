@@ -1,10 +1,15 @@
 import React from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
+import UnderConstruction from "@/components/UnderConstruction";
 import { readSeedData } from "@/utils/readSeedData";
 import Button from "@/components/Button";
 import ArrowRightIcon from "@/components/ArrowRightIcon";
 import { FLOWER_FILIGREE_PURPLE } from "@/tokens";
 
 const About = () => {
+  usePageTitle("About");
+  // TODO: remove — temporarily hidden
+  return <UnderConstruction />;
   const aboutPage = readSeedData("about-page-data");
 
   return (

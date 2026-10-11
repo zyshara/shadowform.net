@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+html {
+  scrollbar-gutter: stable;
+  scrollbar-color: var(--dod-lilac) var(--dod-black);
+}
+
 @font-face {
   font-family: "Archivo";
   src:
@@ -76,6 +81,7 @@
 
   --animate-marquee: marquee 24s linear infinite;
 }
+
 
 /* Single source of truth for the palette — tokens.js re-exports these as
    var() references rather than raw values, so every component that reads

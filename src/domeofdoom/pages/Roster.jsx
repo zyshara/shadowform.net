@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { readSeedData } from "@/utils/readSeedData";
 import { colors } from "@/tokens";
 import OrbitFrame from "@/components/OrbitFrame";
@@ -93,6 +94,7 @@ function randomOrbitPairProps() {
 }
 
 const Roster = () => {
+  usePageTitle("Roster");
   const allArtists = (readSeedData("roster-data") ?? []).filter(
     (artist) => artist?.name
   );

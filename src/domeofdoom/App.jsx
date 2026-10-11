@@ -9,6 +9,7 @@ import {
   CatalogItem,
   Contact,
   Home,
+  Licensing,
   Merch,
   NotFound,
   Press,
@@ -29,6 +30,7 @@ const App = () => {
         <Route path="/shows" element={<Shows />} />
         <Route path="/merch" element={<Merch />} />
         <Route path="/press" element={<Press />} />
+        <Route path="/licensing" element={<Licensing />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="*" element={<NotFound />} />
       </Route>

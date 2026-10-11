@@ -19,6 +19,7 @@ if (isDev) await setupLiveReload(app);
 app.use(sslRedirect);
 app.use(noCacheHtml);
 app.use(stripTrailingSlash);
+app.use(express.json());
 
 registerApiRoutes(app, express);
 registerSpaRoutes(app);

@@ -2,6 +2,7 @@
 
 import { Link } from "react-router-dom";
 import { LOGO_URL } from "@/tokens";
+import PoweredByLogo from "@shared/components/PoweredByLogo.jsx";
 
 const FooterColumn = ({ title, children }) => (
   <div>
@@ -14,24 +15,26 @@ const linkClass = "transition-colors hover:text-[var(--dod-accent)]";
 
 const Footer = () => (
   <div className="col-start-1 col-span-6 lg:col-span-4 lg:col-start-2 grid grid-cols-2 gap-8 border-t border-white/10 px-10 py-[50px] sm:grid-cols-4 mt-10">
-    <div className="col-span-2 sm:col-span-1">
-      <img src={LOGO_URL} alt="Dome of Doom" className="mb-3.5 h-11 w-auto" />
+    <div className="col-span-2 sm:col-span-1 flex flex-col justify-between">
+      <img src={LOGO_URL} alt="Dome of Doom" className="mb-3.5 h-11 w-fit" />
       <div className="max-w-[220px] text-[13px] leading-relaxed text-white/45">
         © DOMEOFDOOM 2026, All Rights Reserved
       </div>
+      <PoweredByLogo />
     </div>
 
     <FooterColumn title="Label">
       <Link to="/catalog" className={linkClass}>Catalog</Link>
       <Link to="/roster" className={linkClass}>Roster</Link>
-      <Link to="/shows" className={linkClass}>Shows</Link>
-      <Link to="/shop" className={linkClass}>Shop</Link>
+      <Link to="/merch" className={linkClass}>Merch</Link>
       <Link to="/contact" className={linkClass}>Contact</Link>
     </FooterColumn>
 
     <FooterColumn title="More">
       <Link to="/about" className={linkClass}>About</Link>
+      <Link to="/shows" className={linkClass}>Shows</Link>
       <Link to="/press" className={linkClass}>Press</Link>
+      <Link to="/licensing" className={linkClass}>Licensing</Link>
     </FooterColumn>
 
     <FooterColumn title="Follow">

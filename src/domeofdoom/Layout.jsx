@@ -1,13 +1,12 @@
 // src/domeofdoom/Layout.jsx
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useEffect, useRef, useState } from "react";
 import { useLocation, useOutlet } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import MarqueeBanner from "@/components/MarqueeBanner";
 import Footer from "@/components/Footer";
 import DODBadge from "@/components/DODBadge";
-import PoweredByLogo from "@shared/components/PoweredByLogo.jsx";
 import { colors } from "@/tokens";
 
 const SIDEBAR_TEXT = " DOMEOFDOOM · 15 Year Anniversary · ";
@@ -89,6 +88,7 @@ const Layout = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+
   return (
     <div className="min-h-dvh w-full bg-dod-black text-dod-white grid grid-cols-6 grid-rows-[auto_1fr_auto]">
       <div
@@ -164,23 +164,22 @@ const Layout = () => {
         </svg>
       </div>
 
-      <div className="relative col-start-1 col-span-6 lg:col-span-4 lg:col-start-2">
+      <div className="relative col-start-1 col-span-6 lg:col-span-4 lg:col-start-2" style={{ overflow: "hidden" }}>
         <AnimatePresence>
           <motion.div
             key={location.pathname}
             className="px-8 lg:px-0"
-            initial={{ opacity: 0, y: "100vh" }}
-            animate={{ opacity: 1, y: 0, position: "relative", zIndex: 1 }}
-            exit={{ opacity: 0, position: "absolute", zIndex: 0, top: 0, left: 0, right: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, position: "absolute", top: 0, left: 0, right: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             {element}
           </motion.div>
         </AnimatePresence>
       </div>
       <Footer />
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
-        <PoweredByLogo />
+      <div className="fixed bottom-6 right-6 z-50">
         <DODBadge color="var(--dod-neon-mint)" />
       </div>
     </div>

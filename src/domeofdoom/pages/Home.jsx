@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { Link } from "react-router-dom";
 import { readSeedData } from "@/utils/readSeedData";
 import { colors, LOGO_URL } from "@/tokens";
@@ -54,6 +55,7 @@ function formatReleaseDate(dateStr) {
 }
 
 const Home = () => {
+  usePageTitle(null);
   const releases = readSeedData("discography-data") ?? [];
   const merchItems = readSeedData("merch-data") ?? [];
 
@@ -209,7 +211,7 @@ const Home = () => {
       )}
 
       {/* SHOWS */}
-      <div className="mx-auto max-w-[1400px] px-10 pb-[90px]">
+      <div className="mx-auto max-w-[1400px] px-10 pb-[90px]" style={{ display: "none" }}>
         <SectionHeader title="Upcoming Shows" linkTo="/shows" linkText="Past Shows" />
         <div style={{ borderTop: "1px solid rgba(255,255,255,.08)" }}>
           {upcomingShows.length === 0 ? (
@@ -222,7 +224,7 @@ const Home = () => {
 
       {/* MERCH TEASER */}
       {merchTeaser.length > 0 && (
-        <div className="mx-auto max-w-[1400px] px-10 pb-[100px]">
+        <div className="mx-auto max-w-[1400px] px-10 pb-[100px]" style={{ display: "none" }}>
           <SectionHeader title="Merch" linkTo="/merch" linkText="Shop All" />
           <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
             {merchTeaser.map((item, i) => (

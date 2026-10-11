@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { readSeedData } from "@/utils/readSeedData";
 import { colors } from "@/tokens";
 import SubpageHeader from "@/components/SubpageHeader";
@@ -136,6 +137,7 @@ export const ShowRow = ({ show, isPast = false, index = 0 }) => (
 );
 
 const Shows = () => {
+  usePageTitle("Shows");
   const showsData = readSeedData("shows-data") ?? [];
   const now = Date.now();
   const [yearFilter, setYearFilter] = useState("all");

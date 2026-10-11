@@ -1,5 +1,28 @@
 {
   "title": "Dome of Doom",
-  "description": "welcome to shadowform~",
-  "url": "https://domeofdoom.shadowform.net/"
+  "description": "Dome of Doom Records is an independent, artist-owned record label based in Los Angeles, CA. Home to Wylie Cable, Daedelus, Bleep Bloop, and more.",
+  "url": "https://www.domeofdoom.org/",
+  "image": "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785389998/DOD_LOGO_transparent_2f6232f4c2.png",
+  "jsonLd": {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Dome of Doom Records",
+    "alternateName": "Dome of Doom",
+    "url": "https://www.domeofdoom.org",
+    "logo": "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785389998/DOD_LOGO_transparent_2f6232f4c2.png",
+    "description": "Dome of Doom Records is an independent, artist-owned record label based in Los Angeles, CA, founded in 2011 by musician and record producer Wylie Cable.",
+    "foundingDate": "2011",
+    "foundingLocation": {
+      "@type": "Place",
+      "name": "Los Angeles, California, USA"
+    },
+    "genre": ["Electronic", "Hip Hop", "Experimental", "Beat Music"],
+    "sameAs": [
+      "https://domeofdoom.bandcamp.com",
+      "https://www.instagram.com/domeofdoom",
+      "https://x.com/domeofdoom",
+      "https://www.youtube.com/domeofdoomrecords",
+      "https://en.wikipedia.org/wiki/Dome_of_Doom"
+    ]
+  }
 }

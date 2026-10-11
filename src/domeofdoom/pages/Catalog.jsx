@@ -15,6 +15,7 @@
 // selection (but not the group's own selection) - see facetCounts below.
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { Link, useSearchParams } from "react-router-dom";
 import { readSeedData } from "@/utils/readSeedData";
 import { catalogItemSlug } from "@/utils/catalogItemSlug";
@@ -266,6 +267,7 @@ const CatalogCard = ({ item }) => (
 );
 
 const Catalog = () => {
+  usePageTitle("Catalog");
   const allItems = useMemo(() => readSeedData("catalog-items-data") ?? [], []);
   const [searchParams, setSearchParams] = useSearchParams();
 

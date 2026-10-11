@@ -127,6 +127,7 @@ export default [
     outputPath: "dist/domeofdoom",
     publicPath: "/",
     ...fromMetadata(domeofdoomMetadata),
+    faviconHref: "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785389998/DOD_LOGO_transparent_2f6232f4c2.png",
     preloadFonts: ["/fonts/Archivo-VariableFont_wdth,wght.woff2"],
     alias: {
       "@": path.resolve(__dirname, "src/domeofdoom"),
