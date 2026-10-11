@@ -687,39 +687,20 @@ const Catalog = () => {
               />
             </div>
 
-            {/* Full "Sort: Newest First" control once there's room for it;
-                below that, the same compact icon-only control the mobile
-                bar uses, rather than letting the segments row wrap. */}
-            <div className="hidden items-center gap-2 xl:flex">
-              <span className="text-xs font-semibold uppercase tracking-wide text-dod-white/50">Sort:</span>
-              <div className="relative inline-flex">
-                <select
-                  value={sortOrder}
-                  onChange={(e) => setSortOrder(e.target.value)}
-                  className="cursor-pointer appearance-none border border-dod-lilac/50 bg-transparent px-3 py-1.5 pr-7 text-xs font-semibold uppercase tracking-wide text-dod-lilac"
-                >
-                  <option className="bg-dod-black" value="newest">Newest First</option>
-                  <option className="bg-dod-black" value="oldest">Oldest First</option>
-                  <option className="bg-dod-black" value="az">A–Z</option>
-                </select>
-                <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-dod-lilac">
-                  <ChevronIcon open={false} />
-                </span>
-              </div>
-            </div>
-            <div className="relative flex xl:hidden">
+            <div className="relative flex-shrink-0">
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                aria-label="Sort"
-                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                className="absolute inset-0 w-full h-full cursor-pointer opacity-0"
               >
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
                 <option value="az">A–Z</option>
               </select>
-              <div className="pointer-events-none flex h-full min-h-[38px] w-11 items-center justify-center border border-dod-lilac/50 text-dod-lilac">
-                <SortIcon />
+              <div className="pointer-events-none flex items-center gap-2 border border-dod-lilac/50 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-dod-white">
+                <span className="text-dod-lilac">Sort:</span>
+                {sortOrder === "newest" ? "Newest First" : sortOrder === "oldest" ? "Oldest First" : "A–Z"}
+                <ChevronIcon open={false} />
               </div>
             </div>
           </div>
