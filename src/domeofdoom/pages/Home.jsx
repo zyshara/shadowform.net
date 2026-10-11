@@ -106,7 +106,7 @@ const Home = () => {
                 position: "relative",
                 zIndex: 1,
                 fontFamily: "Archivo, Arial, sans-serif",
-                fontSize: "clamp(20px, 20vw, 108px)",
+                fontSize: "clamp(20px, 14vw, 108px)",
                 lineHeight: "0.86",
                 fontWeight: 800,
                 fontStretch: "expanded",
