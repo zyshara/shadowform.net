@@ -19,6 +19,7 @@ export function cdnImg(url, width = 800) {
   );
   if (uploadMatch) return `${uploadMatch[1]}${transforms}/${uploadMatch[2]}`;
 
-  // External URL — route through Cloudinary fetch
-  return `https://res.cloudinary.com/${CLOUD_NAME}/image/fetch/${transforms}/${encodeURI(url)}`;
+  // External URL — return as-is until Cloudinary fetch domains are configured
+  // (Cloudinary Console → Settings → Security → Allowed fetch domains)
+  return url;
 }
