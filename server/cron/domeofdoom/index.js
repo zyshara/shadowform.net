@@ -46,6 +46,7 @@ export function startDomeOfDoomCron() {
       await runSafe("bandcamp scrape + strapi sync", scrapeBandcampAndSyncStrapi);
       await runSafe("catalog item backfill", backfillCatalogItems);
       await runSafe("artist spotify backfill", backfillArtistSpotify);
+      await runSafe("artist stats sync", syncAllArtistStats);
     },
     { timezone: "America/Los_Angeles" }
   );
@@ -70,10 +71,6 @@ export function startDomeOfDoomCron() {
 
   runSafe("about page sync", syncAboutPage);
   setInterval(() => runSafe("about page sync", syncAboutPage), ONE_DAY_MS);
-
-  // ── Artist stats (disabled in dev — hits Spotify/Instagram/Bandsintown) ──
-  // runSafe("artist stats sync", syncAllArtistStats);
-  // setInterval(() => runSafe("artist stats sync", syncAllArtistStats), ONE_DAY_MS);
 
   logger.info("[domeofdoomCron] jobs registered (catalog cache: every 5 min; scrape/sync: daily)");
 }
