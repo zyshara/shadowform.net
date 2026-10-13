@@ -153,7 +153,7 @@ function BioSection({ artist, portraitUrl }) {
         </div>
         <p style={css.label}>// Stats</p>
         <div className="epk-stats-grid">
-          {artist.stats
+          {(artist.stats ?? [])
             .filter(s => !["Upcoming Shows", "Total Releases"].includes(s.label))
             .map(s => (
             <div key={s.label} style={{

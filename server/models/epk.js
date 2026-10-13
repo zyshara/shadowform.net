@@ -1,6 +1,6 @@
 // server/models/epk.js
 
-import { normalizeArtist } from "./artist.js";
+import { normalizeArtistForEpk } from "./artist.js";
 
 function normalizeFeaturedTrack(raw) {
   if (!raw) return null;
@@ -36,7 +36,7 @@ export function normalizeEpk(entry) {
   const e = entry.attributes ?? entry;
 
   return {
-    artist:           normalizeArtist(e.artist),
+    artist:           normalizeArtistForEpk(e.artist),
     portrait_url:     e.portrait?.url ?? null,
     featured_tracks:  (e.featured_tracks  ?? []).map(normalizeFeaturedTrack).filter(Boolean),
     photos_and_media: (e.photos_and_media ?? []).map(normalizePhotoMedia).filter(Boolean),
