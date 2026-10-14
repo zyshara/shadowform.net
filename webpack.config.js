@@ -129,6 +129,7 @@ export default [
     ...fromMetadata(domeofdoomMetadata),
     faviconHref: "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785389998/DOD_LOGO_transparent_2f6232f4c2.png",
     preloadFonts: ["/fonts/Archivo-VariableFont_wdth,wght.woff2"],
+    umamiId: "f03272b4-9036-480e-a5bf-bfe23548c0b5",
     alias: {
       "@": path.resolve(__dirname, "src/domeofdoom"),
       "@shared": path.resolve(__dirname, "src/shared"),
