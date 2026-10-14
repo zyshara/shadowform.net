@@ -235,22 +235,8 @@ function LatestCompilationSection({ item }) {
 }
 
 // ---------------------------------------------------------------------------
-// ReleaseCard — badge/date row, cover + details row, genre tags, CTA
+// ReleaseCard — corner badge, date, cover + details row, CTA
 // ---------------------------------------------------------------------------
-
-// No genre field exists anywhere in the data pipeline yet (see the same
-// note in CatalogItem.jsx), so the tag row falls back to item.formats
-// (vinyl/cassette etc) rather than inventing genre data per release.
-function ReleaseTag({ children, color }) {
-  return (
-    <span
-      className="border px-2.5 py-1 text-[10px] font-black uppercase leading-none tracking-[0.08em]"
-      style={{ borderColor: `color-mix(in srgb, ${color} 55%, transparent)`, color }}
-    >
-      {children}
-    </span>
-  );
-}
 
 function ReleaseCard({ item }) {
   const upcoming = isUpcoming(item);
@@ -258,36 +244,53 @@ function ReleaseCard({ item }) {
   const date = formatReleaseDate(item.release_date);
   const year = releaseYear(item);
   const description = item.description ? stripHtml(item.description) : null;
-  const tags = item.formats?.length ? item.formats.slice(0, 3) : null;
 
   // Upcoming = mint theme; Latest = lilac theme
   const themeColor = upcoming ? "var(--dod-neon-mint)" : "var(--dod-lilac)";
-  const themeBorder = upcoming
-    ? "color-mix(in srgb, var(--dod-neon-mint) 35%, transparent)"
-    : "color-mix(in srgb, var(--dod-lilac) 35%, transparent)";
+
+  const cta = upcoming ? (
+    <Link
+      to={`/catalog/${slug}`}
+      className="flex items-center justify-center gap-2 border py-3 text-[11px] font-black uppercase tracking-[0.1em] transition-colors hover:opacity-80"
+      style={{ color: themeColor, borderColor: themeColor }}
+    >
+      Pre-Save <ArrowRightIcon size={12} />
+    </Link>
+  ) : (
+    <a
+      href={item.spotify_url || undefined}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center justify-center gap-2 border py-3 text-[11px] font-black uppercase tracking-[0.1em] transition-colors hover:opacity-80"
+      style={{ color: themeColor, borderColor: themeColor }}
+    >
+      Listen Now <ArrowRightIcon size={12} />
+    </a>
+  );
 
   return (
     <div
-      className="flex flex-col gap-4 border p-5"
-      style={{ borderColor: themeBorder, background: "color-mix(in srgb, var(--dod-card) 55%, transparent)" }}
+      className="relative flex flex-col gap-4 border p-5"
+      style={{ borderColor: themeColor, background: "transparent" }}
     >
-      {/* Badge row */}
-      <div className="flex items-center justify-between gap-3">
-        <CardLabelBadge
-          text={upcoming ? "Upcoming Release" : "Latest Release"}
-          icon={upcoming ? CalendarIcon : PlusCircleIcon}
-          color={themeColor}
-        />
-        {date && (
+      <CardLabelBadge
+        text={upcoming ? "Upcoming Release" : "Latest Release"}
+        icon={upcoming ? CalendarIcon : PlusCircleIcon}
+        color={themeColor}
+        style={{ position: "absolute", top: "-1px", left: "-1px" }}
+      />
+
+      {date && (
+        <div className="flex justify-end">
           <span className="flex-shrink-0 text-[11px] font-medium uppercase tracking-[0.04em]" style={{ color: "rgba(255,255,255,0.35)" }}>
             {date}
           </span>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Cover + info row */}
-      <div className="flex gap-4">
-        <div className="h-[104px] w-[104px] flex-shrink-0 overflow-hidden border border-white/10 sm:h-[124px] sm:w-[124px]">
+      {/* Cover + info — stacked on mobile, two columns (cover left, details right) from sm up */}
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="aspect-square w-full overflow-hidden border border-dod-lilac/70">
           {item.artwork_url ? (
             <img
               src={item.artwork_url}
@@ -297,14 +300,20 @@ function ReleaseCard({ item }) {
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center" style={{ background: "var(--dod-deep-purple)" }}>
-              <StarIcon size={44} showBackground={false} showGlow />
+              <StarIcon size={64} showBackground={false} showGlow />
             </div>
           )}
         </div>
 
-        <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-          <div style={typeLabel}>
-            {item.type ?? "Single"}{year ? ` · ${year}` : ""}
+        <div className="flex min-w-0 flex-col gap-1.5">
+          <div
+            className="text-[11px] font-bold uppercase leading-none tracking-[0.1em]"
+            style={{ fontFamily: "'PP Neue Montreal', sans-serif" }}
+          >
+            <span style={{ color: "color-mix(in srgb, var(--dod-white) 50%, transparent)" }}>
+              {item.type ?? "Single"}
+            </span>
+            {year && <span style={{ color: "var(--dod-deep-purple)" }}> · {year}</span>}
           </div>
           <Link to={`/catalog/${slug}`} className="hover:opacity-80 transition-opacity">
             <div
@@ -330,37 +339,10 @@ function ReleaseCard({ item }) {
               {description}
             </p>
           )}
+
+          <div className="mt-auto pt-2">{cta}</div>
         </div>
       </div>
-
-      {tags && (
-        <div className="flex flex-wrap gap-2">
-          {tags.map((t) => (
-            <ReleaseTag key={t} color={themeColor}>{t}</ReleaseTag>
-          ))}
-        </div>
-      )}
-
-      {/* CTA */}
-      {upcoming ? (
-        <Link
-          to={`/catalog/${slug}`}
-          className="flex items-center justify-center gap-2 border py-3 text-[11px] font-black uppercase tracking-[0.1em] transition-colors hover:opacity-80"
-          style={{ color: themeColor, borderColor: themeColor }}
-        >
-          Pre-Save <ArrowRightIcon size={12} />
-        </Link>
-      ) : (
-        <a
-          href={item.spotify_url || undefined}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 border py-3 text-[11px] font-black uppercase tracking-[0.1em] transition-colors hover:opacity-80"
-          style={{ color: themeColor, borderColor: themeColor }}
-        >
-          Listen Now <ArrowRightIcon size={12} />
-        </a>
-      )}
     </div>
   );
 }
@@ -554,7 +536,7 @@ function LatestReleasesSection({ latestRelease, upcomingRelease }) {
       <HomeSectionHeader title="Latest Releases" linkTo="/catalog" linkText="View All" />
 
       {upcomingRelease ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <ReleaseCard item={upcomingRelease} />
           {latestRelease && <ReleaseCard item={latestRelease} />}
         </div>
@@ -589,8 +571,8 @@ const Home = () => {
     (i) => !i.release_date || new Date(i.release_date).getTime() <= now
   );
   const latestRelease = released[0] ?? nonCompilations[0] ?? null;
-  // PREVIEW: force two-card layout using second released item
-  const upcomingRelease = released[1] ?? null;
+  // PREVIEW: test upcoming release card with fake future date
+  const upcomingRelease = released[1] ? { ...released[1], release_date: "2027-06-01" } : null;
 
   return (
     <div>

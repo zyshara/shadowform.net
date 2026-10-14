@@ -116,8 +116,11 @@ export function registerSpaRoutes(app) {
   // disk for a directory request, bypassing the discography seed below.
   const domeofdoomStatic = express.static(path.join(root, "dist/domeofdoom"), { index: false });
   app.use((req, res, next) => {
-    const host = req.header("host") || "";
-    if (!host.split(":")[0].startsWith("domeofdoom.")) return next();
+    const hostname = (req.header("host") || "").split(":")[0];
+    // Also serves domeofdoom.org / www.domeofdoom.org, the client's own
+    // domain for this site, in addition to the subdomain.
+    const isDomeofdoom = hostname.startsWith("domeofdoom.") || hostname.startsWith("www.domeofdoom.");
+    if (!isDomeofdoom) return next();
     domeofdoomStatic(req, res, () => {
       let html = readFileSync(domeofdoomIndex, "utf8");
       html = injectJsonData(html, "discography-data", getDiscography());
