@@ -4,6 +4,7 @@ import { strapiGet, strapiPost, strapiUploadMedia, strapiPut, invalidateCache } 
 import { normalizeEntry, normalizeGuestbook } from "#apps/shadowform/models/guestbook.js";
 import { logger } from "#lib/logger.js";
 import { createRateLimiter } from "#lib/rateLimit.js";
+import { sanitize, sanitizeUrl } from "#lib/sanitize.js";
 
 // ── config ────────────────────────────────────────────────────────────────────
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
@@ -84,15 +85,20 @@ export function registerGuestbookRoutes(app, express) {
     }
 
     // ── validate body ───────────────────────────────────────────────────────
-    const { name, website, message, tags = [], drawing = null } = req.body ?? {};
+    const { tags = [], drawing = null } = req.body ?? {};
+    const name    = sanitize(req.body?.name);
+    const message = sanitize(req.body?.message);
+    // Not HTML — rendered as a raw <a href>, so this needs scheme
+    // validation (blocks javascript:/data:/etc.), not just tag-stripping.
+    const website = sanitizeUrl(req.body?.website);
 
-    if (!name || typeof name !== "string" || !name.trim()) {
+    if (!name) {
       return res.status(400).json({ error: "name is required" });
     }
-    if (name.trim().length > 80) {
+    if (name.length > 80) {
       return res.status(400).json({ error: "name is too long (max 80 chars)" });
     }
-    if (message && message.length > 500) {
+    if (message.length > 500) {
       return res.status(400).json({ error: "message is too long (max 500 chars)" });
     }
 
@@ -120,9 +126,9 @@ export function registerGuestbookRoutes(app, express) {
     try {
       const payload = {
         data: {
-          name:            name.trim().slice(0, 80),
-          website:         website?.trim().slice(0, 200) || null,
-          message:         message?.trim().slice(0, 500) || null,
+          name:            name.slice(0, 80),
+          website:         website.slice(0, 200) || null,
+          message:         message.slice(0, 500) || null,
           date_posted:     new Date().toISOString(),
           ip_address:      ip,
           guestbook_tags: cleanTagIds,

@@ -2,6 +2,7 @@
 import nodemailer from "nodemailer";
 import { logger } from "#lib/logger.js";
 import { createRateLimiter } from "#lib/rateLimit.js";
+import { sanitize } from "#lib/sanitize.js";
 
 const TO_ADDRESS   = "frydome@domeofdoom.org";
 const FROM_ADDRESS = "contact@shadowform.net";
@@ -26,11 +27,6 @@ const getTransporter = () => {
 
 // 5 submissions per IP per hour
 const checkRateLimit = createRateLimiter({ windowMs: 60 * 60 * 1000, max: 5 });
-
-function sanitize(val) {
-  if (typeof val !== "string") return "";
-  return val.replace(/\x00/g, "").replace(/<[^>]*>/g, "").trim();
-}
 
 export function registerContactRoutes(app) {
   app.post("/api/contact", async (req, res) => {
