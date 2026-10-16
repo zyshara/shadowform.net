@@ -80,6 +80,8 @@ html {
 
 
   --animate-marquee: marquee 24s linear infinite;
+
+  --breakpoint-3xl: 1600px;
 }
 
 

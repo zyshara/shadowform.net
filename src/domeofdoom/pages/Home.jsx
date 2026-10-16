@@ -145,9 +145,9 @@ function LatestCompilationSection({ item }) {
     <div className="mx-auto max-w-[1400px] pb-[80px] pt-12 px-6 lg:px-10">
       <HomeSectionHeader title="Latest Compilation" linkTo={`/catalog/${slug}`} linkText="Learn More" />
 
-      <div className="grid grid-cols-1 lg:grid-cols-[440px_1fr] relative overflow-hidden">
+      <div className="grid grid-cols-1 3xl:grid-cols-[440px_1fr] relative overflow-hidden">
         <div
-          className="absolute top-0 bottom-0 w-full lg:w-[440px] pointer-events-none overflow-hidden"
+          className="absolute top-0 bottom-0 w-full 3xl:w-[440px] pointer-events-none overflow-hidden"
           style={{
             left: "20px",
             maskImage: "radial-gradient(ellipse 95% 85% at 50% 50%, black 30%, transparent 75%)",
@@ -158,7 +158,7 @@ function LatestCompilationSection({ item }) {
         </div>
         {/* Cover side */}
         <div className="flex items-center justify-center py-14 px-10 min-h-[340px] relative">
-          <div className="relative z-10 w-[300px] lg:w-[380px]">
+          <div className="relative z-10 w-[300px] 3xl:w-[380px]">
             <TiltedCover
               artworkUrl={item.artwork_url}
               title={item.title}

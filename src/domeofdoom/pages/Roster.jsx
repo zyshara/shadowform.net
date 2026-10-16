@@ -3,56 +3,11 @@ import { usePageTitle } from "@/hooks/usePageTitle";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { readSeedData } from "@/utils/readSeedData";
 import { colors } from "@/tokens";
-import OrbitFrame from "@/components/OrbitFrame";
 import WarpedGrid from "@/components/WarpedGrid";
 import GridDome from "@/components/GridDome";
 import StarIcon from "@/components/StarIcon";
 
 const PRIMARY = colors.accent;
-
-// OrbitFrame is purely presentational.
-// All randomized values are generated here once per artist.
-//
-// Corners come in diagonal PAIRS, not picked independently - a card
-// gets two OrbitFrames, either (top-left + bottom-right) or
-// (top-right + bottom-left), never e.g. two corners on the same side.
-const CORNERS = ["top-left", "bottom-right", "top-right", "bottom-left"];
-
-const ORIENTATIONS = ["front"];
-
-const ORBIT_COLOR_PAIRS = [
-  {
-    ring: colors.white,
-    starFrom: colors.lilac,
-    starTo: colors.deep_purple,
-    glow: colors.lilac,
-  },
-  {
-    ring: colors.neon_mint,
-    starFrom: colors.lilac,
-    starTo: colors.lilac,
-    glow: colors.white,
-  },
-  {
-    ring: colors.lilac,
-    starFrom: colors.lilac,
-    starTo: colors.neon_mint,
-    glow: colors.neon_mint,
-  },
-];
-
-const STAR_SIZES = [12, 16, 18];
-
-// 1-3 stars per ring, each an independently random size. OrbitFrame
-// staggers their starting points around the ring itself (evenly, by
-// count) - all this needs to hand it is how many and how big.
-function randomStars() {
-  const count = 2 + Math.floor(Math.random() * 3);
-  return Array.from(
-    { length: count },
-    () => STAR_SIZES[Math.floor(Math.random() * STAR_SIZES.length)]
-  );
-}
 
 // Small per-card variation around WarpedGrid's defaults (intensity=1,
 // density=1) - enough that cards don't all look identical, not enough
@@ -64,36 +19,6 @@ function randomWarpedGridProps() {
   };
 }
 
-// Returns an array of two OrbitFrame prop objects - one per corner in
-// the chosen diagonal pair. Both corners on a card share the same
-// color pair (keeps each card looking like one coherent effect), but
-// each corner's star count/sizes are rolled independently.
-function randomOrbitPairProps() {
-  const corner = CORNERS[Math.floor(Math.random() * CORNERS.length)];
-
-  const orientation = ORIENTATIONS[Math.floor(Math.random() * ORIENTATIONS.length)];
-
-  const {
-    ring,
-    starFrom,
-    starTo,
-    glow,
-  } =
-    ORBIT_COLOR_PAIRS[
-      Math.floor(Math.random() * ORBIT_COLOR_PAIRS.length)
-    ];
-
-  return {
-    corner,
-    orientation: orientation,
-    ringColor: ring,
-    stars: randomStars(),
-    starGradientFrom: starFrom,
-    starGradientTo: starTo,
-    glowColor: glow,
-  };
-}
-
 const Roster = () => {
   usePageTitle("Roster");
   const allArtists = (readSeedData("roster-data") ?? []).filter(
@@ -102,28 +27,6 @@ const Roster = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("az");
-
-  /*
-   * Generate orbit values exactly once.
-   *
-   * OrbitFrame never generates randomness itself.
-   * Each artist therefore gets a consistent orbit configuration
-   * for the lifetime of this Roster component.
-   */
-  const orbitPropsByName = useMemo(() => {
-    const map = {};
-
-    allArtists.forEach((artist) => {
-      map[artist.name] = randomOrbitPairProps();
-    });
-
-    return map;
-
-    // allArtists is intentionally omitted.
-    // readSeedData is static for the lifetime of this page and we
-    // specifically want these values generated only once.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const warpedGridPropsByName = useMemo(() => {
     const map = {};
@@ -253,35 +156,6 @@ const Roster = () => {
               </span>
             </div>
 
-            {/*
-             * -------------------------------------------------------
-             * ORBIT
-             * -------------------------------------------------------
-             *
-             * Two OrbitFrames per card, one per corner of the diagonal
-             * pair from randomOrbitPairProps() (e.g. top-left AND
-             * bottom-right together, never independently chosen).
-             *
-             * Each OrbitFrame contains two separate visual layers:
-             *
-             *   rear ring  → behind this card
-             *   star/front → above this card
-             *
-             * Testing at opacity-100 first (per request) - once confirmed,
-             * swap back to:
-             *   opacity-0 transition-opacity duration-300 group-hover:opacity-100
-             *
-             * Deliberately NOT setting z-index here (see OrbitFrame's own
-             * "do not give this element a z-index" comment) - doing so
-             * creates a new stacking context on the root, which hoists the
-             * whole back+front ring pair above the card as one unit and
-             * breaks the behind/in-front illusion entirely.
-             */}
-             <OrbitFrame
-               key={orbitPropsByName[artist.name].corner}
-               {...orbitPropsByName[artist.name]}
-               className={`transition-all duration-500 opacity-0 group-hover:opacity-100 ${orbitPropsByName[artist.name].corner.includes("top") ? "-translate-y-[100px] group-hover:translate-y-0" : "translate-y-[100px] group-hover:translate-y-0"}`}
-             />
           </div>
         ))}
       </div>
