@@ -20,7 +20,7 @@
 // of inflating the "new artist" count with duplicates of names we already
 // have.
 
-import { strapiGet } from "../../lib/strapi.js";
+import { strapiGetAllPages } from "../../lib/strapi.js";
 import {
   splitArtistString,
   slugifyArtistName,
@@ -29,22 +29,9 @@ import {
 } from "../../lib/artists.js";
 
 const RAW_ITEMS_PATH = "/api/dome-of-doom-bandcamp-item-raws";
-const PAGE_SIZE = 100;
 
-async function fetchAllRawItems() {
-  const all = [];
-  let page = 1;
-  while (true) {
-    const res = await strapiGet(
-      RAW_ITEMS_PATH,
-      { "pagination[page]": page, "pagination[pageSize]": PAGE_SIZE },
-      { noCache: true }
-    );
-    all.push(...res.data);
-    if (page >= res.meta.pagination.pageCount) break;
-    page++;
-  }
-  return all;
+function fetchAllRawItems() {
+  return strapiGetAllPages(RAW_ITEMS_PATH);
 }
 
 // slug -> { variants: Set(raw casing/spelling seen), locations: Set("item / track") }

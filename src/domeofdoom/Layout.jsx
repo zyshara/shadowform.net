@@ -8,6 +8,7 @@ import MarqueeBanner from "@/components/MarqueeBanner";
 import Footer from "@/components/Footer";
 import DODBadge from "@/components/DODBadge";
 import { colors } from "@/tokens";
+import { useScrollToTop } from "@shared/hooks/useScrollToTop";
 
 const SIDEBAR_TEXT = " DOMEOFDOOM · 15 Year Anniversary · ";
 const SIDEBAR_REPEAT = 3;
@@ -81,12 +82,7 @@ const Layout = () => {
   // inside a motion.div that's still mid exit-animation.
   const element = useOutlet();
 
-  // useLayoutEffect (not useEffect) so this runs before paint — otherwise
-  // the first frame can briefly show whatever scroll position the browser
-  // restored.
-  useLayoutEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
+  useScrollToTop(location.pathname);
 
 
   return (

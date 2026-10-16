@@ -8,8 +8,8 @@
 //
 // Data comes from the "catalog-items-data" seed (see injectJsonData in
 // server/routes/spas.js, populated by fetchAndCacheStrapiData.js every 5
-// minutes) - same server-seeded-JSON pattern as discography-data/
-// roster-data/etc, no client-side fetch needed. Each item is already
+// minutes) - same server-seeded-JSON pattern as roster-data/etc, no
+// client-side fetch needed. Each item is already
 // override ?? derived normalized server-side (server/models/catalogItem.js).
 // Facet counts are cross-filtered against the OTHER active groups' current
 // selection (but not the group's own selection) - see facetCounts below.
@@ -17,7 +17,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { Link, useSearchParams } from "react-router-dom";
-import { readSeedData } from "@/utils/readSeedData";
+import { readSeedData } from "@shared/utils/readSeedData";
 import { catalogItemSlug } from "@/utils/catalogItemSlug";
 import { STARBURST_DECOR } from "@/tokens";
 import { colors } from "@/tokens";

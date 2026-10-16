@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import CompassStar from "@/components/CompassStar.jsx";
-import { readSeedData } from "@/utils/readSeedData";
+import { readSeedData } from "@shared/utils/readSeedData";
 
 const SLabel = ({ n, title }) => (
   <div className="flex items-center gap-3">

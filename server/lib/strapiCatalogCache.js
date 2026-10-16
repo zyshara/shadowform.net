@@ -6,12 +6,9 @@
 // output. fetchAndCacheStrapiData.js writes to this; server/routes/spas.js
 // reads it to seed the domeofdoom client bundle on each request.
 
-let catalogItems = [];
+import { createEntityCache } from "./createEntityCache.js";
 
-export function getCatalogItems() {
-  return catalogItems;
-}
+const catalogItemsCache = createEntityCache([]);
 
-export function setCatalogItems(items) {
-  catalogItems = items;
-}
+export const getCatalogItems = catalogItemsCache.get;
+export const setCatalogItems = catalogItemsCache.set;

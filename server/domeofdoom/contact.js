@@ -1,6 +1,7 @@
 // server/domeofdoom/contact.js
 import nodemailer from "nodemailer";
 import { logger } from "../lib/logger.js";
+import { createRateLimiter } from "../lib/rateLimit.js";
 
 const TO_ADDRESS   = "frydome@domeofdoom.org";
 const FROM_ADDRESS = "contact@shadowform.net";
@@ -23,29 +24,8 @@ const getTransporter = () => {
   return _transporter;
 };
 
-// Basic rate limiter — 5 submissions per IP per hour
-const rateLimitStore = new Map();
-const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
-const RATE_LIMIT_MAX = 5;
-
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of rateLimitStore.entries()) {
-    if (now > entry.resetAt) rateLimitStore.delete(key);
-  }
-}, 60 * 60 * 1000);
-
-function checkRateLimit(ip) {
-  const now = Date.now();
-  const entry = rateLimitStore.get(ip);
-  if (!entry || now > entry.resetAt) {
-    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return true;
-  }
-  if (entry.count >= RATE_LIMIT_MAX) return false;
-  entry.count++;
-  return true;
-}
+// 5 submissions per IP per hour
+const checkRateLimit = createRateLimiter({ windowMs: 60 * 60 * 1000, max: 5 });
 
 function sanitize(val) {
   if (typeof val !== "string") return "";
@@ -56,7 +36,7 @@ export function registerContactRoutes(app) {
   app.post("/api/contact", async (req, res) => {
     const ip = req.ip || req.socket?.remoteAddress;
 
-    if (!checkRateLimit(ip)) {
+    if (!checkRateLimit(ip).allowed) {
       return res.status(429).json({ error: "Too many requests. Please try again later." });
     }
 

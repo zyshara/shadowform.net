@@ -60,13 +60,13 @@ const CardLabelBadge = ({
   style,
 }) => {
   const [ref, { width: rawW, height: rawH }] = useElementSize();
-  // Rounded to whole px - the badge's true CSS box is usually fractional
-  // (e.g. 137.34375px), and carrying that fraction into every polygon
-  // coordinate left each one needing its own sub-pixel rounding by the
-  // rasterizer, independently, which could land differently edge to edge.
-  // Whole numbers put every coordinate on the pixel grid the same way.
-  const w = Math.round(rawW);
-  const h = Math.round(rawH);
+  // Math.ceil, not Math.round - rounding DOWN would leave a sub-pixel gap
+  // between the SVG's right/bottom stroke and the badge element's actual
+  // edge (e.g. rawW=137.34 → Math.round→137, leaving a 0.34px gap where
+  // no stroke renders). Ceiling ensures the SVG always covers the full
+  // element, so the right/bottom strokes reach the edges at any zoom.
+  const w = Math.ceil(rawW);
+  const h = Math.ceil(rawH);
   // Inset polygon path by half the stroke width so the full stroke lands
   // inside the viewBox. Without this, the viewBox clips the outer 0.5px of
   // every edge, leaving a hairline instead of a full 1px stroke — which
@@ -92,6 +92,16 @@ const CardLabelBadge = ({
             fill="none"
             stroke={color}
             strokeWidth={STROKE}
+          />
+          {/* Diagonal notch edge overdrawn at √2× stroke width. A 45° line
+              at strokeWidth=1 renders lighter (anti-aliasing covers ~0.7px
+              effective width); multiplying by √2 corrects for the angle so
+              the diagonal's visual weight matches the straight edges. */}
+          <line
+            x1={w - S} y1={h - NOTCH}
+            x2={w - NOTCH} y2={h - S}
+            stroke={color}
+            strokeWidth={STROKE * Math.SQRT2}
           />
         </svg>
       )}

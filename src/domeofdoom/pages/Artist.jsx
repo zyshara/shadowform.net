@@ -1,18 +1,16 @@
 import React from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { useParams, Link } from "react-router-dom";
-import { readSeedData } from "@/utils/readSeedData";
+import { readSeedData } from "@shared/utils/readSeedData";
 import { colors } from "@/tokens";
 import SubpageHeader from "@/components/SubpageHeader";
 import SectionHeader from "@/components/SectionHeader";
 import PosterFrame from "@/components/PosterFrame";
 import ArtistPhoto, { SKEW_DEG, skewOversizePx } from "@/components/ArtistPhoto";
-import CascadeImage from "@/components/CascadeImage";
 import Button from "@/components/Button";
 import SpotifyIcon from "@/components/SpotifyIcon";
 import BandcampIcon from "@/components/BandcampIcon";
 import { ShowRow } from "@/pages/Shows";
-import { releaseSlug } from "@/utils/releaseSlug";
 import { artistSlug } from "@/utils/artistSlug";
 
 const PRIMARY = colors.accent;
@@ -39,29 +37,12 @@ function showTimestamp(show) {
   return new Date(y, m - 1, d).getTime();
 }
 
-function releaseTimestamp(release) {
-  if (release.release_date) {
-    const t = new Date(release.release_date).getTime();
-    if (!isNaN(t)) return t;
-  }
-  if (release.year) return new Date(`${release.year}-01-01`).getTime();
-  return 0;
-}
-
 const Artist = () => {
   const { artistSlug: slugParam } = useParams();
 
   const allArtists = (readSeedData("roster-data") ?? []).filter((a) => a?.name);
   const artist = allArtists.find((a) => artistSlug(a.name) === slugParam);
   usePageTitle(artist?.name);
-
-  const allReleases = readSeedData("discography-data") ?? [];
-  const releases = artist
-    ? allReleases
-        .filter((r) => (r.artists?.length ? r.artists.includes(artist.name) : r.artist === artist.name))
-        .slice()
-        .sort((a, b) => releaseTimestamp(b) - releaseTimestamp(a))
-    : [];
 
   const allShows = readSeedData("shows-data") ?? [];
   const artistShows = artist
@@ -116,15 +97,11 @@ const Artist = () => {
             <SubpageHeader
               heading={artist.name}
               subheading={
-                <span className="disco-filter-count">
-                  <b>{releases.length}</b> releases
-                  {upcomingShows.length > 0 && (
-                    <>
-                      <span className="disco-filter-dot"> · </span>
-                      <b>{upcomingShows.length}</b> upcoming shows
-                    </>
-                  )}
-                </span>
+                upcomingShows.length > 0 ? (
+                  <span className="disco-filter-count">
+                    <b>{upcomingShows.length}</b> upcoming shows
+                  </span>
+                ) : null
               }
             />
             <p className="text-[14px] leading-relaxed text-white/60">
@@ -160,75 +137,6 @@ const Artist = () => {
             </div>
           </div>
         </div>
-
-      <div className="mt-16">
-        <SectionHeader title="Releases" />
-        {releases.length === 0 ? (
-          <div className="py-10 text-center text-[14px]" style={{ color: "rgba(255,255,255,.35)" }}>
-            No releases yet — check back soon.
-          </div>
-        ) : (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-              gap: 14,
-            }}
-          >
-            {releases.map((release, i) => (
-              <Link
-                key={release.uid ?? i}
-                to={`/discography?release=${releaseSlug(release)}`}
-                className="disco-grid-tile"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  cursor: "pointer",
-                  border: "1px solid rgba(255,255,255,.12)",
-                  overflow: "hidden",
-                }}
-              >
-                <div style={{ position: "relative", aspectRatio: "1", overflow: "hidden" }}>
-                  {release.cover_art_src ? (
-                    <CascadeImage
-                      src={release.cover_art_src}
-                      alt={release.release_name}
-                      index={i}
-                      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                    />
-                  ) : null}
-                </div>
-                <div
-                  className="h-[16px] md:h-[12px]"
-                  style={{
-                    width: "100%",
-                    flexShrink: 0,
-                    borderTop: `1px solid ${PRIMARY}`,
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "0 6px",
-                    overflow: "hidden",
-                    marginTop: "1px",
-                  }}
-                >
-                  <span
-                    style={{
-                      font: "600 8px 'Helvetica Neue', Helvetica, Arial, sans-serif",
-                      color: "white",
-                      letterSpacing: ".02em",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {release.release_name}
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
 
       <div className="mt-16">
         <SectionHeader title="Upcoming Shows" />

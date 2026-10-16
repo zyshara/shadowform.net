@@ -1,6 +1,6 @@
 import React from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
-import { readSeedData } from "@/utils/readSeedData";
+import { readSeedData } from "@shared/utils/readSeedData";
 import SubpageHeader from "@/components/SubpageHeader";
 import UnderConstruction from "@/components/UnderConstruction";
 

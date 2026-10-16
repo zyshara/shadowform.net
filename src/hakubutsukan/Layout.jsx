@@ -1,8 +1,9 @@
-import { useLayoutEffect, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, Outlet, NavLink, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import CompassStar from "@/components/CompassStar.jsx";
 import PoweredByLogo from "@shared/components/PoweredByLogo.jsx";
+import { useScrollToTop } from "@shared/hooks/useScrollToTop";
 
 const NAV_LINKS = [
   { to: "/exhibits",       label: "Exhibits" },
@@ -85,7 +86,7 @@ const Layout = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isHome = location.pathname === "/";
 
-  useLayoutEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
+  useScrollToTop(location.pathname);
   useEffect(() => { setDrawerOpen(false); }, [location.pathname]);
   useEffect(() => {
     if (!drawerOpen) return;

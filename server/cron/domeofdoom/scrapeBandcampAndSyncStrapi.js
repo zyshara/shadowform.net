@@ -11,12 +11,11 @@
 // separately and is not this module's concern.
 
 import { scrapeCatalog, scrapeArtists } from "dod-bandcamp-scraper";
-import { strapiGet, strapiPost, strapiPut } from "../../lib/strapi.js";
+import { strapiGetAllPages, strapiPost, strapiPut } from "../../lib/strapi.js";
 import { logger } from "../../lib/logger.js";
 
 const RAW_ITEMS_PATH = "/api/dome-of-doom-bandcamp-item-raws";
 const ARTISTS_PATH = "/api/dome-of-doom-artists";
-const PAGE_SIZE = 100;
 const WRITE_DELAY_MS = 150;
 
 function sleep(ms) {
@@ -26,25 +25,13 @@ function sleep(ms) {
 // ─── Catalog/merch items (DomeOfDoomBandcampItemRaw) ────────────────────────
 
 async function loadExistingRawItems() {
+  const entries = await strapiGetAllPages(RAW_ITEMS_PATH, { "fields[0]": "bandcamp_url" });
+
   const byUrl = new Map();
-  let page = 1;
-  while (true) {
-    const res = await strapiGet(
-      RAW_ITEMS_PATH,
-      {
-        "fields[0]": "bandcamp_url",
-        "pagination[page]": page,
-        "pagination[pageSize]": PAGE_SIZE,
-      },
-      { noCache: true }
-    );
-    for (const entry of res.data) {
-      const url = entry.bandcamp_url ?? entry.attributes?.bandcamp_url;
-      const docId = entry.documentId ?? entry.id;
-      if (url) byUrl.set(url, docId);
-    }
-    if (page >= res.meta.pagination.pageCount) break;
-    page++;
+  for (const entry of entries) {
+    const url = entry.bandcamp_url ?? entry.attributes?.bandcamp_url;
+    const docId = entry.documentId ?? entry.id;
+    if (url) byUrl.set(url, docId);
   }
   return byUrl;
 }
@@ -121,25 +108,13 @@ async function syncCatalogItems() {
 // every artist that already exists. Same normalization (trim + uppercase)
 // as that existing flow, so this merges into the same records instead.
 async function loadExistingArtistsByName() {
+  const entries = await strapiGetAllPages(ARTISTS_PATH, { "fields[0]": "name" });
+
   const byName = new Map();
-  let page = 1;
-  while (true) {
-    const res = await strapiGet(
-      ARTISTS_PATH,
-      {
-        "fields[0]": "name",
-        "pagination[page]": page,
-        "pagination[pageSize]": PAGE_SIZE,
-      },
-      { noCache: true }
-    );
-    for (const entry of res.data) {
-      const name = (entry.name ?? entry.attributes?.name ?? "").trim();
-      const docId = entry.documentId ?? entry.id;
-      if (name) byName.set(name.toUpperCase(), docId);
-    }
-    if (page >= res.meta.pagination.pageCount) break;
-    page++;
+  for (const entry of entries) {
+    const name = (entry.name ?? entry.attributes?.name ?? "").trim();
+    const docId = entry.documentId ?? entry.id;
+    if (name) byName.set(name.toUpperCase(), docId);
   }
   return byName;
 }

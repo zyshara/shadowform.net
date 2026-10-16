@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
-import { readSeedData } from "@/utils/readSeedData";
+import { readSeedData } from "@shared/utils/readSeedData";
 import { colors } from "@/tokens";
 import WarpedGrid from "@/components/WarpedGrid";
 import GridDome from "@/components/GridDome";

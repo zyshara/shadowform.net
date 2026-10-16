@@ -16,11 +16,10 @@
 // nothing to resolve until we have another source for this text.
 
 import { spotifyGet, parseSpotifyArtistId } from "../../lib/spotify.js";
-import { strapiGet, strapiPut } from "../../lib/strapi.js";
+import { strapiGetAllPages, strapiPut } from "../../lib/strapi.js";
 import { logger } from "../../lib/logger.js";
 
 const ARTISTS_PATH = "/api/dome-of-doom-artists";
-const PAGE_SIZE = 100;
 const WRITE_DELAY_MS = 150;
 
 function sleep(ms) {
@@ -31,24 +30,8 @@ function normalizeArtistName(s) {
   return (s ?? "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 }
 
-async function fetchArtistsFromStrapi() {
-  const all = [];
-  let page = 1;
-  while (true) {
-    const res = await strapiGet(
-      ARTISTS_PATH,
-      {
-        populate: "derived",
-        "pagination[page]": page,
-        "pagination[pageSize]": PAGE_SIZE,
-      },
-      { noCache: true }
-    );
-    all.push(...res.data);
-    if (page >= res.meta.pagination.pageCount) break;
-    page++;
-  }
-  return all;
+function fetchArtistsFromStrapi() {
+  return strapiGetAllPages(ARTISTS_PATH, { populate: "derived" });
 }
 
 // Exact normalized-name match only - see file header for why.

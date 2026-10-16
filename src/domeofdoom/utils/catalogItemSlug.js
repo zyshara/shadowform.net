@@ -5,9 +5,8 @@
 // never drift. Items with a human-assigned catalog_number (overrides-only,
 // see catalog-item-overrides.json) use that directly as the URL segment
 // (e.g. /catalog/DOD_088) since it's already a stable, human-facing id.
-// Items without one fall back to a title-slug + uid suffix, same pattern as
-// Discography's releaseSlug - the uid suffix guarantees uniqueness even
-// when titles collide or are empty.
+// Items without one fall back to a title-slug + uid suffix - the uid suffix
+// guarantees uniqueness even when titles collide or are empty.
 function slugify(str) {
   return (str || "")
     .toLowerCase()

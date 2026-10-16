@@ -6,12 +6,9 @@
 // on top of the Bandcamp-scraped roster) now that Roster/Artist pages read
 // this fully-normalized Strapi list directly instead.
 
-let artists = [];
+import { createEntityCache } from "./createEntityCache.js";
 
-export function getArtists() {
-  return artists;
-}
+const artistsCache = createEntityCache([]);
 
-export function setArtists(list) {
-  artists = list;
-}
+export const getArtists = artistsCache.get;
+export const setArtists = artistsCache.set;

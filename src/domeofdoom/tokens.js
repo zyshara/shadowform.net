@@ -13,7 +13,6 @@
 export const colors = {
   black:        "var(--dod-black)",
   white:        "var(--dod-white)",
-  white:        "var(--dod-white)",
   lilac:        "var(--dod-lilac)",
   neon_mint:    "var(--dod-neon-mint)",
   deep_purple:  "var(--dod-deep-purple)",

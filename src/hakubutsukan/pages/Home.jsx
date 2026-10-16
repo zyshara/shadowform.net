@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { readSeedData } from "@/utils/readSeedData";
+import { readSeedData } from "@shared/utils/readSeedData";
 import CompassStar from "@/components/CompassStar.jsx";
 
 const CLASSIFICATION_GROUPS = [

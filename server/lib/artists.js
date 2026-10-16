@@ -2,13 +2,13 @@
 //
 // Shared helpers for splitting Bandcamp's free-text `artist` field into
 // individual artist names and resolving/creating their Dome of Doom Artist
-// entries in Strapi. Used by both the discography sync cron job and the
-// one-off backfill script so the split rules never drift between them.
+// entries in Strapi. Used by the catalog scrape/backfill cron jobs and the
+// artist-extraction dry-run script so the split rules never drift between
+// them.
 
-import { strapiGet, strapiPost } from "./strapi.js";
+import { strapiGetAllPages, strapiPost } from "./strapi.js";
 
 const ARTISTS_PATH = "/api/dome-of-doom-artists";
-const PAGE_SIZE = 100;
 
 // Split "DMVU, Finnoh" / "DMVU & FINNOH" / "ZOF, DMVU, Babyweight" / "A x B"
 // into individual artist names (case-insensitive separators).
@@ -149,29 +149,17 @@ export function resolveArtistNamesFromRawItem(rawItem) {
 // e.g. "(DJ) NOBOD¥" / "DJ Nobody" both slug to "djnobody"). Both keys on
 // a given artist point at the same { docId, name } object.
 export async function loadArtistCache() {
+  const entries = await strapiGetAllPages(ARTISTS_PATH, { "fields[0]": "name" });
+
   const cache = new Map();
-  let page = 1;
-  while (true) {
-    const res = await strapiGet(
-      ARTISTS_PATH,
-      {
-        "fields[0]": "name",
-        "pagination[page]": page,
-        "pagination[pageSize]": PAGE_SIZE,
-      },
-      { noCache: true }
-    );
-    for (const a of res.data) {
-      const name = (a.name ?? a.attributes?.name ?? "").trim();
-      const docId = a.documentId ?? a.id;
-      if (!name) continue;
-      const entry = { docId, name };
-      cache.set(name.toUpperCase(), entry);
-      const slug = slugifyArtistName(name);
-      if (slug) cache.set(slug, entry);
-    }
-    if (page >= res.meta.pagination.pageCount) break;
-    page++;
+  for (const a of entries) {
+    const name = (a.name ?? a.attributes?.name ?? "").trim();
+    const docId = a.documentId ?? a.id;
+    if (!name) continue;
+    const entry = { docId, name };
+    cache.set(name.toUpperCase(), entry);
+    const slug = slugifyArtistName(name);
+    if (slug) cache.set(slug, entry);
   }
   return cache;
 }

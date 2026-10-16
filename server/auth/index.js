@@ -57,7 +57,7 @@ export function registerAuthRoutes(app) {
   // this creates users directly via the privileged API token instead —
   // same technique the (unshipped) feat-wedding branch used.
   app.post("/api/auth/register", jsonBody, async (req, res) => {
-    if (!checkRegisterLimit(clientIp(req))) {
+    if (!checkRegisterLimit(clientIp(req)).allowed) {
       return res.status(429).json({ error: "Too many attempts. Please try again later." });
     }
 
@@ -108,7 +108,7 @@ export function registerAuthRoutes(app) {
 
   // POST /api/auth/login — { email, password }
   app.post("/api/auth/login", jsonBody, async (req, res) => {
-    if (!checkLoginLimit(clientIp(req))) {
+    if (!checkLoginLimit(clientIp(req)).allowed) {
       return res.status(429).json({ error: "Too many attempts. Please try again later." });
     }
 
@@ -140,7 +140,7 @@ export function registerAuthRoutes(app) {
   // Always responds { ok: true } regardless of whether the email exists,
   // matching Strapi's own enumeration-safe behavior.
   app.post("/api/auth/forgot-password", jsonBody, async (req, res) => {
-    if (!checkForgotLimit(clientIp(req))) {
+    if (!checkForgotLimit(clientIp(req)).allowed) {
       return res.status(429).json({ error: "Too many attempts. Please try again later." });
     }
 

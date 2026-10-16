@@ -19,7 +19,7 @@
 // models/show.js still use it for the Shows page - this only changes
 // where the ROSTER PAGE's data comes from.)
 
-import { strapiGet } from "../../lib/strapi.js";
+import { strapiGetAllPages } from "../../lib/strapi.js";
 import { setCatalogItems } from "../../lib/strapiCatalogCache.js";
 import { setArtists } from "../../lib/strapiArtistCache.js";
 import { refreshCacheBustToken } from "../../lib/cacheBustToken.js";
@@ -29,52 +29,16 @@ import { logger } from "../../lib/logger.js";
 
 const CATALOG_ITEMS_PATH = "/api/dome-of-doom-catalog-items";
 const ARTISTS_PATH = "/api/dome-of-doom-artists";
-const PAGE_SIZE = 100;
-
-async function fetchAllCatalogItems() {
-  const all = [];
-  let page = 1;
-  while (true) {
-    const res = await strapiGet(
-      CATALOG_ITEMS_PATH,
-      {
-        "populate[derived][populate]": "*",
-        "populate[overrides][populate]": "*",
-        "pagination[page]": page,
-        "pagination[pageSize]": PAGE_SIZE,
-      },
-      { noCache: true }
-    );
-    all.push(...res.data);
-    if (page >= res.meta.pagination.pageCount) break;
-    page++;
-  }
-  return all;
-}
-
-async function fetchAllArtists() {
-  const all = [];
-  let page = 1;
-  while (true) {
-    const res = await strapiGet(
-      ARTISTS_PATH,
-      {
-        "populate[derived][populate]": "*",
-        "populate[overrides][populate]": "*",
-        "pagination[page]": page,
-        "pagination[pageSize]": PAGE_SIZE,
-      },
-      { noCache: true }
-    );
-    all.push(...res.data);
-    if (page >= res.meta.pagination.pageCount) break;
-    page++;
-  }
-  return all;
-}
+const POPULATE_PARAMS = {
+  "populate[derived][populate]": "*",
+  "populate[overrides][populate]": "*",
+};
 
 export async function fetchAndCacheStrapiData() {
-  const [rawItems, rawArtists] = await Promise.all([fetchAllCatalogItems(), fetchAllArtists()]);
+  const [rawItems, rawArtists] = await Promise.all([
+    strapiGetAllPages(CATALOG_ITEMS_PATH, POPULATE_PARAMS),
+    strapiGetAllPages(ARTISTS_PATH, POPULATE_PARAMS),
+  ]);
 
   const items = normalizeCatalogItems(rawItems);
   const artists = normalizeArtists(rawArtists);

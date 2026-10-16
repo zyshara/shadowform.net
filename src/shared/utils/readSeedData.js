@@ -1,4 +1,4 @@
-// src/domeofdoom/utils/readSeedData.js
+// src/shared/utils/readSeedData.js
 //
 // Reads a JSON blob seeded into the initial HTML by the server (see
 // injectJsonData in server/routes/spas.js) — avoids a network round-trip for

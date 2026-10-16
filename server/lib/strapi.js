@@ -8,6 +8,14 @@ const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN || "";
 const CACHE_TTL_MS = process.env.STRAPI_CACHE_TTL_MS || 5 * 60 * 1000; // 5 minutes
 
 // simple in-memory cache: { [cacheKey]: { data, expiresAt } }
+//
+// This is one of two caching patterns in server/: a short-TTL cache keyed
+// by request URL, for routes that proxy-and-shape a single Strapi
+// collection with no cron job maintaining a snapshot (guestbook.js,
+// management.js, engineering.js, epk.js). For data that needs real
+// synthesis — scraping, merging overrides, normalizing — see
+// createEntityCache.js instead: a cron job refreshes it on a schedule so
+// requests never pay that synthesis cost and reads are always warm.
 const cache = new Map();
 
 /**
@@ -54,6 +62,31 @@ export async function strapiGet(path, params = {}, { ttl = CACHE_TTL_MS, noCache
   cache.set(cacheKey, { data, expiresAt: Date.now() + ttl });
 
   return data;
+}
+
+/**
+ * Fetch every page of a Strapi collection, concatenated into one array.
+ * Always bypasses strapiGet's cache (noCache) — intended for cron jobs that
+ * pull the full collection on a schedule and cache the normalized result
+ * themselves (see bandcampCache.js and friends), not for per-request reads.
+ * @param {string} path   - e.g. "/api/dome-of-doom-artists"
+ * @param {object} params - query params to append (populate, filters, etc.)
+ */
+export async function strapiGetAllPages(path, params = {}) {
+  const PAGE_SIZE = 100;
+  const all = [];
+  let page = 1;
+  while (true) {
+    const res = await strapiGet(
+      path,
+      { ...params, "pagination[page]": page, "pagination[pageSize]": PAGE_SIZE },
+      { noCache: true }
+    );
+    all.push(...res.data);
+    if (page >= res.meta.pagination.pageCount) break;
+    page++;
+  }
+  return all;
 }
 
 export async function strapiPost(path, payload) {

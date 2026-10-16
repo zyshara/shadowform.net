@@ -19,10 +19,12 @@ export function createRateLimiter({ windowMs, max }) {
     const entry = store.get(key);
     if (!entry || now > entry.resetAt) {
       store.set(key, { count: 1, resetAt: now + windowMs });
-      return true;
+      return { allowed: true };
     }
-    if (entry.count >= max) return false;
+    if (entry.count >= max) {
+      return { allowed: false, retryAfterMs: entry.resetAt - now };
+    }
     entry.count++;
-    return true;
+    return { allowed: true };
   };
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { Link } from "react-router-dom";
-import { readSeedData } from "@/utils/readSeedData";
+import { readSeedData } from "@shared/utils/readSeedData";
 import { catalogItemSlug } from "@/utils/catalogItemSlug";
 import { colors } from "@/tokens";
 import Button from "@/components/Button";

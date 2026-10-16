@@ -1,4 +1,4 @@
-// server/cron/domeofdoom/backfillArtistSlugs.js
+// server/scripts/backfillArtistSlugs.js
 //
 // One-off: sets DomeOfDoomArtist.slug (via slugifyArtistName, see
 // lib/artists.js) for every existing artist that doesn't have one yet -
@@ -7,14 +7,13 @@
 // already has a non-empty slug.
 //
 // Usage:
-//   node --env-file=.env server/cron/domeofdoom/backfillArtistSlugs.js --dry-run
-//   node --env-file=.env server/cron/domeofdoom/backfillArtistSlugs.js
+//   node --env-file=.env server/scripts/backfillArtistSlugs.js --dry-run
+//   node --env-file=.env server/scripts/backfillArtistSlugs.js
 
-import { strapiGet, strapiPut } from "../../lib/strapi.js";
-import { slugifyArtistName } from "../../lib/artists.js";
+import { strapiGetAllPages, strapiPut } from "../lib/strapi.js";
+import { slugifyArtistName } from "../lib/artists.js";
 
 const ARTISTS_PATH = "/api/dome-of-doom-artists";
-const PAGE_SIZE = 100;
 const WRITE_DELAY_MS = 150;
 
 const DRY_RUN = process.argv.includes("--dry-run");
@@ -23,20 +22,8 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function fetchAllArtists() {
-  const all = [];
-  let page = 1;
-  while (true) {
-    const res = await strapiGet(
-      ARTISTS_PATH,
-      { "pagination[page]": page, "pagination[pageSize]": PAGE_SIZE },
-      { noCache: true }
-    );
-    all.push(...res.data);
-    if (page >= res.meta.pagination.pageCount) break;
-    page++;
-  }
-  return all;
+function fetchAllArtists() {
+  return strapiGetAllPages(ARTISTS_PATH);
 }
 
 async function main() {

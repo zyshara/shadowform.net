@@ -5,7 +5,7 @@
 
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { readSeedData } from "@/utils/readSeedData";
+import { readSeedData } from "@shared/utils/readSeedData";
 
 const ExternalIcon = () => (
   <svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">

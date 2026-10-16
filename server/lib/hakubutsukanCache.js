@@ -1,20 +1,22 @@
-// In-memory singleton for normalized hakubutsukan data. Same pattern as
+// In-memory singletons for normalized hakubutsukan data. Same pattern as
 // strapiCatalogCache.js — fetchAndCacheHakubutsukanData.js writes here;
 // server/routes/spas.js reads to seed the client bundle per request.
 
-let museums    = [];
-let exhibits   = [];
-let heroImages = [];
-let tags       = [];
+import { createEntityCache } from "./createEntityCache.js";
 
-export function getMuseums()    { return museums;    }
-export function setMuseums(v)   { museums = v;       }
+const museumsCache    = createEntityCache([]);
+const exhibitsCache   = createEntityCache([]);
+const heroImagesCache = createEntityCache([]);
+const tagsCache       = createEntityCache([]);
 
-export function getExhibits()   { return exhibits;   }
-export function setExhibits(v)  { exhibits = v;      }
+export const getMuseums = museumsCache.get;
+export const setMuseums = museumsCache.set;
 
-export function getHeroImages()  { return heroImages; }
-export function setHeroImages(v) { heroImages = v;    }
+export const getExhibits = exhibitsCache.get;
+export const setExhibits = exhibitsCache.set;
 
-export function getTags()        { return tags;       }
-export function setTags(v)       { tags = v;          }
+export const getHeroImages = heroImagesCache.get;
+export const setHeroImages = heroImagesCache.set;
+
+export const getTags = tagsCache.get;
+export const setTags = tagsCache.set;

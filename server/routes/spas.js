@@ -3,7 +3,7 @@ import { fileURLToPath } from "url";
 import { readFileSync } from "fs";
 import express from "express";
 import { loadMetadata, resolvePageMetadata } from "../lib/metadata.js";
-import { getDiscography, getMerch, getShows, getAboutPage } from "../lib/bandcampCache.js";
+import { getMerch, getShows, getAboutPage } from "../lib/bandcampCache.js";
 import { getCatalogItems } from "../lib/strapiCatalogCache.js";
 import { getArtists } from "../lib/strapiArtistCache.js";
 import { getMuseums, getExhibits, getHeroImages, getTags } from "../lib/hakubutsukanCache.js";
@@ -123,7 +123,6 @@ export function registerSpaRoutes(app) {
     if (!isDomeofdoom) return next();
     domeofdoomStatic(req, res, () => {
       let html = readFileSync(domeofdoomIndex, "utf8");
-      html = injectJsonData(html, "discography-data", getDiscography());
       html = injectJsonData(html, "roster-data", withCacheBustedPhotos(getArtists()));
       html = injectJsonData(html, "merch-data", getMerch());
       html = injectJsonData(html, "shows-data", getShows());

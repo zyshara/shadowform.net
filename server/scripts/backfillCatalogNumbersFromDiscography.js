@@ -29,11 +29,10 @@
 //   node --env-file=.env server/scripts/backfillCatalogNumbersFromDiscography.js --dry-run
 //   node --env-file=.env server/scripts/backfillCatalogNumbersFromDiscography.js
 
-import { strapiGet, strapiPut } from "../lib/strapi.js";
+import { strapiGetAllPages, strapiPut } from "../lib/strapi.js";
 
 const DISCOGRAPHY_URL = "https://www.domeofdoom.org/artists";
 const CATALOG_ITEMS_PATH = "/api/dome-of-doom-catalog-items";
-const PAGE_SIZE = 100;
 const WRITE_DELAY_MS = 150;
 
 const DRY_RUN = process.argv.includes("--dry-run");
@@ -78,24 +77,8 @@ async function fetchDiscographyEntries() {
   return entries;
 }
 
-async function fetchAllCatalogItems() {
-  const all = [];
-  let page = 1;
-  while (true) {
-    const res = await strapiGet(
-      CATALOG_ITEMS_PATH,
-      {
-        "populate[overrides][populate]": "*",
-        "pagination[page]": page,
-        "pagination[pageSize]": PAGE_SIZE,
-      },
-      { noCache: true }
-    );
-    all.push(...res.data);
-    if (page >= res.meta.pagination.pageCount) break;
-    page++;
-  }
-  return all;
+function fetchAllCatalogItems() {
+  return strapiGetAllPages(CATALOG_ITEMS_PATH, { "populate[overrides][populate]": "*" });
 }
 
 // "https://gnomebeats.bandcamp.com/album/las-formas-en-flujo-2" -> "las-formas-en-flujo-2"

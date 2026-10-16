@@ -3,6 +3,7 @@
 import { strapiGet, strapiPost, strapiUploadMedia, strapiPut, invalidateCache } from "../lib/strapi.js";
 import { normalizeEntry, normalizeGuestbook } from "../models/guestbook.js";
 import { logger } from "../lib/logger.js";
+import { createRateLimiter } from "../lib/rateLimit.js";
 
 // ── config ────────────────────────────────────────────────────────────────────
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
@@ -10,30 +11,7 @@ const RATE_LIMIT_MAX       = 3;               // posts per IP per window
 const TAG_CACHE_TTL        = 5 * 60 * 1000;  // 5 minutes
 
 // ── IP rate limiter ───────────────────────────────────────────────────────────
-const rateLimitStore = new Map();
-
-function checkRateLimit(ip) {
-  const now   = Date.now();
-  const entry = rateLimitStore.get(ip);
-
-  if (!entry || now > entry.resetAt) {
-    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
-    return { allowed: true };
-  }
-  if (entry.count >= RATE_LIMIT_MAX) {
-    return { allowed: false, retryAfter: Math.ceil((entry.resetAt - now) / 60) };
-  }
-  entry.count++;
-  return { allowed: true };
-}
-
-// Prune stale entries hourly
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, entry] of rateLimitStore) {
-    if (now > entry.resetAt) rateLimitStore.delete(ip);
-  }
-}, RATE_LIMIT_WINDOW_MS);
+const checkRateLimit = createRateLimiter({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX });
 
 // ── tag cache — fetched from Guestbook single type ────────────────────────────
 // Shape: [{ id, label }]
@@ -99,9 +77,9 @@ export function registerGuestbookRoutes(app, express) {
 
     const rate = checkRateLimit(ip);
     if (!rate.allowed) {
-      res.setHeader("Retry-After", String(rate.retryAfter * 60));
+      res.setHeader("Retry-After", String(Math.ceil(rate.retryAfterMs / 1000)));
       return res.status(429).json({
-        error: `too many posts — try again in ${rate.retryAfter} minutes`,
+        error: `too many posts — try again in ${Math.ceil(rate.retryAfterMs / 60000)} minutes`,
       });
     }
 

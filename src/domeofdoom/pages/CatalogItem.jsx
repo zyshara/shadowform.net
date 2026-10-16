@@ -8,7 +8,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { useParams, Link } from "react-router-dom";
-import { readSeedData } from "@/utils/readSeedData";
+import { readSeedData } from "@shared/utils/readSeedData";
 import { findByCatalogParam } from "@/utils/catalogItemSlug";
 import { artistSlug } from "@/utils/artistSlug";
 import SubpageHeader from "@/components/SubpageHeader";

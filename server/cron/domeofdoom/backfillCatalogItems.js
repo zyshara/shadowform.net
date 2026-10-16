@@ -19,14 +19,13 @@
 // A human confirms the real value in overrides.label_role; derived's guess
 // is never treated as final (see conversation history re: Alpha Dog).
 
-import { strapiGet, strapiPost, strapiPut } from "../../lib/strapi.js";
+import { strapiGetAllPages, strapiPost, strapiPut } from "../../lib/strapi.js";
 import { slugifyArtistName, resolveArtistNamesFromRawItem, loadArtistCache, ensureArtist } from "../../lib/artists.js";
 import { logger } from "../../lib/logger.js";
 
 const RAW_ITEMS_PATH = "/api/dome-of-doom-bandcamp-item-raws";
 const CATALOG_ITEMS_PATH = "/api/dome-of-doom-catalog-items";
 const FORMATS_PATH = "/api/dome-of-doom-formats";
-const PAGE_SIZE = 100;
 const WRITE_DELAY_MS = 150;
 
 function sleep(ms) {
@@ -38,50 +37,21 @@ async function fetchMusicRawItems() {
   // support $contains against json-array values (500s), so item_type is
   // filtered server-side and the sources-includes-"music" check happens
   // client-side below instead.
-  const all = [];
-  let page = 1;
-  while (true) {
-    const res = await strapiGet(
-      RAW_ITEMS_PATH,
-      {
-        "filters[item_type][$in][0]": "album",
-        "filters[item_type][$in][1]": "track",
-        "pagination[page]": page,
-        "pagination[pageSize]": PAGE_SIZE,
-      },
-      { noCache: true }
-    );
-    for (const entry of res.data) {
-      if (Array.isArray(entry.sources) && entry.sources.includes("music")) {
-        all.push(entry);
-      }
-    }
-    if (page >= res.meta.pagination.pageCount) break;
-    page++;
-  }
-  return all;
+  const entries = await strapiGetAllPages(RAW_ITEMS_PATH, {
+    "filters[item_type][$in][0]": "album",
+    "filters[item_type][$in][1]": "track",
+  });
+  return entries.filter((entry) => Array.isArray(entry.sources) && entry.sources.includes("music"));
 }
 
 async function loadExistingCatalogItems() {
+  const entries = await strapiGetAllPages(CATALOG_ITEMS_PATH, { "fields[0]": "bandcamp_url" });
+
   const byUrl = new Map();
-  let page = 1;
-  while (true) {
-    const res = await strapiGet(
-      CATALOG_ITEMS_PATH,
-      {
-        "fields[0]": "bandcamp_url",
-        "pagination[page]": page,
-        "pagination[pageSize]": PAGE_SIZE,
-      },
-      { noCache: true }
-    );
-    for (const entry of res.data) {
-      const url = entry.bandcamp_url ?? entry.attributes?.bandcamp_url;
-      const docId = entry.documentId ?? entry.id;
-      if (url) byUrl.set(url, docId);
-    }
-    if (page >= res.meta.pagination.pageCount) break;
-    page++;
+  for (const entry of entries) {
+    const url = entry.bandcamp_url ?? entry.attributes?.bandcamp_url;
+    const docId = entry.documentId ?? entry.id;
+    if (url) byUrl.set(url, docId);
   }
   return byUrl;
 }
@@ -89,21 +59,13 @@ async function loadExistingCatalogItems() {
 // ─── Formats (DomeOfDoomFormat lookup) ──────────────────────────────────────
 
 async function loadFormatCache() {
+  const entries = await strapiGetAllPages(FORMATS_PATH);
+
   const byName = new Map();
-  let page = 1;
-  while (true) {
-    const res = await strapiGet(
-      FORMATS_PATH,
-      { "pagination[page]": page, "pagination[pageSize]": PAGE_SIZE },
-      { noCache: true }
-    );
-    for (const entry of res.data) {
-      const name = entry.name ?? entry.attributes?.name;
-      const docId = entry.documentId ?? entry.id;
-      if (name) byName.set(name, docId);
-    }
-    if (page >= res.meta.pagination.pageCount) break;
-    page++;
+  for (const entry of entries) {
+    const name = entry.name ?? entry.attributes?.name;
+    const docId = entry.documentId ?? entry.id;
+    if (name) byName.set(name, docId);
   }
   return byName;
 }

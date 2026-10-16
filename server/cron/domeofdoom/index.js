@@ -7,7 +7,6 @@ import { scrapeBandcampAndSyncStrapi } from "./scrapeBandcampAndSyncStrapi.js";
 import { backfillCatalogItems } from "./backfillCatalogItems.js";
 import { backfillArtistSpotify } from "./backfillArtistSpotify.js";
 import { fetchAndCacheStrapiData } from "./fetchAndCacheStrapiData.js";
-import { syncDiscography } from "./syncDiscography.js";
 import { syncAboutPage } from "./syncAboutPage.js";
 import { syncShows } from "./syncShows.js";
 import { syncAllArtistStats } from "./syncStats.js";
@@ -52,9 +51,6 @@ export function startDomeOfDoomCron() {
   );
 
   // ── Daily data syncs (run on startup + every 24h) ───────────────────────
-  runSafe("discography sync", syncDiscography);
-  setInterval(() => runSafe("discography sync", syncDiscography), ONE_DAY_MS);
-
   runRosterThenShows();
   setInterval(runRosterThenShows, ONE_DAY_MS);
 

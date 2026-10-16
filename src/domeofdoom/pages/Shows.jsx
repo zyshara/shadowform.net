@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
-import { readSeedData } from "@/utils/readSeedData";
+import { readSeedData } from "@shared/utils/readSeedData";
 import { colors } from "@/tokens";
 import SubpageHeader from "@/components/SubpageHeader";
 import Button from "@/components/Button";
