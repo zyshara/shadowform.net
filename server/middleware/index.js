@@ -37,9 +37,6 @@ export function noCacheHtml(req, res, next) {
    Strip trailing slashes
 ─────────────────────────────────────────────── */
 export function stripTrailingSlash(req, res, next) {
-  // Do NOT touch swatchbook URLs
-  if (req.originalUrl.startsWith("/creative/swatchbook")) return next();
-
   if (req.originalUrl.length > 1 && req.originalUrl.endsWith("/")) {
     return res.redirect(301, req.originalUrl.slice(0, -1));
   }

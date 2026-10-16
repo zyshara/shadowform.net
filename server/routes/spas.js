@@ -6,7 +6,6 @@ import { loadMetadata, resolvePageMetadata } from "../lib/metadata.js";
 import { getMerch, getShows, getAboutPage } from "../lib/bandcampCache.js";
 import { getCatalogItems } from "../lib/strapiCatalogCache.js";
 import { getArtists } from "../lib/strapiArtistCache.js";
-import { getMuseums, getExhibits, getHeroImages, getTags } from "../lib/hakubutsukanCache.js";
 import { withCacheBust } from "../lib/cacheBustToken.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -81,11 +80,6 @@ export function registerSpaRoutes(app) {
   // Shared static assets (served at root)
   app.use("/shared", express.static(path.join(root, "public/shared")));
 
-  // jenis32 character creator assets (manifest, part images, reference
-  // renders) — large binary art, served as-is rather than run through
-  // webpack like src/jenis32/assets.
-  app.use("/character-assets", express.static(path.join(root, "public/character-assets")));
-
   /* ── Redspear SPA (subdomain) ── */
   const redspearIndex  = path.join(root, "dist/redspear/index.html");
   const redspearStatic = express.static(path.join(root, "dist/redspear"));
@@ -130,40 +124,6 @@ export function registerSpaRoutes(app) {
       html = injectJsonData(html, "catalog-items-data", getCatalogItems());
       res.type("html").send(html);
     });
-  });
-
-  /* ── Hakubutsukan SPA (subdomain) ── */
-  const hakubutsukanIndex  = path.join(root, "dist/hakubutsukan/index.html");
-  const hakubutsukanStatic = express.static(path.join(root, "dist/hakubutsukan"), { index: false });
-  app.use((req, res, next) => {
-    const host = req.header("host") || "";
-    if (!host.split(":")[0].startsWith("hakubutsukan-la.")) return next();
-    hakubutsukanStatic(req, res, () => {
-      let html = readFileSync(hakubutsukanIndex, "utf8");
-      html = injectJsonData(html, "museums-data",     getMuseums());
-      html = injectJsonData(html, "exhibits-data",    getExhibits());
-      html = injectJsonData(html, "hero-images-data", getHeroImages());
-      html = injectJsonData(html, "tags-data",        getTags());
-      res.type("html").send(html);
-    });
-  });
-
-  /* ── jenis32 SPA (subdomain) ── */
-  const jenis32Index  = path.join(root, "dist/jenis32/index.html");
-  const jenis32Static = express.static(path.join(root, "dist/jenis32"));
-  app.use((req, res, next) => {
-    const host = req.header("host") || "";
-    if (!host.split(":")[0].startsWith("jenis32.")) return next();
-    jenis32Static(req, res, () => {
-      res.sendFile(jenis32Index);
-    });
-  });
-
-  /* ── Swatchbook SPA ── */
-  app.use("/creative/swatchbook", express.static(path.join(root, "dist/swatchbook")));
-  app.use("/creative/swatchbook", (req, res, next) => {
-    if (req.path.includes(".")) return next();
-    res.sendFile(path.join(root, "dist/swatchbook/index.html"));
   });
 
   /* ── Preserved archived sites ── */

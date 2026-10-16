@@ -107,8 +107,6 @@ const fromMetadata = (metadata) => ({
 const redspearMetadata      = loadMetadata(path.join(__dirname, "src/redspear/metadata.json"));
 const lowPolyMetadata       = loadMetadata(path.join(__dirname, "src/low-poly/metadata.json"));
 const domeofdoomMetadata    = loadMetadata(path.join(__dirname, "src/domeofdoom/metadata.json"));
-const hakubutsukanMetadata  = loadMetadata(path.join(__dirname, "src/hakubutsukan/metadata.json"));
-const jenis32Metadata       = loadMetadata(path.join(__dirname, "src/jenis32/metadata.json"));
 
 export default [
   makeConfig({
@@ -154,37 +152,6 @@ export default [
     umamiId: "cdea5119-53fc-4bbe-9c3a-4dc923b3489e",
     alias: {
       "@": path.resolve(__dirname, "src/main"),
-      "@shared": path.resolve(__dirname, "src/shared"),
-    },
-  }),
-  makeConfig({
-    entry: "./src/hakubutsukan/index.js",
-    outputPath: "dist/hakubutsukan",
-    publicPath: "/",
-    ...fromMetadata(hakubutsukanMetadata),
-    alias: {
-      "@": path.resolve(__dirname, "src/hakubutsukan"),
-      "@shared": path.resolve(__dirname, "src/shared"),
-    },
-  }),
-  makeConfig({
-    entry: "./src/jenis32/index.js",
-    outputPath: "dist/jenis32",
-    publicPath: "/",
-    ...fromMetadata(jenis32Metadata),
-    faviconHref: "/shared/jenis32-favicon.png",
-    alias: {
-      "@": path.resolve(__dirname, "src/jenis32"),
-      "@shared": path.resolve(__dirname, "src/shared"),
-    },
-  }),
-  makeConfig({
-    entry: "./src/swatchbook/index.js",
-    outputPath: "dist/swatchbook",
-    publicPath: "/creative/swatchbook/",
-    title: "🖤 swatchbook - 𝔰𝔥𝔞𝔡𝔬𝔴𝔣𝔬𝔯𝔪 . 𝔫𝔢𝔱 🩷",
-    alias: {
-      "@": path.resolve(__dirname, "src/swatchbook"),
       "@shared": path.resolve(__dirname, "src/shared"),
     },
   }),
