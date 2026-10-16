@@ -156,6 +156,15 @@ export async function strapiPut(path, payload) {
   return res.json();
 }
 
+// Resolves a Strapi media relation's `url` (which Strapi returns relative
+// to itself) into an absolute URL the client can load directly.
+export function resolveMediaUrl(media) {
+  const url = media?.url;
+  if (!url) return null;
+  if (/^https?:\/\//.test(url)) return url;
+  return `${STRAPI_URL}${url}`;
+}
+
 export function invalidateCache(path, params = {}) {
   if (!path) {
     cache.clear();

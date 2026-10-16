@@ -14,10 +14,10 @@
 // for the shared user pool instead of one app's own content types.
 
 import express from "express";
-import { requireAuth } from "../middleware/index.js";
-import { createRateLimiter } from "../lib/rateLimit.js";
-import { logger } from "../lib/logger.js";
-import { strapiGet, strapiPost } from "../lib/strapi.js";
+import { requireAuth } from "#middleware/index.js";
+import { createRateLimiter } from "#lib/rateLimit.js";
+import { logger } from "#lib/logger.js";
+import { strapiGet, strapiPost } from "#lib/strapi.js";
 
 const STRAPI_URL = process.env.STRAPI_API_URL || "https://strapi-shadowform-52c53315c615.herokuapp.com";
 const jsonBody = express.json();

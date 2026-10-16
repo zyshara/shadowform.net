@@ -14,6 +14,20 @@
   "author": "Jennifer Decker (@zyshara)",
   "type": "module",
   "main": "index.js",
+  "imports": {
+    "#lib/*": "./server/lib/*",
+    "#api/*": "./server/api/*",
+    "#models/*": "./server/models/*",
+    "#automation/*": "./server/automation/*",
+    "#auth/*": "./server/auth/*",
+    "#middleware/*": "./server/middleware/*",
+    "#routes/*": "./server/routes/*",
+    "#cron/*": "./server/cron/*",
+    "#apps/domeofdoom/*": "./server/apps/domeofdoom/*",
+    "#apps/shadowform/*": "./server/apps/shadowform/*",
+    "#apps/redspear/*": "./server/apps/redspear/*",
+    "#apps/low-poly/*": "./server/apps/low-poly/*"
+  },
   "scripts": {
     "build": "webpack --config webpack.config.js --mode production && node scripts/generate-sitemap.mjs",
     "start": "node server.js",

@@ -1,0 +1,99 @@
+{
+  "domeofdoom": {
+    "hostnames": ["domeofdoom.org", "www.domeofdoom.org", "domeofdoom.shadowform.net", "domeofdoom.localhost"],
+    "canonicalHost": "www.domeofdoom.org",
+    "srcDir": "src/domeofdoom",
+    "distDir": "dist/domeofdoom",
+    "umamiId": "f03272b4-9036-480e-a5bf-bfe23548c0b5",
+    "faviconHref": "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785389998/DOD_LOGO_transparent_2f6232f4c2.png",
+    "preloadFonts": ["/fonts/Archivo-VariableFont_wdth,wght.woff2"],
+    "metadata": {
+      "title": "Dome of Doom",
+      "description": "Dome of Doom Records is an independent, artist-owned record label based in Los Angeles, CA. Home to Wylie Cable, Daedelus, Bleep Bloop, and more.",
+      "url": "https://www.domeofdoom.org/",
+      "image": "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785389998/DOD_LOGO_transparent_2f6232f4c2.png",
+      "jsonLd": {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Dome of Doom Records",
+        "alternateName": "Dome of Doom",
+        "url": "https://www.domeofdoom.org",
+        "logo": "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785389998/DOD_LOGO_transparent_2f6232f4c2.png",
+        "description": "Dome of Doom Records is an independent, artist-owned record label based in Los Angeles, CA, founded in 2011 by musician and record producer Wylie Cable.",
+        "foundingDate": "2011",
+        "foundingLocation": {
+          "@type": "Place",
+          "name": "Los Angeles, California, USA"
+        },
+        "genre": ["Electronic", "Hip Hop", "Experimental", "Beat Music"],
+        "sameAs": [
+          "https://domeofdoom.bandcamp.com",
+          "https://www.instagram.com/domeofdoom",
+          "https://x.com/domeofdoom",
+          "https://www.youtube.com/domeofdoomrecords",
+          "https://en.wikipedia.org/wiki/Dome_of_Doom"
+        ]
+      }
+    }
+  },
+  "redspear": {
+    "hostnames": ["redspear.shadowform.net", "redspear.localhost"],
+    "canonicalHost": "redspear.shadowform.net",
+    "srcDir": "src/redspear",
+    "distDir": "dist/redspear",
+    "umamiId": "0bf57e1c-2c3f-4f39-80f6-31a7cf393705",
+    "artistSlug": "redspear",
+    "metadata": {
+      "title": "Red Spear",
+      "description": "Hard techno from LA- aggressive, mechanical, from the darkest corners of the internet",
+      "url": "https://redspear.shadowform.net/",
+      "image": "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1784683365/Red_Spear_OG_Tag_8cd6dc03db.png",
+      "jsonLd": {
+        "@context": "https://schema.org",
+        "@type": "MusicGroup",
+        "name": "Red Spear",
+        "url": "https://redspear.shadowform.net",
+        "image": "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1775258559/redspear_icon_49596002d5.png",
+        "genre": ["Electronic", "Hard Techno", "Dark Ambient", "Techno"],
+        "description": "Hard techno from LA- aggressive, mechanical, from the darkest corners of the internet"
+      },
+      "pages": {
+        "epk": {
+          "title": "Artist Press Kit",
+          "url": "https://redspear.shadowform.net/epk"
+        }
+      }
+    }
+  },
+  "low-poly": {
+    "hostnames": ["low-poly.shadowform.net", "low-poly.localhost"],
+    "canonicalHost": "low-poly.shadowform.net",
+    "srcDir": "src/low-poly",
+    "distDir": "dist/low-poly",
+    "umamiId": "47f76d43-46c9-46aa-9343-d5599838342e",
+    "artistSlug": "low-poly",
+    "metadata": {
+      "title": "Low Poly",
+      "description": "Forward-thinking bass music with releases on mau5trap, Jadū Dala, and Space Yacht",
+      "url": "https://low-poly.shadowform.net/",
+      "image": "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1775258559/lowpoly_icon_4502a47996.png",
+      "pages": {
+        "epk": {
+          "title": "Artist Press Kit",
+          "url": "https://low-poly.shadowform.net/epk"
+        }
+      }
+    }
+  },
+  "shadowform": {
+    "hostnames": ["shadowform.net", "www.shadowform.net", "shadowform.localhost", "localhost", "127.0.0.1"],
+    "canonicalHost": "shadowform.net",
+    "srcDir": "src/shadowform",
+    "distDir": "dist/shadowform",
+    "umamiId": "cdea5119-53fc-4bbe-9c3a-4dc923b3489e",
+    "isCatchAll": true,
+    "metadata": {
+      "title": "🖤 𝔰𝔥𝔞𝔡𝔬𝔴𝔣𝔬𝔯𝔪 . 𝔫𝔢𝔱 🩷"
+    }
+  }
+}

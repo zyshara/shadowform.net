@@ -1,5 +1,15 @@
+// server/middleware/index.js
+//
+// Generic, tenant-agnostic Express middleware applied to every request in
+// server.js: HTTPS/host redirects, no-cache for HTML, trailing-slash
+// stripping, and the shared-Strapi-user-pool auth guard.
+
 /* ───────────────────────────────────────────────
    SSL redirect (safe)
+
+   Host canonicalization (www stripping, domeofdoom.org vs. its
+   subdomain, etc.) is handled separately by canonicalHostRedirect
+   (see lib/appsConfig.js) — this one only upgrades http -> https.
 ─────────────────────────────────────────────── */
 export function sslRedirect(req, res, next) {
   const host = req.header("host") || "";
@@ -8,10 +18,6 @@ export function sslRedirect(req, res, next) {
 
   if (hostname === "localhost" || hostname === "127.0.0.1" || hostname.endsWith(".localhost")) {
     return next();
-  }
-
-  if (hostname === "www.shadowform.net") {
-    return res.redirect(302, `https://shadowform.net${req.url}`);
   }
 
   if (proto !== "https") {

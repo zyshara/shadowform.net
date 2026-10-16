@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useFavicon } from "@shared/hooks/useFavicon";
 import { formatPageTitle } from "@shared/utils/pageTitle";
@@ -451,19 +450,19 @@ function LinksRow({ links }) {
 }
 
 // ── Root ──────────────────────────────────────────────────────────────────────
-export default function EPK({ slug: slugProp }) {
-  const params = useParams();
-  const slug = slugProp ?? params.slug;
+// No slug prop/param needed — the subdomain already tells the server which
+// artist's EPK to return (see config/apps.json's artistSlug).
+export default function EPK() {
   const [epk, setEpk] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/epk/${slug}`)
+    fetch("/api/epk")
       .then((r) => r.json())
       .then(({ data }) => setEpk(data ?? null))
       .catch(() => setEpk(null))
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, []);
 
   useFavicon(epk?.artist?.icon ?? null);
 

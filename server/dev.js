@@ -1,3 +1,9 @@
+// server/dev.js
+//
+// Wires up livereload for the dev server — watches dist/ and refreshes the
+// browser once webpack's watch build finishes. Only called in dev
+// (NODE_ENV !== "production"), see server.js.
+
 import path from "path";
 import { fileURLToPath } from "url";
 

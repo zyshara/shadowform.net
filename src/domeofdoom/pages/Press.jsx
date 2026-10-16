@@ -186,7 +186,7 @@ export default function Press() {
   const [sortOrder, setSortOrder] = useState("newest");
 
   useEffect(() => {
-    fetch("/api/domeofdoom/press")
+    fetch("/api/press")
       .then((r) => r.json())
       .then((d) => { setItems(d.items ?? []); setLoading(false); })
       .catch(() => { setError("Failed to load press items."); setLoading(false); });

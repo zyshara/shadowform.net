@@ -10,7 +10,7 @@ const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/epk" element={<EPK slug="redspear" />} />
+      <Route path="/epk" element={<EPK />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

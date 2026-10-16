@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import path from "path";
 import webpack from "webpack";
 import { fileURLToPath } from "url";
-import { loadMetadata } from "./server/lib/metadata.js";
+import { appsConfig } from "./server/lib/appsConfig.js";
 
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
@@ -92,67 +92,25 @@ const makeConfig = ({
   ],
 });
 
-// Converts a loaded metadata.json (see server/lib/metadata.js) into
-// makeConfig's metadata-related params.
-const fromMetadata = (metadata) => ({
-  title: metadata.title,
-  siteName: metadata.title,
-  description: metadata.description,
-  ogImage: metadata.image ?? null,
-  canonicalUrl: metadata.url ?? null,
-  jsonLd: metadata.jsonLd ?? null,
-  robots: metadata.robots ?? "index, follow",
+// Converts one app's config/apps.json entry into makeConfig's params.
+const configFor = (app) => ({
+  entry: `./${app.srcDir}/index.js`,
+  outputPath: app.distDir,
+  publicPath: "/",
+  title: app.metadata.title,
+  siteName: app.metadata.title,
+  description: app.metadata.description,
+  ogImage: app.metadata.image ?? null,
+  canonicalUrl: app.metadata.url ?? null,
+  jsonLd: app.metadata.jsonLd ?? null,
+  robots: app.metadata.robots ?? "index, follow",
+  umamiId: app.umamiId ?? null,
+  faviconHref: app.faviconHref,
+  preloadFonts: app.preloadFonts ?? [],
+  alias: {
+    "@": path.resolve(__dirname, app.srcDir),
+    "@shared": path.resolve(__dirname, "src/shared"),
+  },
 });
 
-const redspearMetadata      = loadMetadata(path.join(__dirname, "src/redspear/metadata.json"));
-const lowPolyMetadata       = loadMetadata(path.join(__dirname, "src/low-poly/metadata.json"));
-const domeofdoomMetadata    = loadMetadata(path.join(__dirname, "src/domeofdoom/metadata.json"));
-
-export default [
-  makeConfig({
-    entry: "./src/redspear/index.js",
-    outputPath: "dist/redspear",
-    publicPath: "/",
-    ...fromMetadata(redspearMetadata),
-    umamiId: "0bf57e1c-2c3f-4f39-80f6-31a7cf393705",
-    alias: {
-      "@": path.resolve(__dirname, "src/redspear"),
-      "@shared": path.resolve(__dirname, "src/shared"),
-    },
-  }),
-  makeConfig({
-    entry: "./src/domeofdoom/index.js",
-    outputPath: "dist/domeofdoom",
-    publicPath: "/",
-    ...fromMetadata(domeofdoomMetadata),
-    faviconHref: "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785389998/DOD_LOGO_transparent_2f6232f4c2.png",
-    preloadFonts: ["/fonts/Archivo-VariableFont_wdth,wght.woff2"],
-    umamiId: "f03272b4-9036-480e-a5bf-bfe23548c0b5",
-    alias: {
-      "@": path.resolve(__dirname, "src/domeofdoom"),
-      "@shared": path.resolve(__dirname, "src/shared"),
-    },
-  }),
-  makeConfig({
-    entry: "./src/low-poly/index.js",
-    outputPath: "dist/low-poly",
-    publicPath: "/",
-    ...fromMetadata(lowPolyMetadata),
-    umamiId: "47f76d43-46c9-46aa-9343-d5599838342e",
-    alias: {
-      "@": path.resolve(__dirname, "src/low-poly"),
-      "@shared": path.resolve(__dirname, "src/shared"),
-    },
-  }),
-  makeConfig({
-    entry: "./src/main/index.js",
-    outputPath: "dist/main",
-    publicPath: "/",
-    title: "🖤 𝔰𝔥𝔞𝔡𝔬𝔴𝔣𝔬𝔯𝔪 . 𝔫𝔢𝔱 🩷",
-    umamiId: "cdea5119-53fc-4bbe-9c3a-4dc923b3489e",
-    alias: {
-      "@": path.resolve(__dirname, "src/main"),
-      "@shared": path.resolve(__dirname, "src/shared"),
-    },
-  }),
-];
+export default Object.values(appsConfig).map((app) => makeConfig(configFor(app)));
