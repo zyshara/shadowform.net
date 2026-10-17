@@ -54,6 +54,25 @@
 }
 #rs-enter-button:hover { background: black; color: #ff0000; }
 
+#rs-enter-button { opacity: 0; visibility: hidden; }
+#rs-enter-button.rs-enter-ready {
+  visibility: visible;
+  animation: rsEnterReveal 550ms ease-out forwards;
+}
+@keyframes rsEnterReveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.rs-splash-wordmark,
+.rs-vhs-wrap { opacity: 0; }
+.rs-splash-wordmark.rs-wordmark-ready,
+.rs-active .rs-vhs-wrap { animation: rsEnterReveal 550ms ease-out forwards; }
+@media (prefers-reduced-motion: reduce) {
+  #rs-enter-button.rs-enter-ready { animation: none; opacity: 1; }
+  .rs-splash-wordmark.rs-wordmark-ready,
+  .rs-active .rs-vhs-wrap { animation: none; opacity: 1; }
+}
+
 .rs-vhs-wrap {
   position: relative;
   overflow: hidden;

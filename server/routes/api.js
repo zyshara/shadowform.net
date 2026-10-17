@@ -11,8 +11,6 @@
 import express from "express";
 import { registerShadowformApi } from "#apps/shadowform/registerApi.js";
 import { registerDomeOfDoomApi } from "#apps/domeofdoom/registerApi.js";
-import { registerRedspearApi } from "#apps/redspear/registerApi.js";
-import { registerLowPolyApi } from "#apps/low-poly/registerApi.js";
 import { requireAppHost } from "#lib/appsConfig.js";
 
 function mount(app, appId, register) {
@@ -25,6 +23,4 @@ function mount(app, appId, register) {
 export function registerApiRoutes(app) {
   mount(app, "shadowform", registerShadowformApi);
   mount(app, "domeofdoom", registerDomeOfDoomApi);
-  mount(app, "redspear", registerRedspearApi);
-  mount(app, "low-poly", registerLowPolyApi);
 }

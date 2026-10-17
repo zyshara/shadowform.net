@@ -13,10 +13,10 @@ it. If a file here ever needs to know "which app," it belongs in
 - `appsConfig.js` — reads `config/apps.json` once; exports `matchesAppHost`/
   `requireAppHost` (the host-scoping each app's `registerApi`/`registerSpa`
   uses) and `canonicalHostRedirect`.
-- `epk.js` — `getEpkBySlug`: the Strapi fetch shared by redspear's and
-  low-poly's own `/api/epk` routes — each passes its own fixed
-  `artistSlug` from `config/apps.json` (see `server/apps/README.md` for
-  why the fetch is shared but the route registration isn't).
+- `epk.js` — `getEpkBySlug`: the cached Strapi fetch shared by the Redspear
+  and Low Poly SSR route loaders, scoped by each tenant's fixed `artistSlug`.
+- `registerSsrApp.js` — shared tenant SSR registration, Vite middleware in
+  development and built client/server assets in production.
 - `logger.js` — the shared logger.
 - `rateLimit.js` — `createRateLimiter`: a per-IP in-memory rate limiter
   factory, used by contact/guestbook/auth routes.

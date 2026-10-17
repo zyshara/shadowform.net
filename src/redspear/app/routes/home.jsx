@@ -41,8 +41,22 @@ export default function Home() {
   const [fadingOut, setFadingOut] = useState(false);
   const [wordmarkReady, setWordmarkReady] = useState(false);
   const [wordmarkFailed, setWordmarkFailed] = useState(false);
+  const [splashWordmarkReady, setSplashWordmarkReady] = useState(false);
   const enterTimer = useRef(null);
   const wordmark = useRef(null);
+  const splashWordmark = useRef(null);
+
+  useEffect(() => {
+    const img = splashWordmark.current;
+    let cancelled = false;
+    const reveal = async () => {
+      try { await img.decode(); } catch { return; }
+      if (!cancelled) setSplashWordmarkReady(true);
+    };
+    img.addEventListener("load", reveal);
+    if (img.complete && img.naturalWidth) reveal();
+    return () => { cancelled = true; img.removeEventListener("load", reveal); };
+  }, []);
 
   useEffect(() => () => clearTimeout(enterTimer.current), []);
 
@@ -110,6 +124,8 @@ export default function Home() {
         <div id="rs-splash-screen" className={fadingOut ? "rs-fade-out" : ""}>
           <div className="w-full max-w-[1200px] px-5">
             <img
+              ref={splashWordmark}
+              className={`rs-splash-wordmark${splashWordmarkReady ? " rs-wordmark-ready" : ""}`}
               src={BLACK_WORDMARK}
               width={1920} height={1080} fetchPriority="high"
               alt="Red Spear"
@@ -118,8 +134,9 @@ export default function Home() {
           </div>
 
           <div className="absolute bottom-10 left-0 right-0 flex items-center justify-center px-5">
-            <button id="rs-enter-button" onClick={handleEnter} disabled={!wordmarkReady || fadingOut}>
-              {wordmarkReady ? "Enter" : "Loading…"}
+            <button id="rs-enter-button" className={wordmarkReady ? "rs-enter-ready" : ""}
+              onClick={handleEnter} disabled={!wordmarkReady || fadingOut}>
+              Enter
             </button>
           </div>
         </div>

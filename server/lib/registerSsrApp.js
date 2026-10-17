@@ -28,12 +28,7 @@ export function registerSsrApp(app, appId, hmrPort) {
       viteDevServer.middlewares(req, res, async (err) => {
         if (err) return next(err);
         try {
-          // Mirrors react-router's own internal dev-middleware (vite.js) —
-          // Vite's Environment API `runner`, not the older `ssrLoadModule`,
-          // and the request/response adapter react-router itself uses
-          // (@remix-run/node-fetch-server), not @react-router/express's —
-          // since that combination is what's actually tested against this
-          // Vite/react-router version pairing.
+          // Use React Router's Environment API runner and Node fetch adapter.
           const build = await viteDevServer.environments.ssr.runner.import(
             "virtual:react-router/server-build"
           );

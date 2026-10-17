@@ -1,10 +1,7 @@
 // server/lib/epk.js
 //
-// Shared Strapi fetch for one artist's EPK page by slug. Used by both
-// redspear and low-poly's own registerApi.js — they're the two apps with
-// an EPK page, each registering their own /api/epk route (no slug param —
-// the subdomain already identifies the artist) scoped to their own
-// hostnames, both calling into this one fetch.
+// Shared Strapi fetch for the Redspear and Low Poly SSR route loaders.
+// Each loader supplies its tenant's fixed artistSlug from config/apps.json.
 
 import { strapiGet } from "./strapi.js";
 import { artistPopulate } from "./populate.js";

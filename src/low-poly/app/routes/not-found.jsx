@@ -1,4 +1,8 @@
-import React from "react";
+import { data } from "react-router";
+
+export function loader() {
+  return data(null, { status: 404 });
+}
 
 const NotFound = () => {
   return (

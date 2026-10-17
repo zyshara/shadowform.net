@@ -1,16 +1,16 @@
-# server/apps/redspear/
+# Redspear
 
-The redspear.shadowform.net site. No Strapi models of its own — the EPK
-response shape comes from the shared `server/models/epk.js`.
+`registerSpa.js` mounts this tenant through `server/lib/registerSsrApp.js`:
+Vite middleware in development (HMR port 24678), built client assets and
+React Router SSR in production.
 
-## Contents
+Routes live in `src/redspear/app`: `/`, `/epk`, and a catch-all returning 404.
+The EPK route loader calls `server/lib/epk.js` with the tenant's fixed
+`artistSlug`, then normalizes the result with `server/models/epk.js`.
+There is no standalone `/api/epk` endpoint.
 
-- `registerApi.js` — `registerRedspearApi`: registers redspear's own
-  `GET /api/epk` (no slug param — the subdomain already tells us which
-  artist; its fixed `artistSlug` comes from `config/apps.json`), scoped to
-  its own hostnames by `server/routes/api.js`. The actual Strapi fetch is
-  shared with low-poly via `server/lib/epk.js`; the route registration
-  itself is redspear's own.
-- `registerSpa.js` — `registerRedspearSpa`: host-sniffs for `redspear.*`,
-  serves the built SPA, and special-cases `/epk` to inject per-page
-  metadata (title/OG tags) from `config/apps.json` before crawlers see it.
+The shared Strapi client caches successful responses in memory for five
+minutes by default (`STRAPI_CACHE_TTL_MS` overrides this in milliseconds).
+Expired data is refreshed on demand; there is no EPK refresh cron.
+Page HTML is rendered per request, with metadata, favicon and font preloads.
+`npm run build:ssr` builds both SSR tenants and runs as part of `npm run build`.
