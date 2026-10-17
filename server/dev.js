@@ -6,6 +6,7 @@
 
 import path from "path";
 import { fileURLToPath } from "url";
+import { appsConfig, matchesAppHost } from "./lib/appsConfig.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,7 +18,14 @@ export async function setupLiveReload(app) {
 
   const liveReloadServer = livereload.createServer();
   liveReloadServer.watch(path.join(root, "dist"));
-  app.use(connectLiveReload());
+  const injectLiveReload = connectLiveReload();
+  app.use((req, res, next) => {
+    // SSR tenants use Vite's HMR client. connect-livereload buffers responses
+    // and assumes binary chunks are Buffers, breaking React Router's
+    // Uint8Array SSR stream (and preventing incremental delivery).
+    if (Object.entries(appsConfig).some(([id, config]) => config.ssrFramework && matchesAppHost(id, req))) return next();
+    return injectLiveReload(req, res, next);
+  });
   liveReloadServer.server.once("connection", () => {
     setTimeout(() => liveReloadServer.refresh("/"), 100);
   });

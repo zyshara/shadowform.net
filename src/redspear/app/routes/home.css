@@ -61,10 +61,18 @@
 
 .rs-vhs-wrap img {
   width: 100%;
+  height: auto;
   display: block;
   filter: contrast(1.08) brightness(0.92) saturate(1.1);
   animation: rsRgbShift 8s infinite;
 }
+
+.rs-page:not(.rs-active) .rs-vhs-wrap img,
+.rs-page:not(.rs-active) .rs-vhs-noise,
+.rs-page:not(.rs-active) .rs-vhs-tracking { animation-play-state: paused; }
+
+.rs-wordmark-fallback { color: #ff0000; text-align: center; font-size: clamp(48px, 12vw, 160px); }
+#rs-enter-button:disabled { cursor: wait; }
 
 @keyframes rsRgbShift {
   0%, 100% { filter: contrast(1.08) brightness(0.92) saturate(1.1); transform: translateX(0); }

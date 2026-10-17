@@ -1,6 +1,19 @@
-import React, { useState } from "react";
-import { useFavicon } from "@shared/hooks/useFavicon";
-import "./Home.css";
+import { useEffect, useRef, useState } from "react";
+import fontStylesheet from "./home-fonts.css?url";
+import "./home.css";
+
+const RED_WORDMARK = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1784674743/Red_Spear_Wordmark_Red_488735c440.png";
+const BLACK_WORDMARK = "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1784677508/Red_Spear_Wordmark_Black_006851c7de.png";
+
+export function links() {
+  return [
+    { rel: "preconnect", href: "https://res.cloudinary.com" },
+    { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+    { rel: "preload", as: "font", type: "font/woff2", crossOrigin: "anonymous",
+      href: "https://fonts.gstatic.com/s/vt323/v18/pxiKyp0ihIEF2isfFJXUdVNF.woff2", fetchPriority: "high" },
+    { rel: "stylesheet", href: fontStylesheet },
+  ];
+}
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 const LINKS = [
@@ -26,23 +39,51 @@ function logInterceptTransmission() {
 export default function Home() {
   const [entered, setEntered]     = useState(false);
   const [fadingOut, setFadingOut] = useState(false);
+  const [wordmarkReady, setWordmarkReady] = useState(false);
+  const [wordmarkFailed, setWordmarkFailed] = useState(false);
+  const enterTimer = useRef(null);
+  const wordmark = useRef(null);
 
-  useFavicon("https://res.cloudinary.com/dfeyhbxeg/image/upload/v1775258559/redspear_icon_49596002d5.png");
+  useEffect(() => () => clearTimeout(enterTimer.current), []);
+
+  const handleWordmarkLoad = async (event) => {
+    try {
+      await event.currentTarget.decode();
+    } catch {
+      // A text wordmark keeps the hub usable if decoding fails.
+      setWordmarkFailed(true);
+    }
+    setWordmarkReady(true);
+  };
+
+  useEffect(() => {
+    // Cached images can finish before hydration attaches the load handler.
+    if (wordmark.current?.complete) {
+      if (wordmark.current.naturalWidth) handleWordmarkLoad({ currentTarget: wordmark.current });
+      else { setWordmarkFailed(true); setWordmarkReady(true); }
+    }
+  }, []);
 
   const handleEnter = () => {
+    if (!wordmarkReady || fadingOut) return;
     setFadingOut(true);
-    setTimeout(() => {
+    enterTimer.current = setTimeout(() => {
       setEntered(true);
       logInterceptTransmission();
     }, 500);
   };
 
   return (
-    <div className="rs-page">
+    <div className={`rs-page${fadingOut || entered ? " rs-active" : ""}`}>
       {/* Hub — always mounted; the splash overlays on top of it until entered */}
-      <div id="rs-hub" className="relative flex min-h-dvh w-full items-center justify-center">
+      <div id="rs-hub" inert={!entered} className="relative flex min-h-dvh w-full items-center justify-center">
         <div className="rs-vhs-wrap w-full max-w-[1200px] px-5">
-          <img src="https://res.cloudinary.com/dfeyhbxeg/image/upload/v1784674743/Red_Spear_Wordmark_Red_488735c440.png" alt="Red Spear" />
+          {/* React 19 emits image preloads into the SSR head for both wordmarks. */}
+          {wordmarkFailed ? <h1 className="rs-wordmark-fallback">Red Spear</h1> : (
+            <img ref={wordmark} src={RED_WORDMARK} alt="Red Spear" width={1920} height={1080}
+              onLoad={handleWordmarkLoad}
+              onError={() => { setWordmarkFailed(true); setWordmarkReady(true); }} />
+          )}
           <div className="rs-vhs-scanlines" />
           <div className="rs-vhs-noise" />
         </div>
@@ -69,14 +110,17 @@ export default function Home() {
         <div id="rs-splash-screen" className={fadingOut ? "rs-fade-out" : ""}>
           <div className="w-full max-w-[1200px] px-5">
             <img
-              src="https://res.cloudinary.com/dfeyhbxeg/image/upload/v1784677508/Red_Spear_Wordmark_Black_006851c7de.png"
+              src={BLACK_WORDMARK}
+              width={1920} height={1080} fetchPriority="high"
               alt="Red Spear"
-              style={{ width: "100%", display: "block" }}
+              style={{ width: "100%", height: "auto", display: "block" }}
             />
           </div>
 
           <div className="absolute bottom-10 left-0 right-0 flex items-center justify-center px-5">
-            <button id="rs-enter-button" onClick={handleEnter}>Enter</button>
+            <button id="rs-enter-button" onClick={handleEnter} disabled={!wordmarkReady || fadingOut}>
+              {wordmarkReady ? "Enter" : "Loading…"}
+            </button>
           </div>
         </div>
       )}

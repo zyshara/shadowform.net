@@ -113,4 +113,8 @@ const configFor = (app) => ({
   },
 });
 
-export default Object.values(appsConfig).map((app) => makeConfig(configFor(app)));
+// Apps migrated to the React Router v8 (Vite SSR) pipeline build and serve
+// themselves — see their own src/<app>/vite.config.js — and are excluded here.
+export default Object.values(appsConfig)
+  .filter((app) => !app.ssrFramework)
+  .map((app) => makeConfig(configFor(app)));

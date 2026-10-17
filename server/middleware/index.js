@@ -43,8 +43,13 @@ export function noCacheHtml(req, res, next) {
    Strip trailing slashes
 ─────────────────────────────────────────────── */
 export function stripTrailingSlash(req, res, next) {
-  if (req.originalUrl.length > 1 && req.originalUrl.endsWith("/")) {
-    return res.redirect(301, req.originalUrl.slice(0, -1));
+  // Only normalize the pathname: query values can legitimately end in "/"
+  // (React Router requests critical.css?pathname=/ for the home page).
+  const queryIndex = req.originalUrl.indexOf("?");
+  const pathname = queryIndex === -1 ? req.originalUrl : req.originalUrl.slice(0, queryIndex);
+  const search = queryIndex === -1 ? "" : req.originalUrl.slice(queryIndex);
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    return res.redirect(301, pathname.slice(0, -1) + search);
   }
 
   next();

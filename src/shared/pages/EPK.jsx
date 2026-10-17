@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { useFavicon } from "@shared/hooks/useFavicon";
-import { formatPageTitle } from "@shared/utils/pageTitle";
+import { useFavicon } from "../hooks/useFavicon.js";
+import { formatPageTitle } from "../utils/pageTitle.js";
 
 // ── Waveform bars (decorative) ────────────────────────────────────────────────
 const WAVE_SEEDS = [
@@ -128,6 +128,35 @@ function Hero({ artist }) {
 }
 
 // ── Bio + Stats ───────────────────────────────────────────────────────────────
+function Portrait({ url, name }) {
+  const image = useRef(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const img = image.current;
+    let cancelled = false;
+    const reveal = async () => {
+      try { await img.decode(); } catch { return; }
+      if (!cancelled) setReady(true);
+    };
+    img.addEventListener("load", reveal);
+    // A cached image may finish loading before hydration.
+    if (img.complete && img.naturalWidth) reveal();
+    return () => { cancelled = true; img.removeEventListener("load", reveal); };
+  }, []);
+
+  return (
+    <div style={{ position: "relative", aspectRatio: "1 / 1" }}>
+      <img ref={image} src={url} alt={name}
+        className={`epk-portrait${ready ? " epk-portrait-ready" : ""}`}
+        style={{ display:"block", width:"100%", aspectRatio:"1 / 1", objectFit:"cover", objectPosition:"center" }}
+      />
+      <div aria-hidden="true"
+        className={`epk-portrait-cover${ready ? " epk-portrait-cover-reveal" : ""}`} />
+    </div>
+  );
+}
+
 function BioSection({ artist, portraitUrl }) {
   return (
     <div className="epk-bio-grid">
@@ -141,14 +170,11 @@ function BioSection({ artist, portraitUrl }) {
         <div style={{
           ...css.card,
           padding: 0,
+          aspectRatio: "1 / 1",
           overflow: "hidden",
           marginBottom: "1.5rem",
         }}>
-          <img
-            src={portraitUrl}
-            alt={artist.name}
-            style={{ display:"block", width:"100%", aspectRatio:"1 / 1", objectFit:"cover", objectPosition:"center" }}
-          />
+          {portraitUrl && <Portrait key={portraitUrl} url={portraitUrl} name={artist.name} />}
         </div>
         <p style={css.label}>// Stats</p>
         <div className="epk-stats-grid">
@@ -450,35 +476,25 @@ function LinksRow({ links }) {
 }
 
 // ── Root ──────────────────────────────────────────────────────────────────────
-// No slug prop/param needed — the subdomain already tells the server which
-// artist's EPK to return (see config/apps.json's artistSlug).
-export default function EPK() {
-  const [epk, setEpk] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/epk")
-      .then((r) => r.json())
-      .then(({ data }) => setEpk(data ?? null))
-      .catch(() => setEpk(null))
-      .finally(() => setLoading(false));
-  }, []);
-
-  useFavicon(epk?.artist?.icon ?? null);
+// `epk` is pre-fetched server-side (loader, in the SSR apps) or passed down
+// after a client fetch (non-SSR apps) — either way, no slug prop/param is
+// needed since the subdomain already tells the server which artist's EPK
+// to return (see config/apps.json's artistSlug).
+export default function EPK({ epk, loadFontStyles = true, manageFavicon = true }) {
+  useFavicon(manageFavicon ? epk?.artist?.icon ?? null : null);
 
   useEffect(() => {
     if (epk?.artist?.name) document.title = formatPageTitle("Artist Press Kit", epk.artist.name);
   }, [epk?.artist?.name]);
 
-  if (loading) return <div />;
-  if (!epk)    return <div />;
+  if (!epk) return <div />;
 
   const { artist, portrait_url, featured_tracks, photos_and_media, press, links } = epk;
 
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;700;800&display=swap');
+        ${loadFontStyles ? "@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;700;800&display=swap');" : ""}
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
           background: var(--bg);
@@ -487,6 +503,26 @@ export default function EPK() {
           min-height: 100vh;
         }
         button { font-family: inherit; }
+        .epk-reveal-overlay {
+          position: fixed; inset: 0; z-index: 1000;
+          background: var(--bg); pointer-events: none;
+          animation: epk-reveal 550ms ease-out forwards;
+        }
+        @keyframes epk-reveal {
+          from { opacity: 1; }
+          to { opacity: 0; visibility: hidden; }
+        }
+        .epk-portrait { visibility: hidden; }
+        .epk-portrait-ready { visibility: visible; }
+        .epk-portrait-cover {
+          position: absolute; inset: 0; background: var(--surface);
+          pointer-events: none;
+        }
+        .epk-portrait-cover-reveal { animation: epk-reveal 550ms ease-out forwards; }
+        @media (prefers-reduced-motion: reduce) {
+          .epk-reveal-overlay { display: none; }
+          .epk-portrait-cover-reveal { display: none; }
+        }
         .epk-press-link { color: inherit; text-decoration: none; transition: color 350ms; }
         .epk-press-link:hover { color: var(--accent); }
         .epk-social-link { display:flex; align-items:center; gap:10px; padding:10px 0; text-decoration:none; color:var(--text); transition:color 350ms; }
@@ -517,6 +553,9 @@ export default function EPK() {
           .epk-dl-btn { padding: 5px !important; }
         }
       `}</style>
+
+      <div className="epk-reveal-overlay" aria-hidden="true" />
+      <noscript><style>{`.epk-portrait { visibility: visible; } .epk-portrait-cover { display: none; }`}</style></noscript>
 
       <div style={{ maxWidth:860, margin:"0 auto", padding:"2rem 1.5rem" }}>
         <Hero artist={artist} />

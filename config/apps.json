@@ -41,6 +41,8 @@
     "canonicalHost": "redspear.shadowform.net",
     "srcDir": "src/redspear",
     "distDir": "dist/redspear",
+    "ssrFramework": true,
+    "faviconHref": "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1775258559/redspear_icon_49596002d5.png",
     "umamiId": "0bf57e1c-2c3f-4f39-80f6-31a7cf393705",
     "artistSlug": "redspear",
     "metadata": {
@@ -70,6 +72,8 @@
     "canonicalHost": "low-poly.shadowform.net",
     "srcDir": "src/low-poly",
     "distDir": "dist/low-poly",
+    "ssrFramework": true,
+    "faviconHref": "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1775258559/lowpoly_icon_4502a47996.png",
     "umamiId": "47f76d43-46c9-46aa-9343-d5599838342e",
     "artistSlug": "low-poly",
     "metadata": {
