@@ -9,7 +9,15 @@ export function createCachedClientLoader({ maxEntries = 30 } = {}) {
     const cached = entries.get(key);
     if (cached) return cached.data;
 
-    const data = await serverLoader();
+    let data;
+    try {
+      data = await serverLoader();
+    } catch (error) {
+      // A speculative hover request must not replace the current page with
+      // an error boundary. Real navigation still surfaces errors normally.
+      if (new URL(request.url).searchParams.get("_preload") === "1") return null;
+      throw error;
+    }
     // Do not retain cancelled loads, errors, redirects, or HTTP responses.
     if (!request.signal.aborted && !(data instanceof Response)) {
       if (entries.size >= maxEntries) entries.delete(entries.keys().next().value);

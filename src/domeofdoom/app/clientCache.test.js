@@ -4,6 +4,14 @@ import { createCachedClientLoader } from "./clientCache";
 afterEach(() => vi.useRealTimers());
 const args = (path, serverLoader) => ({ request: new Request(`https://example.com${path}`), serverLoader });
 
+it("ignores speculative preload failures and retries on real navigation", async () => {
+  const load = createCachedClientLoader();
+  const serverLoader = vi.fn().mockRejectedValueOnce(new Error("offline")).mockResolvedValue({ ok: true });
+  expect(await load(args("/catalog?_preload=1", serverLoader))).toBeNull();
+  expect(await load(args("/catalog", serverLoader))).toEqual({ ok: true });
+  expect(serverLoader).toHaveBeenCalledTimes(2);
+});
+
 it("reuses data for the page lifecycle regardless of elapsed time", async () => {
   vi.useFakeTimers();
   const load = createCachedClientLoader();

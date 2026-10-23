@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { NavLink, useLocation } from "react-router";
 import navlinks from "@/data/navlinks.json";
 import { colors, LOGO_URL } from "@/tokens";
+import PrefetchedNavLink from "./PrefetchedNavLink";
 
 const NAV_FONT_STYLE = {
   fontFamily: "Archivo, sans-serif",
@@ -62,7 +63,7 @@ const Navbar = () => {
         {/* Desktop nav */}
         <nav ref={navRef} className="relative hidden items-center gap-[34px] lg:flex">
           {navlinks.map((link) => (
-            <NavLink
+            <PrefetchedNavLink
               key={link.id}
               ref={(el) => {
                 linkRefs.current[link.id] = el;
@@ -77,7 +78,7 @@ const Navbar = () => {
               })}
             >
               {link.text}
-            </NavLink>
+            </PrefetchedNavLink>
           ))}
           <div
             aria-hidden="true"
@@ -122,7 +123,7 @@ const Navbar = () => {
       >
         <div className="flex flex-col gap-1 px-4 py-3">
           {navlinks.map((link) => (
-            <NavLink
+            <PrefetchedNavLink
               key={link.id}
               to={link.path}
               prefetch="intent"
@@ -135,7 +136,7 @@ const Navbar = () => {
               })}
             >
               {link.text}
-            </NavLink>
+            </PrefetchedNavLink>
           ))}
         </div>
       </nav>

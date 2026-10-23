@@ -1,8 +1,7 @@
 // src/domeofdoom/Layout.jsx
 
-import { useLayoutEffect, useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { useLocation, useOutlet } from "react-router";
-import { AnimatePresence, motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import MarqueeBanner from "@/components/MarqueeBanner";
 import Footer from "@/components/Footer";
@@ -75,11 +74,6 @@ if (typeof window !== "undefined" && "scrollRestoration" in window.history) {
 
 const Layout = () => {
   const location = useLocation();
-  // Captured as a value (not rendered as <Outlet/>) so the exiting page's
-  // motion.div keeps showing its own already-resolved content while it
-  // fades out — <Outlet/> subscribes to router context directly, so used
-  // inline it would snap to the new route's content immediately, even
-  // inside a motion.div that's still mid exit-animation.
   const element = useOutlet();
 
   useScrollToTop(location.pathname);
@@ -102,21 +96,6 @@ const Layout = () => {
         }}
       />
       <Navbar />
-      {/* Outgoing and incoming pages animate at the same time: the exiting
-          page is pulled out of normal flow (position: absolute, via its
-          `exit` variant) so it can fade in place as an overlay while the
-          incoming page — still in normal flow, so it drives real page
-          height/scroll — slides up underneath/over it. The relative
-          wrapper gives that absolutely-positioned exit something to
-          anchor to.
-
-          px-8 lives on the motion.div itself, not this wrapper - an
-          absolutely-positioned child's left/right: 0 (the exit variant)
-          aligns to the parent's padding-BOX edge, i.e. it ignores the
-          parent's own padding and spans full width. Keeping the padding
-          on the animated element itself means both the normal-flow
-          entering page and the absolutely-positioned exiting page get
-          the same inset regardless of which positioning mode they're in. */}
       {/* Vertical sidebar — lg+ only, fixed to left edge */}
       <div
         className="hidden lg:flex"
@@ -161,18 +140,11 @@ const Layout = () => {
       </div>
 
       <div className="relative col-start-1 col-span-6 lg:col-span-4 lg:col-start-2" style={{ overflow: "hidden" }}>
-        <AnimatePresence>
-          <motion.div
-            key={location.pathname}
-            className="px-8 lg:px-0"
-            initial={false}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, position: "absolute", top: 0, left: 0, right: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-          >
-            {element}
-          </motion.div>
-        </AnimatePresence>
+        {/* Swap pages immediately so the outgoing page does not stay mounted
+            and repaint alongside a potentially expensive incoming grid. */}
+        <div key={location.pathname} className="px-8 lg:px-0">
+          {element}
+        </div>
       </div>
       <Footer />
       <div className="fixed bottom-6 right-6 z-50">

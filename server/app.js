@@ -1,5 +1,6 @@
 import { requestLogging } from "#middleware/requestLogging.js";
 import express from "express";
+import compression from "compression";
 import { sslRedirect, noCacheHtml, stripTrailingSlash } from "#middleware/index.js";
 import { canonicalHostRedirect } from "#lib/appsConfig.js";
 import { registerApiRoutes } from "#routes/api.js";
@@ -17,6 +18,9 @@ export function createApp() {
   app.use(requestLogging);
   app.use(sslRedirect);
   app.use(canonicalHostRedirect);
+  // Compress text assets and streamed SSR/data responses before routes write.
+  // Keep the default size/type and no-transform checks; binary media passes through.
+  app.use(compression());
   app.use(noCacheHtml);
   app.use(stripTrailingSlash);
   registerApiRoutes(app);

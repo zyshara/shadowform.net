@@ -8,6 +8,8 @@ import WormholeGrid from "@/components/WormholeGrid";
 import StarIcon from "@/components/StarIcon";
 import PressCardSkeleton from "@/components/ImageSkeleton";
 import FilterBar from "@/components/FilterBar";
+import Button from "@/components/Button";
+import ArrowRightIcon from "@/components/ArrowRightIcon";
 
 // ---------------------------------------------------------------------------
 // Icons
@@ -237,6 +239,13 @@ export default function Press({ items = [] }) {
           <p ref={descriptionRef} className="text-xl text-dod-lilac">
             Articles, features, interviews, and coverage from around the world.
           </p>
+          <div className="px-[3px] py-[3px]">
+            <Button variant="primary" href="/DOMEOFDOOM_LICENSING.pdf" reloadDocument>
+              <span className="flex items-center justify-center gap-2">
+                Licensing <ArrowRightIcon size={15} />
+              </span>
+            </Button>
+          </div>
         </div>
         <div className="relative overflow-hidden min-h-[110px]">
           <div className="absolute inset-0 w-full h-full flex justify-center items-center filter-[saturate(2)]">
