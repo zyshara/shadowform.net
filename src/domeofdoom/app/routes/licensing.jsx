@@ -1,4 +1,6 @@
-import { pageMeta } from "../pageMeta";
+import { redirectDocument } from "react-router";
 
-export const meta = pageMeta("Licensing");
-export { default } from "../../pages/Licensing";
+// Preserve existing /licensing URLs while opening the PDF as a document.
+export function loader() {
+  return redirectDocument("/DOMEOFDOOM_LICENSING.pdf");
+}

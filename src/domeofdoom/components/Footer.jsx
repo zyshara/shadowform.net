@@ -26,7 +26,7 @@ const Footer = () => (
       <Link to="/about" className={linkClass}>About</Link>
       <Link to="/shows" className={linkClass}>Shows</Link>
       <Link to="/press" className={linkClass}>Press</Link>
-      <Link to="/licensing" className={linkClass}>Licensing</Link>
+      <a href="/DOMEOFDOOM_LICENSING.pdf" className={linkClass}>Licensing</a>
     </FooterColumn>
 
     <FooterColumn title="Follow">
