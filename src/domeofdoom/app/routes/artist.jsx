@@ -1,3 +1,4 @@
+import { createCachedClientLoader } from "../clientCache";
 import { servicesContext } from "../context";
 import Page from "../../pages/Artist";
 import { pageMeta } from "../pageMeta";
@@ -12,3 +13,5 @@ export async function loader({ context, params }) {
     now: Date.now(), pageTitle: artist.name, image: artist.photo_src };
 }
 export default function Route({ loaderData }) { return <Page {...loaderData} />; }
+
+export const clientLoader = createCachedClientLoader();

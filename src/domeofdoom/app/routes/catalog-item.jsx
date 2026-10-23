@@ -1,3 +1,4 @@
+import { createCachedClientLoader } from "../clientCache";
 import { servicesContext } from "../context";
 import Page from "../../pages/CatalogItem";
 import { pageMeta } from "../pageMeta";
@@ -13,3 +14,5 @@ export async function loader({ context, params }) {
     pageTitle: item.title, image: item.artwork_url };
 }
 export default function Route({ loaderData }) { return <Page {...loaderData} />; }
+
+export const clientLoader = createCachedClientLoader();

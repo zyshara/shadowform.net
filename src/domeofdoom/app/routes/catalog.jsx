@@ -1,3 +1,4 @@
+import { createCachedClientLoader } from "../clientCache";
 import { servicesContext } from "../context";
 import Page from "../../pages/Catalog";
 import { pageMeta } from "../pageMeta";
@@ -11,3 +12,5 @@ export async function loader({ context }) {
   return { allItems: await context.get(servicesContext).getCatalog() };
 }
 export default function Route({ loaderData }) { return <Page {...loaderData} />; }
+
+export const clientLoader = createCachedClientLoader();

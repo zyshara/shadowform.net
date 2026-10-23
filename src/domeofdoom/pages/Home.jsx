@@ -2,6 +2,7 @@ import React from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { Link } from "react-router";
 import { catalogItemSlug } from "@/utils/catalogItemSlug";
+import { selectHomeReleases } from "@/utils/homeReleases";
 import { colors } from "@/tokens";
 import Button from "@/components/Button";
 import testBg3 from "@/assets/test_bg_3.png";
@@ -529,7 +530,7 @@ function LatestReleasesSection({ latestRelease, upcomingRelease, now }) {
       <HomeSectionHeader title="Latest Releases" linkTo="/catalog" linkText="View All" />
 
       {upcomingRelease ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className={`grid grid-cols-1 ${latestRelease ? "lg:grid-cols-2" : ""} gap-4`}>
           <ReleaseCard item={upcomingRelease} now={now} />
           {latestRelease && <ReleaseCard item={latestRelease} now={now} />}
         </div>
@@ -552,18 +553,8 @@ const Home = ({ catalogItems = [], now }) => {
     .filter((i) => i.type === "Compilation")
     .sort((a, b) => new Date(b.release_date ?? 0) - new Date(a.release_date ?? 0));
 
-  const nonCompilations = catalogItems
-    .filter((i) => i.type !== "Compilation")
-    .sort((a, b) => new Date(b.release_date ?? 0) - new Date(a.release_date ?? 0));
-
   const latestCompilation = compilations[0] ?? null;
-
-  const released = nonCompilations.filter(
-    (i) => !i.release_date || new Date(i.release_date).getTime() <= now
-  );
-  const latestRelease = released[0] ?? nonCompilations[0] ?? null;
-  // PREVIEW: test upcoming release card with fake future date
-  const upcomingRelease = released[1] ? { ...released[1], release_date: "2027-06-01" } : null;
+  const { latestRelease, upcomingRelease } = selectHomeReleases(catalogItems, now);
 
   return (
     <div>
@@ -604,7 +595,8 @@ const Home = ({ catalogItems = [], now }) => {
             <Button variant="primary" href="https://open.spotify.com/search/label%3Adome-of-doom/albums">
               <div className="flex gap-2 justify-center items-center">Listen Now<ArrowUpRightIcon size={15} /></div>
             </Button>
-            <Button variant="secondary" to="/merch">
+            {/* Re-enable Shop Merch when the merch page is finished. */}
+            <Button variant="secondary" to="/merch" style={{ display: "none" }}>
               <div className="flex gap-2 justify-center items-center">Shop Merch<ArrowRightIcon size={15} /></div>
             </Button>
           </div>

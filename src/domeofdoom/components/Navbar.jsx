@@ -23,11 +23,15 @@ const Navbar = () => {
 
   const updateIndicator = useCallback(() => {
     const activeLink = navlinks.find((l) =>
-      l.path === "/" ? location.pathname === "/" : location.pathname.startsWith(l.path)
+      l.path === "/" ? location.pathname === "/" :
+        location.pathname === l.path || location.pathname.startsWith(`${l.path}/`)
     );
     const el = activeLink && linkRefs.current[activeLink.id];
     const nav = navRef.current;
-    if (!el || !nav) return;
+    if (!el || !nav) {
+      setIndicator((previous) => ({ ...previous, ready: false }));
+      return;
+    }
     const navRect = nav.getBoundingClientRect();
     const elRect = el.getBoundingClientRect();
     setIndicator({ left: elRect.left - navRect.left, width: elRect.width, ready: true });
@@ -51,7 +55,7 @@ const Navbar = () => {
     <div className="sticky top-0 z-50 col-start-1 col-span-6 lg:col-span-4 lg:col-start-2 bg-dod-black/85 backdrop-blur-md">
       {/* Bar */}
       <div className="col-start-2 col-span-4 flex items-center justify-between border-b border-white/10 px-6 py-[22px] lg:px-10">
-        <NavLink to="/" className="flex items-center">
+        <NavLink to="/" prefetch="intent" className="flex items-center">
           <img src={LOGO_URL} alt="Dome of Doom" className="h-11 w-auto" />
         </NavLink>
 
@@ -64,10 +68,11 @@ const Navbar = () => {
                 linkRefs.current[link.id] = el;
               }}
               to={link.path}
+              prefetch="intent"
               end={link.path === "/"}
               className="navlink-hover-flash py-1.5 text-[13px] uppercase tracking-[0.02em]"
-              style={({ isActive }) => ({
-                color: isActive ? "#ffffff" : colors.white,
+              style={({ isActive, isPending }) => ({
+                color: isPending ? colors.neon_mint : isActive ? "#ffffff" : colors.white,
                 ...NAV_FONT_STYLE,
               })}
             >
@@ -120,6 +125,7 @@ const Navbar = () => {
             <NavLink
               key={link.id}
               to={link.path}
+              prefetch="intent"
               end={link.path === "/"}
               className="rounded px-4 py-3 text-[14px] uppercase tracking-[0.02em] transition-colors"
               style={({ isActive }) => ({
