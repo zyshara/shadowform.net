@@ -351,169 +351,56 @@ function FeatureReleaseCard({ item }) {
   const description = item.description ? stripHtml(item.description) : null;
 
   return (
-    <div
-      className="grid border border-white/10 overflow-hidden"
-      style={{
-        background: colors.card,
-        gridTemplateColumns: "56px 1fr 1fr 56px",
-      }}
-    >
-      {/* Far-left: DOD label column */}
-      <div
-        className="flex flex-col items-center justify-between py-6 border-r border-white/[0.06]"
-        style={{ background: "rgba(0,0,0,0.2)" }}
-      >
-        <div
-          className="text-[8px] font-black uppercase tracking-[0.18em] text-center leading-tight"
-          style={{ color: "rgba(255,255,255,0.25)" }}
-        >
-          DOD
+    <div className="feature-release">
+      <aside aria-hidden="true" className="feature-release-rail text-dod-lilac">
+        <div className="flex flex-col items-center gap-2">
+          <GlobeIcon size={30} />
+          <span className="text-[9px] font-bold tracking-[0.2em]">DOD<br />{year}</span>
         </div>
-        <div
-          className="text-[8px] font-bold"
-          style={{
-            color: "rgba(255,255,255,0.2)",
-            writingMode: "vertical-rl",
-            transform: "rotate(180deg)",
-            letterSpacing: "0.2em",
-          }}
-        >
-          {year ?? ""}
+        <div className="flex flex-col gap-3">
+          {[0, 1, 2].map((i) => <SectionDots key={i} size={14} color="var(--dod-lilac)" />)}
         </div>
-        <div className="w-px flex-1 mt-2 mb-2" style={{ background: "rgba(255,255,255,0.08)" }} />
-      </div>
+        <div className="feature-release-barcode" />
+      </aside>
 
-      {/* Cover */}
-      <div className="relative overflow-hidden" style={{ aspectRatio: "1 / 1" }}>
+      <Link to={`/catalog/${slug}`} className="feature-release-artwork">
         {item.artwork_url ? (
-          <img
-            src={item.artwork_url}
-            alt={item.title}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
+          <img src={item.artwork_url} alt={item.title} className="h-full w-full object-cover" loading="lazy" />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center" style={{ background: "var(--dod-deep-purple)" }}>
-            <StarIcon size={120} showBackground={false} showGlow />
-          </div>
+          <StarIcon size={120} showBackground={false} showGlow />
         )}
-        <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[color:var(--dod-card)] to-transparent pointer-events-none" />
-      </div>
+      </Link>
 
-      {/* Content */}
-      <div className="flex flex-col justify-center px-10 py-10 gap-4">
-        <div style={typeLabel}>
-          {item.type ?? "Single"}{year ? ` · ${year}` : ""}
-        </div>
-
-        <Link to={`/catalog/${slug}`} className="group">
-          <h2
-            className="m-0 italic font-black uppercase leading-[0.95] group-hover:opacity-80 transition-opacity"
-            style={{
-              fontFamily: "Archivo, sans-serif",
-              fontStretch: "expanded",
-              fontVariationSettings: '"wdth" 125',
-              fontSize: "clamp(42px, 5vw, 72px)",
-              color: "var(--dod-accent)",
-            }}
-          >
-            {item.title}
-          </h2>
+      <div className="feature-release-content">
+        <div style={typeLabel}>{item.type ?? "Single"}{year ? ` · ${year}` : ""}</div>
+        <Link to={`/catalog/${slug}`} className="hover:opacity-80 transition-opacity">
+          <h2 className="feature-release-title">{item.title}</h2>
         </Link>
-
         {item.artists?.length > 0 && (
-          <div
-            className="font-semibold"
-            style={{ fontSize: "clamp(16px, 1.6vw, 22px)", color: "rgba(255,255,255,0.75)" }}
-          >
-            {item.artists.join(", ")}
-          </div>
+          <div className="feature-release-artists">{item.artists.join(", ")}</div>
         )}
-
-        {description && (
-          <p className="m-0 text-[13px] leading-relaxed line-clamp-3" style={{ color: "rgba(255,255,255,0.45)" }}>
-            {description}
-          </p>
-        )}
-
-        <div className="mt-2">
-          <Button
-            variant="primary"
-            type="small"
-            href={item.spotify_url || undefined}
-            to={!item.spotify_url ? `/catalog/${slug}` : undefined}
-          >
-            <span className="inline-flex items-center gap-2">
-              Listen Now <ArrowUpRightIcon size={11} />
-            </span>
+        {description && <p className="m-0 mt-3 text-sm leading-relaxed text-dod-white/60 line-clamp-4">{description}</p>}
+        <div className="mt-auto px-[3px] pb-[3px] pt-5">
+          <Button variant="primary" to="/catalog" className="w-full max-w-[320px]">
+            <span className="inline-flex items-center gap-2">Listen Now <ArrowRightIcon size={15} /></span>
           </Button>
         </div>
-
-        {/* Platform row */}
-        <div className="flex items-center gap-5 mt-1">
-          {item.spotify_url && (
-            <a
-              href={item.spotify_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.1em] opacity-40 hover:opacity-80 transition-opacity"
-              style={{ color: "var(--dod-text)" }}
-            >
-              <SpotifyIcon size={12} /> Spotify
-            </a>
-          )}
-          {item.bandcamp_url && (
-            <a
-              href={item.bandcamp_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.1em] opacity-40 hover:opacity-80 transition-opacity"
-              style={{ color: "var(--dod-text)" }}
-            >
-              <BandcampIcon size={12} /> Bandcamp
-            </a>
-          )}
+        {/* Keep platform links available; we may want to re-enable them later. */}
+        <div style={{ display: "none" }} className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-4 text-[10px] font-semibold uppercase tracking-[0.08em] text-dod-white/60">
+          {item.spotify_url && <a href={item.spotify_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-dod-neon-mint"><SpotifyIcon size={15} />Spotify</a>}
+          {item.bandcamp_url && <a href={item.bandcamp_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-dod-neon-mint"><BandcampIcon size={15} />Bandcamp</a>}
         </div>
       </div>
 
-      {/* Far-right decorative column */}
-      <div
-        className="flex flex-col items-center justify-between py-6 border-l border-white/[0.06]"
-        style={{ background: "rgba(0,0,0,0.2)" }}
-      >
-        <StarIcon
-          size={28}
-          gradientFrom="var(--dod-accent2)"
-          gradientTo="var(--dod-accent2)"
-          glowColor="var(--dod-accent2)"
-          showBackground={false}
-          showGlow
-        />
-        <GlobeRings
-          size={38}
-          radius={13}
-          meridianCount={3}
-          parallelCount={3}
-          tilt={0.32}
-          strokeWidth={0.7}
-          gradientFrom="var(--dod-accent2)"
-          gradientTo="var(--dod-accent2)"
-          glowColor="var(--dod-accent2)"
-          glowIntensity={2}
-          showFill={false}
-          rings={[{ angle: -18, rx: 18, ry: 5, colorFrom: "var(--dod-accent2)", glowIntensity: 3, thickness: 0.7 }]}
-        />
-        <div
-          className="text-[7px] font-bold uppercase text-center leading-loose"
-          style={{
-            color: "rgba(255,255,255,0.2)",
-            writingMode: "vertical-rl",
-            transform: "rotate(180deg)",
-            letterSpacing: "0.25em",
-          }}
-        >
-          Low&nbsp;Frequencies Brighter&nbsp;Worlds
+      <aside aria-hidden="true" className="feature-release-filigree text-dod-lilac">
+        <div className="flex flex-col items-center gap-5 border border-dod-lilac/60 px-2 py-5">
+          <StarIcon size={64} gradientFrom="var(--dod-lilac)" gradientTo="var(--dod-deep-purple)" showBackground={false} showGlow={false} />
+          <GlobeRings size={64} radius={23} meridianCount={5} parallelCount={5} strokeWidth={0.7} gradientFrom="var(--dod-lilac)" gradientTo="var(--dod-lilac)" showFill={false} rings={[]} />
         </div>
-      </div>
+        <div className="mt-auto border-b border-l border-dod-lilac/60 p-3 text-[9px] uppercase tracking-[0.1em] leading-relaxed">
+          DOME<br />OF<br />DOOM
+        </div>
+      </aside>
     </div>
   );
 }
