@@ -1,3 +1,8 @@
+@import "./rainbow-party.css";
+@import "./matrix-glitch.css";
+@import "./fire-glitch.css";
+@import "./blink-blue.css";
+@import "./blizzard.css";
 /* TagThemes.css
    Import in index.css:
    @import "./TagThemes.css";
@@ -14,9 +19,3 @@
 .tag-theme-char {
   display: inline-block;
 }
-
-@import "./rainbow-party.css";
-@import "./matrix-glitch.css";
-@import "./fire-glitch.css";
-@import "./blink-blue.css";
-@import "./blizzard.css";

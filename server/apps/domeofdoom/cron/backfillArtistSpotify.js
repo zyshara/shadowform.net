@@ -15,9 +15,10 @@
 // endpoint exposes an artist bio/description field at all - there's simply
 // nothing to resolve until we have another source for this text.
 
-import { spotifyGet, parseSpotifyArtistId } from "#apps/domeofdoom/spotifyApi.js";
+import { spotifyGet, parseSpotifyArtistId } from "#lib/spotify.js";
 import { strapiGetAllPages, strapiPut } from "#lib/strapi.js";
-import { logger } from "#lib/logger.js";
+import { createLogger } from "#lib/logger.js";
+const log = createLogger("domeofdoom");
 
 const ARTISTS_PATH = "/api/dome-of-doom-artists";
 const WRITE_DELAY_MS = 150;
@@ -68,11 +69,11 @@ function withDerivedUpdates(derived, updates) {
 }
 
 export async function backfillArtistSpotify({ dryRun = false } = {}) {
-  if (dryRun) logger.info("[domeofdoomSpotify] --- DRY RUN, no writes will be made ---");
+  if (dryRun) log.info("backfillArtistSpotify", "--- DRY RUN, no writes will be made ---");
 
-  logger.info("[domeofdoomSpotify] loading artists from Strapi...");
+  log.info("backfillArtistSpotify", "loading artists from Strapi...");
   const artists = await fetchArtistsFromStrapi();
-  logger.info(`[domeofdoomSpotify] ${artists.length} artist(s) loaded`);
+  log.info("backfillArtistSpotify", `${artists.length} artist(s) loaded`);
 
   const stats = { urlResolved: 0, urlSkipped: 0, urlNoMatch: 0, descriptionResolved: 0, failed: 0 };
 
@@ -89,18 +90,18 @@ export async function backfillArtistSpotify({ dryRun = false } = {}) {
           spotifyUrl = match.url;
           spotifyId = match.id;
           if (dryRun) {
-            logger.info(`[domeofdoomSpotify] [dry] would set spotify_url for "${name}" -> ${spotifyUrl}`);
+            log.info("backfillArtistSpotify", `[dry] would set spotify_url for "${name}" -> ${spotifyUrl}`);
           } else {
             await strapiPut(`${ARTISTS_PATH}/${artist.documentId}`, {
               data: { derived: withDerivedUpdates(derived, { spotify_url: spotifyUrl }) },
             });
-            logger.info(`[domeofdoomSpotify] resolved spotify_url for "${name}" -> ${spotifyUrl}`);
+            log.info("backfillArtistSpotify", `resolved spotify_url for "${name}" -> ${spotifyUrl}`);
           }
           derived.spotify_url = spotifyUrl;
           stats.urlResolved++;
         } else {
           stats.urlNoMatch++;
-          logger.info(`[domeofdoomSpotify] [no match] "${name}"`);
+          log.info("backfillArtistSpotify", `[no match] "${name}"`);
         }
         await sleep(WRITE_DELAY_MS);
       } else {
@@ -111,7 +112,7 @@ export async function backfillArtistSpotify({ dryRun = false } = {}) {
         const description = await resolveSpotifyDescription(spotifyId);
         if (description) {
           if (dryRun) {
-            logger.info(`[domeofdoomSpotify] [dry] would set spotify_description for "${name}"`);
+            log.info("backfillArtistSpotify", `[dry] would set spotify_description for "${name}"`);
           } else {
             await strapiPut(`${ARTISTS_PATH}/${artist.documentId}`, {
               data: { derived: withDerivedUpdates(derived, { spotify_description: description }) },
@@ -122,13 +123,13 @@ export async function backfillArtistSpotify({ dryRun = false } = {}) {
         }
       }
     } catch (err) {
-      logger.error(`[domeofdoomSpotify] failed to resolve "${name}":`, err.message);
+      log.error("backfillArtistSpotify", `failed to resolve "${name}":`, err);
       stats.failed++;
     }
   }
 
-  logger.info(
-    `[domeofdoomSpotify] complete: ${stats.urlResolved} url resolved, ${stats.urlSkipped} already set, ` +
+  log.info("backfillArtistSpotify",
+    `complete: ${stats.urlResolved} url resolved, ${stats.urlSkipped} already set, ` +
     `${stats.urlNoMatch} no match, ${stats.descriptionResolved} description resolved, ${stats.failed} failed`
   );
 

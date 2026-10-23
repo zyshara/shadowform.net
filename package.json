@@ -19,7 +19,6 @@
   },
   "imports": {
     "#lib/*": "./server/lib/*",
-    "#api/*": "./server/api/*",
     "#models/*": "./server/models/*",
     "#automation/*": "./server/automation/*",
     "#auth/*": "./server/auth/*",
@@ -32,58 +31,42 @@
     "#apps/low-poly/*": "./server/apps/low-poly/*"
   },
   "scripts": {
-    "build": "webpack --config webpack.config.js --mode production && npm run build:ssr && node scripts/generate-sitemap.mjs",
-    "build:ssr": "react-router build src/redspear && react-router build src/low-poly",
+    "build": "npm run build:ssr && node scripts/generate-sitemap.mjs",
+    "clean": "node scripts/clean-build.mjs",
+    "build:ssr": "npm run clean && react-router build src/redspear && react-router build src/low-poly && react-router build src/domeofdoom && react-router build src/shadowform",
     "start": "node server.js",
-    "dev": "concurrently -k \"webpack --config webpack.config.js --watch --mode development\" \"nodemon server.js\"",
+    "dev": "nodemon --exec \"node --conditions=development\" server.js",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "dependencies": {
     "@notionhq/client": "^5.23.2",
     "@remix-run/node-fetch-server": "^0.14.2",
-    "@tanstack/react-table": "^8.21.3",
     "atrament": "^5.1.0",
-    "connect-history-api-fallback": "^2.0.0",
     "dod-bandcamp-scraper": "github:zyshara/dod-bandcamp-scraper#main",
     "dotenv": "^17.4.0",
     "express": "^5.1.0",
     "framer-motion": "^12.23.26",
     "googleapis": "^173.0.0",
     "isbot": "^5",
-    "multer": "^2.4.0",
     "node-cron": "^4.6.0",
     "nodemailer": "^10.0.12",
     "react": "^19.2.9",
     "react-dom": "^19.2.9",
-    "react-router": "^8.4.0",
-    "react-router-dom": "^7.9.4"
+    "react-router": "^8.4.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.28.4",
-    "@babel/preset-env": "^7.28.3",
-    "@babel/preset-react": "^7.27.1",
     "@react-router/dev": "^8.4.0",
     "@tailwindcss/postcss": "^4.1.13",
     "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "autoprefixer": "^10.4.21",
-    "babel-loader": "^10.0.0",
-    "concurrently": "^9.2.1",
-    "connect-livereload": "^0.6.1",
-    "css-loader": "^7.1.2",
-    "html-webpack-plugin": "^5.6.4",
     "jsdom": "^24.1.3",
-    "livereload": "^0.10.3",
     "nodemon": "^3.1.10",
     "postcss": "^8.5.6",
-    "postcss-loader": "^8.2.0",
-    "style-loader": "^4.0.0",
     "tailwindcss": "^4.1.13",
     "vite": "^8.3.4",
-    "vitest": "^5.0.5",
-    "webpack": "^5.101.3",
-    "webpack-cli": "^6.0.1"
+    "vitest": "^5.0.5"
   }
 }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 
 // Canonical password-reset landing page for every shadowform.net app that
 // uses the shared Strapi user pool — Strapi's own "reset password page"

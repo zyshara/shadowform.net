@@ -1,0 +1,13 @@
+{
+  "watch": [
+    "server.js",
+    "server",
+    "config/apps.json",
+    "package.json",
+    "package-lock.json"
+  ],
+  "ignore": [
+    "server/**/*.test.js"
+  ],
+  "ext": "js,json"
+}

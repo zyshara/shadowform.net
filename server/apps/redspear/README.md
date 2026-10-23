@@ -1,6 +1,6 @@
 # Redspear
 
-`registerSpa.js` mounts this tenant through `server/lib/registerSsrApp.js`:
+`registerSsr.js` mounts this tenant through `server/lib/registerSsrApp.js`:
 Vite middleware in development (HMR port 24678), built client assets and
 React Router SSR in production.
 

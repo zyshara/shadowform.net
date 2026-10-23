@@ -1,3 +1,5 @@
+import { createLogger } from "#lib/logger.js";
+const log = createLogger("domeofdoom");
 // server/domeofdoom/scripts/backfillCatalogNumbersFromDiscography.js
 //
 // One-off, manual, NOT wired into cron/index.js. Parses the official
@@ -103,20 +105,20 @@ function findBySlug(itemsBySlug, slug) {
 }
 
 async function main() {
-  if (DRY_RUN) console.log("--- DRY RUN, no writes will be made ---\n");
+  if (DRY_RUN) log.info("main", "--- DRY RUN, no writes will be made ---\n");
 
-  console.log(`Fetching discography list from ${DISCOGRAPHY_URL}...`);
+  log.info("main", `Fetching discography list from ${DISCOGRAPHY_URL}...`);
   const entries = await fetchDiscographyEntries();
-  console.log(`${entries.length} entries parsed\n`);
+  log.info("main", `${entries.length} entries parsed\n`);
 
-  console.log("Loading DomeOfDoomCatalogItem records from Strapi...");
+  log.info("main", "Loading DomeOfDoomCatalogItem records from Strapi...");
   const items = await fetchAllCatalogItems();
   const itemsBySlug = new Map();
   for (const item of items) {
     const slug = slugOf(item.bandcamp_url);
     if (slug) itemsBySlug.set(slug, item);
   }
-  console.log(`${items.length} catalog item(s) in Strapi\n`);
+  log.info("main", `${items.length} catalog item(s) in Strapi\n`);
 
   const toBackfill = [];
   const conflicts = [];
@@ -140,28 +142,28 @@ async function main() {
     }
   }
 
-  console.log(`--- Would backfill (no catalog_number set yet): ${toBackfill.length} ---`);
+  log.info("main", `--- Would backfill (no catalog_number set yet): ${toBackfill.length} ---`);
   for (const { entry, item } of toBackfill) {
-    console.log(`  ${entry.catalogNumber.padEnd(12)} <- "${entry.label}" (${item.derived?.title ?? item.bandcamp_url})`);
+    log.info("main", `  ${entry.catalogNumber.padEnd(12)} <- "${entry.label}" (${item.derived?.title ?? item.bandcamp_url})`);
   }
 
-  console.log(`\n--- Already correct, no change needed: ${alreadySet.length} ---`);
+  log.info("main", `\n--- Already correct, no change needed: ${alreadySet.length} ---`);
 
-  console.log(`\n--- Conflicts (already has a DIFFERENT catalog_number - not touched): ${conflicts.length} ---`);
+  log.info("main", `\n--- Conflicts (already has a DIFFERENT catalog_number - not touched): ${conflicts.length} ---`);
   for (const { entry, item, existing } of conflicts) {
-    console.log(
+    log.info("main",
       `  "${entry.label}": page says ${entry.catalogNumber}, Strapi already has ${existing} ` +
       `(${item.derived?.title ?? item.bandcamp_url})`
     );
   }
 
-  console.log(`\n--- No matching catalog item in Strapi (bandcamp_url not found): ${noMatch.length} ---`);
+  log.info("main", `\n--- No matching catalog item in Strapi (bandcamp_url not found): ${noMatch.length} ---`);
   for (const entry of noMatch) {
-    console.log(`  ${entry.catalogNumber.padEnd(12)} <- "${entry.label}" (${entry.bandcampUrl})`);
+    log.info("main", `  ${entry.catalogNumber.padEnd(12)} <- "${entry.label}" (${entry.bandcampUrl})`);
   }
 
   if (!DRY_RUN) {
-    console.log(`\nWriting ${toBackfill.length} catalog_number override(s)...`);
+    log.info("main", `\nWriting ${toBackfill.length} catalog_number override(s)...`);
     for (const { entry, item } of toBackfill) {
       const docId = item.documentId ?? item.id;
       await strapiPut(`${CATALOG_ITEMS_PATH}/${docId}`, {
@@ -169,11 +171,11 @@ async function main() {
       });
       await sleep(WRITE_DELAY_MS);
     }
-    console.log("Done.");
+    log.info("main", "Done.");
   }
 }
 
 main().catch((err) => {
-  console.error(err);
+  log.error("main", err);
   process.exit(1);
 });

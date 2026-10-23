@@ -1,22 +1,20 @@
 import { defineConfig } from "vitest/config";
-import path from "path";
-import { fileURLToPath } from "url";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-export default defineConfig({
+const root = path.dirname(fileURLToPath(import.meta.url));
+const project = (name, app, include) => ({
+  resolve: { alias: {
+    "@": path.join(root, "src", app),
+    "@shared": path.join(root, "src/shared"),
+  } },
   test: {
-    environment: "jsdom",
-    globals: true,
-    setupFiles: ["./src/test/setup.js"],
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "src/domeofdoom"),
-      "@shared": path.resolve(__dirname, "src/shared"),
-    },
-  },
-  esbuild: {
-    jsx: "automatic",
+    name, environment: "jsdom", globals: true,
+    setupFiles: [path.join(root, "src/test/setup.js")], include,
   },
 });
+
+export default defineConfig({ test: { projects: [
+  project("main", "domeofdoom", ["server/**/*.test.js", "src/{domeofdoom,redspear,low-poly}/**/*.test.{js,jsx}"]),
+  project("shadowform", "shadowform", ["src/shadowform/**/*.test.{js,jsx}"]),
+] } });

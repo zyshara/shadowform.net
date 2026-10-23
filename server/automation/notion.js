@@ -1,7 +1,8 @@
 // server/automation/notion.js
 
 import cron from "node-cron";
-import { logger } from "#lib/logger.js";
+import { createLogger } from "#lib/logger.js";
+const log = createLogger("notion");
 import { queryDatabase, createPage, updatePage, getPage } from "./notionApi.js";
 import { createEvent, updateEvent } from "./googleCalendar.js";
 
@@ -78,13 +79,13 @@ async function markOverdueRolloutTasks() {
   for (const task of overdueTasks) {
     const taskName = task.properties["Name"]?.formula?.string ?? getTitle(task, "Description");
     try {
-      logger.info(`[notionCron] marking overdue: ${taskName}`);
+      log.info("markOverdueRolloutTasks", `marking overdue: ${taskName}`);
       await updatePage(task.id, {
         "Due Date": { date: { start: today } },
         Status:     { status: { name: "Overdue" } },
       });
     } catch (err) {
-      logger.error(`[notionCron] failed to mark overdue "${taskName}":`, err.message);
+      log.error("markOverdueRolloutTasks", `failed to mark overdue "${taskName}":`, err);
     }
   }
 }
@@ -94,13 +95,13 @@ async function markOverdueRolloutTasks() {
 async function createRolloutTasksFromTemplate(rollout) {
   const releaseDateStart = rollout.properties["Release Date"]?.rollup?.array?.[0]?.date?.start;
   if (!releaseDateStart) {
-    logger.warn(`[notionCron] rollout "${getTitle(rollout)}" has no Release Date yet, skipping task creation`);
+    log.warn("createRolloutTasksFromTemplate", `rollout "${getTitle(rollout)}" has no Release Date yet, skipping task creation`);
     return;
   }
 
   const artistId = rollout.properties["Artist"]?.rollup?.array?.[0]?.relation?.[0]?.id;
   if (!artistId) {
-    logger.warn(`[notionCron] rollout "${getTitle(rollout)}" has no Artist yet`);
+    log.warn("createRolloutTasksFromTemplate", `rollout "${getTitle(rollout)}" has no Artist yet`);
   }
 
   const templates = await queryDatabase(ROLLOUT_TASK_TEMPLATE_DATABASE_ID);
@@ -110,7 +111,7 @@ async function createRolloutTasksFromTemplate(rollout) {
     const offset        = template.properties["Offset Days"]?.number ?? 0;
     const dueDate        = addDays(releaseDateStart, offset);
 
-    logger.info(`[notionCron] creating rollout task: ${templateName} (due ${dueDate})`);
+    log.info("createRolloutTasksFromTemplate", `creating rollout task: ${templateName} (due ${dueDate})`);
 
     await createPage(ROLLOUT_TASKS_DATABASE_ID, {
       Description: { title: [{ text: { content: templateName } }] },
@@ -138,7 +139,7 @@ async function createMissingRollouts() {
 
     const releaseName = getTitle(release);
     try {
-      logger.info(`[notionCron] creating rollout for release: ${releaseName}`);
+      log.info("createMissingRollouts", `creating rollout for release: ${releaseName}`);
 
       const created = await createPage(ROLLOUTS_DATABASE_ID, {
         Name:    { title: [{ text: { content: releaseName } }] },
@@ -151,7 +152,7 @@ async function createMissingRollouts() {
       const rollout = await getPage(created.id);
       await createRolloutTasksFromTemplate(rollout);
     } catch (err) {
-      logger.error(`[notionCron] failed to create rollout for release "${releaseName}":`, err.message);
+      log.error("createMissingRollouts", `failed to create rollout for release "${releaseName}":`, err);
     }
   }
 }
@@ -169,7 +170,7 @@ async function createOrUpdateCalendarEvent({ page, calendarId, summary, date }) 
   const syncedAt = new Date().toISOString();
 
   if (existingEventId) {
-    logger.info(`[notionCron] updating calendar event: ${summary}`);
+    log.info("createOrUpdateCalendarEvent", `updating calendar event: ${summary}`);
     await updateEvent(calendarId, existingEventId, event);
     await updatePage(page.id, {
       "Google Calendar Last Sync": { date: { start: syncedAt } },
@@ -177,7 +178,7 @@ async function createOrUpdateCalendarEvent({ page, calendarId, summary, date }) 
     return;
   }
 
-  logger.info(`[notionCron] creating calendar event: ${summary}`);
+  log.info("createOrUpdateCalendarEvent", `creating calendar event: ${summary}`);
   const created = await createEvent(calendarId, event);
   await updatePage(page.id, {
     "Google Calendar Event ID":  { rich_text: [{ text: { content: created.id } }] },
@@ -193,13 +194,13 @@ async function syncTaskToCalendar(task) {
   const artistId  = task.properties["Artist"]?.relation?.[0]?.id;
   const calendarId = ARTIST_CALENDAR_IDS[artistId];
   if (!calendarId) {
-    logger.warn(`[notionCron] task "${taskName}" has no mapped artist calendar, skipping`);
+    log.warn("syncTaskToCalendar", `task "${taskName}" has no mapped artist calendar, skipping`);
     return;
   }
 
   const dueDate = task.properties["Due Date"]?.date?.start;
   if (!dueDate) {
-    logger.warn(`[notionCron] task "${taskName}" has no Due Date, skipping calendar sync`);
+    log.warn("syncTaskToCalendar", `task "${taskName}" has no Due Date, skipping calendar sync`);
     return;
   }
 
@@ -223,7 +224,7 @@ async function syncRolloutTasksToCalendar() {
     try {
       await syncTaskToCalendar(task);
     } catch (err) {
-      logger.error(`[notionCron] failed to sync task "${getTitle(task, "Description")}" to calendar:`, err.message);
+      log.error("syncRolloutTasksToCalendar", `failed to sync task "${getTitle(task, "Description")}" to calendar:`, err);
     }
     await sleep(200); // pace consecutive writes — reduces how often the burst quota gets tripped at all
   }
@@ -237,13 +238,13 @@ async function syncRolloutToCalendar(rollout) {
   const artistId    = rollout.properties["Artist"]?.rollup?.array?.[0]?.relation?.[0]?.id;
   const calendarId  = ARTIST_CALENDAR_IDS[artistId];
   if (!calendarId) {
-    logger.warn(`[notionCron] rollout "${releaseName}" has no mapped artist calendar, skipping`);
+    log.warn("syncRolloutToCalendar", `rollout "${releaseName}" has no mapped artist calendar, skipping`);
     return;
   }
 
   const releaseDate = rollout.properties["Release Date"]?.rollup?.array?.[0]?.date?.start;
   if (!releaseDate) {
-    logger.warn(`[notionCron] rollout "${releaseName}" has no Release Date, skipping calendar sync`);
+    log.warn("syncRolloutToCalendar", `rollout "${releaseName}" has no Release Date, skipping calendar sync`);
     return;
   }
 
@@ -272,7 +273,7 @@ async function resyncTasksForRollout(rollout) {
     try {
       await syncTaskToCalendar(task);
     } catch (err) {
-      logger.error(`[notionCron] failed to cascade-sync task "${getTitle(task, "Description")}" after rollout change:`, err.message);
+      log.error("resyncTasksForRollout", `failed to cascade-sync task "${getTitle(task, "Description")}" after rollout change:`, err);
     }
     await sleep(200); // pace consecutive writes — this is exactly the loop that tripped the burst quota
   }
@@ -295,27 +296,27 @@ async function syncRolloutsToCalendar() {
       try {
         await syncRolloutToCalendar(rollout);
       } catch (err) {
-        logger.error(`[notionCron] failed to sync rollout "${getTitle(rollout)}" to calendar:`, err.message);
+        log.error("syncRolloutsToCalendar", `failed to sync rollout "${getTitle(rollout)}" to calendar:`, err);
       }
     }
 
     try {
       await resyncTasksForRollout(rollout);
     } catch (err) {
-      logger.error(`[notionCron] failed to cascade tasks for rollout "${getTitle(rollout)}":`, err.message);
+      log.error("syncRolloutsToCalendar", `failed to cascade tasks for rollout "${getTitle(rollout)}":`, err);
     }
   }
 }
 
 async function syncNotionTasks() {
-  logger.info("[notionCron] starting sync...");
+  log.info("syncNotionTasks", "starting sync...");
 
   await markOverdueRolloutTasks();
   await createMissingRollouts();
   await syncRolloutsToCalendar();
   await syncRolloutTasksToCalendar();
 
-  logger.info("[notionCron] sync complete");
+  log.info("syncNotionTasks", "sync complete");
 }
 
 export function startNotionCron() {
@@ -323,9 +324,9 @@ export function startNotionCron() {
     try {
       await syncNotionTasks();
     } catch (err) {
-      logger.error("[notionCron] sync failed:", err.message);
+      log.error("startNotionCron", "sync failed:", err);
     }
   });
 
-  logger.info("[notionCron] job registered (every minute)");
+  log.info("startNotionCron", "job registered (every minute)");
 }

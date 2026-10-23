@@ -5,7 +5,7 @@ import Tag from "@/components/Tag";
 import Button from "@/components/Button";
 import Ornament from "@/components/Ornament";
 import Header from "@/components/Header";
-import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
+import FadeIn from "@/components/FadeIn";
 
 // ── Shared sub-components ─────────────────────────────────────────────────────
 
@@ -38,11 +38,10 @@ const CardIcon = ({ icon, badge, title }) => {
 // ── Mobile breakpoint hook ────────────────────────────────────────────────────
 
 const useIsMobile = () => {
-  const [mobile, setMobile] = useState(() =>
-    typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches
-  );
+  const [mobile, setMobile] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 640px)");
+    setMobile(mq.matches);
     const handler = (e) => setMobile(e.matches);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
@@ -289,17 +288,7 @@ const CtaCard = ({ heading, label, cta, href, disabled = false }) => (
 
 // ── Engineering page ──────────────────────────────────────────────────────────
 
-const Engineering = () => {
-  const { data: apiData, error, loading, fading } = usePageLoad(
-    () => fetch("/api/engineering").then(r => {
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      return r.json();
-    }),
-    { minLoadMs: 300 },
-  );
-
-  if (loading) return <LoadingScreen fading={fading} />;
-
+const Engineering = ({ apiData }) => {
   const header    = apiData?.data?.header;
   const projects  = apiData?.data?.projects ?? [];
   const hero      = projects[0];

@@ -1,3 +1,5 @@
+import { resolveMediaUrl } from "#lib/strapi.js";
+
 // ── word blacklist ────────────────────────────────────────────────────────────
 const BLACKLIST = [
   // add words here — redacted with █ on display, stored raw in strapi
@@ -17,16 +19,16 @@ function redact(str) {
  * Returns null for entries missing required fields (filtered out by callers).
  */
 export function normalizeEntry(raw) {
-  if (!raw.id || !raw.name || !raw.date_posted) return null;
+  if (!raw || !raw.id || !raw.name || !raw.date_posted) return null;
 
   return {
     id:      raw.id,
     name:    redact(raw.name ?? ""),
     website: raw.website ?? null,
     message: redact(raw.message ?? ""),
-    drawing: raw.drawing?.url ?? null,
+    drawing: resolveMediaUrl(raw.drawing),
     _ts:     new Date(raw.date_posted).getTime(), // raw timestamp for sorting
-    date:    raw.date_posted ? new Date(raw.date_posted).toLocaleDateString("en-CA").replace(/-/g, ".") : null,
+    date:    raw.date_posted ? new Date(raw.date_posted).toISOString().slice(0, 10).replace(/-/g, ".") : null,
     tags:    raw.guestbook_tags?.map((a) => ({ label: a.label, theme: a.theme })),
   };
 }

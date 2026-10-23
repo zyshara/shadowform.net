@@ -5,7 +5,8 @@
 // before they expire — once expired there's no way back except redoing the
 // full OAuth login flow (see server/scripts/getInstagramToken.js).
 
-import { logger } from "#lib/logger.js";
+import { createLogger } from "#lib/logger.js";
+const log = createLogger("instagram");
 
 const INSTAGRAM_APP_ID     = process.env.INSTAGRAM_APP_ID;
 const INSTAGRAM_APP_SECRET = process.env.INSTAGRAM_APP_SECRET;
@@ -59,6 +60,6 @@ export async function refreshLongLivedToken(token) {
   const res = await fetch(`https://graph.instagram.com/refresh_access_token?${params}`);
   if (!res.ok) throw new Error(`Instagram token refresh failed: ${res.status} ${await res.text()}`);
   const data = await res.json();
-  logger.info(`[instagram] token refreshed, expires in ${data.expires_in}s`);
+  log.info("refreshLongLivedToken", `token refreshed, expires in ${data.expires_in}s`);
   return data; // { access_token, token_type, expires_in }
 }

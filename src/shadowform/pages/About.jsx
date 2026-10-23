@@ -9,7 +9,7 @@ import VoidFrame from "@/components/VoidFrame";
 import EntryCard from "@/components/EntryCard";
 import Button from "@/components/Button";
 import SparkleFrame from "@/components/SparkleFrame";
-import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
+import FadeIn from "@/components/FadeIn";
 
 // ── cat photo — cycles through srcs on click, scales up on hover ──
 const CatImage = ({ srcs, alt }) => {
@@ -161,16 +161,7 @@ const CatCarousel = () => {
   );
 };
 
-const About = () => {
-  const { data: latestEntry, loading, fading } = usePageLoad(
-    () => fetch("/api/guestbook")
-      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-      .then((data) => data.guestbook?.guestbook_entries?.[0] ?? null),
-    { minLoadMs: 300 },
-  );
-
-  if (loading) return <LoadingScreen fading={fading} />;
-
+const About = ({ latestEntry }) => {
   return (
     <FadeIn className="flex flex-col w-full">
         <div className="flex flex-col justify-center items-center md:items-start md:flex-row gap-7 pb-8">

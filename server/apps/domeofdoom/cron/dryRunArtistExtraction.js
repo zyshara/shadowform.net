@@ -1,3 +1,5 @@
+import { createLogger } from "#lib/logger.js";
+const log = createLogger("domeofdoom");
 // server/domeofdoom/cron/dryRunArtistExtraction.js
 //
 // One-off exploration script, NOT part of the regular cron schedule and
@@ -45,11 +47,11 @@ function addOccurrence(map, rawName, where) {
 }
 
 async function main() {
-  console.log("Loading raw Bandcamp items + existing artist roster from Strapi...");
+  log.info("main", "Loading raw Bandcamp items + existing artist roster from Strapi...");
   const [rawItems, artistCache] = await Promise.all([fetchAllRawItems(), loadArtistCache()]);
 
   const rosterSlugs = new Set([...artistCache.values()].map((v) => slugifyArtistName(v.name)));
-  console.log(`${rawItems.length} raw item(s), ${artistCache.size} known roster artist(s)\n`);
+  log.info("main", `${rawItems.length} raw item(s), ${artistCache.size} known roster artist(s)\n`);
 
   const fromArtistsField = new Map();
   const fromTracksField = new Map();
@@ -128,17 +130,17 @@ async function main() {
     const slugs = [...map.keys()].sort();
     const known = slugs.filter(isKnown);
     const unknown = slugs.filter((s) => !isKnown(s));
-    console.log(`--- ${label} ---`);
-    console.log(`${slugs.length} unique artist(s): ${known.length} already in roster, ${unknown.length} NOT in roster`);
+    log.info("report", `--- ${label} ---`);
+    log.info("report", `${slugs.length} unique artist(s): ${known.length} already in roster, ${unknown.length} NOT in roster`);
     if (unknown.length > 0) {
-      console.log("New candidates (with up to 3 example locations each):");
+      log.info("report", "New candidates (with up to 3 example locations each):");
       for (const slug of unknown.sort((a, b) => formatVariants(map.get(a)).localeCompare(formatVariants(map.get(b))))) {
         const entry = map.get(slug);
         const examples = [...entry.locations].slice(0, 3);
-        console.log(`  - ${formatVariants(entry)} <- ${examples.join("; ")}${entry.locations.size > 3 ? "; ..." : ""}`);
+        log.info("report", `  - ${formatVariants(entry)} <- ${examples.join("; ")}${entry.locations.size > 3 ? "; ..." : ""}`);
       }
     }
-    console.log("");
+    log.info("report", "");
     return { slugs, known, unknown };
   };
 
@@ -146,8 +148,8 @@ async function main() {
   const tracksResult = report("tracks[].artist field (NOT currently mined anywhere - this is the new part)", fromTracksField);
 
   const newFromTracksOnly = tracksResult.unknown.filter((slug) => !fromArtistsField.has(slug));
-  console.log("--- Net new signal from tracks[].artist specifically ---");
-  console.log(
+  log.info("main", "--- Net new signal from tracks[].artist specifically ---");
+  log.info("main",
     `${newFromTracksOnly.length} artist(s) are unmatched AND weren't already surfaced by the artists field split:`
   );
   for (const slug of newFromTracksOnly.sort((a, b) =>
@@ -155,12 +157,11 @@ async function main() {
   )) {
     const entry = fromTracksField.get(slug);
     const examples = [...entry.locations].slice(0, 3);
-    console.log(`  - ${formatVariants(entry)} <- ${examples.join("; ")}${entry.locations.size > 3 ? "; ..." : ""}`);
+    log.info("main", `  - ${formatVariants(entry)} <- ${examples.join("; ")}${entry.locations.size > 3 ? "; ..." : ""}`);
   }
-  console.log("");
 
-  console.log("--- Excluded: remix-credit-only (original artist of a track someone else remixed) ---");
-  console.log(
+  log.info("main", "--- Excluded: remix-credit-only (original artist of a track someone else remixed) ---");
+  log.info("main",
     `${excludedRemixOnly.size} name(s) only ever appeared as the pre-dash artist in an "X - Song (Y Remix)" ` +
     `track title, never anywhere else - not added as candidates:`
   );
@@ -169,11 +170,11 @@ async function main() {
   )) {
     const entry = excludedRemixOnly.get(slug);
     const examples = [...entry.locations].slice(0, 3);
-    console.log(`  - ${formatVariants(entry)} <- ${examples.join("; ")}${entry.locations.size > 3 ? "; ..." : ""}`);
+    log.info("main", `  - ${formatVariants(entry)} <- ${examples.join("; ")}${entry.locations.size > 3 ? "; ..." : ""}`);
   }
 }
 
 main().catch((err) => {
-  console.error(err);
+  log.error("main", err);
   process.exit(1);
 });

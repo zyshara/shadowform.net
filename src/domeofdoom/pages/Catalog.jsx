@@ -6,18 +6,13 @@
 // the earlier "Crate Sidebar" checkbox-list direction this page used
 // before.
 //
-// Data comes from the "catalog-items-data" seed (see injectJsonData in
-// server/routes/spas.js, populated by fetchAndCacheStrapiData.js every 5
-// minutes) - same server-seeded-JSON pattern as roster-data/etc, no
-// client-side fetch needed. Each item is already
-// override ?? derived normalized server-side (server/models/catalogItem.js).
+// The route loader supplies normalized catalog data from Strapi.
 // Facet counts are cross-filtered against the OTHER active groups' current
 // selection (but not the group's own selection) - see facetCounts below.
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
-import { Link, useSearchParams } from "react-router-dom";
-import { readSeedData } from "@shared/utils/readSeedData";
+import { Link, useSearchParams } from "react-router";
 import { catalogItemSlug } from "@/utils/catalogItemSlug";
 import { STARBURST_DECOR } from "@/tokens";
 import { colors } from "@/tokens";
@@ -269,9 +264,8 @@ const CatalogCard = ({ item }) => (
   </Link>
 );
 
-const Catalog = () => {
+const Catalog = ({ allItems = [] }) => {
   usePageTitle("Catalog");
-  const allItems = useMemo(() => readSeedData("catalog-items-data") ?? [], []);
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Lazy initializers (function form of useState) - only read the URL

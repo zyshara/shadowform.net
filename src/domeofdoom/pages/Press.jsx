@@ -1,5 +1,5 @@
 // src/domeofdoom/pages/Press.jsx
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { colors } from "@/tokens";
@@ -174,23 +174,13 @@ const PressCard = ({ item }) => {
 // Press page
 // ---------------------------------------------------------------------------
 
-export default function Press() {
+export default function Press({ items = [] }) {
   usePageTitle("Press");
-  const [items, setItems]       = useState([]);
-  const [loading, setLoading]   = useState(true);
-  const [error, setError]       = useState(null);
   const descriptionRef = useRef(null);
 
   const [yearSel,   setYearSel]   = useState(new Set());
   const [outletSel, setOutletSel] = useState(new Set());
   const [sortOrder, setSortOrder] = useState("newest");
-
-  useEffect(() => {
-    fetch("/api/press")
-      .then((r) => r.json())
-      .then((d) => { setItems(d.items ?? []); setLoading(false); })
-      .catch(() => { setError("Failed to load press items."); setLoading(false); });
-  }, []);
 
   const toggle = (setSel) => (value) =>
     setSel((prev) => {
@@ -302,16 +292,10 @@ export default function Press() {
       />
 
       {/* Grid */}
-      {loading && (
-        <p className="text-dod-lilac/60 text-sm py-10 text-center">Loading…</p>
-      )}
-      {error && (
-        <p className="text-dod-orange text-sm py-10 text-center">{error}</p>
-      )}
-      {!loading && !error && filtered.length === 0 && (
+      {filtered.length === 0 && (
         <p className="text-dod-lilac/60 text-sm py-10 text-center">No results.</p>
       )}
-      {!loading && !error && filtered.length > 0 && (
+      {filtered.length > 0 && (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {visibleItems.map((item) => <PressCard key={item.id} item={item} />)}

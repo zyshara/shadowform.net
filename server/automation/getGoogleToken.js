@@ -6,6 +6,8 @@
 // paste into .env as GOOGLE_REFRESH_TOKEN.
 
 import "dotenv/config";
+import { createLogger } from "#lib/logger.js";
+const log = createLogger("googleCalendar");
 import { google } from "googleapis";
 import readline from "node:readline/promises";
 
@@ -21,7 +23,7 @@ const url = oauth2Client.generateAuthUrl({
   scope: ["https://www.googleapis.com/auth/calendar"],
 });
 
-console.log("Open this URL, approve access, then copy the `code` param from the redirect URL:\n");
+log.info("getGoogleToken", "Open this URL, approve access, then copy the code param from the redirect URL:");
 console.log(url, "\n");
 
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
@@ -30,5 +32,5 @@ rl.close();
 
 const { tokens } = await oauth2Client.getToken(code.trim());
 
-console.log("\nAdd this to .env:\n");
+log.info("getGoogleToken", "Add this to .env (keep the following token private):");
 console.log(`GOOGLE_REFRESH_TOKEN=${tokens.refresh_token}`);

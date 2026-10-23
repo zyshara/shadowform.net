@@ -1,8 +1,7 @@
 // server/lib/rateLimit.js
 //
-// Minimal in-memory per-IP rate limiter, same approach as
-// server/domeofdoom/contact.js's checkRateLimit. Returns a function you can
-// call per-request; each call site gets its own independent counter store.
+// In-memory per-IP rate limiting. Each route gets an independent counter store;
+// the cleanup timer does not keep tests or otherwise idle processes running.
 
 export function createRateLimiter({ windowMs, max }) {
   const store = new Map();
@@ -12,7 +11,7 @@ export function createRateLimiter({ windowMs, max }) {
     for (const [key, entry] of store.entries()) {
       if (now > entry.resetAt) store.delete(key);
     }
-  }, windowMs);
+  }, windowMs).unref();
 
   return function checkRateLimit(key) {
     const now = Date.now();
@@ -26,5 +25,16 @@ export function createRateLimiter({ windowMs, max }) {
     }
     entry.count++;
     return { allowed: true };
+  };
+}
+
+// req.ip respects the app's explicitly configured trusted proxy boundary.
+export function rateLimit({ message = "Too many requests. Please try again later.", ...options }) {
+  const check = createRateLimiter(options);
+  return (req, res, next) => {
+    const result = check(req.ip || req.socket?.remoteAddress || "unknown");
+    if (result.allowed) return next();
+    res.setHeader("Retry-After", String(Math.ceil(result.retryAfterMs / 1000)));
+    res.status(429).json({ error: message });
   };
 }

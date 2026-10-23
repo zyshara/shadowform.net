@@ -1,28 +1,34 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
-import { readSeedData } from "@shared/utils/readSeedData";
 import { colors } from "@/tokens";
 import WarpedGrid from "@/components/WarpedGrid";
 import GridDome from "@/components/GridDome";
 import StarIcon from "@/components/StarIcon";
 
 const PRIMARY = colors.accent;
+const EMPTY_ARTISTS = [];
 
 // Small per-card variation around WarpedGrid's defaults (intensity=1,
 // density=1) - enough that cards don't all look identical, not enough
 // to stop reading as "the same grid".
-function randomWarpedGridProps() {
+function randomWarpedGridProps(name) {
+  let seed = 0;
+  for (const char of name) seed = (seed * 31 + char.charCodeAt(0)) >>> 0;
+  const random = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
   return {
-    intensity: 0.5 + Math.random() * 1.1, // 0.8 - 1.2
-    density: 0.1 + Math.random() * 0.4, // 0.85 - 1.15
+    intensity: 0.5 + random() * 1.1, // 0.8 - 1.2
+    density: 0.1 + random() * 0.4, // 0.85 - 1.15
   };
 }
 
-const Roster = () => {
+const Roster = ({ artists: sourceArtists = EMPTY_ARTISTS }) => {
   usePageTitle("Roster");
-  const allArtists = (readSeedData("roster-data") ?? []).filter(
-    (artist) => artist?.name
+  // Keep the list stable when infinite scroll updates its visible count.
+  // A new list identity tells useInfiniteScroll to reset to the first page.
+  const allArtists = useMemo(
+    () => sourceArtists.filter((artist) => artist?.name),
+    [sourceArtists]
   );
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -32,13 +38,13 @@ const Roster = () => {
     const map = {};
 
     allArtists.forEach((artist) => {
-      map[artist.name] = randomWarpedGridProps();
+      map[artist.name] = randomWarpedGridProps(artist.name);
     });
 
     return map;
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [sourceArtists]);
 
   const artists = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();

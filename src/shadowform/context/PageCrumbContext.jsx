@@ -6,7 +6,7 @@
 // this context rather than passing props directly.
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 
 const PageCrumbContext = createContext(null);
 

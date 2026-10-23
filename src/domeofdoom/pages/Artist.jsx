@@ -1,7 +1,6 @@
 import React from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
-import { useParams, Link } from "react-router-dom";
-import { readSeedData } from "@shared/utils/readSeedData";
+import { useParams, Link } from "react-router";
 import { colors } from "@/tokens";
 import SubpageHeader from "@/components/SubpageHeader";
 import SectionHeader from "@/components/SectionHeader";
@@ -34,21 +33,19 @@ const FRAME_SKEW_OVERSIZE = skewOversizePx(FRAME_HEIGHT);
 
 function showTimestamp(show) {
   const [y, m, d] = show.date.split("-").map(Number);
-  return new Date(y, m - 1, d).getTime();
+  return Date.UTC(y, m - 1, d);
 }
 
-const Artist = () => {
+const Artist = ({ artists: sourceArtists = [], allShows = [], now }) => {
   const { artistSlug: slugParam } = useParams();
 
-  const allArtists = (readSeedData("roster-data") ?? []).filter((a) => a?.name);
+  const allArtists = sourceArtists.filter((a) => a?.name);
   const artist = allArtists.find((a) => artistSlug(a.name) === slugParam);
   usePageTitle(artist?.name);
 
-  const allShows = readSeedData("shows-data") ?? [];
   const artistShows = artist
     ? allShows.filter((s) => s.artists?.some((a) => a.name === artist.name))
     : [];
-  const now = Date.now();
   const upcomingShows = artistShows
     .filter((s) => showTimestamp(s) >= now)
     .sort((a, b) => showTimestamp(a) - showTimestamp(b));

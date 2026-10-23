@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 // Detailed wireframe globe — inherits currentColor, scales via width/height
 function WireGlobe({ size = "100%" }) {

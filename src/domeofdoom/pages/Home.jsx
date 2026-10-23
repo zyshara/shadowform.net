@@ -1,7 +1,6 @@
 import React from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
-import { Link } from "react-router-dom";
-import { readSeedData } from "@shared/utils/readSeedData";
+import { Link } from "react-router";
 import { catalogItemSlug } from "@/utils/catalogItemSlug";
 import { colors } from "@/tokens";
 import Button from "@/components/Button";
@@ -72,12 +71,12 @@ function formatReleaseDate(dateStr) {
   if (!dateStr) return null;
   const d = new Date(dateStr);
   if (isNaN(d)) return null;
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
 }
 
-function isUpcoming(item) {
+function isUpcoming(item, now) {
   if (!item?.release_date) return false;
-  return new Date(item.release_date).getTime() > Date.now();
+  return new Date(item.release_date).getTime() > now;
 }
 
 // Strip HTML tags for plain-text contexts
@@ -146,18 +145,18 @@ function LatestCompilationSection({ item }) {
       <HomeSectionHeader title="Latest Compilation" linkTo={`/catalog/${slug}`} linkText="Learn More" />
 
       <div className="grid grid-cols-1 3xl:grid-cols-[440px_1fr] relative overflow-hidden">
-        <div
-          className="absolute top-0 bottom-0 w-full 3xl:w-[440px] pointer-events-none overflow-hidden"
-          style={{
-            left: "20px",
-            maskImage: "radial-gradient(ellipse 95% 85% at 50% 50%, black 30%, transparent 75%)",
-            WebkitMaskImage: "radial-gradient(ellipse 95% 85% at 50% 50%, black 30%, transparent 75%)",
-          }}
-        >
-          <WarpedGrid density={0.4} className="absolute inset-0 opacity-80" />
-        </div>
-        {/* Cover side */}
-        <div className="flex items-center justify-center py-14 px-10 min-h-[340px] relative">
+        {/* Keep the decorative grid inside the artwork area at every breakpoint. */}
+        <div className="isolate flex items-center justify-center py-14 px-10 min-h-[340px] relative overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none overflow-hidden"
+            style={{
+              maskImage: "radial-gradient(ellipse 95% 85% at 50% 50%, black 30%, transparent 75%)",
+              WebkitMaskImage: "radial-gradient(ellipse 95% 85% at 50% 50%, black 30%, transparent 75%)",
+            }}
+          >
+            <WarpedGrid density={0.4} className="absolute inset-0 opacity-80" />
+          </div>
           <div className="relative z-10 w-[300px] 3xl:w-[380px]">
             <TiltedCover
               artworkUrl={item.artwork_url}
@@ -238,8 +237,8 @@ function LatestCompilationSection({ item }) {
 // ReleaseCard — corner badge, date, cover + details row, CTA
 // ---------------------------------------------------------------------------
 
-function ReleaseCard({ item }) {
-  const upcoming = isUpcoming(item);
+function ReleaseCard({ item, now }) {
+  const upcoming = isUpcoming(item, now);
   const slug = catalogItemSlug(item);
   const date = formatReleaseDate(item.release_date);
   const year = releaseYear(item);
@@ -248,29 +247,22 @@ function ReleaseCard({ item }) {
   // Upcoming = mint theme; Latest = lilac theme
   const themeColor = upcoming ? "var(--dod-neon-mint)" : "var(--dod-lilac)";
 
-  const cta = upcoming ? (
-    <Link
-      to={`/catalog/${slug}`}
-      className="flex items-center justify-center gap-2 border py-3 text-[11px] font-black uppercase tracking-[0.1em] transition-colors hover:opacity-80"
-      style={{ color: themeColor, borderColor: themeColor }}
+  const cta = (
+    <Button
+      variant={upcoming ? "primary" : "secondary"}
+      to={upcoming ? `/catalog/${slug}` : "/catalog"}
+      className="w-full min-w-0"
     >
-      Pre-Save <ArrowRightIcon size={12} />
-    </Link>
-  ) : (
-    <a
-      href={item.spotify_url || undefined}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex items-center justify-center gap-2 border py-3 text-[11px] font-black uppercase tracking-[0.1em] transition-colors hover:opacity-80"
-      style={{ color: themeColor, borderColor: themeColor }}
-    >
-      Listen Now <ArrowRightIcon size={12} />
-    </a>
+      <span className="flex items-center justify-center gap-2">
+        {upcoming ? "Learn More" : "Listen Now"}
+        <ArrowRightIcon size={15} />
+      </span>
+    </Button>
   );
 
   return (
     <div
-      className="relative flex flex-col gap-4 border p-5"
+      className="relative flex min-w-0 flex-col gap-4 border p-5"
       style={{ borderColor: themeColor, background: "transparent" }}
     >
       <CardLabelBadge
@@ -289,8 +281,8 @@ function ReleaseCard({ item }) {
       )}
 
       {/* Cover + info — stacked on mobile, two columns (cover left, details right) from sm up */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <div className="aspect-square w-full overflow-hidden border border-dod-lilac/70">
+      <div className="grid flex-1 grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="aspect-square w-full self-start overflow-hidden border border-dod-lilac/70">
           {item.artwork_url ? (
             <img
               src={item.artwork_url}
@@ -317,7 +309,7 @@ function ReleaseCard({ item }) {
           </div>
           <Link to={`/catalog/${slug}`} className="hover:opacity-80 transition-opacity">
             <div
-              className="font-black uppercase leading-tight"
+              className="line-clamp-3 font-black uppercase leading-tight [overflow-wrap:anywhere]"
               style={{
                 fontFamily: "Archivo, sans-serif",
                 fontStretch: "expanded",
@@ -340,7 +332,8 @@ function ReleaseCard({ item }) {
             </p>
           )}
 
-          <div className="mt-auto pt-2">{cta}</div>
+          {/* Include the button's 1px outline + 2px offset in its alignment. */}
+          <div className="mt-auto px-[3px] pb-[3px] pt-2">{cta}</div>
         </div>
       </div>
     </div>
@@ -528,7 +521,7 @@ function FeatureReleaseCard({ item }) {
 // LatestReleasesSection
 // ---------------------------------------------------------------------------
 
-function LatestReleasesSection({ latestRelease, upcomingRelease }) {
+function LatestReleasesSection({ latestRelease, upcomingRelease, now }) {
   if (!latestRelease && !upcomingRelease) return null;
 
   return (
@@ -537,8 +530,8 @@ function LatestReleasesSection({ latestRelease, upcomingRelease }) {
 
       {upcomingRelease ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <ReleaseCard item={upcomingRelease} />
-          {latestRelease && <ReleaseCard item={latestRelease} />}
+          <ReleaseCard item={upcomingRelease} now={now} />
+          {latestRelease && <ReleaseCard item={latestRelease} now={now} />}
         </div>
       ) : (
         <FeatureReleaseCard item={latestRelease} />
@@ -551,11 +544,9 @@ function LatestReleasesSection({ latestRelease, upcomingRelease }) {
 // Home
 // ---------------------------------------------------------------------------
 
-const Home = () => {
+const Home = ({ catalogItems = [], now }) => {
   usePageTitle(null);
 
-  const catalogItems = readSeedData("catalog-items-data") ?? [];
-  const now = Date.now();
 
   const compilations = catalogItems
     .filter((i) => i.type === "Compilation")
@@ -621,7 +612,7 @@ const Home = () => {
       </div>
 
       <LatestCompilationSection item={latestCompilation} />
-      <LatestReleasesSection latestRelease={latestRelease} upcomingRelease={upcomingRelease} />
+      <LatestReleasesSection latestRelease={latestRelease} upcomingRelease={upcomingRelease} now={now} />
     </div>
   );
 };

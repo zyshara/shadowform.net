@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import GlobeIcon from "@/components/GlobeIcon";
 
 const SIZE = {
@@ -52,8 +52,8 @@ const BrutalistButton = ({
   const c = COLOR[color]        ?? COLOR["neon-green"];
 
   const colorClass = hovered ? c.hovered : c.base;
-  const showFiligree = filigreeIcon !== null;
   const filigreeIcon = filigreeIconProp !== undefined ? filigreeIconProp : <GlobeIcon size={s.icon} />;
+  const showFiligree = filigreeIcon !== null;
 
   const outerClass = [
     "flex items-stretch border-[3px] border-double transition-colors duration-150",

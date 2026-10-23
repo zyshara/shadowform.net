@@ -1,6 +1,6 @@
 // src/domeofdoom/components/Footer.jsx
 
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { LOGO_URL } from "@/tokens";
 import PoweredByLogo from "@shared/components/PoweredByLogo.jsx";
 

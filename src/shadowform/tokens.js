@@ -44,7 +44,7 @@ export const colors = {
 };
 
 export const typography = {
-  // Font families — matches your tailwind config
+  // Font families declared in index.css.
   display: "'Alagard', cursive",        // was UnifrakturMaguntia — headings, nav, site name
   ui:      "'Alkhemikal', monospace",   // UI labels, tags, ticker, footer
   body:    "'IM Fell English', serif",  // body prose, quotes

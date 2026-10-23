@@ -30,7 +30,7 @@ const TiltedCover = ({ artworkUrl, title, text = {}, className = "" }) => {
         <div className="tilted-cover-face tilted-cover-left">
           {left.first && <span>{left.first}</span>}
           {left.middle && <span>{left.middle}</span>}
-          {left.last && <span>{left.last}</span>}
+          {left.last && <span className="tilted-cover-left-title" title={left.last}>{left.last}</span>}
         </div>
         <div className="tilted-cover-face tilted-cover-bottom">
           {bottom.first && <span className="tilted-cover-bottom-title">{bottom.first}</span>}

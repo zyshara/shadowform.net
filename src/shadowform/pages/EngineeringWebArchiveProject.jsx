@@ -1,6 +1,6 @@
 // src/shadowform/pages/EngineeringWebArchiveProject.jsx
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import Tag from "@/components/Tag";
 import Button from "@/components/Button";
 import Header from "@/components/Header";
@@ -8,15 +8,14 @@ import Modal from "@/components/Modal";
 import Ornament from "@/components/Ornament";
 import PreservedSite from "@/components/PreservedSite";
 import MobileSitePreview from "@/components/MobileSitePreview";
-import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
+import FadeIn from "@/components/FadeIn";
 import { usePageCrumb } from "@/context/PageCrumbContext";
 
 const useIsMobile = () => {
-  const [mobile, setMobile] = useState(() =>
-    typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches
-  );
+  const [mobile, setMobile] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 640px)");
+    setMobile(mq.matches);
     const handler = (e) => setMobile(e.matches);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
@@ -160,22 +159,12 @@ const ProjectDetailCard = ({ project }) => {
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
-const EngineeringWebArchiveProject = () => {
+const EngineeringWebArchiveProject = ({ apiData }) => {
   const { slug }   = useParams();
   const mobile     = useIsMobile();
   const [siteOpen, setSiteOpen] = useState(false);
 
-  const { data: apiData, error, loading, fading } = usePageLoad(
-    () => fetch(`/api/engineering/archive/${slug}`).then(r => {
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      return r.json();
-    }),
-    { minLoadMs: 300 },
-  );
-
   usePageCrumb(apiData?.data?.eyebrow);
-
-  if (loading) return <LoadingScreen fading={fading} />;
 
   const project = apiData?.data ?? null;
 

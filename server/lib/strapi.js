@@ -1,89 +1,67 @@
-// server/lib/strapi.js
+import { createLogger } from "./logger.js";
+import { createAsyncCache } from "./cache.js";
 
-import { logger } from "./logger.js";
-
-const STRAPI_URL   = process.env.STRAPI_API_URL   || "https://strapi-shadowform-52c53315c615.herokuapp.com";
+const STRAPI_URL = process.env.STRAPI_API_URL || "https://strapi-shadowform-52c53315c615.herokuapp.com";
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN || "";
+const cache = createAsyncCache();
+const log = createLogger("strapi");
 
-const configuredTtl = Number(process.env.STRAPI_CACHE_TTL_MS ?? 5 * 60 * 1000);
-const CACHE_TTL_MS = Number.isFinite(configuredTtl) && configuredTtl >= 0
-  ? configuredTtl : 5 * 60 * 1000;
-
-// simple in-memory cache: { [cacheKey]: { data, expiresAt } }
-//
-// This is one of two caching patterns in server/: a short-TTL cache keyed
-// by request URL, for routes that proxy-and-shape a single Strapi
-// collection with no cron job maintaining a snapshot (guestbook.js,
-// management.js, engineering.js, epk.js). For data that needs real
-// synthesis — scraping, merging overrides, normalizing — see
-// createEntityCache.js instead: a cron job refreshes it on a schedule so
-// requests never pay that synthesis cost and reads are always warm.
-const cache = new Map();
-
-/**
- * Fetch from Strapi with auth header, populate support, and in-memory caching.
- * @param {string} path   - e.g. "/api/artists"
- * @param {object} params - query params to append
- * @param {object} opts
- * @param {number}  opts.ttl      - cache TTL in ms (default: CACHE_TTL_MS)
- * @param {boolean} opts.noCache  - bypass cache entirely
- */
-export async function strapiGet(path, params = {}, { ttl = CACHE_TTL_MS, noCache = false } = {}) {
-  const query    = new URLSearchParams(params).toString();
-  const fullUrl  = `${STRAPI_URL}${path}${query ? `?${query}` : ""}`;
-  const cacheKey = fullUrl;
-
-  // return cached data if still fresh
-  if (!noCache) {
-    const cached = cache.get(cacheKey);
-    if (cached && Date.now() < cached.expiresAt) {
-      logger.debug("[strapi] cache hit:", cacheKey);
-      return cached.data;
-    }
-  }
-
-  logger.debug("[strapi] fetching:", fullUrl);
-
-  const res = await fetch(fullUrl, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(STRAPI_TOKEN && { Authorization: `Bearer ${STRAPI_TOKEN}` }),
-    },
-  });
-
-  if (!res.ok) {
-    const body = await res.text();
-    const err  = new Error(`Strapi ${res.status}: ${res.statusText}`);
-    err.body   = body;
-    throw err;
-  }
-
-  const data = await res.json();
-
-  // store in cache
-  cache.set(cacheKey, { data, expiresAt: Date.now() + ttl });
-
-  return data;
+function requestUrl(path, params = {}) {
+  const query = new URLSearchParams(params).toString();
+  return `${STRAPI_URL}${path}${query ? `?${query}` : ""}`;
 }
 
-/**
- * Fetch every page of a Strapi collection, concatenated into one array.
- * Always bypasses strapiGet's cache (noCache) — intended for cron jobs that
- * pull the full collection on a schedule and cache the normalized result
- * themselves (see bandcampCache.js and friends), not for per-request reads.
- * @param {string} path   - e.g. "/api/dome-of-doom-artists"
- * @param {object} params - query params to append (populate, filters, etc.)
- */
+// One transport for JSON reads/writes and multipart uploads. The timeout also
+// covers response-body consumption. Do not retry writes automatically.
+async function request(url, { method = "GET", payload, formData } = {}) {
+  const parsed = new URL(url);
+  const endpoint = `${parsed.origin}${parsed.pathname}`;
+  const query = Object.fromEntries([...new Set(parsed.searchParams.keys())].map(key => {
+    const values = parsed.searchParams.getAll(key);
+    return [key, values.length === 1 ? values[0] : values];
+  }));
+  const started = performance.now();
+  log.info(method, endpoint, { event: "request", query });
+  try {
+    const res = await fetch(url, {
+      method,
+      signal: AbortSignal.timeout(30000),
+      headers: {
+        ...(!formData && { "Content-Type": "application/json" }),
+        ...(STRAPI_TOKEN && { Authorization: `Bearer ${STRAPI_TOKEN}` }),
+      },
+      ...(formData ? { body: formData } : payload !== undefined ? { body: JSON.stringify(payload) } : {}),
+    });
+    if (!res.ok) {
+      const error = new Error(`Strapi ${res.status}: ${res.statusText}`);
+      error.status = res.status;
+      error.body = await res.text();
+      throw error;
+    }
+    const data = res.status === 204 ? null : await res.json();
+    log.info(method, endpoint, { event: "response", status: res.status,
+      durationMs: Math.round(performance.now() - started) });
+    return data;
+  } catch (error) {
+    log.error(method, endpoint, { event: "failed", durationMs: Math.round(performance.now() - started), error });
+    throw error;
+  }
+}
+
+export function strapiGet(path, params = {}, { ttl, noCache = false } = {}) {
+  const url = requestUrl(path, params);
+  const load = () => request(url);
+  // Bypass both cache reads and writes, as used by ingestion/pagination.
+  return noCache ? load() : cache.get(url, load, { ttl });
+}
+
 export async function strapiGetAllPages(path, params = {}) {
-  const PAGE_SIZE = 100;
   const all = [];
   let page = 1;
   while (true) {
-    const res = await strapiGet(
-      path,
-      { ...params, "pagination[page]": page, "pagination[pageSize]": PAGE_SIZE },
-      { noCache: true }
-    );
+    const res = await strapiGet(path, {
+      ...params, "pagination[page]": page, "pagination[pageSize]": 100,
+    }, { noCache: true });
     all.push(...res.data);
     if (page >= res.meta.pagination.pageCount) break;
     page++;
@@ -91,90 +69,34 @@ export async function strapiGetAllPages(path, params = {}) {
   return all;
 }
 
-export async function strapiPost(path, payload) {
-  const res = await fetch(`${STRAPI_URL}${path}`, {
-    method:  "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(STRAPI_TOKEN && { Authorization: `Bearer ${STRAPI_TOKEN}` }),
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (!res.ok) {
-    const body = await res.text();
-    const err  = new Error(`Strapi ${res.status}: ${res.statusText}`);
-    err.body   = body;
-    throw err;
-  }
-  return res.json();
+export function strapiPost(path, payload) {
+  return request(requestUrl(path), { method: "POST", payload });
 }
 
-/**
- * Upload a file to Strapi's media library.
- * @param {Buffer} buffer - file buffer
- * @param {string} filename - e.g. "drawing-123.png"
- * @param {string} mimeType - e.g. "image/png"
- * @returns {object} uploaded file object from Strapi
- */
+export function strapiPut(path, payload) {
+  return request(requestUrl(path), { method: "PUT", payload });
+}
+
 export async function strapiUploadMedia(buffer, filename, mimeType = "image/png") {
   const formData = new FormData();
   formData.append("files", new Blob([buffer], { type: mimeType }), filename);
-
-  const res = await fetch(`${STRAPI_URL}/api/upload`, {
-    method:  "POST",
-    headers: { ...(STRAPI_TOKEN && { Authorization: `Bearer ${STRAPI_TOKEN}` }) },
-    // no Content-Type header — let fetch set the multipart boundary automatically
-    body:    formData,
-  });
-
-  if (!res.ok) {
-    const body = await res.text();
-    const err  = new Error(`Strapi upload ${res.status}: ${res.statusText}`);
-    err.body   = body;
-    throw err;
-  }
-
-  const uploaded = await res.json();
+  const uploaded = await request(requestUrl("/api/upload"), { method: "POST", formData });
   return uploaded?.[0] ?? null;
 }
 
-export async function strapiPut(path, payload) {
-  const res = await fetch(`${STRAPI_URL}${path}`, {
-    method:  "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      ...(STRAPI_TOKEN && { Authorization: `Bearer ${STRAPI_TOKEN}` }),
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (!res.ok) {
-    const body = await res.text();
-    const err  = new Error(`Strapi ${res.status}: ${res.statusText}`);
-    err.body   = body;
-    throw err;
-  }
-  return res.json();
-}
-
-// Resolves a Strapi media relation's `url` (which Strapi returns relative
-// to itself) into an absolute URL the client can load directly.
 export function resolveMediaUrl(media) {
   const url = media?.url;
   if (!url) return null;
-  if (/^https?:\/\//.test(url)) return url;
-  return `${STRAPI_URL}${url}`;
+  return /^https?:\/\//.test(url) ? url : `${STRAPI_URL}${url}`;
 }
 
-export function invalidateCache(path, params = {}) {
-  if (!path) {
-    cache.clear();
-    logger.info("[strapi] cache cleared");
-    return;
-  }
-  const query   = new URLSearchParams(params).toString();
-  const fullUrl = `${STRAPI_URL}${path}${query ? `?${query}` : ""}`;
-  cache.delete(fullUrl);
-  logger.info("[strapi] cache invalidated:", fullUrl);
+// Without params, invalidate every populated/filtered variant of this endpoint
+// and its detail URLs. With params, invalidate just the exact query.
+export function invalidateCache(path, params) {
+  cache.invalidate(url => {
+    if (!path) return true;
+    if (params !== undefined) return url === requestUrl(path, params);
+    const pathname = new URL(url).pathname;
+    return pathname === path || pathname.startsWith(`${path}/`);
+  });
 }

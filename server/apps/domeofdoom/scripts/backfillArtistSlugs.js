@@ -1,3 +1,5 @@
+import { createLogger } from "#lib/logger.js";
+const log = createLogger("domeofdoom");
 // server/domeofdoom/scripts/backfillArtistSlugs.js
 //
 // One-off: sets DomeOfDoomArtist.slug (via slugifyArtistName, see
@@ -27,14 +29,14 @@ function fetchAllArtists() {
 }
 
 async function main() {
-  if (DRY_RUN) console.log("--- DRY RUN, no writes will be made ---\n");
+  if (DRY_RUN) log.info("main", "--- DRY RUN, no writes will be made ---\n");
 
-  console.log("Loading Dome of Doom Artists from Strapi...");
+  log.info("main", "Loading Dome of Doom Artists from Strapi...");
   const artists = await fetchAllArtists();
-  console.log(`${artists.length} artist(s) total\n`);
+  log.info("main", `${artists.length} artist(s) total\n`);
 
   const toBackfill = artists.filter((a) => !a.slug);
-  console.log(`${toBackfill.length} artist(s) missing a slug\n`);
+  log.info("main", `${toBackfill.length} artist(s) missing a slug\n`);
 
   // Surface it if backfilling would give two DIFFERENT existing records
   // the same slug - that means they're likely already-duplicate artist
@@ -49,11 +51,11 @@ async function main() {
   }
   const collisions = [...bySlug.entries()].filter(([, group]) => group.length > 1);
   if (collisions.length > 0) {
-    console.log(`⚠ ${collisions.length} slug collision(s) among EXISTING artists - likely duplicate records:`);
+    log.info("main", `⚠ ${collisions.length} slug collision(s) among EXISTING artists - likely duplicate records:`);
     for (const [slug, group] of collisions) {
-      console.log(`  - "${slug}": ${group.map((a) => `"${a.name}" (${a.documentId ?? a.id})`).join(", ")}`);
+      log.info("main", `  - "${slug}": ${group.map((a) => `"${a.name}" (${a.documentId ?? a.id})`).join(", ")}`);
     }
-    console.log("These are not auto-merged - review and decide manually.\n");
+    log.info("main", "These are not auto-merged - review and decide manually.\n");
   }
 
   let updated = 0;
@@ -62,24 +64,24 @@ async function main() {
     const slug = slugifyArtistName(artist.name);
 
     if (!slug) {
-      console.log(`  [skip] "${artist.name}" (${docId}) - name normalizes to an empty slug`);
+      log.info("main", `  [skip] "${artist.name}" (${docId}) - name normalizes to an empty slug`);
       continue;
     }
 
     if (DRY_RUN) {
-      console.log(`  [dry] would set "${artist.name}" (${docId}) -> slug: "${slug}"`);
+      log.info("main", `  [dry] would set "${artist.name}" (${docId}) -> slug: "${slug}"`);
     } else {
       await strapiPut(`${ARTISTS_PATH}/${docId}`, { data: { slug } });
-      console.log(`  [updated] "${artist.name}" (${docId}) -> slug: "${slug}"`);
+      log.info("main", `  [updated] "${artist.name}" (${docId}) -> slug: "${slug}"`);
       await sleep(WRITE_DELAY_MS);
     }
     updated++;
   }
 
-  console.log(`\n${DRY_RUN ? "Would update" : "Updated"} ${updated} artist(s).`);
+  log.info("main", `\n${DRY_RUN ? "Would update" : "Updated"} ${updated} artist(s).`);
 }
 
 main().catch((err) => {
-  console.error(err);
+  log.error("main", err);
   process.exit(1);
 });

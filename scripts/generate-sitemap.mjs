@@ -1,50 +1,14 @@
-// scripts/generate-sitemap.mjs
-// Run after webpack build to write dist/domeofdoom/sitemap.xml.
-// Fetches dynamic slugs (catalog items, artists) from the local server
-// so the sitemap reflects real content.
-
-import { readFileSync, writeFileSync } from "fs";
-import { createRequire } from "module";
-import path from "path";
-import { fileURLToPath } from "url";
+// Build the public sitemap from the same Strapi-normalized data as SSR.
+import "dotenv/config";
+import { writeFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { getCatalog, getArtists } from "../server/apps/domeofdoom/data.js";
+import { catalogItemSlug } from "../src/domeofdoom/utils/catalogItemSlug.js";
+import { artistSlug } from "../src/domeofdoom/utils/artistSlug.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-const envPath = path.join(__dirname, "../.env");
-let fileEnv = {};
-try {
-  fileEnv = Object.fromEntries(
-    readFileSync(envPath, "utf8")
-      .split("\n")
-      .filter((l) => l.includes("=") && !l.startsWith("#"))
-      .map((l) => { const i = l.indexOf("="); return [l.slice(0, i).trim(), l.slice(i + 1).trim()]; })
-  );
-} catch { /* no .env file — rely on process.env (e.g. Heroku config vars) */ }
-
-const STRAPI_URL   = fileEnv.STRAPI_API_URL   ?? process.env.STRAPI_API_URL;
-const STRAPI_TOKEN = fileEnv.STRAPI_API_TOKEN ?? process.env.STRAPI_API_TOKEN;
-const SITE_ROOT    = "https://www.domeofdoom.org";
-
-function artistSlug(name) {
-  return (name ?? "").toLowerCase().trim().replace(/\s+/g, "-");
-}
-
-function slugify(str) {
-  return (str || "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-}
-
-function catalogItemSlug(item) {
-  if (item.catalog_number) return item.catalog_number;
-  return `${slugify(item.title)}-${item.documentId}`;
-}
-
-async function strapiGet(path) {
-  const res = await fetch(`${STRAPI_URL}${path}`, {
-    headers: { Authorization: `Bearer ${STRAPI_TOKEN}` },
-  });
-  if (!res.ok) throw new Error(`Strapi ${res.status} ${path}`);
-  return res.json();
-}
+const SITE_ROOT = "https://www.domeofdoom.org";
 
 async function main() {
   const staticPages = [
@@ -62,10 +26,8 @@ async function main() {
   // Fetch catalog items
   let catalogPages = [];
   try {
-    const catalogData = await strapiGet(
-      "/api/dome-of-doom-catalog-items?fields[0]=documentId&fields[1]=title&fields[2]=catalog_number&pagination[pageSize]=500"
-    );
-    catalogPages = (catalogData.data ?? []).map((item) => ({
+    const catalogData = await getCatalog();
+    catalogPages = catalogData.map((item) => ({
       loc: `/catalog/${catalogItemSlug(item)}`,
       priority: "0.7",
       changefreq: "monthly",
@@ -78,10 +40,8 @@ async function main() {
   // Fetch artists
   let rosterPages = [];
   try {
-    const rosterData = await strapiGet(
-      "/api/dome-of-doom-artists?fields[0]=name&pagination[pageSize]=200"
-    );
-    rosterPages = (rosterData.data ?? [])
+    const rosterData = await getArtists();
+    rosterPages = rosterData
       .filter((a) => a.name)
       .map((a) => ({
         loc: `/roster/${artistSlug(a.name)}`,
@@ -106,9 +66,9 @@ ${allPages.map(({ loc, priority, changefreq }) => `  <url>
   </url>`).join("\n")}
 </urlset>`;
 
-  const outPath = path.join(__dirname, "../dist/domeofdoom/sitemap.xml");
+  const outPath = path.join(__dirname, "../dist/domeofdoom/client/sitemap.xml");
   writeFileSync(outPath, xml, "utf8");
-  console.log(`\nWrote ${allPages.length} URLs → dist/domeofdoom/sitemap.xml`);
+  console.log(`\nWrote ${allPages.length} URLs → dist/domeofdoom/client/sitemap.xml`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

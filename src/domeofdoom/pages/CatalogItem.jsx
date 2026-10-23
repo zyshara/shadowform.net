@@ -7,8 +7,7 @@
 // card links.
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
-import { useParams, Link } from "react-router-dom";
-import { readSeedData } from "@shared/utils/readSeedData";
+import { useParams, Link } from "react-router";
 import { findByCatalogParam } from "@/utils/catalogItemSlug";
 import { artistSlug } from "@/utils/artistSlug";
 import SubpageHeader from "@/components/SubpageHeader";
@@ -50,6 +49,7 @@ function formatReleaseDate(item) {
     month: "long",
     day: "numeric",
     year: "numeric",
+    timeZone: "UTC",
   });
 }
 
@@ -194,9 +194,9 @@ const AVATAR_SIZE = {
   large: { box: "max-w-[100px] lg:max-w-[120px]", icon: 76 },
 };
 
-// `artist` is a roster-data entry (see the linkedArtists join in
+// `artist` is a normalized Strapi artist (see the linkedArtists join in
 // CatalogItem below) - name, location, photo_src, all sourced from the
-// Bandcamp artist roster scrape, not from the catalog item itself.
+// Strapi artist record, not from the catalog item itself.
 const ArtistCard = ({ artist, size = "small", className = "" }) => {
   const to = `/roster/${artistSlug(artist.name)}`;
   const avatar = AVATAR_SIZE[size];
@@ -334,7 +334,7 @@ const TracklistScrollArea = ({ children, count }) => {
   );
 };
 
-const CatalogItem = () => {
+const CatalogItem = ({ allItems = [], roster = [] }) => {
   const { catalogParam } = useParams();
   // Stepped through by the two ArrowButtons next to the Spotify/Bandcamp
   // row - slideDirection just tracks which way the user last pressed, so
@@ -344,7 +344,6 @@ const CatalogItem = () => {
   const [slideIndex, setSlideIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState(1);
 
-  const allItems = readSeedData("catalog-items-data") ?? [];
   const item = findByCatalogParam(allItems, catalogParam);
   usePageTitle(item?.title);
 
@@ -377,13 +376,7 @@ const CatalogItem = () => {
     setSlideIndex((i) => (i + direction + coverSlides.length) % coverSlides.length);
   };
 
-  // item.artists (normalizeCatalogItem) is name-only - the richer profile
-  // (photo, location) lives in roster-data instead (normalized
-  // DomeOfDoomArtist records, see server/models/artist.js), joined here by
-  // name. roster-data is seeded into every domeofdoom page unconditionally,
-  // so this is a plain lookup, no fetch. Names that don't match anyone
-  // currently in Strapi are dropped rather than shown as a broken card.
-  const roster = readSeedData("roster-data") ?? [];
+  // The route loader joins this release to normalized Strapi artist records.
   const rosterByName = new Map(roster.map((a) => [a.name, a]));
   let linkedArtists = item.artists.map((name) => rosterByName.get(name)).filter(Boolean);
 
@@ -410,7 +403,7 @@ const CatalogItem = () => {
   return (
     <div className="font-ppneue pt-10 flex flex-col gap-8">
       <div className="grid gap-2 grid-cols-6 items-center justify-center w-full h-full">
-        <div className="flex flex-col gap-8 col-start-1 col-span-6 md:col-span-3">
+        <div className="flex min-w-0 flex-col gap-8 col-start-1 col-span-6 md:col-span-3">
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 text-xs md:text-sm font-medium tracking-[0.15em] text-dod-lilac">
               { item.catalog_number && (
@@ -422,7 +415,7 @@ const CatalogItem = () => {
                {item.type} {yearOf(item) ? `· ${yearOf(item)}` : ""}
               </div>
             </div>
-            <div className="text-5xl md:text-[clamp(20px,3vw,8rem)] leading-[1.05] italic font-semibold uppercase text-dod-neon-mint">
+            <div className="text-5xl md:text-[clamp(20px,3vw,8rem)] leading-[1.05] italic font-semibold uppercase text-dod-neon-mint [overflow-wrap:anywhere]">
               {withBreakOpportunities(item.title)}
             </div>
             <div className="text-xl text-dod-deep-purple font-medium">
@@ -668,7 +661,7 @@ const CatalogItem = () => {
           now, and Artists is always the lone full-width frame rather
           than sharing a row with anything. Card size/layout depends
           entirely on how many artists actually joined against
-          roster-data above:
+          loader-provided roster above:
 
             1 artist   -> one (large) artist card, full width
             2 artists  -> both (large) side by side

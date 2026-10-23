@@ -7,7 +7,7 @@
 // own Archivo-expanded treatment; artists without a photo fall back to
 // their initials on a tinted card, same as the design's placeholder state.
 import { Fragment } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { colors, FLOWER_FILIGREE } from "@/tokens";
 import { artistSlug } from "@/utils/artistSlug";
 import ArtistPhoto from "@/components/ArtistPhoto";

@@ -1,6 +1,6 @@
 // src/shadowform/pages/UnderConstruction.jsx
 
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import Ornament from "@/components/Ornament";
 import Header from "@/components/Header";
 import routes from "@/data/routes";

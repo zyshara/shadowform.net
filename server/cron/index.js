@@ -6,12 +6,17 @@
 import { startNotionCron } from "#automation/notion.js";
 import { startInstagramCron } from "#automation/instagram.js";
 import { startDomeOfDoomCron } from "#apps/domeofdoom/cron/index.js";
-import { logger } from "#lib/logger.js";
+import { createLogger } from "#lib/logger.js";
+const log = createLogger("cron");
+
+let started = false;
 
 export function startCronJobs() {
+  if (started) return;
+  started = true;
   startDomeOfDoomCron();
   startInstagramCron();
   startNotionCron();
 
-  logger.info("[cron] all jobs registered");
+  log.info("startCronJobs", "all jobs registered");
 }

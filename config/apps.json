@@ -1,12 +1,17 @@
 {
   "domeofdoom": {
-    "hostnames": ["domeofdoom.org", "www.domeofdoom.org", "domeofdoom.shadowform.net", "domeofdoom.localhost"],
+    "hostnames": [
+      "domeofdoom.org",
+      "www.domeofdoom.org",
+      "domeofdoom.shadowform.net",
+      "domeofdoom.localhost"
+    ],
     "canonicalHost": "www.domeofdoom.org",
     "srcDir": "src/domeofdoom",
+    "ssrFramework": true,
     "distDir": "dist/domeofdoom",
     "umamiId": "f03272b4-9036-480e-a5bf-bfe23548c0b5",
     "faviconHref": "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785389998/DOD_LOGO_transparent_2f6232f4c2.png",
-    "preloadFonts": ["/fonts/Archivo-VariableFont_wdth,wght.woff2"],
     "metadata": {
       "title": "Dome of Doom",
       "description": "Dome of Doom Records is an independent, artist-owned record label based in Los Angeles, CA. Home to Wylie Cable, Daedelus, Bleep Bloop, and more.",
@@ -25,7 +30,12 @@
           "@type": "Place",
           "name": "Los Angeles, California, USA"
         },
-        "genre": ["Electronic", "Hip Hop", "Experimental", "Beat Music"],
+        "genre": [
+          "Electronic",
+          "Hip Hop",
+          "Experimental",
+          "Beat Music"
+        ],
         "sameAs": [
           "https://domeofdoom.bandcamp.com",
           "https://www.instagram.com/domeofdoom",
@@ -34,10 +44,14 @@
           "https://en.wikipedia.org/wiki/Dome_of_Doom"
         ]
       }
-    }
+    },
+    "hmrPort": 24680
   },
   "redspear": {
-    "hostnames": ["redspear.shadowform.net", "redspear.localhost"],
+    "hostnames": [
+      "redspear.shadowform.net",
+      "redspear.localhost"
+    ],
     "canonicalHost": "redspear.shadowform.net",
     "srcDir": "src/redspear",
     "distDir": "dist/redspear",
@@ -56,7 +70,12 @@
         "name": "Red Spear",
         "url": "https://redspear.shadowform.net",
         "image": "https://res.cloudinary.com/dfeyhbxeg/image/upload/v1775258559/redspear_icon_49596002d5.png",
-        "genre": ["Electronic", "Hard Techno", "Dark Ambient", "Techno"],
+        "genre": [
+          "Electronic",
+          "Hard Techno",
+          "Dark Ambient",
+          "Techno"
+        ],
         "description": "Hard techno from LA- aggressive, mechanical, from the darkest corners of the internet"
       },
       "pages": {
@@ -65,10 +84,14 @@
           "url": "https://redspear.shadowform.net/epk"
         }
       }
-    }
+    },
+    "hmrPort": 24678
   },
   "low-poly": {
-    "hostnames": ["low-poly.shadowform.net", "low-poly.localhost"],
+    "hostnames": [
+      "low-poly.shadowform.net",
+      "low-poly.localhost"
+    ],
     "canonicalHost": "low-poly.shadowform.net",
     "srcDir": "src/low-poly",
     "distDir": "dist/low-poly",
@@ -87,17 +110,27 @@
           "url": "https://low-poly.shadowform.net/epk"
         }
       }
-    }
+    },
+    "hmrPort": 24679
   },
   "shadowform": {
-    "hostnames": ["shadowform.net", "www.shadowform.net", "shadowform.localhost", "localhost", "127.0.0.1"],
+    "hostnames": [
+      "shadowform.net",
+      "www.shadowform.net",
+      "shadowform.localhost",
+      "localhost",
+      "127.0.0.1"
+    ],
     "canonicalHost": "shadowform.net",
     "srcDir": "src/shadowform",
+    "ssrFramework": true,
+    "faviconHref": "/shared/favicon.png",
     "distDir": "dist/shadowform",
     "umamiId": "cdea5119-53fc-4bbe-9c3a-4dc923b3489e",
     "isCatchAll": true,
     "metadata": {
       "title": "🖤 𝔰𝔥𝔞𝔡𝔬𝔴𝔣𝔬𝔯𝔪 . 𝔫𝔢𝔱 🩷"
-    }
+    },
+    "hmrPort": 24681
   }
 }

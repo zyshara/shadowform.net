@@ -14,6 +14,5 @@ cross-app normalizers (generic artist/EPK content, rich-text headers), see
   (`normalizeArtist`/`normalizeArtists`). Not to be confused with
   `server/models/artist.js`, which normalizes the *generic* `/api/artists`
   content type for EPK/management use.
-- `show.js` — Dome of Doom Show → the shape the Shows page expects.
-- `aboutPage.js` — Dome of Doom About Page single-type → the shape the
-  About page expects.
+- `show.js` — Dome of Doom Show → the artist-page show-row shape, with
+  photos joined from normalized Strapi artists.

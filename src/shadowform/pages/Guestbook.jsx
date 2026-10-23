@@ -7,9 +7,8 @@ import Tag from "@/components/Tag";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import EntryCard from "@/components/EntryCard";
-import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
+import FadeIn from "@/components/FadeIn";
 
-// ── Drawing Modal ─────────────────────────────────────────────────────────────
 // ── Drawing Modal ─────────────────────────────────────────────────────────────
 const DrawModal = ({ onClose, onAttach }) => {
   const canvasRef  = useRef(null);
@@ -189,17 +188,9 @@ const undo = () => {
 };
 
 // ── Guestbook Page ────────────────────────────────────────────────────────────
-const Guestbook = () => {
-  const { data, error, loading, fading } = usePageLoad(
-    () => Promise.all([
-      fetch("/api/guestbook").then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
-      fetch("/api/guestbook/tags").then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
-    ]).then(([gbData, tagData]) => ({ entries: gbData.guestbook?.guestbook_entries ?? [], tags: tagData.tags ?? [] })),
-    { minLoadMs: 1500 },
-  );
-
-  const [entries,    setEntries]    = useState([]);
-  const [availTags,  setAvailTags]  = useState([]);
+const Guestbook = ({ initialData }) => {
+  const [entries, setEntries] = useState(initialData.entries);
+  const availTags = initialData.tags;
   const [submitErr,  setSubmitErr]  = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted,  setSubmitted]  = useState(false);
@@ -210,13 +201,6 @@ const Guestbook = () => {
   const [message,  setMessage]  = useState("");
   const [selTags,  setSelTags]  = useState([]);
   const [drawing,  setDrawing]  = useState(null);
-
-  // Seed entries + tags once data arrives
-  useEffect(() => {
-    if (!data) return;
-    setEntries(data.entries);
-    setAvailTags(data.tags);
-  }, [data]);
 
   const toggleTag = (tag) =>
     setSelTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]);
@@ -231,9 +215,9 @@ const Guestbook = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: name.trim(), website: website.trim(), message: message.trim(), tags: selTags, drawing: drawing ?? null }),
       });
-      if (res.status === 429) throw new Error("too many posts — try again later");
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const { entry } = await res.json();
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || `HTTP ${res.status}`);
+      const { entry } = result;
       setEntries((prev) => [entry, ...prev]);
       setName(""); setWebsite(""); setMessage(""); setSelTags([]); setDrawing(null);
       setSubmitted(true);
@@ -245,18 +229,6 @@ const Guestbook = () => {
       setSubmitting(false);
     }
   };
-
-  if (loading) return <LoadingScreen fading={fading} />;
-
-  if (error) return (
-    <div className="flex-1 flex flex-col">
-      <div className="flex-1 flex items-center justify-center">
-        <p className="font-fell italic text-[13px]" style={{ color: "var(--text-nav-inactive)" }}>
-          something went wrong — {error}
-        </p>
-      </div>
-    </div>
-  );
 
   return (
     <>
@@ -344,6 +316,9 @@ const Guestbook = () => {
                   <Button variant="secondary" corners arrow="right" className="w-full sm:w-auto justify-center" onClick={() => setShowDraw(true)}>
                     open drawing pad
                   </Button>
+
+                </div>
+              )}
                   <div className="flex items-center gap-3 sm:flex-none">
                     {submitted && <span className="font-fell italic text-[12px]" style={{ color:"var(--pink-text)" }}>✦ signed!</span>}
                     {submitErr && <span className="font-fell italic text-[12px]" style={{ color:"var(--pink-text)" }}>{submitErr}</span>}
@@ -352,13 +327,11 @@ const Guestbook = () => {
                       accent="end"
                       className="w-full sm:w-auto justify-center"
                       onClick={handleSubmit}
-                      disabled={!name.trim()}
+                      disabled={!name.trim() || submitting}
                     >
                       {submitting ? "signing..." : "sign"}
                     </Button>
                   </div>
-                </div>
-              )}
             </div>
           </div>
 

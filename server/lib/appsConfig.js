@@ -2,8 +2,8 @@
 //
 // Single source of truth for every app's hostnames, canonical domain, build
 // paths, and SEO metadata — read once from config/apps.json. Consumed by
-// webpack.config.js (build time) and by the pieces below (request time):
-// spas.js's host-sniffing, each app's own SPA route, the API host-guard,
+// tenant Vite builds and the request-time helpers below:
+// SSR tenant registration, the API host guard,
 // and the canonical-host redirect.
 
 import { readFileSync } from "fs";
@@ -35,7 +35,7 @@ function hostnameOf(req) {
 }
 
 // True if `req`'s Host header is one of `appId`'s own hostnames. Used by
-// each app's own SPA-serving route.
+// each app's own SSR-serving route.
 export function matchesAppHost(appId, req) {
   return getApp(appId).hostnames?.includes(hostnameOf(req)) ?? false;
 }

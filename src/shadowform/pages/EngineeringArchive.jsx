@@ -3,7 +3,7 @@ import React from "react";
 import Tag from "@/components/Tag";
 import Header from "@/components/Header";
 import Ornament from "@/components/Ornament";
-import LoadingScreen, { FadeIn, usePageLoad } from "@/components/LoadingScreen";
+import FadeIn from "@/components/FadeIn";
 import { useCardInView } from "@/hooks/useCardInView";
 
 // ── Archive entry row ─────────────────────────────────────────────────────────
@@ -98,17 +98,7 @@ const ArchiveEntry = ({ project, index }) => {
 
 // ── Archive page ──────────────────────────────────────────────────────────────
 
-const EngineeringArchive = () => {
-  const { data: apiData, error, loading, fading } = usePageLoad(
-    () => fetch("/api/engineering/archive").then(r => {
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      return r.json();
-    }),
-    { minLoadMs: 300 },
-  );
-
-  if (loading) return <LoadingScreen fading={fading} />;
-
+const EngineeringArchive = ({ apiData }) => {
   const header  = apiData?.data?.header;
   const entries = apiData?.data?.entries ?? [];
 

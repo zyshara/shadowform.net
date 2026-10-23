@@ -5,7 +5,8 @@
 // daily, to never risk falling off the edge like the original tokens did.
 
 import cron from "node-cron";
-import { logger } from "#lib/logger.js";
+import { createLogger } from "#lib/logger.js";
+const log = createLogger("instagram");
 import { updateEnvVar } from "./env.js";
 import { refreshLongLivedToken } from "./instagramApi.js";
 
@@ -15,16 +16,16 @@ async function refreshInstagramTokens() {
   for (const envKey of TOKEN_ENV_KEYS) {
     const token = process.env[envKey];
     if (!token) {
-      logger.warn(`[instagramCron] ${envKey} not set, skipping`);
+      log.warn("refreshInstagramTokens", `${envKey} not set, skipping`);
       continue;
     }
 
     try {
       const { access_token } = await refreshLongLivedToken(token);
       updateEnvVar(envKey, access_token);
-      logger.info(`[instagramCron] refreshed ${envKey}`);
+      log.info("refreshInstagramTokens", `refreshed ${envKey}`);
     } catch (err) {
-      logger.error(`[instagramCron] failed to refresh ${envKey}:`, err.message);
+      log.error("refreshInstagramTokens", `failed to refresh ${envKey}:`, err);
     }
   }
 }
@@ -34,9 +35,9 @@ export function startInstagramCron() {
     try {
       await refreshInstagramTokens();
     } catch (err) {
-      logger.error("[instagramCron] refresh run failed:", err.message);
+      log.error("startInstagramCron", "refresh run failed:", err);
     }
   });
 
-  logger.info("[instagramCron] job registered (daily at 6am)");
+  log.info("startInstagramCron", "job registered (daily at 6am)");
 }

@@ -6,7 +6,6 @@ import {
   normalizeEngineeringArchive,
   normalizeWebArchiveProject,
 } from "#apps/shadowform/models/engineering.js";
-import { logger } from "#lib/logger.js";
 
 const PROJ = "populate[projects][populate]";
 
@@ -68,42 +67,17 @@ async function getWebArchiveProjectBySlug(slug, opts = {}) {
   }, opts);
 }
 
-// ── Routes ────────────────────────────────────────────────────────────────────
+export async function getEngineering() {
+  const response = await getEngineeringPage();
+  return normalizeEngineeringPage(response.data);
+}
 
-export function registerEngineeringRoutes(app) {
-  app.get("/api/engineering", async (req, res) => {
-    try {
-      const data = await getEngineeringPage();
-      res.json({ data: normalizeEngineeringPage(data.data) });
-    } catch (err) {
-      logger.error("[engineering] fetch failed:", err.message, err.body ?? "");
-      res.status(502).json({ error: err.message });
-    }
-  });
+export async function getEngineeringArchive() {
+  const response = await getEngineeringArchivePage();
+  return normalizeEngineeringArchive(response.data);
+}
 
-  app.get("/api/engineering/archive", async (req, res) => {
-    try {
-      const data = await getEngineeringArchivePage();
-      res.json({ data: normalizeEngineeringArchive(data.data) });
-    } catch (err) {
-      logger.error("[engineering/archive] fetch failed:", err.message, err.body ?? "");
-      res.status(502).json({ error: err.message });
-    }
-  });
-
-  app.get("/api/engineering/archive/:slug", async (req, res) => {
-    const { slug } = req.params;
-    try {
-      const data    = await getWebArchiveProjectBySlug(slug);
-      const entry   = data?.data?.[0] ?? null;
-      const project = normalizeWebArchiveProject(entry);
-      if (!project) {
-        return res.status(404).json({ error: "Project not found" });
-      }
-      res.json({ data: project });
-    } catch (err) {
-      logger.error(`[engineering/archive/${slug}] fetch failed:`, err.message, err.body ?? "");
-      res.status(502).json({ error: err.message });
-    }
-  });
+export async function getArchiveProject(slug) {
+  const response = await getWebArchiveProjectBySlug(slug);
+  return normalizeWebArchiveProject(response.data?.[0] ?? null);
 }

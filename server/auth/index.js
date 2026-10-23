@@ -16,7 +16,8 @@
 import express from "express";
 import { requireAuth } from "#middleware/index.js";
 import { createRateLimiter } from "#lib/rateLimit.js";
-import { logger } from "#lib/logger.js";
+import { createLogger } from "#lib/logger.js";
+const log = createLogger("auth");
 import { strapiGet, strapiPost } from "#lib/strapi.js";
 
 const STRAPI_URL = process.env.STRAPI_API_URL || "https://strapi-shadowform-52c53315c615.herokuapp.com";
@@ -95,13 +96,13 @@ export function registerAuthRoutes(app) {
       });
       const loginData = await loginRes.json();
       if (!loginRes.ok) {
-        logger.error("[auth] post-register login failed:", loginData?.error?.message);
+        log.error("register", "post-register login failed:", loginData?.error?.message);
         return res.status(502).json({ error: "account created, but could not log you in — try logging in manually" });
       }
 
       res.status(201).json({ jwt: loginData.jwt, user: { id: loginData.user.id, email: loginData.user.email } });
     } catch (err) {
-      logger.error("[auth] register error:", err.message, err.body ?? "");
+      log.error("register", "register error:", err);
       res.status(502).json({ error: "could not create account" });
     }
   });
@@ -131,7 +132,7 @@ export function registerAuthRoutes(app) {
 
       res.json({ jwt: data.jwt, user: { id: data.user.id, email: data.user.email } });
     } catch (err) {
-      logger.error("[auth] login error:", err.message);
+      log.error("login", "login error:", err);
       res.status(502).json({ error: "could not log in" });
     }
   });
@@ -157,10 +158,10 @@ export function registerAuthRoutes(app) {
       });
       if (!strapiRes.ok) {
         const message = await strapiErrorMessage(strapiRes);
-        logger.warn("[auth] forgot-password failed:", message);
+        log.warn("forgotPassword", "forgot-password failed:", message);
       }
     } catch (err) {
-      logger.error("[auth] forgot-password error:", err.message);
+      log.error("forgotPassword", "forgot-password error:", err);
     }
 
     // Always ok:true — never reveal whether the email was found.
@@ -189,7 +190,7 @@ export function registerAuthRoutes(app) {
 
       res.json({ jwt: data.jwt, user: { id: data.user.id, email: data.user.email } });
     } catch (err) {
-      logger.error("[auth] reset-password error:", err.message);
+      log.error("resetPassword", "reset-password error:", err);
       res.status(502).json({ error: "could not reset password" });
     }
   });

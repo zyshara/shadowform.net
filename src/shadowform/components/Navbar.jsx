@@ -1,6 +1,6 @@
 // src/shadowform/components/Navbar.jsx
 
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router";
 import cherry_blossom from "@shared/assets/images/cherry_blossom.png";
 import routes from "@/data/routes";
 

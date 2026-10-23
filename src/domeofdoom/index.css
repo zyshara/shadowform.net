@@ -58,9 +58,7 @@ html {
   font-style: italic;
 }
 
-/* tailwind.config.js's JS-based theme.extend isn't loaded under Tailwind v4
-   without an explicit @config directive (which this project doesn't use), so
-   custom animations have to be registered here instead, CSS-native. */
+/* Tailwind v4 theme tokens and custom animations are registered in CSS. */
 @theme {
   --font-archivo: "Archivo";
   --font-ppneue: "PP Neue Montreal";
@@ -349,8 +347,13 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 14px 0;
+  gap: 8px;
 }
 .tilted-cover-left span {
+  flex-shrink: 0;
+  min-height: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   font: 700 9px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -358,6 +361,9 @@ body {
   text-transform: uppercase;
   color: var(--dod-black);
   white-space: nowrap;
+}
+.tilted-cover-left .tilted-cover-left-title {
+  flex-shrink: 1;
 }
 .tilted-cover-bottom {
   left: 0;

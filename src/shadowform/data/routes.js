@@ -1,18 +1,9 @@
 // src/shadowform/data/routes.js
 //
 // Single source of truth for every route under Layout: path, nav label,
-// breadcrumb text (PageChrome), component, and any redirects/props it needs.
-// App.jsx generates <Route> elements from this list, and PageChrome/Navbar/
+// breadcrumb text (PageChrome), and legacy redirects.
+// React Router route config reads paths/redirects from this list; PageChrome/Navbar/
 // MobileMenu/UnderConstruction all resolve labels from it too, via matchPath.
-
-import {
-  About,
-  Engineering,
-  EngineeringArchive,
-  EngineeringWebArchiveProject,
-  Guestbook,
-  UnderConstruction,
-} from "@/pages";
 
 const routes = [
   {
@@ -20,35 +11,30 @@ const routes = [
     path: "/about",
     text: "About",
     crumb: "about",
-    component: About,
   },
   {
     id: "arthur-morgan",
     path: "/about/arthur-morgan",
     crumb: "arthur morgan",
     hideFromNav: true,
-    component: UnderConstruction,
   },
   {
     id: "kilrogg-deadeye",
     path: "/about/kilrogg-deadeye",
     crumb: "kilrogg deadeye",
     hideFromNav: true,
-    component: UnderConstruction,
   },
   {
     id: "guardian-lulu",
     path: "/about/guardian-lulu",
     crumb: "guardian lulu",
     hideFromNav: true,
-    component: UnderConstruction,
   },
   {
     id: "engineering",
     path: "/engineering",
     text: "Engineering",
     crumb: "engineering",
-    component: Engineering,
     redirects: [
       "/software",
       "/software-engineering",
@@ -63,21 +49,18 @@ const routes = [
     path: "/engineering/archive",
     crumb: "archive",
     hideFromNav: true,
-    component: EngineeringArchive,
   },
   {
     id: "engineering-archive-project",
     path: "/engineering/archive/:slug",
     crumb: "the archive",
     hideFromNav: true,
-    component: EngineeringWebArchiveProject,
   },
   {
     id: "laboratory",
     path: "/laboratory",
     text: "Laboratory",
     crumb: "laboratory",
-    component: UnderConstruction,
     redirects: ["/creative"],
   },
   {
@@ -85,14 +68,12 @@ const routes = [
     path: "/shop",
     text: "Shop",
     crumb: "shop",
-    component: UnderConstruction,
   },
   {
     id: "contact",
     path: "/contact",
     text: "Contact",
     crumb: "contact",
-    component: UnderConstruction,
   },
   {
     id: "guestbook",
@@ -100,7 +81,6 @@ const routes = [
     text: "Guestbook",
     crumb: "guestbook",
     hideFromNav: true,
-    component: Guestbook,
   },
 ];
 

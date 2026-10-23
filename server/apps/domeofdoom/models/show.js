@@ -4,11 +4,7 @@
  * Maps a raw Strapi "Dome of Doom Show" entry → the shape the client expects.
  * Compatible with both Strapi v4 (entry.attributes) and v5 (flat entry).
  */
-// Strapi's Dome of Doom Artist relation only stores `name` — it's
-// auto-created by the discography sync (see artists.js) and never
-// carries a photo. Real artist photos live in the Bandcamp-scraped roster
-// cache instead, so `pfpByName` (built from getRoster()) is how a show
-// artist's name gets matched to a photo_src.
+// Artist photos are joined from normalized Strapi artist records.
 export function normalizeShow(raw, pfpByName = new Map()) {
   const s = raw?.attributes ?? raw;
   if (!s || !s.name) return null;

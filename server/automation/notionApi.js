@@ -5,7 +5,8 @@
 // and cache each database's default data source id on first use.
 
 import { Client } from "@notionhq/client";
-import { logger } from "#lib/logger.js";
+import { createLogger } from "#lib/logger.js";
+const log = createLogger("notion");
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 
@@ -24,7 +25,7 @@ async function getDataSourceId(databaseId) {
 // silently drops any matches beyond it (no error, no log), which is exactly
 // how a real edit went missing from a calendar sync before.
 export async function queryDatabase(databaseId, filter) {
-  logger.debug("[notion] querying database:", databaseId);
+  log.debug("queryDatabase", "querying database:", databaseId);
   const dataSourceId = await getDataSourceId(databaseId);
 
   const results = [];
@@ -44,7 +45,7 @@ export async function queryDatabase(databaseId, filter) {
 }
 
 export async function createPage(databaseId, properties) {
-  logger.debug("[notion] creating page in:", databaseId);
+  log.debug("createPage", "creating page in:", databaseId);
   return notion.pages.create({
     parent: { data_source_id: await getDataSourceId(databaseId) },
     properties,
@@ -52,7 +53,7 @@ export async function createPage(databaseId, properties) {
 }
 
 export async function updatePage(pageId, properties) {
-  logger.debug("[notion] updating page:", pageId);
+  log.debug("updatePage", "updating page:", pageId);
   return notion.pages.update({
     page_id: pageId,
     properties,
@@ -60,6 +61,6 @@ export async function updatePage(pageId, properties) {
 }
 
 export async function getPage(pageId) {
-  logger.debug("[notion] fetching page:", pageId);
+  log.debug("getPage", "fetching page:", pageId);
   return notion.pages.retrieve({ page_id: pageId });
 }

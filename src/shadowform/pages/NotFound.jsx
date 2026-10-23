@@ -1,7 +1,7 @@
 // src/shadowform/pages/NotFound.jsx
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const LINES = [
   { text: "A fatal exception 404 has occurred at 0028:C0034B53 in VXD", hi: false },

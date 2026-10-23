@@ -1,12 +1,10 @@
 // server/apps/domeofdoom/registerApi.js
 //
-// Registers domeofdoom's API routes (contact form, press/outlets). The SPA
-// static-serving route lives separately in registerSpa.js.
+// Registers domeofdoom's API routes (contact form). The SSR
+// frontend is registered separately in registerSsr.js.
 
-import { registerContactRoutes } from "./contact.js";
-import { registerPressRoutes } from "./press.js";
+import { registerContactRoutes } from "./routes/contact.js";
 
 export function registerDomeOfDoomApi(app) {
   registerContactRoutes(app);
-  registerPressRoutes(app);
 }

@@ -1,6 +1,6 @@
 // src/shadowform/components/Button.jsx
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 // ── Colour tokens per state ───────────────────────────────────────────────────
 const COLORS = {

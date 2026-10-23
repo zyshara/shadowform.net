@@ -1,7 +1,7 @@
 // src/domeofdoom/Layout.jsx
 
 import { useLayoutEffect, useEffect, useRef, useState } from "react";
-import { useLocation, useOutlet } from "react-router-dom";
+import { useLocation, useOutlet } from "react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import MarqueeBanner from "@/components/MarqueeBanner";
@@ -165,7 +165,7 @@ const Layout = () => {
           <motion.div
             key={location.pathname}
             className="px-8 lg:px-0"
-            initial={{ opacity: 0 }}
+            initial={false}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, position: "absolute", top: 0, left: 0, right: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}

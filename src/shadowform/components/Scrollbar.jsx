@@ -1,7 +1,7 @@
 // src/shadowform/components/Scrollbar.jsx
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 
 const MIN_THUMB_HEIGHT = 24;
 

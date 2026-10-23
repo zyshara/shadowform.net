@@ -9,8 +9,8 @@ const PRIMARY = colors.accent;
 function formatShowDate(dateStr) {
   // Parse as local date to avoid timezone offset flipping the day
   const [year, month, day] = dateStr.split("-").map(Number);
-  const d = new Date(year, month - 1, day);
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }).toUpperCase();
+  const d = new Date(Date.UTC(year, month - 1, day));
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).toUpperCase();
 }
 
 export const ShowRow = ({ show, isPast = false, index = 0 }) => (

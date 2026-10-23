@@ -1,6 +1,6 @@
 // src/shadowform/components/PageChrome.jsx
 
-import { Link, matchPath, useLocation } from "react-router-dom";
+import { Link, matchPath, useLocation } from "react-router";
 import routes from "@/data/routes";
 import { usePageCrumbContext } from "@/context/PageCrumbContext";
 

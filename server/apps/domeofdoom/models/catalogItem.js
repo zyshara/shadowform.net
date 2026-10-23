@@ -1,3 +1,4 @@
+import { resolveMediaUrl } from "#lib/strapi.js";
 // server/domeofdoom/models/catalogItem.js
 import { cdnImg } from "#lib/cloudinary.js";
 
@@ -82,14 +83,6 @@ function plainTextToHtml(text) {
     .map((para) => `<p>${escapeHtml(para).replace(/\n/g, "<br/>")}</p>`)
     .join("");
   return html || null;
-}
-
-function resolveMediaUrl(media) {
-  const url = media?.url;
-  if (!url) return null;
-  if (/^https?:\/\//.test(url)) return url;
-  const base = process.env.STRAPI_API_URL || "https://strapi-shadowform-52c53315c615.herokuapp.com";
-  return `${base}${url}`;
 }
 
 /**

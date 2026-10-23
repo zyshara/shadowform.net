@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { AnimatePresence, motion } from "framer-motion";
 
 import DotDivider from "@/components/DotDivider";
@@ -14,7 +14,7 @@ const Enter = () => {
       onClick={() => navigate("/about")}
       className="flex h-dvh w-dvw items-center justify-center font-alagard text-center text-[8vw] sm:text-5xl lg:text-lg text-white flex-col select-none cursor-pointer"
       style={{ background: "#0e0c14" }}
-      initial={{ opacity: 0 }}
+      initial={false}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5, ease: "easeInOut" }}

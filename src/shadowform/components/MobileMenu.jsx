@@ -1,6 +1,6 @@
 // src/shadowform/components/MobileMenu.jsx
 
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router";
 import { useEffect } from "react";
 
 import Ornament from "@/components/Ornament";

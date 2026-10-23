@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { artistSlug } from "@/utils/artistSlug";
 import { colors } from "@/tokens";
 import StarIcon from "@/components/StarIcon";

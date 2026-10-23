@@ -21,7 +21,8 @@
 
 import { strapiGetAllPages, strapiPost, strapiPut } from "#lib/strapi.js";
 import { slugifyArtistName, resolveArtistNamesFromRawItem, loadArtistCache, ensureArtist } from "#apps/domeofdoom/artists.js";
-import { logger } from "#lib/logger.js";
+import { createLogger } from "#lib/logger.js";
+const log = createLogger("domeofdoom");
 
 const RAW_ITEMS_PATH = "/api/dome-of-doom-bandcamp-item-raws";
 const CATALOG_ITEMS_PATH = "/api/dome-of-doom-catalog-items";
@@ -174,20 +175,20 @@ function suggestLabelRole(title, packages) {
 // ─── Orchestration ────────────────────────────────────────────────────────
 
 export async function backfillCatalogItems({ dryRun = false } = {}) {
-  if (dryRun) logger.info("[domeofdoomCatalogItems] --- DRY RUN, no writes will be made ---");
+  if (dryRun) log.info("backfillCatalogItems", "--- DRY RUN, no writes will be made ---");
 
-  logger.info("[domeofdoomCatalogItems] loading music raw items from Strapi...");
+  log.info("backfillCatalogItems", "loading music raw items from Strapi...");
   const rawItems = await fetchMusicRawItems();
-  logger.info(`[domeofdoomCatalogItems] ${rawItems.length} music raw item(s) (album/track, sources includes music)`);
+  log.info("backfillCatalogItems", `${rawItems.length} music raw item(s) (album/track, sources includes music)`);
 
-  logger.info("[domeofdoomCatalogItems] loading existing catalog items + format cache + artist cache...");
+  log.info("backfillCatalogItems", "loading existing catalog items + format cache + artist cache...");
   const [existing, formatCache, artistCache] = await Promise.all([
     loadExistingCatalogItems(),
     loadFormatCache(),
     loadArtistCache(),
   ]);
-  logger.info(
-    `[domeofdoomCatalogItems] ${existing.size} existing catalog item(s), ${formatCache.size} known format(s), ` +
+  log.info("backfillCatalogItems",
+    `${existing.size} existing catalog item(s), ${formatCache.size} known format(s), ` +
     `${artistCache.size} known artist(s)`
   );
 
@@ -233,8 +234,8 @@ export async function backfillCatalogItems({ dryRun = false } = {}) {
       const existingDocId = existing.get(bandcampUrl);
 
       if (dryRun) {
-        logger.info(
-          `[domeofdoomCatalogItems] [dry] would ${existingDocId ? "update" : "create"} "${title}" ` +
+        log.info("backfillCatalogItems",
+          `[dry] would ${existingDocId ? "update" : "create"} "${title}" ` +
           `(suggested_type=${payload.derived.suggested_type}, label_role=${payload.derived.label_role}, ` +
           `formats=[${formatNames.join(", ")}], artists=[${artistNames.filter((n) => !createdNames.includes(n)).join(", ")}]` +
           (createdNames.length ? `, would_create_artists=[${createdNames.join(", ")}]` : "") +
@@ -249,19 +250,19 @@ export async function backfillCatalogItems({ dryRun = false } = {}) {
       if (existingDocId) stats.updated++;
       else stats.created++;
     } catch (err) {
-      logger.error(`[domeofdoomCatalogItems] failed to sync "${bandcampUrl}":`, err.message);
+      log.error("backfillCatalogItems", `failed to sync "${bandcampUrl}":`, err);
       stats.failed++;
     }
 
     await sleep(WRITE_DELAY_MS);
   }
 
-  logger.info(
-    `[domeofdoomCatalogItems] complete: ${stats.created} created, ${stats.updated} updated, ${stats.failed} failed`
+  log.info("backfillCatalogItems",
+    `complete: ${stats.created} created, ${stats.updated} updated, ${stats.failed} failed`
   );
   if (newArtistNames.size > 0) {
-    logger.info(
-      `[domeofdoomCatalogItems] ${newArtistNames.size} new artist name(s) ${dryRun ? "would be" : "were"} created: ` +
+    log.info("backfillCatalogItems",
+      `${newArtistNames.size} new artist name(s) ${dryRun ? "would be" : "were"} created: ` +
       [...newArtistNames].sort().join(", ")
     );
   }

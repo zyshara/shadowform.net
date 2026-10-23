@@ -16,7 +16,7 @@ import { requireAppHost } from "#lib/appsConfig.js";
 function mount(app, appId, register) {
   const router = express.Router();
   router.use(requireAppHost(appId));
-  register(router, express);
+  register(router);
   app.use(router);
 }
 

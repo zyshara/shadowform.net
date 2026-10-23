@@ -8,7 +8,8 @@
 // rather than fixed — see GOOGLE_CALENDAR_ID_* env vars.
 
 import { google } from "googleapis";
-import { logger } from "#lib/logger.js";
+import { createLogger } from "#lib/logger.js";
+const log = createLogger("googleCalendar");
 
 const GOOGLE_CLIENT_ID     = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
@@ -56,14 +57,14 @@ async function withRetry(fn, { attempts = 4, baseDelayMs = 1000 } = {}) {
     } catch (err) {
       if (attempt >= attempts || !isRetryable(err)) throw err;
       const delay = baseDelayMs * 2 ** (attempt - 1);
-      logger.warn(`[gcal] ${describeGoogleError(err)} — retrying in ${delay}ms (attempt ${attempt}/${attempts})`);
+      log.warn("withRetry", `${describeGoogleError(err)} — retrying in ${delay}ms (attempt ${attempt}/${attempts})`);
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 }
 
 export async function listEvents(calendarId, params = {}) {
-  logger.debug("[gcal] listing events:", calendarId);
+  log.debug("listEvents", "listing events:", calendarId);
   const res = await calendar.events.list({
     calendarId,
     singleEvents: true,
@@ -73,7 +74,7 @@ export async function listEvents(calendarId, params = {}) {
 }
 
 export async function createEvent(calendarId, event) {
-  logger.debug("[gcal] creating event:", calendarId, event.summary);
+  log.debug("createEvent", "creating event:", calendarId, event.summary);
   try {
     const res = await withRetry(() => calendar.events.insert({
       calendarId,
@@ -81,13 +82,13 @@ export async function createEvent(calendarId, event) {
     }));
     return res.data;
   } catch (err) {
-    logger.error("[gcal] create failed:", describeGoogleError(err));
+    log.error("createEvent", "create failed:", describeGoogleError(err));
     throw err;
   }
 }
 
 export async function updateEvent(calendarId, eventId, event) {
-  logger.debug("[gcal] updating event:", calendarId, eventId);
+  log.debug("updateEvent", "updating event:", calendarId, eventId);
   try {
     const res = await withRetry(() => calendar.events.patch({
       calendarId,
@@ -96,13 +97,13 @@ export async function updateEvent(calendarId, eventId, event) {
     }));
     return res.data;
   } catch (err) {
-    logger.error("[gcal] update failed:", describeGoogleError(err));
+    log.error("updateEvent", "update failed:", describeGoogleError(err));
     throw err;
   }
 }
 
 export async function deleteEvent(calendarId, eventId) {
-  logger.debug("[gcal] deleting event:", calendarId, eventId);
+  log.debug("deleteEvent", "deleting event:", calendarId, eventId);
   await calendar.events.delete({
     calendarId,
     eventId,

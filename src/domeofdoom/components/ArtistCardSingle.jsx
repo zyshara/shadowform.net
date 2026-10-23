@@ -13,7 +13,7 @@
 // are hardcoded placeholders below (clearly marked). spotify_url is real —
 // sourced from derived.spotify_url via normalizeArtist.
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { artistSlug } from "@/utils/artistSlug";
 import { colors } from "@/tokens";
 import StarIcon from "@/components/StarIcon";

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router";
 import navlinks from "@/data/navlinks.json";
 import { colors, LOGO_URL } from "@/tokens";
 

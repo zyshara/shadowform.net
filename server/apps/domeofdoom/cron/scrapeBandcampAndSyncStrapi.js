@@ -12,7 +12,8 @@
 
 import { scrapeCatalog, scrapeArtists } from "dod-bandcamp-scraper";
 import { strapiGetAllPages, strapiPost, strapiPut } from "#lib/strapi.js";
-import { logger } from "#lib/logger.js";
+import { createLogger } from "#lib/logger.js";
+const log = createLogger("domeofdoom");
 
 const RAW_ITEMS_PATH = "/api/dome-of-doom-bandcamp-item-raws";
 const ARTISTS_PATH = "/api/dome-of-doom-artists";
@@ -60,15 +61,15 @@ function toRawPayload(release) {
 }
 
 async function syncCatalogItems() {
-  logger.info("[domeofdoomSync] scraping catalog...");
+  log.info("syncCatalogItems", "scraping catalog...");
   const output = await scrapeCatalog();
-  logger.info(
-    `[domeofdoomSync] catalog scrape complete: ${output.scrapeMetadata.successCount} items, ${output.scrapeMetadata.errorCount} errors`
+  log.info("syncCatalogItems",
+    `catalog scrape complete: ${output.scrapeMetadata.successCount} items, ${output.scrapeMetadata.errorCount} errors`
   );
 
-  logger.info("[domeofdoomSync] loading existing raw items from Strapi...");
+  log.info("syncCatalogItems", "loading existing raw items from Strapi...");
   const existing = await loadExistingRawItems();
-  logger.info(`[domeofdoomSync] ${existing.size} existing raw item(s) in Strapi`);
+  log.info("syncCatalogItems", `${existing.size} existing raw item(s) in Strapi`);
 
   const stats = { created: 0, updated: 0, failed: 0 };
 
@@ -85,15 +86,15 @@ async function syncCatalogItems() {
         stats.created++;
       }
     } catch (err) {
-      logger.error(`[domeofdoomSync] failed to sync "${release.name}" (${release.bandcampUrl}):`, err.message);
+      log.error("syncCatalogItems", `failed to sync "${release.name}" (${release.bandcampUrl}):`, err);
       stats.failed++;
     }
 
     await sleep(WRITE_DELAY_MS);
   }
 
-  logger.info(
-    `[domeofdoomSync] catalog sync complete: ${stats.created} created, ${stats.updated} updated, ${stats.failed} failed`
+  log.info("syncCatalogItems",
+    `catalog sync complete: ${stats.created} created, ${stats.updated} updated, ${stats.failed} failed`
   );
 
   return { scrape: output.scrapeMetadata, sync: stats };
@@ -131,13 +132,13 @@ function toArtistPayload(artist) {
 }
 
 async function syncArtists() {
-  logger.info("[domeofdoomSync] scraping artists...");
+  log.info("syncArtists", "scraping artists...");
   const output = await scrapeArtists();
-  logger.info(`[domeofdoomSync] artist scrape complete: ${output.artists.length} artists`);
+  log.info("syncArtists", `artist scrape complete: ${output.artists.length} artists`);
 
-  logger.info("[domeofdoomSync] loading existing artists from Strapi...");
+  log.info("syncArtists", "loading existing artists from Strapi...");
   const existing = await loadExistingArtistsByName();
-  logger.info(`[domeofdoomSync] ${existing.size} existing artist(s) in Strapi`);
+  log.info("syncArtists", `${existing.size} existing artist(s) in Strapi`);
 
   const stats = { created: 0, updated: 0, failed: 0 };
 
@@ -154,15 +155,15 @@ async function syncArtists() {
         stats.created++;
       }
     } catch (err) {
-      logger.error(`[domeofdoomSync] failed to sync artist "${artist.name}":`, err.message);
+      log.error("syncArtists", `failed to sync artist "${artist.name}":`, err);
       stats.failed++;
     }
 
     await sleep(WRITE_DELAY_MS);
   }
 
-  logger.info(
-    `[domeofdoomSync] artist sync complete: ${stats.created} created, ${stats.updated} updated, ${stats.failed} failed`
+  log.info("syncArtists",
+    `artist sync complete: ${stats.created} created, ${stats.updated} updated, ${stats.failed} failed`
   );
 
   return { scrape: output.scrapeMetadata, sync: stats };
