@@ -108,6 +108,7 @@ export function normalizeCatalogItem(raw) {
   const description = blocksToHtml(overrides.description) || plainTextToHtml(derived.description) || null;
   const labelRole = overrides.label_role || derived.label_role || null;
   const catalogNumber = overrides.catalog_number || null;
+  const spotifyUrl = (overrides.spotify_url || r.spotify_url || "").trim();
 
   const artists = (derived.artists ?? []).map((a) => a.name ?? a.attributes?.name).filter(Boolean);
   const formats = (derived.formats ?? []).map((f) => f.name ?? f.attributes?.name).filter(Boolean);
@@ -115,7 +116,7 @@ export function normalizeCatalogItem(raw) {
   return {
     uid: raw.documentId ?? raw.id,
     bandcamp_url: r.bandcamp_url ?? null,
-    spotify_url: overrides.spotify_url || r.spotify_url || null,
+    spotify_url: spotifyUrl ? spotifyUrl.split(/[?#]/)[0] : null,
     title,
     description,
     artwork_url: cdnImg(artworkUrl, 400),

@@ -17,6 +17,8 @@ it("uses the catalog Spotify override and omits placeholder links", async () => 
   expect(normalizeCatalogItem({ ...base, overrides: { spotify_url: spotifyUrl }, spotify_url: "https://example.com/old" }).spotify_url).toBe(spotifyUrl);
   expect(normalizeCatalogItem(base).spotify_url).toBeNull();
   expect(normalizeCatalogItem({ ...base, spotify_url: spotifyUrl }).spotify_url).toBe(spotifyUrl);
+  expect(normalizeCatalogItem({ ...base, overrides: { spotify_url: `${spotifyUrl}?si=sharing-token#fragment` } }).spotify_url).toBe(spotifyUrl);
+  expect(normalizeCatalogItem({ ...base, overrides: { spotify_url: "   " } }).spotify_url).toBeNull();
 });
 
 it("shares cold collection loads and refreshes on demand after expiry", async () => {
