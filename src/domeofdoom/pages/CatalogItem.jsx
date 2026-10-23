@@ -672,7 +672,8 @@ const CatalogItem = ({ allItems = [], roster = [] }) => {
       {linkedArtists.length > 0 && (
         // 1-artist skips FRAME_CLASS here - ArtistCardSingle already
         // supplies its own border, so this outer frame would double it up.
-        <div className={`grid grid-cols-6 gap-4 ${linkedArtists.length > 2 ? FRAME_CLASS : ""}`}>
+        // Re-enable the Artists section after its layout and content are finished.
+        <div style={{ display: "none" }} className={`grid grid-cols-6 gap-4 ${linkedArtists.length > 2 ? FRAME_CLASS : ""}`}>
           {linkedArtists.length === 1 && (
             // ArtistCardSingle brings its own border/label-equivalent
             // (see the reference mockups) - no FRAME_CLASS/SectionLabel

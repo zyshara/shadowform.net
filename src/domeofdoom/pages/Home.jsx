@@ -372,6 +372,11 @@ function FeatureReleaseCard({ item }) {
       </Link>
 
       <div className="feature-release-content">
+        {item.artwork_url && (
+          <div aria-hidden="true" className="feature-release-atmosphere">
+            <img src={item.artwork_url} alt="" loading="lazy" />
+          </div>
+        )}
         <div style={typeLabel}>{item.type ?? "Single"}{year ? ` · ${year}` : ""}</div>
         <Link to={`/catalog/${slug}`} className="hover:opacity-80 transition-opacity">
           <h2 className="feature-release-title">{item.title}</h2>
@@ -379,9 +384,13 @@ function FeatureReleaseCard({ item }) {
         {item.artists?.length > 0 && (
           <div className="feature-release-artists">{item.artists.join(", ")}</div>
         )}
+        <div className="feature-release-catalog-rule">
+          <span aria-hidden="true" />
+          {item.catalog_number && <span>{item.catalog_number}</span>}
+        </div>
         {description && <p className="m-0 mt-3 text-sm leading-relaxed text-dod-white/60 line-clamp-4">{description}</p>}
         <div className="mt-auto px-[3px] pb-[3px] pt-5">
-          <Button variant="primary" to="/catalog" className="w-full max-w-[320px]">
+          <Button variant="primary" to="/catalog" className="w-full md:max-w-[320px]">
             <span className="inline-flex items-center gap-2">Listen Now <ArrowRightIcon size={15} /></span>
           </Button>
         </div>

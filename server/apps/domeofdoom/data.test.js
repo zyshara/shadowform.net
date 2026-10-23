@@ -10,6 +10,15 @@ afterEach(() => {
   vi.useRealTimers(); vi.unstubAllEnvs(); vi.resetAllMocks(); vi.resetModules();
 });
 
+it("uses the catalog Spotify override and omits placeholder links", async () => {
+  const { normalizeCatalogItem } = await import("./models/catalogItem.js");
+  const base = { documentId: "release", derived: { title: "Compilation" } };
+  const spotifyUrl = "https://open.spotify.com/album/4sy6ZZqrc7AUNXMEEfqfJT";
+  expect(normalizeCatalogItem({ ...base, overrides: { spotify_url: spotifyUrl }, spotify_url: "https://example.com/old" }).spotify_url).toBe(spotifyUrl);
+  expect(normalizeCatalogItem(base).spotify_url).toBeNull();
+  expect(normalizeCatalogItem({ ...base, spotify_url: spotifyUrl }).spotify_url).toBe(spotifyUrl);
+});
+
 it("shares cold collection loads and refreshes on demand after expiry", async () => {
   vi.resetModules();
   vi.stubEnv("STRAPI_CACHE_TTL_MS", "1000");
