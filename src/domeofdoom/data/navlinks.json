@@ -3,7 +3,7 @@
   { "id": "catalog", "path": "/catalog", "text": "Catalog" },
   { "id": "roster", "path": "/roster", "text": "Roster" },
   { "id": "shows", "path": "/shows", "text": "Shows" },
-  { "id": "merch", "path": "/merch", "text": "Merch" },
+  { "id": "merch", "path": "https://domeofdoom.bandcamp.com/merch", "text": "Merch" },
   { "id": "press", "path": "/press", "text": "Press" },
   { "id": "contact", "path": "/contact", "text": "Contact" }
 ]

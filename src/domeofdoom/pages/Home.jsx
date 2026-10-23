@@ -12,7 +12,6 @@ import ArrowUpRightIcon from "@/components/ArrowUpRightIcon";
 import ArrowRightIcon from "@/components/ArrowRightIcon";
 import TiltedCover from "@/components/TiltedCover";
 import StarIcon from "@/components/StarIcon";
-import GlobeRings from "@/components/GlobeRings";
 import GlobeIcon from "@/components/GlobeIcon";
 import GlobeSlideButton from "@/components/GlobeSlideButton";
 import SectionDots from "@/components/SectionDots";
@@ -238,19 +237,19 @@ function LatestCompilationSection({ item }) {
 // ReleaseCard — corner badge, date, cover + details row, CTA
 // ---------------------------------------------------------------------------
 
-function ReleaseCard({ item, now }) {
+function ReleaseCard({ item, now, showLabel = true, primary = false }) {
   const upcoming = isUpcoming(item, now);
   const slug = catalogItemSlug(item);
   const date = formatReleaseDate(item.release_date);
   const year = releaseYear(item);
   const description = item.description ? stripHtml(item.description) : null;
 
-  // Upcoming = mint theme; Latest = lilac theme
-  const themeColor = upcoming ? "var(--dod-neon-mint)" : "var(--dod-lilac)";
+  // Card position determines its skin; release date determines its label.
+  const themeColor = primary ? "var(--dod-neon-mint)" : "var(--dod-lilac)";
 
   const cta = (
     <Button
-      variant={upcoming ? "primary" : "secondary"}
+      variant={primary ? "primary" : "secondary"}
       to={upcoming ? `/catalog/${slug}` : "/catalog"}
       className="w-full min-w-0"
     >
@@ -266,12 +265,12 @@ function ReleaseCard({ item, now }) {
       className="relative flex min-w-0 flex-col gap-4 border p-5"
       style={{ borderColor: themeColor, background: "transparent" }}
     >
-      <CardLabelBadge
+      {showLabel && <CardLabelBadge
         text={upcoming ? "Upcoming Release" : "Latest Release"}
         icon={upcoming ? CalendarIcon : PlusCircleIcon}
         color={themeColor}
         style={{ position: "absolute", top: "-1px", left: "-1px" }}
-      />
+      />}
 
       {date && (
         <div className="flex justify-end">
@@ -342,97 +341,20 @@ function ReleaseCard({ item, now }) {
 }
 
 // ---------------------------------------------------------------------------
-// FeatureReleaseCard — single wide card (1-up layout)
-// ---------------------------------------------------------------------------
-
-function FeatureReleaseCard({ item }) {
-  const year = releaseYear(item);
-  const slug = catalogItemSlug(item);
-  const description = item.description ? stripHtml(item.description) : null;
-
-  return (
-    <div className="feature-release">
-      <aside aria-hidden="true" className="feature-release-rail text-dod-lilac">
-        <div className="flex flex-col items-center gap-2">
-          <GlobeIcon size={30} />
-          <span className="text-[9px] font-bold tracking-[0.2em]">DOD<br />{year}</span>
-        </div>
-        <div className="flex flex-col gap-3">
-          {[0, 1, 2].map((i) => <SectionDots key={i} size={14} color="var(--dod-lilac)" />)}
-        </div>
-        <div className="feature-release-barcode" />
-      </aside>
-
-      <Link to={`/catalog/${slug}`} className="feature-release-artwork">
-        {item.artwork_url ? (
-          <img src={item.artwork_url} alt={item.title} className="h-full w-full object-cover" loading="lazy" />
-        ) : (
-          <StarIcon size={120} showBackground={false} showGlow />
-        )}
-      </Link>
-
-      <div className="feature-release-content">
-        {item.artwork_url && (
-          <div aria-hidden="true" className="feature-release-atmosphere">
-            <img src={item.artwork_url} alt="" loading="lazy" />
-          </div>
-        )}
-        <div style={typeLabel}>{item.type ?? "Single"}{year ? ` · ${year}` : ""}</div>
-        <Link to={`/catalog/${slug}`} className="hover:opacity-80 transition-opacity">
-          <h2 className="feature-release-title">{item.title}</h2>
-        </Link>
-        {item.artists?.length > 0 && (
-          <div className="feature-release-artists">{item.artists.join(", ")}</div>
-        )}
-        <div className="feature-release-catalog-rule">
-          <span aria-hidden="true" />
-          {item.catalog_number && <span>{item.catalog_number}</span>}
-        </div>
-        {description && <p className="m-0 mt-3 text-sm leading-relaxed text-dod-white/60 line-clamp-4">{description}</p>}
-        <div className="mt-auto px-[3px] pb-[3px] pt-5">
-          <Button variant="primary" to="/catalog" className="w-full md:max-w-[320px]">
-            <span className="inline-flex items-center gap-2">Listen Now <ArrowRightIcon size={15} /></span>
-          </Button>
-        </div>
-        {/* Keep platform links available; we may want to re-enable them later. */}
-        <div style={{ display: "none" }} className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-4 text-[10px] font-semibold uppercase tracking-[0.08em] text-dod-white/60">
-          {item.spotify_url && <a href={item.spotify_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-dod-neon-mint"><SpotifyIcon size={15} />Spotify</a>}
-          {item.bandcamp_url && <a href={item.bandcamp_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-dod-neon-mint"><BandcampIcon size={15} />Bandcamp</a>}
-        </div>
-      </div>
-
-      <aside aria-hidden="true" className="feature-release-filigree text-dod-lilac">
-        <div className="flex flex-col items-center gap-5 border border-dod-lilac/60 px-2 py-5">
-          <StarIcon size={64} gradientFrom="var(--dod-lilac)" gradientTo="var(--dod-deep-purple)" showBackground={false} showGlow={false} />
-          <GlobeRings size={64} radius={23} meridianCount={5} parallelCount={5} strokeWidth={0.7} gradientFrom="var(--dod-lilac)" gradientTo="var(--dod-lilac)" showFill={false} rings={[]} />
-        </div>
-        <div className="mt-auto border-b border-l border-dod-lilac/60 p-3 text-[9px] uppercase tracking-[0.1em] leading-relaxed">
-          DOME<br />OF<br />DOOM
-        </div>
-      </aside>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
 // LatestReleasesSection
 // ---------------------------------------------------------------------------
 
-function LatestReleasesSection({ latestRelease, upcomingRelease, now }) {
-  if (!latestRelease && !upcomingRelease) return null;
+function LatestReleasesSection({ cards, now }) {
+  if (!cards.length) return null;
 
   return (
     <div className="mx-auto max-w-[1400px] pb-[100px] px-6 lg:px-10">
       <HomeSectionHeader title="Latest Releases" linkTo="/catalog" linkText="View All" />
-
-      {upcomingRelease ? (
-        <div className={`grid grid-cols-1 ${latestRelease ? "lg:grid-cols-2" : ""} gap-4`}>
-          <ReleaseCard item={upcomingRelease} now={now} />
-          {latestRelease && <ReleaseCard item={latestRelease} now={now} />}
-        </div>
-      ) : (
-        <FeatureReleaseCard item={latestRelease} />
-      )}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {cards.map(({ item, showLabel }, index) => (
+          <ReleaseCard key={item.uid || catalogItemSlug(item)} item={item} now={now} showLabel={showLabel} primary={index === 0} />
+        ))}
+      </div>
     </div>
   );
 }
@@ -450,7 +372,7 @@ const Home = ({ catalogItems = [], now }) => {
     .sort((a, b) => new Date(b.release_date ?? 0) - new Date(a.release_date ?? 0));
 
   const latestCompilation = compilations[0] ?? null;
-  const { latestRelease, upcomingRelease } = selectHomeReleases(catalogItems, now);
+  const cards = selectHomeReleases(catalogItems, now);
 
   return (
     <div>
@@ -488,11 +410,10 @@ const Home = ({ catalogItems = [], now }) => {
             Celebrating 15 years of supporting experimental & bass artists on vinyl & casette
           </p>
           <div className="flex gap-4 flex-col sm:flex-row">
-            <Button variant="primary" href="https://open.spotify.com/search/label%3Adome-of-doom/albums">
-              <div className="flex gap-2 justify-center items-center">Listen Now<ArrowUpRightIcon size={15} /></div>
+            <Button variant="primary" to="/catalog">
+              <div className="flex gap-2 justify-center items-center">Listen Now<ArrowRightIcon size={15} /></div>
             </Button>
-            {/* Re-enable Shop Merch when the merch page is finished. */}
-            <Button variant="secondary" to="/merch" style={{ display: "none" }}>
+            <Button variant="secondary" href="https://domeofdoom.bandcamp.com/merch">
               <div className="flex gap-2 justify-center items-center">Shop Merch<ArrowRightIcon size={15} /></div>
             </Button>
           </div>
@@ -500,7 +421,7 @@ const Home = ({ catalogItems = [], now }) => {
       </div>
 
       <LatestCompilationSection item={latestCompilation} />
-      <LatestReleasesSection latestRelease={latestRelease} upcomingRelease={upcomingRelease} now={now} />
+      <LatestReleasesSection cards={cards} now={now} />
     </div>
   );
 };

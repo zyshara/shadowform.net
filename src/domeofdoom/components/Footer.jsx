@@ -18,7 +18,7 @@ const Footer = () => (
     <FooterColumn title="Label">
       <Link to="/catalog" className={linkClass}>Catalog</Link>
       <Link to="/roster" className={linkClass}>Roster</Link>
-      <Link to="/merch" className={linkClass}>Merch</Link>
+      <a href="https://domeofdoom.bandcamp.com/merch" className={linkClass}>Merch</a>
       <Link to="/contact" className={linkClass}>Contact</Link>
     </FooterColumn>
 
@@ -37,7 +37,7 @@ const Footer = () => (
     </FooterColumn>
 
     <div className="col-span-2 sm:col-span-1 sm:order-first flex flex-col justify-between">
-      <img src={LOGO_URL} alt="Dome of Doom" className="mb-3.5 h-11 w-fit" />
+      <img src={LOGO_URL} alt="Dome of Doom" className="mb-3.5 h-11 w-auto max-w-full self-start object-contain object-left" />
       <div className="max-w-[220px] text-[13px] leading-relaxed text-white/45">
         © DOMEOFDOOM 2026, All Rights Reserved
       </div>

@@ -7,8 +7,11 @@ export function selectHomeReleases(items, now) {
 
   const released = releases.filter(({ date }) => date <= now).sort((a, b) => b.date - a.date);
   const upcoming = releases.filter(({ date }) => date > now).sort((a, b) => a.date - b.date);
-  return {
-    latestRelease: released[0]?.item ?? null,
-    upcomingRelease: upcoming[0]?.item ?? null,
-  };
+  if (upcoming.length && released.length) {
+    return [upcoming[0], released[0]].map(({ item }) => ({ item, showLabel: true }));
+  }
+  // Always use the two-card layout, without duplicating releases when the
+  // catalog contains fewer than two eligible entries.
+  const selected = released.length ? released : upcoming;
+  return selected.slice(0, 2).map(({ item }, index) => ({ item, showLabel: index === 0 }));
 }
