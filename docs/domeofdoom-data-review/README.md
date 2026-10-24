@@ -16,7 +16,7 @@ All five known 2026 Japan club/in-store stops are published: ENTER Shibuya (Sept
 
 ## Added 2025 shows
 
-Dabow at Maybe Forever, Denver (May 31–June 1) is published with a flyer, linked YouTube recording, and individual page. Hamdi: Abomination Club Tour at DEF, Atlanta (April 19–20), is published as an external-only listing with the supplied flyer and promoter-managed RA link. The Atlanta venue remains TBA — DEF. Both retain only Dabow in the roster relation.
+Dabow at Maybe Forever, Denver (May 31–June 1) is published with a flyer, linked YouTube recording, and individual page. Hamdi: Abomination Club Tour at DEF, Atlanta (April 19–20), is published as an external-only listing with the supplied flyer and promoter-managed RA link. The Atlanta venue is displayed as TBA at the client’s request. Both retain only Dabow in the roster relation.
 
 ## Proposed next batch
 

@@ -126,6 +126,7 @@ const Navbar = () => {
             <PrefetchedNavLink
               key={link.id}
               to={link.path}
+              warm={open}
               prefetch="intent"
               end={link.path === "/"}
               className="rounded px-4 py-3 text-[14px] uppercase tracking-[0.02em] transition-colors"

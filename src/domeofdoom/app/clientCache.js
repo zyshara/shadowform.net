@@ -3,6 +3,8 @@
 // a full page reload/tab close, or eviction by the memory bound below.
 export function createCachedClientLoader({ maxEntries = 30 } = {}) {
   const entries = new Map();
+  const pending = new Map();
+  const cancelled = Symbol("cancelled preload");
   async function clientLoader({ request, serverLoader }) {
     // These routes filter/sort locally; query strings do not change server data.
     const key = new URL(request.url).pathname;
@@ -11,7 +13,36 @@ export function createCachedClientLoader({ maxEntries = 30 } = {}) {
 
     let data;
     try {
-      data = await serverLoader();
+      const existing = pending.get(key);
+      if (existing && !existing.signal.aborted) {
+        // Cancellation belongs to the original fetcher, not its consumers.
+        let onAbort;
+        const aborted = new Promise(resolve => {
+          onAbort = () => resolve(cancelled);
+          existing.signal.addEventListener("abort", onAbort, { once: true });
+        });
+        try {
+          data = await Promise.race([existing.promise, aborted]);
+        } catch (error) {
+          if (!existing.signal.aborted) throw error;
+          data = cancelled;
+        } finally {
+          existing.signal.removeEventListener("abort", onAbort);
+        }
+        if (data !== cancelled && !existing.signal.aborted) return data;
+        // Recheck the pending map so multiple surviving consumers share
+        // the replacement request too.
+        return clientLoader({ request, serverLoader });
+      }
+
+      const entry = { signal: request.signal };
+      entry.promise = Promise.resolve().then(serverLoader);
+      pending.set(key, entry);
+      try {
+        data = await entry.promise;
+      } finally {
+        if (pending.get(key) === entry) pending.delete(key);
+      }
     } catch (error) {
       // A speculative hover request must not replace the current page with
       // an error boundary. Real navigation still surfaces errors normally.
