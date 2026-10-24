@@ -1,3 +1,4 @@
+import HomeSectionHeader from "@/components/HomeSectionHeader";
 import React from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { Link } from "react-router";
@@ -24,39 +25,6 @@ import PlusCircleIcon from "@/components/PlusCircleIcon";
 // HomeSectionHeader — small tracked label + rule + link (matches mock)
 // ---------------------------------------------------------------------------
 
-function HomeSectionHeader({ title, linkTo, linkText }) {
-  return (
-    <div className="flex items-center gap-3 mb-8 w-full">
-      <SectionDots color={colors.accent2} size={18} className="flex-shrink-0" />
-      <span
-        className="flex-shrink-0 whitespace-nowrap"
-        style={{
-          fontFamily: "Archivo, sans-serif",
-          fontStretch: "expanded",
-          fontVariationSettings: '"wdth" 125',
-          fontWeight: 700,
-          fontSize: "clamp(11px, 1.1vw, 14px)",
-          letterSpacing: "0.04em",
-          textTransform: "uppercase",
-          color: "var(--dod-accent)",
-        }}
-      >
-        {title}
-      </span>
-      <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, color-mix(in srgb, var(--dod-white) 60%, transparent), color-mix(in srgb, var(--dod-lilac) 80%, transparent))" }} />
-      {linkTo && (
-        <Link
-          to={linkTo}
-          className="navlink-hover-flash flex-shrink-0 flex items-center gap-1 text-[12px] font-bold uppercase tracking-[0.08em] whitespace-nowrap"
-          style={{ color: colors.accent2 }}
-        >
-          {linkText}
-          <ArrowRightIcon size={12} />
-        </Link>
-      )}
-    </div>
-  );
-}
 
 // ---------------------------------------------------------------------------
 // Helpers

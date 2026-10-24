@@ -9,7 +9,7 @@ import ArtistPhoto, { SKEW_DEG, skewOversizePx } from "@/components/ArtistPhoto"
 import Button from "@/components/Button";
 import SpotifyIcon from "@/components/SpotifyIcon";
 import BandcampIcon from "@/components/BandcampIcon";
-import { ShowRow } from "@/pages/Shows";
+import { ShowRow } from "@/components/ArtistShowRow";
 import { artistSlug } from "@/utils/artistSlug";
 
 const PRIMARY = colors.accent;

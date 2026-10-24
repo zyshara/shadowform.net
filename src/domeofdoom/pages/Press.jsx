@@ -1,3 +1,4 @@
+import IndexPageHeader from "@/components/IndexPageHeader";
 // src/domeofdoom/pages/Press.jsx
 import React, { useMemo, useRef, useState } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
@@ -229,26 +230,10 @@ export default function Press({ items = [] }) {
   return (
     <div className="flex flex-col gap-10">
       {/* Header */}
-      <div className="border-b border-dod-lilac/50 gap-4 lg:gap-0 grid grid-cols-1 md:grid-cols-2">
-        <div className="flex flex-col gap-4 lg:border-r lg:border-dod-lilac/50 lg:p-16 lg:pl-0">
-          <span className="text-[clamp(4.5rem,6.3vw,6rem)] text-dod-neon-mint italic font-semibold">PRESS</span>
-          <div className="text-xl">
-            <span className="text-dod-lilac font-bold">{filtered.length}</span>
-            {" "}of {items.length} items
-          </div>
-          <p ref={descriptionRef} className="text-xl text-dod-lilac">
-            Articles, features, interviews, and coverage from around the world.
-          </p>
-          <div className="px-[3px] py-[3px]">
-            <Button variant="primary" href="/DOMEOFDOOM_LICENSING.pdf" reloadDocument>
-              <span className="flex items-center justify-center gap-2">
-                Licensing <ArrowRightIcon size={15} />
-              </span>
-            </Button>
-          </div>
-        </div>
-        <div className="relative overflow-hidden min-h-[110px]">
-          <div className="absolute inset-0 w-full h-full flex justify-center items-center filter-[saturate(2)]">
+      <IndexPageHeader heading="PRESS" count={filtered.length} total={items.length}
+        descriptionRef={descriptionRef}
+        description="Articles, features, interviews, and coverage from around the world."
+        asset={<>          <div className="absolute inset-0 w-full h-full flex justify-center items-center filter-[saturate(2)]">
             <WormholeGrid
               colorOuter={colors.deep_purple}
               colorMid={colors.lilac}
@@ -280,8 +265,15 @@ export default function Press({ items = [] }) {
               src="https://res.cloudinary.com/dfeyhbxeg/image/upload/f_auto,q_auto,w_1200/v1786587597/distressed_texture_c11a949095.png"
             />
           </div>
-        </div>
-      </div>
+</>}
+      >          <div className="px-[3px] py-[3px]">
+            <Button variant="primary" href="/DOMEOFDOOM_LICENSING.pdf" reloadDocument>
+              <span className="flex items-center justify-center gap-2">
+                Licensing <ArrowRightIcon size={15} />
+              </span>
+            </Button>
+          </div>
+</IndexPageHeader>
 
       {/* Filter bar */}
       <FilterBar

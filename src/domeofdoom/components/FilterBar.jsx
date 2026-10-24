@@ -59,6 +59,23 @@ const CloseIcon = () => (
 
 export const FilterDropdown = ({ panelKey, label, options, selected, onToggle, openPanel, onOpenPanel, resultCount }) => {
   const isOpen = openPanel === panelKey;
+  const dropdownRef = useRef(null);
+  useEffect(() => {
+    if (!isOpen) return;
+    const dismissOutside = event => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) onOpenPanel(null);
+    };
+    const dismissEscape = event => {
+      if (event.key === "Escape") onOpenPanel(null);
+    };
+    // Capture pointer events so touch/pen and clicks stopped by other UI still dismiss.
+    document.addEventListener("pointerdown", dismissOutside, true);
+    document.addEventListener("keydown", dismissEscape);
+    return () => {
+      document.removeEventListener("pointerdown", dismissOutside, true);
+      document.removeEventListener("keydown", dismissEscape);
+    };
+  }, [isOpen, onOpenPanel]);
   const activeCount = selected.size;
   const valueText =
     activeCount === 0
@@ -66,9 +83,10 @@ export const FilterDropdown = ({ panelKey, label, options, selected, onToggle, o
       : options.filter((o) => selected.has(o.value)).map((o) => o.label).join(", ");
 
   return (
-    <div className="relative">
+    <div ref={dropdownRef} className="relative">
       <button
         type="button"
+        aria-expanded={isOpen}
         onClick={() => onOpenPanel(isOpen ? null : panelKey)}
         className="flex cursor-pointer flex-col items-start gap-1 py-1 text-left"
       >
@@ -76,7 +94,7 @@ export const FilterDropdown = ({ panelKey, label, options, selected, onToggle, o
           {label}
         </span>
         <span className="flex items-center gap-2 whitespace-nowrap text-sm font-semibold text-dod-white">
-          <span className="max-w-[200px] truncate">{valueText}</span>
+          <span className="max-w-[160px] truncate">{valueText}</span>
           <span className="text-dod-lilac/60">{resultCount}</span>
           <ChevronIcon open={isOpen} />
         </span>
@@ -87,14 +105,14 @@ export const FilterDropdown = ({ panelKey, label, options, selected, onToggle, o
           {options.map(({ value, label: optLabel, count }) => {
             const isSel = selected.has(value);
             return (
-              <div key={value} onClick={() => onToggle(value)}
-                className="flex cursor-pointer items-center justify-between gap-3 px-2 py-1.5 hover:bg-dod-lilac/10">
+              <button type="button" aria-pressed={isSel} key={value} onClick={() => onToggle(value)}
+                className="flex w-full cursor-pointer items-center justify-between gap-3 px-2 py-1.5 text-left hover:bg-dod-lilac/10">
                 <span className={`flex items-center gap-2 text-sm ${isSel ? "text-dod-neon-mint" : "text-dod-white"}`}>
                   <span className={`h-3 w-3 flex-shrink-0 border ${isSel ? "border-dod-neon-mint bg-dod-neon-mint" : "border-dod-lilac/50"}`} />
                   {optLabel}
                 </span>
                 <span className="text-xs text-dod-lilac/60">{count}</span>
-              </div>
+              </button>
             );
           })}
         </div>
@@ -166,11 +184,17 @@ const FilterBar = ({ groups, sortOptions, sortValue, onSortChange, resultCount, 
 
   const activeFilterCount = groups.reduce((sum, g) => sum + g.selected.size, 0);
   const hasFilters = activeFilterCount > 0;
+  const selectedChips = groups.flatMap(g => [...g.selected].map(value => ({
+    key: `${g.key}-${value}`,
+    label: g.options.find(o => o.value === value)?.label ?? String(value),
+    onRemove: () => g.onToggle(value),
+  })));
 
   // Mount immediately on open; unmount after close animation
   useEffect(() => {
     if (mobileOpen) { setPanelMounted(true); return; }
-    const t = setTimeout(() => { setPanelMounted(false); setPanelPullUp(null); setPanelMaxHeight(null); }, PANEL_ANIMATION_MS);
+    setPanelPullUp(null);
+    const t = setTimeout(() => { setPanelMounted(false); setPanelMaxHeight(null); }, PANEL_ANIMATION_MS);
     return () => clearTimeout(t);
   }, [mobileOpen]);
 
@@ -187,11 +211,11 @@ const FilterBar = ({ groups, sortOptions, sortValue, onSortChange, resultCount, 
   // aligns with panelTopRef (the page's description element).
   useEffect(() => {
     if (!mobileOpen || !panelMounted) return;
-    if (!mobileBarWrapperRef.current || !panelTopRef?.current) return;
+    if (!mobileBarWrapperRef.current) return;
 
     const measure = () => {
       const panelDocTop = mobileBarWrapperRef.current.getBoundingClientRect().top + window.scrollY;
-      const targetDocTop = panelTopRef.current.getBoundingClientRect().top + window.scrollY;
+      const targetDocTop = panelTopRef?.current ? panelTopRef.current.getBoundingClientRect().top + window.scrollY : panelDocTop;
       setPanelPullUp(Math.max(0, panelDocTop - targetDocTop));
       setPanelMaxHeight(Math.max(0, window.innerHeight - targetDocTop - 10));
     };
@@ -202,15 +226,6 @@ const FilterBar = ({ groups, sortOptions, sortValue, onSortChange, resultCount, 
     return () => window.removeEventListener("resize", measure);
   }, [mobileOpen, panelMounted, panelTopRef]);
 
-  // Close desktop popovers on outside click
-  const barRef = useRef(null);
-  useEffect(() => {
-    const handler = (e) => {
-      if (barRef.current && !barRef.current.contains(e.target)) setOpenPanel(null);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
 
   return (
     <div className="font-sans">
@@ -278,7 +293,7 @@ const FilterBar = ({ groups, sortOptions, sortValue, onSortChange, resultCount, 
             {hasFilters && onClearAll && (
               <button
                 type="button"
-                onClick={() => { onClearAll(); setMobileOpen(false); }}
+                onClick={onClearAll}
                 className="mt-4 w-full border border-dod-lilac/50 py-2.5 text-xs font-semibold uppercase tracking-wide text-dod-white"
               >
                 Clear All
@@ -289,41 +304,64 @@ const FilterBar = ({ groups, sortOptions, sortValue, onSortChange, resultCount, 
       </div>
 
       {/* ---- Desktop bar (hidden below md) ---- */}
-      <div ref={barRef} className="hidden md:flex items-end justify-between gap-6 border-b border-dod-lilac/50 pb-3">
-        <div className="flex items-end gap-8">
-          {groups.map((g, i) => (
-            <React.Fragment key={g.key}>
-              {i > 0 && <div className="self-stretch w-px bg-dod-lilac/20" />}
-              <FilterDropdown
-                panelKey={g.key}
-                label={g.label}
-                options={g.options}
-                selected={g.selected}
-                onToggle={g.onToggle}
-                openPanel={openPanel}
-                onOpenPanel={setOpenPanel}
-                resultCount={resultCount}
-              />
-            </React.Fragment>
-          ))}
+        <div className="hidden flex-col gap-3 font-sans md:flex">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div className="flex flex-wrap items-stretch">
+              {groups.map((g, i) => <React.Fragment key={g.key}>
+                {i > 0 && <div className="mx-6 w-px bg-dod-lilac/20" />}
+                <FilterDropdown label={g.label} options={g.options} selected={g.selected} onToggle={g.onToggle} panelKey={g.key} openPanel={openPanel} onOpenPanel={setOpenPanel} resultCount={resultCount} />
+              </React.Fragment>)}
+            </div>
+
+            <div className="relative flex-shrink-0">
+              <select
+                value={sortValue}
+                onChange={(e) => onSortChange(e.target.value)}
+                aria-label="Sort"
+                className="absolute inset-0 w-full h-full cursor-pointer opacity-0"
+              >
+                {sortOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+              <div className="pointer-events-none flex items-center gap-2 border border-dod-lilac/50 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-dod-white">
+                <span className="text-dod-lilac">Sort:</span>
+                {sortOptions.find(o => o.value === sortValue)?.label ?? sortValue}
+                <ChevronIcon open={false} />
+              </div>
+            </div>
+          </div>
+
+          <div className="h-[1px] w-full bg-dod-lilac/50" />
+
+          {hasFilters && (
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-semibold uppercase tracking-wide text-dod-white/50">Active Filters:</span>
+                {selectedChips.map((chip) => (
+                  <button
+                    key={chip.key}
+                    type="button"
+                    onClick={chip.onRemove}
+                    className="flex cursor-pointer items-center gap-1.5 border border-dod-lilac/50 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-dod-white transition-colors hover:border-dod-neon-mint hover:text-dod-neon-mint"
+                  >
+                    {chip.label}
+                    <span aria-hidden="true">✕</span>
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={onClearAll}
+                  className="cursor-pointer px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-dod-neon-mint"
+                >
+                  Clear All
+                </button>
+              </div>
+              <span className="whitespace-nowrap text-xs font-semibold uppercase tracking-wide text-dod-neon-mint">
+                {resultCount} Result{resultCount === 1 ? "" : "s"}
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Sort */}
-        <div className="relative flex-shrink-0">
-          <select
-            value={sortValue}
-            onChange={(e) => onSortChange(e.target.value)}
-            className="absolute inset-0 w-full h-full cursor-pointer opacity-0"
-          >
-            {sortOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-          </select>
-          <div className="pointer-events-none flex items-center gap-2 border border-dod-lilac/50 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-dod-white">
-            <span className="text-dod-lilac">Sort:</span>
-            {sortOptions.find((o) => o.value === sortValue)?.label ?? sortValue}
-            <ChevronIcon open={false} />
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

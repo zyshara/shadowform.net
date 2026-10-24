@@ -1,0 +1,13 @@
+{
+  "updated": "2026-10-23",
+  "source": "User-supplied Spotify URLs and explicit unavailable decisions",
+  "entries": [
+    { "documentId": "dlgrqfpv1q3macvezn7wjf5h", "title": "HFO", "spotifyUrl": "https://open.spotify.com/album/1Wp1irbDftXs0ak3Bw7bAI" },
+    { "documentId": "vcnu8gzkbdc4tbx4medqoeqe", "title": "Noise LP", "artist": "thook", "spotifyUrl": "https://open.spotify.com/album/7mVlD9jeP0tN3uEd4UaTna" },
+    { "documentId": "ki32yjfg4zcxaaklvh5v3v21", "title": "...And The World Weeps", "spotifyUrl": "https://open.spotify.com/album/4PH9fUjUOkQqQEvFTutHxM" },
+    { "documentId": "ox195hkhpm36fa390q3j1gpd", "title": "Remixtape Vol. 2", "spotifyUrl": null },
+    { "documentId": "wvc30hhnbi2qlqf75aizj05n", "title": "The Beat Will Always Save Us Vol. 1", "spotifyUrl": null },
+    { "documentId": "o8805uys1pxvdkfdkh1xbb8h", "title": "YAYAYA", "spotifyUrl": "https://open.spotify.com/album/5asd8vtFKMSCFwr1CK5Fem" },
+    { "documentId": "miat8wu8m6g2t2ae27j10nau", "title": "Taut", "spotifyUrl": "https://open.spotify.com/album/4vNt6ruBzjxHIBCJrdHdIR" }
+  ]
+}

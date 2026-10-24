@@ -1,0 +1,189 @@
+[
+  {
+    "id": "DOD-P008-L01",
+    "title": "Wylie Cable at heavysick ZERO",
+    "date": "2026-09-18",
+    "endDate": null,
+    "dateKind": "event",
+    "type": "Show",
+    "venue": "heavysick ZERO",
+    "city": "Tokyo",
+    "state": null,
+    "country": "JP",
+    "artists": [
+      "Wylie Cable"
+    ],
+    "lineup": "Wylie Cable",
+    "tour": "Wylie Cable Japan Tour 2026",
+    "url": "https://ra.co/events/2537541",
+    "flyer": null
+  },
+  {
+    "id": "DOD-P007-L01",
+    "title": "90BPM TAKEOVER presents Dome of Doom 15 Year Anniversary",
+    "date": "2026-09-17",
+    "endDate": null,
+    "dateKind": "event",
+    "type": "Show",
+    "venue": "ENTER Shibuya",
+    "city": "Tokyo",
+    "state": null,
+    "country": "JP",
+    "artists": [
+      "Wylie Cable",
+      "Maru"
+    ],
+    "lineup": "Wylie Cable",
+    "tour": "Wylie Cable Japan Tour 2026",
+    "url": "https://entershibuya.com/schedule/dome-of-doom-records-15-year-anniversary-world-tour/",
+    "flyer": null
+  },
+  {
+    "id": "DOD-P025-L01",
+    "title": "Dabow at FAM Fest",
+    "date": "2025-06-07",
+    "endDate": null,
+    "dateKind": "performance",
+    "type": "Festival",
+    "venue": "Freedom Field",
+    "city": "Harmony",
+    "state": "ME",
+    "country": "US",
+    "artists": [
+      "Dabow"
+    ],
+    "lineup": "Dabow",
+    "tour": "Dabow Debut US Tour 2025",
+    "url": "https://www.jambase.com/festival/fam-fest-2025",
+    "flyer": null
+  },
+  {
+    "id": "DOD-P001-L01",
+    "title": "Dome of Doom 13 Years of Bad Luck",
+    "date": "2024-09-27",
+    "endDate": null,
+    "dateKind": "event",
+    "type": "Show",
+    "venue": "1720",
+    "city": "Los Angeles",
+    "state": "CA",
+    "country": "US",
+    "artists": [
+      "Bleep Bloop",
+      "Daedelus",
+      "Lizzy Jane",
+      "ZOF",
+      "Lord Genmu",
+      "BOSTN",
+      "Low Poly"
+    ],
+    "lineup": "Bleep Bloop, Daedelus, Lizzy Jane, ZOF b2b Lord Genmu, BOSTN b2b Low Poly",
+    "tour": null,
+    "url": "https://ra.co/events/2004111",
+    "flyer": null
+  },
+  {
+    "id": "DOD-P039-L05",
+    "title": "HARD Summer",
+    "date": "2023-08-05",
+    "endDate": "2023-08-06",
+    "dateKind": "festival",
+    "type": "Festival",
+    "venue": "Los Angeles Memorial Coliseum / Exposition Park / BMO Stadium",
+    "city": "Los Angeles",
+    "state": "CA",
+    "country": "US",
+    "artists": [
+      "Jon Casey"
+    ],
+    "lineup": "It Hz (Jon Casey & Chee), Skrillex, Fourtet, 21 Savage, Kid Kudi + more",
+    "tour": null,
+    "url": "https://www.lacoliseum.com/events/hard-summer-2023/",
+    "flyer": null
+  },
+  {
+    "id": "DOD-P033-L01",
+    "title": "Maybe Forever x Dome of Doom Takeover",
+    "date": "2023-07-22",
+    "endDate": "2023-07-23",
+    "dateKind": "event",
+    "type": "Show",
+    "venue": "Secret location",
+    "city": "Denver",
+    "state": "CO",
+    "country": "US",
+    "artists": [
+      "Bleep Bloop",
+      "Lord Genmu",
+      "BOSTN",
+      "Wylie Cable"
+    ],
+    "lineup": "Bleep Bloop, Lord Genmu, BOSTN, Wylie Cable, SWAMPZ",
+    "tour": null,
+    "url": "https://www.tickettailor.com/events/maybeforever/953469",
+    "flyer": null
+  },
+  {
+    "id": "DOD-P063-L01",
+    "title": "Nightfall Music Festival",
+    "date": "2019-11-01",
+    "endDate": "2019-11-03",
+    "dateKind": "festival",
+    "type": "Festival",
+    "venue": "Parker House Haunted Attraction",
+    "city": "Denton",
+    "state": "TX",
+    "country": "US",
+    "artists": [
+      "Wylie Cable",
+      "Gangus"
+    ],
+    "lineup": "Wylie Cable b2b Gangus",
+    "tour": null,
+    "url": "https://www.facebook.com/events/350008895935358/",
+    "flyer": "nightfall-2019"
+  },
+  {
+    "id": "DOD-P077-L01",
+    "title": "Bass Waffles V27: Yeehaw Rodeo Hoedown",
+    "date": "2019-06-30",
+    "endDate": null,
+    "dateKind": "event",
+    "type": "Show",
+    "venue": "The OffBeat \u2013 A Bar on York",
+    "city": "Highland Park",
+    "state": "CA",
+    "country": "US",
+    "artists": [
+      "Wylie Cable",
+      "Dabow",
+      "shrimpnose"
+    ],
+    "lineup": "Cousin Litt; Wylie Cable b2b Dabow; Shrimpnose; B\u00e4khu; Pastry.music (birthday set / BW resident)",
+    "tour": null,
+    "url": "https://www.facebook.com/events/2349423135377618/",
+    "flyer": null
+  },
+  {
+    "id": "DOD-P145-L01",
+    "title": "Low End Theory",
+    "date": "2017-11-08",
+    "endDate": null,
+    "dateKind": "event",
+    "type": "Show",
+    "venue": "2419 N Broadway, Los Angeles, CA 90031",
+    "city": "Los Angeles",
+    "state": "CA",
+    "country": "US",
+    "artists": [
+      "Tsuruda",
+      "Huxley Anne",
+      "Linafornia",
+      "Wylie Cable"
+    ],
+    "lineup": "PAINT (Tsuruda & Huxley Anne); CHYNNA; LINAFORNIA; WYLIE CABLE; residents Daddy Kev, Nobody, D-Styles",
+    "tour": null,
+    "url": "https://www.facebook.com/events/1666482953410628/",
+    "flyer": null
+  }
+]

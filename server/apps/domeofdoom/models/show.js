@@ -14,7 +14,7 @@ export function normalizeShow(raw, pfpByName = new Map()) {
     const artist = a.attributes ?? a;
     const pfp = pfpByName.get(artist.name?.trim().toUpperCase()) ?? null;
     return {
-      name: artist.name,
+      name: artist.overrides?.name || artist.derived?.name || artist.name,
       pfp,
     };
   });

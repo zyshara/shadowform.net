@@ -2,25 +2,12 @@ import React, { useState, useMemo } from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { colors } from "@/tokens";
-import WarpedGrid from "@/components/WarpedGrid";
+import ArtworkOverlay from "@/components/ArtworkOverlay";
 import GridDome from "@/components/GridDome";
 import StarIcon from "@/components/StarIcon";
 
 const PRIMARY = colors.accent;
 const EMPTY_ARTISTS = [];
-
-// Small per-card variation around WarpedGrid's defaults (intensity=1,
-// density=1) - enough that cards don't all look identical, not enough
-// to stop reading as "the same grid".
-function randomWarpedGridProps(name) {
-  let seed = 0;
-  for (const char of name) seed = (seed * 31 + char.charCodeAt(0)) >>> 0;
-  const random = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
-  return {
-    intensity: 0.5 + random() * 1.1, // 0.8 - 1.2
-    density: 0.1 + random() * 0.4, // 0.85 - 1.15
-  };
-}
 
 const Roster = ({ artists: sourceArtists = EMPTY_ARTISTS }) => {
   usePageTitle("Roster");
@@ -33,18 +20,6 @@ const Roster = ({ artists: sourceArtists = EMPTY_ARTISTS }) => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("az");
-
-  const warpedGridPropsByName = useMemo(() => {
-    const map = {};
-
-    allArtists.forEach((artist) => {
-      map[artist.name] = randomWarpedGridProps(artist.name);
-    });
-
-    return map;
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sourceArtists]);
 
   const artists = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -145,16 +120,7 @@ const Roster = ({ artists: sourceArtists = EMPTY_ARTISTS }) => {
                 </div>
               )}
 
-              {/* Bottom fade */}
-              <div className="absolute inset-0 bg-[linear-gradient(0deg,_var(--dod-black)_0%,_transparent_40%)]" />
-
-              {/* Color treatment */}
-              <div className="absolute inset-0 bg-dod-deep-purple/50 mix-blend-overlay saturate-200 group-hover:opacity-50 transition-all duration-500" />
-
-              <WarpedGrid
-                {...warpedGridPropsByName[artist.name]}
-                className="absolute w-full h-full scale-120"
-              />
+              <ArtworkOverlay name={artist.name} />
 
               {/* Artist name */}
               <span className="absolute bottom-0 p-3 font-ppneue font-semibold uppercase text-dod-neon-mint">

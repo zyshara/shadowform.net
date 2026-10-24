@@ -8,6 +8,7 @@ export default [layout("routes/layout.jsx", [
   route("press", "routes/press.jsx"),
   route("about", "routes/about.jsx"),
   route("shows", "routes/shows.jsx"),
+  route("shows/:showSlug", "routes/show-page.jsx"),
   route("merch", "routes/merch.jsx"),
   route("licensing", "routes/licensing.jsx"),
   route("contact", "routes/contact.jsx"),

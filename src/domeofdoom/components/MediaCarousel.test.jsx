@@ -1,0 +1,31 @@
+import React from "react";
+import { MemoryRouter } from "react-router";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, expect, it, vi } from "vitest";
+import MediaCarousel from "./MediaCarousel";
+afterEach(cleanup);
+it("pages through overflow, updates arrow states, and keeps the count in the header", () => {
+  render(<MemoryRouter><MediaCarousel title="Event Videos" kind="videos" items={[{ id: 1 }, { id: 2 }, { id: 3 }]} renderItem={item => <span>Video {item.id}</span>} /></MemoryRouter>);
+  const track = screen.getByRole("group", { name: "Event Videos carousel" });
+  Object.defineProperties(track, { clientWidth: { value: 400 }, scrollWidth: { value: 612 } });
+  track.scrollTo = vi.fn(({ left }) => { track.scrollLeft = left; fireEvent.scroll(track); });
+  act(() => { fireEvent(window, new Event("resize")); });
+  const previous = screen.getByRole("button", { name: "Previous event videos" });
+  const next = screen.getByRole("button", { name: "Next event videos" });
+  expect(previous).toBeDisabled();
+  expect(next).toBeEnabled();
+  fireEvent.click(next);
+  expect(track.scrollTo).toHaveBeenLastCalledWith({ left: 212, behavior: "instant" });
+  expect(next).toBeDisabled();
+  expect(previous).toBeEnabled();
+  fireEvent.click(previous);
+  expect(track.scrollLeft).toBe(0);
+  expect(previous).toBeDisabled();
+  expect(screen.getByRole("heading", { name: "Event Videos" })).toBeInTheDocument();
+  expect(screen.getByText("3")).toBeInTheDocument();
+});
+it("omits navigation for a single photograph", () => {
+  render(<MemoryRouter><MediaCarousel title="Event Photos" kind="photos" items={[{ id: "photo" }]} renderItem={() => <img src="/photo.jpg" alt="Event crowd" />} /></MemoryRouter>);
+  expect(screen.getByRole("heading", { name: "Event Photos" })).toBeInTheDocument();
+  expect(screen.queryByRole("button")).not.toBeInTheDocument();
+});

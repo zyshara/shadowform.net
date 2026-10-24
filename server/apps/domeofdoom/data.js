@@ -29,3 +29,5 @@ export const getShows = cached(async () => {
 });
 
 export const getPressItems = cached(getPress);
+
+export { getEventIndex, getEventPage } from './eventContent.js';

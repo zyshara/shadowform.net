@@ -1,11 +1,13 @@
 // Manual public-catalog backfill. Dry-run by default; --apply writes verified
 // matches only. Existing overrides are preserved. Never scheduled by cron.
 // node --env-file=.env server/apps/domeofdoom/scripts/backfillCatalogSpotify.js [--apply]
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { strapiGetAllPages, strapiGet, strapiPut } from "#lib/strapi.js";
 import { spotifyGet } from "#lib/spotify.js";
 import { exactCandidates, domeAttribution, isEp, spotifySearchTitle } from "./spotifyCatalogMatch.js";
 
+const manualDecisions = JSON.parse(await readFile(new URL("./data/spotify-manual-decisions.json", import.meta.url), "utf8")).entries;
+const unavailable = new Set(manualDecisions.filter(entry => entry.spotifyUrl === null).map(entry => entry.documentId));
 const path = "/api/dome-of-doom-catalog-items";
 const apply = process.argv.includes("--apply");
 const epOnly = process.argv.includes("--ep-only");
@@ -22,6 +24,10 @@ try {
     const artist = item.derived?.artists?.[0]?.name;
     const row = { documentId: item.documentId, title, artist, bandcampUrl: item.bandcamp_url };
     report.entries.push(row);
+    if (unavailable.has(item.documentId)) {
+      row.status = "confirmed-unavailable";
+      continue;
+    }
     if (item.overrides?.spotify_url) {
       Object.assign(row, { status: "existing", spotifyUrl: item.overrides.spotify_url });
       continue;

@@ -35,3 +35,15 @@ it("does not reload the catalog for browser-only filter changes", () => {
     defaultShouldRevalidate: true,
   })).toBe(false);
 });
+
+
+it("uses CMS inventory without silently merging prototype shows", async () => {
+  const { loader } = await import("./shows");
+  const context = contextFor({ getEventIndex: async () => ({ enabled: true, shows: [] }) });
+  expect((await loader({ context })).shows).toEqual([]);
+});
+it("uses CMS event pages and returns 404 for unpublished/missing CMS pages", async () => {
+  const { loader } = await import("./show-page");
+  const context = contextFor({ getEventPage: async () => ({ enabled: true, content: null }) });
+  await expect(loader({ context, params: { showSlug: "maybe-forever-dome-of-doom-takeover-2023" } })).rejects.toMatchObject({ status: 404 });
+});
