@@ -6,7 +6,7 @@ This file tracks remaining research and records promoted into the CMS.
 
 Radio appearances are excluded from Shows at the user's request (October 23, 2026). Four live CMS entries and five pending source candidates were removed; the Room 303 proposal is also excluded. Do not reimport radio broadcasts as shows.
 
-Of the original 180 source events, 15 are published, nine radio appearances are excluded, and 156 remain in the review inventory. Three previously deleted legacy events remain excluded from import, leaving 153 active candidates. Three have corroborated core facts; 150 still require review.
+Of the original 180 source events, 27 are published, nine radio appearances are excluded, and 144 remain in the review inventory. The three previously removed legacy events were restored at the client's request. Two remaining candidates have corroborated core facts; 142 still require review.
 
 Original source material remains historical evidence; the structured files here contain only active non-radio candidates.
 
@@ -18,6 +18,14 @@ All five known 2026 Japan club/in-store stops are published: ENTER Shibuya (Sept
 
 Dabow at Maybe Forever, Denver (May 31–June 1) is published with a flyer, linked YouTube recording, and individual page. Hamdi: Abomination Club Tour at DEF, Atlanta (April 19–20), is published as an external-only listing with the supplied flyer and promoter-managed RA link. The Atlanta venue is displayed as TBA at the client’s request. Both retain only Dabow in the roster relation.
 
+## 2023 added and legacy records restored
+
+All twelve remaining 2023 source entries are published as index listings, including the three restored legacy events: Jon Casey / Alison Wonderland at Red Rocks, Lightning in a Bottle, and DMVU / Opiuo at Red Rocks. HARD Summer and the July Maybe Forever event were already present.
+
+Matching client flyers were attached to The Untz Festival, The Allegory of the Rave, Gem & Jam, and Scenario. The Caverns roster artists are billed on April 1; Untz uses May 12–14 festival dates and Gem & Jam February 3–5. Scenario's flyer confirms The Love Song Bar in Los Angeles.
+
+Pirate Pandas, SXSW / Ninja Bus, Huxley Anne at Spin, and FMU retain partial verification and source-label archive evidence. Unknown venues remain TBA or Secret Warehouse. The January 21 Black Box entry uses verified DMVU and shrimpnose credits, correcting the original Daedelus credit. The supplied DMVU butterfly flyer is for April 24, 2026 and is deliberately left aside at the client's request.
+
 ## Proposed next batch
 
 Structured proposals are in [next-batch-proposals.json](next-batch-proposals.json). These are preparation records, not an import command.
@@ -26,7 +34,6 @@ Structured proposals are in [next-batch-proposals.json](next-batch-proposals.jso
 |---|---|---|---|
 | DOD-P023-L01 | Dabow at Luna Lounge | April 26, 2025 | The artist listing specifies Cheektowaga, NY, rather than Buffalo metro. The [promoter archive](https://linktr.ee/lunapresentsbuffalo) corroborates the Dabow event. Store the precise municipality. |
 | DOD-P021-L01 | Dabow at The Office | April 18, 2025 | Artist archive corroborates Nashville, venue and date. Event permalink remains preferable to the general artist archive, but no missing event time needs to be invented. |
-| DOD-P039-L25 | An Intimate Evening w/ DMVU | January 21–22, 2023 | [Venue event page](https://events.blackboxdenver.co/e/dmvu-jan21) bills DMVU plus Shrimpnose, Wasabi Jackson and Sound Guy Josh, 21:00–02:00. The original inventory's Daedelus credit is not corroborated; replace it with DMVU. |
 
 ## Next research priorities / client-supplied material
 

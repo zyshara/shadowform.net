@@ -6,6 +6,7 @@
 // slanted frame regardless of where it's used.
 
 import { colors } from "@/tokens";
+import { responsiveImage } from "@/utils/responsiveImage";
 
 const headingFont = {
   fontFamily: "Archivo, sans-serif",
@@ -69,7 +70,7 @@ const ArtistPhoto = ({ name, src, width = 380, height, fill = false, hoverEffect
       >
         {src ? (
           <img
-            src={src}
+            {...responsiveImage(src, "(min-width: 768px) 500px, 90vw", [320, 640, 960])}
             alt={name}
             className="h-full w-full object-cover"
             style={{ display: "block" }}

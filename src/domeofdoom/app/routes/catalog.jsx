@@ -2,6 +2,7 @@ import { createCachedClientLoader } from "../clientCache";
 import { servicesContext } from "../context";
 import Page from "../../pages/Catalog";
 import { pageMeta } from "../pageMeta";
+import { catalogSummary } from "../../utils/catalogPayloads";
 export const meta = pageMeta("Catalog");
 // Filters and sorting use the catalog already loaded in the browser.
 export function shouldRevalidate({ currentUrl, nextUrl, formMethod, defaultShouldRevalidate }) {
@@ -9,7 +10,8 @@ export function shouldRevalidate({ currentUrl, nextUrl, formMethod, defaultShoul
   return defaultShouldRevalidate;
 }
 export async function loader({ context }) {
-  return { allItems: await context.get(servicesContext).getCatalog() };
+  const items = await context.get(servicesContext).getCatalog();
+  return { allItems: items.map(catalogSummary) };
 }
 export default function Route({ loaderData }) { return <Page {...loaderData} />; }
 

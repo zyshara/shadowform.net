@@ -3,7 +3,7 @@ import { NavLink, useFetcher, useLocation } from "react-router";
 
 // Framework link prefetch warms route modules, but routes with clientLoader
 // need a loader invocation to seed our in-memory data cache as well.
-const DATA_ROUTES = new Set(["/", "/catalog", "/roster", "/press"]);
+const DATA_ROUTES = new Set(["/", "/catalog", "/roster", "/press", "/shows"]);
 
 export default function PrefetchedNavLink({ to, warm = false, ...props }) {
   const fetcher = useFetcher();

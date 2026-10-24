@@ -9,13 +9,14 @@ import StarIcon from "@/components/StarIcon";
 import HomeSectionHeader from "@/components/HomeSectionHeader";
 import ArrowUpRightIcon from "@/components/ArrowUpRightIcon";
 import { filterShows, formatShowDate, groupShows, showDateLabel, showRegion, splitShows } from "@/utils/showInventory";
+import { responsiveImage } from "@/utils/responsiveImage";
 
 const emptyFilters = () => ({ type: new Set(), year: new Set(), artist: new Set(), region: new Set() });
 const COUNTRY_NAMES = { US: "USA", CA: "Canada", MX: "Mexico", GB: "UK", BE: "Belgium", CZ: "Czech Republic", JP: "Japan" };
 const unique = values => [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b));
 
 function ShowImage({ show }) {
-  return show.flyerUrl ? <img src={show.flyerUrl} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" /> :
+  return show.flyerUrl ? <img {...responsiveImage(show.flyerUrl, "120px", [160, 320])} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" /> :
     <div className="shows-image-fallback" aria-hidden="true"><StarIcon size={54} showBackground={false} showGlow={false} /></div>;
 }
 

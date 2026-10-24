@@ -27,7 +27,7 @@ it("reuses a hover request when clicked before it finishes", async () => {
 });
 
 function menuRouter() {
-  const loaders = Object.fromEntries(["catalog", "roster", "press"].map(path => [path, vi.fn(async () => ({}))]));
+  const loaders = Object.fromEntries(["catalog", "roster", "press", "shows"].map(path => [path, vi.fn(async () => ({}))]));
   const router = createMemoryRouter([{ element: <Navbar />, children: [
     { path: "/", element: <p>Home</p> },
     ...Object.entries(loaders).map(([path, loader]) => ({ path: `/${path}`, loader, element: <p>{path}</p> })),

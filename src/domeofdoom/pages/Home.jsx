@@ -3,10 +3,12 @@ import React from "react";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { Link } from "react-router";
 import { catalogItemSlug } from "@/utils/catalogItemSlug";
-import { selectHomeReleases } from "@/utils/homeReleases";
 import { colors } from "@/tokens";
 import Button from "@/components/Button";
 import testBg3 from "@/assets/test_bg_3.png";
+import heroAvif from "@/assets/home-hero.avif";
+import heroWebp from "@/assets/home-hero.webp";
+import { responsiveImage } from "@/utils/responsiveImage";
 import SpotifyIcon from "@/components/SpotifyIcon";
 import BandcampIcon from "@/components/BandcampIcon";
 import ArrowUpRightIcon from "@/components/ArrowUpRightIcon";
@@ -129,6 +131,7 @@ function LatestCompilationSection({ item }) {
             <TiltedCover
               artworkUrl={item.artwork_url}
               title={item.title}
+              loading="lazy"
             />
           </div>
         </div>
@@ -253,7 +256,7 @@ function ReleaseCard({ item, now, showLabel = true, primary = false }) {
         <div className="aspect-square w-full self-start overflow-hidden border border-dod-lilac/70">
           {item.artwork_url ? (
             <img
-              src={item.artwork_url}
+              {...responsiveImage(item.artwork_url, "(min-width: 1024px) 20vw, (min-width: 640px) 45vw, 90vw", [320, 640, 960])}
               alt={item.title}
               className="h-full w-full object-cover"
               loading="lazy"
@@ -331,22 +334,21 @@ function LatestReleasesSection({ cards, now }) {
 // Home
 // ---------------------------------------------------------------------------
 
-const Home = ({ catalogItems = [], now }) => {
+const Home = ({ cards = [], latestCompilation = null, now }) => {
   usePageTitle(null);
 
 
-  const compilations = catalogItems
-    .filter((i) => i.type === "Compilation")
-    .sort((a, b) => new Date(b.release_date ?? 0) - new Date(a.release_date ?? 0));
-
-  const latestCompilation = compilations[0] ?? null;
-  const cards = selectHomeReleases(catalogItems, now);
 
   return (
     <div>
       {/* HERO */}
       <div className="relative h-[600px] sm:h-[640px] overflow-hidden border-b border-white/10">
-        <img src={testBg3} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover" />
+        <picture>
+          <source type="image/avif" srcSet={heroAvif} />
+          <source type="image/webp" srcSet={heroWebp} />
+          <img src={testBg3} alt="" width={1400} height={589} fetchPriority="high"
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover" />
+        </picture>
         <div
           className="pointer-events-none absolute inset-0"
           style={{ background: `linear-gradient(to right, ${colors.bg} 0%, ${colors.bg} 22%, color-mix(in srgb, ${colors.bg} 60%, transparent) 50%, color-mix(in srgb, ${colors.bg} 5%, transparent) 100%)` }}

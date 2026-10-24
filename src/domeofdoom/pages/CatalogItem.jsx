@@ -30,6 +30,7 @@ import ArtistCardDouble from "@/components/ArtistCardDouble";
 import SectionDots from "@/components/SectionDots";
 import { getVinylDiscOverride } from "@/data/vinylDiscOverrides";
 import { colors } from "@/tokens";
+import { responsiveImage } from "@/utils/responsiveImage";
 
 // No genre field exists anywhere in the data pipeline yet (not on the
 // Strapi DomeOfDoomArtist model, not in the Bandcamp scrape) - hardcoded
@@ -472,7 +473,7 @@ const CatalogItem = ({ allItems = [], roster = [] }) => {
               </div>
             ) : (
               <img
-                src={coverSlides[slideIndex].src}
+                {...responsiveImage(coverSlides[slideIndex].src, "(min-width: 768px) 35vw, 90vw", [400, 800, 1200])}
                 alt={item.title}
                 className="aspect-square w-full object-cover md:p-[50px] lg:p[60px]"
               />
@@ -608,8 +609,10 @@ const CatalogItem = ({ allItems = [], roster = [] }) => {
                     ) : (
                       item.artwork_url && (
                         <img
-                          src={item.artwork_url}
+                          {...responsiveImage(item.artwork_url, "(min-width: 1024px) 25vw, 80vw", [320, 640, 960])}
                           alt={format.label}
+                          loading="lazy"
+                          decoding="async"
                           className="absolute inset-0 h-full w-full object-cover"
                         />
                       )

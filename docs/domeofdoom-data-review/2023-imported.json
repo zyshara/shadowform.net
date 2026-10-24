@@ -1,0 +1,106 @@
+[
+  {
+    "source": "DOD-P039-L03",
+    "show": "fz399mt23ku9k4ffu91uhtvv",
+    "name": "Jon Casey at Red Rocks Amphitheatre",
+    "date": "2023-10-13",
+    "verification": "partial",
+    "restored": true
+  },
+  {
+    "source": "DOD-P039-L07",
+    "show": "k9htg8629rb2wz7sy62s2oao",
+    "name": "Lightning In A Bottle 20th anniversary",
+    "date": "2023-05-24",
+    "verification": "partial",
+    "restored": true
+  },
+  {
+    "source": "DOD-P039-L09",
+    "show": "c0x1hh9etwh2exmvh5cfrq8m",
+    "name": "DMVU at Red Rocks Amphitheatre",
+    "date": "2023-05-21",
+    "verification": "partial",
+    "restored": true
+  },
+  {
+    "source": "DOD-P039-L11",
+    "show": "lfveyguq8wetugto4cg27t2w",
+    "name": "The Untz Festival",
+    "date": "2023-05-12",
+    "verification": "checked",
+    "restored": false,
+    "file": 610,
+    "media": "r104vbp7haidm17qrk5f5617"
+  },
+  {
+    "source": "DOD-P039-L13",
+    "show": "g3ikvsg22fkt6o5v8bsnfgko",
+    "name": "Pirate Pandas",
+    "date": "2023-04-22",
+    "verification": "partial",
+    "restored": false
+  },
+  {
+    "source": "DOD-P039-L15",
+    "show": "tniph8uapntcazi0ixvwiu16",
+    "name": "The Allegory of the Rave",
+    "date": "2023-04-01",
+    "verification": "checked",
+    "restored": false,
+    "file": 611,
+    "media": "a00sv4i81st6pff8130cl61z"
+  },
+  {
+    "source": "DOD-P039-L17",
+    "show": "ozh4jj4cac15wv5y666vx61n",
+    "name": "SXSW \u2014 Ninja Bus",
+    "date": "2023-03-16",
+    "verification": "partial",
+    "restored": false
+  },
+  {
+    "source": "DOD-P039-L19",
+    "show": "rw0rpq56uitnue7vgobxij8y",
+    "name": "Huxley Anne at Spin Nightclub",
+    "date": "2023-03-11",
+    "verification": "partial",
+    "restored": false
+  },
+  {
+    "source": "DOD-P039-L21",
+    "show": "t89i0fabe2t0dr9e3b4j183t",
+    "name": "FMU Records Warehouse Party",
+    "date": "2023-03-10",
+    "verification": "partial",
+    "restored": false
+  },
+  {
+    "source": "DOD-P039-L23",
+    "show": "mx6nu9kqutckrne63eycvz8p",
+    "name": "Gem & Jam Festival",
+    "date": "2023-02-03",
+    "verification": "checked",
+    "restored": false,
+    "file": 612,
+    "media": "z8i3nyo79c1g9bc6qnbozdlq"
+  },
+  {
+    "source": "DOD-P039-L25",
+    "show": "ocz4yre71wl46al7plc72k8g",
+    "name": "An Intimate Evening with DMVU + Shrimpnose",
+    "date": "2023-01-21",
+    "verification": "checked",
+    "restored": false
+  },
+  {
+    "source": "DOD-P039-L27",
+    "show": "a9h6ra94d9o360fszh9zbknu",
+    "name": "Scenario",
+    "date": "2023-01-18",
+    "verification": "checked",
+    "restored": false,
+    "file": 613,
+    "media": "zopujlyo6w31tiykg869ems6"
+  }
+]

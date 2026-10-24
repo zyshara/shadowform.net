@@ -7,7 +7,7 @@ import { colors } from "@/tokens";
 import WarpedGrid from "@/components/WarpedGrid";
 import WormholeGrid from "@/components/WormholeGrid";
 import StarIcon from "@/components/StarIcon";
-import PressCardSkeleton from "@/components/ImageSkeleton";
+import { responsiveImage } from "@/utils/responsiveImage";
 import FilterBar from "@/components/FilterBar";
 import Button from "@/components/Button";
 import ArrowRightIcon from "@/components/ArrowRightIcon";
@@ -64,7 +64,7 @@ function PressCardImage({ item, onLoad }) {
   if (hasImage) {
     return (
       <img
-        src={imgSrc}
+        {...responsiveImage(imgSrc, "(min-width: 1280px) 10vw, (min-width: 768px) 20vw, 40vw")}
         alt={item.title}
         loading="lazy"
         decoding="async"
@@ -105,20 +105,17 @@ const PressCard = ({ item }) => {
 
   return (
     <div className="relative border border-dod-lilac/20 hover:border-dod-neon-mint/50 transition-colors duration-200 overflow-hidden h-[220px]">
-      {/* Skeleton shown until image resolves */}
-      {!loaded && (
-        <div className="absolute inset-0 z-10 bg-[#0d0f10]">
-          <PressCardSkeleton />
-        </div>
-      )}
       <Tag
         {...linkProps}
-        className={`group flex flex-row bg-[#0d0f10] hover:bg-[#181c1e] transition-[opacity,background-color] duration-500 overflow-hidden h-full ${href ? "cursor-pointer" : ""} ${loaded ? "opacity-100" : "opacity-0"}`}
+        className={`group flex flex-row bg-[#0d0f10] hover:bg-[#181c1e] transition-colors duration-200 overflow-hidden h-full ${href ? "cursor-pointer" : ""}`}
       >
       {/* Thumbnail */}
       <div className="w-2/5 flex-shrink-0 p-3">
         <div className="relative h-full overflow-hidden">
-          <PressCardImage item={item} onLoad={() => setLoaded(true)} />
+          {!loaded && <div aria-hidden="true" className="absolute inset-0 z-10 animate-pulse bg-dod-lilac/10" />}
+          <div className={`absolute inset-0 transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}>
+            <PressCardImage item={item} onLoad={() => setLoaded(true)} />
+          </div>
         </div>
       </div>
 
@@ -128,7 +125,7 @@ const PressCard = ({ item }) => {
         <div className="flex items-center justify-between gap-2">
           {item.outlet?.logo ? (
             <img
-              src={item.outlet.logo}
+              {...responsiveImage(item.outlet.logo, "64px", [64, 128])}
               alt={item.outlet.name}
               loading="lazy"
               decoding="async"

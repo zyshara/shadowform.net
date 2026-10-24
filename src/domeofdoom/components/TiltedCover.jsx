@@ -7,6 +7,7 @@
 // overlaid on top of a flat photo.
 import React from "react";
 import { LOGO_URL } from "@/tokens";
+import { responsiveImage } from "@/utils/responsiveImage";
 
 // `text` is a mapping keyed by face class name, each value an optional
 // {first, middle, last} set of strings - whichever keys are present
@@ -16,7 +17,7 @@ import { LOGO_URL } from "@/tokens";
 // it wants on whichever face without this component knowing what a
 // "catalog number" or "artist" is - title/artworkUrl stay as their own
 // props since they're used for the front face's actual image, not text.
-const TiltedCover = ({ artworkUrl, title, text = {}, className = "" }) => {
+const TiltedCover = ({ artworkUrl, title, text = {}, className = "", loading = "eager" }) => {
   const left = text["tilted-cover-left"] ?? {};
   const bottom = text["tilted-cover-bottom"] ?? {};
 
@@ -24,7 +25,7 @@ const TiltedCover = ({ artworkUrl, title, text = {}, className = "" }) => {
     <div className={`tilted-cover-scene ${className}`}>
       <div className="tilted-cover-rotor">
         <div className="tilted-cover-face tilted-cover-front">
-          {artworkUrl && <img src={artworkUrl} alt={title} />}
+          {artworkUrl && <img {...responsiveImage(artworkUrl, "(min-width: 1024px) 400px, 80vw", [320, 640, 960])} alt={title} loading={loading} decoding="async" />}
           <img className="tilted-cover-mark" src={LOGO_URL} alt="" aria-hidden="true" />
         </div>
         <div className="tilted-cover-face tilted-cover-left">

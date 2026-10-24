@@ -35,3 +35,25 @@ The previous separate HTTP audit found substantial uncached data transfer cost, 
 For an exact breakdown, capture browser network and performance traces or add temporary browser-side marks for input, route commit, and the first post-commit frame. Compare first/repeated clicks, hover versus immediate click, and touch/mobile. Match loader requests to clicks to verify prefetch reuse/deduplication. Until then, keep the recommendation focused on smaller Catalog payloads, visible pending feedback, and rendering text independently of images; do not claim a proven dominant bottleneck.
 
 No application behavior changed during this measurement.
+
+## Post-deployment verification
+
+After deployment of pending-request reuse and mobile-menu warming:
+
+| Destination | First visit in fresh tab | Repeat visit in same tab |
+| --- | ---: | ---: |
+| Catalog | 953 ms | 327 ms |
+| Roster | 471 ms | 218 ms |
+| Press | 608 ms | 291 ms |
+
+Method: individual top-nav clicks, polling full accessibility state until the destination title appeared, followed by a screenshot confirming each destination. These are single click-to-observation samples including automation overhead, not precise paint timings or statistical performance claims. Browser HTTP caches and server caches were not cleared. These results are not a controlled before/after experiment; repeat caching existed before the change too.
+
+Deployment checks:
+
+- Public `clientCache-DqYOwIRw.js` contains the pending map, shared promise, and cancellation fallback.
+- A controlled Node check imported that exact deployed module, started a concurrent preload and navigation, resolved their response, then loaded the route again. Only one supplied server-loader call occurred and all consumers received the expected data.
+- Public `layout-844GlkuN.js` contains mobile link `warm` wiring, render-prefetch selection, and Data Saver/slow-connection guards.
+- Mobile-menu runtime behavior was covered by local integration tests before deployment, but was not exercised in a live mobile viewport here.
+- No live browser network trace was available to count actual HTTP requests or isolate hover overlap. The deployed-module test verifies the reuse logic, not router transport behavior end to end.
+
+Screenshots still show images/card frames resolving after route arrival, and the underline can remain between destinations during its transition. Those remaining visual delays are outside the prefetch change.

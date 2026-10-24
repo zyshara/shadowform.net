@@ -5,6 +5,7 @@ import Button from "@/components/Button";
 import ArrowUpRightIcon from "@/components/ArrowUpRightIcon";
 import ArtworkOverlay from "@/components/ArtworkOverlay";
 import MediaCarousel from "@/components/MediaCarousel";
+import { responsiveImage } from "@/utils/responsiveImage";
 
 function EventVideo({ media }) {
   const [playing, setPlaying] = useState(false);
@@ -13,7 +14,7 @@ function EventVideo({ media }) {
       {playing ? <iframe src={`https://www.youtube-nocookie.com/embed/${media.youtubeId}?autoplay=1`}
         title={media.title} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen /> :
         <button type="button" onClick={() => setPlaying(true)} aria-label={`Play ${media.title}`} className="event-video-play event-artwork group">
-          <img src={media.thumbnail || `https://i.ytimg.com/vi/${media.youtubeId}/hqdefault.jpg`} alt="" loading="lazy" />
+          <img {...responsiveImage(media.thumbnail || `https://i.ytimg.com/vi/${media.youtubeId}/hqdefault.jpg`, "(min-width: 768px) 35vw, 90vw", [320, 640, 960])} alt="" loading="lazy" decoding="async" />
           <ArtworkOverlay name={media.title} />
           <span className="event-play-icon" aria-hidden="true">▶</span>
         </button>}
@@ -32,7 +33,7 @@ export default function ShowPage({ page, media = {} }) {
     <Link to="/shows" className="mb-8 inline-flex items-center gap-2 text-xs uppercase tracking-wider text-dod-lilac hover:text-dod-neon-mint">← All shows</Link>
     <div className={`event-hero ${!flyer ? "event-hero-no-flyer" : ""}`}>
       {flyer && <a href={flyer.originalImage || flyer.image} target="_blank" rel="noopener noreferrer" aria-label="View full event flyer (opens in a new tab)" className="event-flyer-link">
-        <img className="event-flyer" src={flyer.image} alt={flyer.alt} fetchPriority="high" />
+        <img className="event-flyer" {...responsiveImage(flyer.image, "(min-width: 1024px) 35vw, 90vw", [400, 800, 1200])} alt={flyer.alt} fetchPriority="high" />
       </a>}
       <div className="event-details">
         <h1>{page.title}</h1>
@@ -51,7 +52,7 @@ export default function ShowPage({ page, media = {} }) {
     </div>
     <div className="event-media">
       {videos.length > 0 && <MediaCarousel title="Event Videos" items={videos} kind="videos" renderItem={media => <EventVideo media={media} />} />}
-      {photos.length > 0 && <MediaCarousel title="Artwork and Photos" items={photos} kind="photos" renderItem={media => <a href={media.originalImage || media.image} target="_blank" rel="noopener noreferrer" className="event-artwork group"><img className="aspect-square w-full object-cover border border-dod-lilac/40" src={media.previewImage || media.image} alt={media.alt} loading="lazy" /><ArtworkOverlay name={media.title} />{media.credit && <span className="text-xs text-dod-lilac">{media.credit}</span>}</a>} />}
+      {photos.length > 0 && <MediaCarousel title="Artwork and Photos" items={photos} kind="photos" renderItem={media => <a href={media.originalImage || media.image} target="_blank" rel="noopener noreferrer" className="event-artwork group"><img className="aspect-square w-full object-cover border border-dod-lilac/40" {...responsiveImage(media.previewImage || media.image, "(min-width: 768px) 35vw, 90vw", [320, 640, 960])} alt={media.alt} loading="lazy" decoding="async" /><ArtworkOverlay name={media.title} />{media.credit && <span className="text-xs text-dod-lilac">{media.credit}</span>}</a>} />}
     </div>
   </div>;
 }

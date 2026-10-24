@@ -16,6 +16,7 @@ import { Link, useSearchParams } from "react-router";
 import { catalogItemSlug } from "@/utils/catalogItemSlug";
 import FilterBar from "@/components/FilterBar";
 import IndexPageHeader from "@/components/IndexPageHeader";
+import { responsiveImage } from "@/utils/responsiveImage";
 import { colors } from "@/tokens";
 import WarpedGrid from "@/components/WarpedGrid";
 import StarIcon from "@/components/StarIcon";
@@ -92,7 +93,7 @@ const CatalogCard = ({ item }) => (
     )}
     {item.artwork_url && (
       <img
-        src={item.artwork_url}
+        {...responsiveImage(item.artwork_url, "(min-width: 1280px) 17vw, (min-width: 1024px) 23vw, 50vw")}
         alt={item.title}
         loading="lazy"
         decoding="async"

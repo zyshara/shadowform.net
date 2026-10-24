@@ -4,6 +4,7 @@ import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { colors } from "@/tokens";
 import ArtworkOverlay from "@/components/ArtworkOverlay";
 import GridDome from "@/components/GridDome";
+import { responsiveImage } from "@/utils/responsiveImage";
 import StarIcon from "@/components/StarIcon";
 
 const PRIMARY = colors.accent;
@@ -98,7 +99,7 @@ const Roster = ({ artists: sourceArtists = EMPTY_ARTISTS }) => {
               {artist.photo_src ? (
                 <img
                   className="absolute inset-0 h-full w-full object-cover grayscale group transition-all group-hover:scale-110 group-hover:grayscale-0 duration-500"
-                  src={artist.photo_src}
+                  {...responsiveImage(artist.photo_src, "(min-width: 1024px) 17vw, (min-width: 768px) 33vw, 50vw")}
                   alt={artist.name}
                   loading="lazy"
                   decoding="async"

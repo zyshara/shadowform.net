@@ -40,30 +40,6 @@
         "https://www.bandsintown.com/a/12229895-dabow"
       ],
       "notes": "Artist past-shows archive corroborates date, city, venue. No address or time inferred; event-specific permalink remains desirable."
-    },
-    {
-      "source_id": "DOD-P039-L25",
-      "name": "The Black Box presents: An Intimate Evening w/ DMVU",
-      "date": "2023-01-21",
-      "end_date": "2023-01-22",
-      "start_time": "21:00:00.000",
-      "end_time": "02:00:00.000",
-      "timezone": "America/Denver",
-      "venue": "The Black Box",
-      "city": "Denver",
-      "state": "CO",
-      "country": "US",
-      "type": "Show",
-      "date_kind": "event",
-      "artist_names": [
-        "DMVU",
-        "shrimpnose"
-      ],
-      "link": "https://events.blackboxdenver.co/e/dmvu-jan21",
-      "sources": [
-        "https://events.blackboxdenver.co/e/dmvu-jan21"
-      ],
-      "notes": "Primary venue event page identifies DMVU + Shrimpnose, Wasabi Jackson and Sound Guy Josh. Remove uncorroborated Daedelus credit from this event; original source text preserved in review queue."
     }
   ]
 }
