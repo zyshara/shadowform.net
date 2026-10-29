@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+  <defs>
+    <symbol id="corner-spark" viewBox="0 0 32 32">
+      <path d="M1 13V1h12M1 5h5M5 1v5" fill="none" stroke="currentColor" stroke-width="1"/>
+      <path d="M15 9v12M9 15h12M11 11l8 8M19 11l-8 8" fill="none" stroke="currentColor" stroke-width=".7"/>
+      <circle cx="15" cy="15" r="1.7" fill="currentColor"/>
+    </symbol>
+    <symbol id="corner-pixel" viewBox="0 0 32 32">
+      <path d="M2 15V2h13M2 8h5V3M8 2v6M13 2v3M2 13h3" fill="none" stroke="currentColor" stroke-width="2" shape-rendering="crispEdges"/>
+      <path d="M17 12h3v3h-3zM25 18h2v2h-2z" fill="currentColor" shape-rendering="crispEdges"/>
+    </symbol>
+    <symbol id="corner-arc" viewBox="0 0 32 32">
+      <path d="M1 18V1h17M1 9A8 8 0 0 1 9 1M1 15A14 14 0 0 1 15 1" fill="none" stroke="currentColor" stroke-width=".9"/>
+      <circle cx="18" cy="18" r="1.5" fill="currentColor"/>
+      <path d="M18 11v14M11 18h14" stroke="currentColor" stroke-width=".6"/>
+    </symbol>
+    <symbol id="star-eight" viewBox="0 0 32 32">
+      <path d="M16 1l2.5 12.5L31 16l-12.5 2.5L16 31l-2.5-12.5L1 16l12.5-2.5z" fill="none" stroke="currentColor" stroke-width=".9"/>
+      <circle cx="16" cy="16" r="2" fill="currentColor"/>
+    </symbol>
+    <symbol id="crescent" viewBox="0 0 32 32">
+      <path d="M23 3A13 13 0 1 0 29 24 12 12 0 0 1 23 3Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="divider-stars" viewBox="0 0 160 16">
+      <path d="M0 8H64M96 8h64" fill="none" stroke="currentColor" stroke-width=".8" opacity=".55"/>
+      <path d="M80 1l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="currentColor"/>
+      <circle cx="69" cy="8" r="1" fill="currentColor"/><circle cx="91" cy="8" r="1" fill="currentColor"/>
+    </symbol>
+  </defs>
+</svg>

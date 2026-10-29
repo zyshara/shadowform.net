@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Lora:wght@400;500&display=swap');
+
+:root{font-family:'DM Sans',sans-serif;color:#293831;background:#f8f9f6;font-synthesis:none;font-weight:400;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}body{margin:0}button,input,a{-webkit-tap-highlight-color:transparent}button,input{font:inherit}button{color:inherit;cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #6c957d;outline-offset:4px}button svg{width:20px;height:20px}button{border:0}a{color:inherit}.family-app{height:100dvh;min-height:500px;position:relative;overflow:hidden}.app-header{height:94px;background:#fffdfb;display:flex;align-items:center;padding:0 46px;border-bottom:1px solid #e7e9e3;gap:24px;position:relative;z-index:5}.brand{display:flex;align-items:center;gap:13px;font-size:22px;letter-spacing:-.6px;font-weight:600;text-decoration:none}.leaf{width:40px;height:40px;color:#73957b}.leaf.small{width:29px;height:29px}.header-divider{width:1px;height:23px;background:#e2e5dc;margin-left:6px}.family-name{font-size:13px;color:#7b8279}.search-toggle{margin-left:auto;display:flex;gap:10px;align-items:center;background:#f7f8f3;border:1px solid #e7e9df;border-radius:8px;padding:11px 14px;font-size:12px;color:#637063}.search-toggle svg{width:16px;height:16px}.people-count{border-left:1px solid #dce0d5;padding-left:10px;font-size:11px;color:#85907f}.tree-viewport{position:absolute;inset:94px 0 0;overflow:hidden;touch-action:none;cursor:grab;background-color:#f8f9f6;background-image:radial-gradient(#d5ddcf 0.7px,transparent 0.7px);background-size:22px 22px;outline-offset:-4px}.tree-viewport.dragging{cursor:grabbing}.canvas-heading{position:absolute;top:43px;left:0;right:0;text-align:center;pointer-events:none;user-select:none}.eyebrow{font-size:10px;letter-spacing:2.3px;color:#82907f;font-weight:600;margin:0 0 12px}.canvas-heading h1{font-family:Lora,Georgia,serif;font-weight:400;font-size:32px;letter-spacing:-1px;margin:0 0 12px}.canvas-heading>p:last-child{font-size:12px;color:#8a9185;margin:0}.tree-world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}.connections{position:absolute;inset:0;overflow:visible;pointer-events:none}.connections path{fill:none;stroke:#a3afa1;stroke-width:1.4}.connections circle{fill:#a3afa1}.connections .relationship path{stroke:#8d9e8d}.connections .partner path{stroke-dasharray:2 5}.connections .divorced path{stroke-dasharray:5 5}.connections text{fill:#b77366;text-anchor:middle;stroke:#f8f9f6;stroke-width:4px;paint-order:stroke;font-size:22px}.person-card{position:absolute;width:270px;height:88px;display:flex;align-items:center;gap:13px;padding:15px 17px;background:#fffefc;border:1px solid #dde2d7;border-radius:11px;box-shadow:0 3px 5px #29383103,0 8px 24px #29383104;text-align:left;user-select:none;transition:border-color .15s,box-shadow .15s}.person-card:hover{border-color:#89a388;box-shadow:0 5px 20px #394f3612}.person-card:active{cursor:grabbing}.avatar,.result-avatar,.detail-avatar{display:grid;place-items:center;background:#eef0e6;color:#7b8969;font-family:Lora,Georgia,serif;border:1px solid #dfe4d4;border-radius:50%;flex-shrink:0}.avatar{width:43px;height:43px;font-size:15px}.person-copy{display:flex;flex-direction:column;gap:7px}.person-copy strong{font-size:14px;font-weight:550;letter-spacing:-.4px;white-space:nowrap}.person-copy>span{font-size:11px;color:#929688}.focus-person{border-color:#aebda4}.you-label{position:absolute;bottom:-9px;left:50%;transform:translateX(-50%);font-size:8px;letter-spacing:1.1px;font-weight:600;color:#728466;background:#edf1e7;border:1px solid #dbe4d3;border-radius:4px;padding:3px 9px}.tree-summary{position:absolute;bottom:72px;left:35px;display:flex;gap:12px;align-items:center;background:#fffefaeb;border:1px solid #e3e7dc;border-radius:10px;padding:16px 20px;pointer-events:none;box-shadow:0 3px 14px #243e2603}.tree-summary>span{display:flex;flex-direction:column;gap:6px}.tree-summary strong{font-weight:500;font-size:12px}.tree-summary small{font-size:10px;color:#969d8d}.tree-summary small span{margin:0 5px}.canvas-controls{position:absolute;right:32px;bottom:74px;display:flex;flex-direction:column;align-items:center;gap:10px}.zoom-level{font-size:10px;color:#919b8a}.zoom-buttons{border-radius:8px;overflow:hidden;border:1px solid #e0e5d9;box-shadow:0 2px 8px #33462a07}.zoom-buttons button,.fit-button{display:grid;place-items:center;width:40px;height:40px;background:#fffefa}.zoom-buttons button+button{border-top:1px solid #e7eade}.zoom-buttons button:hover,.fit-button:hover{background:#eef2e8}.fit-button{border:1px solid #e0e5d9;border-radius:8px}.canvas-footer{position:absolute;bottom:0;left:0;right:0;height:43px;border-top:1px solid #e4e8dc;display:flex;align-items:center;justify-content:center;background:#f8f9f6ed;font-size:10px;color:#8b9483;gap:9px}.legend-line{width:26px;height:1px;background:#9caa97}.footer-hint{position:absolute;right:33px;color:#a1a799}.footer-hint span{margin:0 8px}.search-panel{position:absolute;top:80px;right:46px;width:340px;border:1px solid #e1e6da;background:#fffefa;border-radius:12px;box-shadow:0 12px 40px #25382012;padding:19px}.search-panel label{font-size:12px;display:block;margin-bottom:12px}.search-panel input{width:100%;border:1px solid #d5dfce;background:#f8faf5;padding:11px;border-radius:6px;font-size:13px}.search-results{margin-top:10px;max-height:300px;overflow:auto}.search-results button{width:100%;display:flex;gap:10px;align-items:center;background:transparent;text-align:left;padding:10px 2px;font-size:12px;border-radius:5px}.search-results button:hover{background:#eff3e9}.result-avatar{width:28px;height:28px;font-size:10px}.search-results p{font-size:12px;color:#8b9483}.person-dialog{border:1px solid #e4e9de;border-radius:20px;width:400px;padding:36px;color:#293831;background:#fffefa;box-shadow:0 25px 100px #172f2220;max-height:85dvh;overflow:auto}.person-dialog::backdrop{background:#25342930;backdrop-filter:blur(4px)}.close-detail{position:absolute;right:17px;top:17px}.icon-button{display:grid;place-items:center;background:transparent;width:32px;height:32px;border-radius:50%;color:#8b9483}.icon-button:hover{background:#edf1e7}.detail-avatar{width:70px;height:70px;font-size:24px;margin-bottom:24px}.person-dialog .eyebrow{font-size:8px;letter-spacing:1.7px}.person-dialog h2{font-family:Lora,Georgia,serif;font-size:25px;line-height:1.35;font-weight:400;margin:0 0 26px}.living-label{display:inline-block;font-size:10px;color:#6f8366;background:#edf2e7;border-radius:20px;padding:4px 10px;margin-top:-14px;margin-bottom:5px}.detail-section{border-top:1px solid #e8ecdf;padding-top:17px;margin-top:18px}.detail-section>span{font-size:10px;color:#8e9986;text-transform:uppercase;letter-spacing:1px}.detail-section p{font-size:13px;margin:9px 0}.detail-section small{font-size:10px;color:#929a89}.detail-footer{margin:30px 0 0;display:flex;align-items:center;gap:8px;color:#9aa38e;font-size:10px}.sheet-handle{display:none}.not-found{padding:15vh 10vw;font-family:Lora,Georgia,serif}.not-found a{font-family:'DM Sans',sans-serif;font-size:14px}
+@media(min-width:1600px){.canvas-heading{top:60px}.canvas-heading h1{font-size:38px}}
+@media(max-width:640px){.app-header{height:78px;padding:0 22px;gap:12px}.brand{font-size:19px;gap:9px}.brand .leaf{width:32px;height:32px}.header-divider,.family-name,.search-toggle>span{display:none}.search-toggle{padding:9px;background:transparent;border:0}.search-toggle svg{width:20px;height:20px}.tree-viewport{top:78px}.canvas-heading{top:32px}.canvas-heading h1{font-size:25px}.eyebrow{font-size:8px;letter-spacing:1.8px}.canvas-heading>p:last-child{font-size:10px}.tree-summary{left:18px;bottom:69px;padding:12px 14px;gap:8px}.tree-summary strong{font-size:11px}.tree-summary small{font-size:9px}.tree-summary .leaf{width:24px;height:24px}.canvas-controls{right:18px;bottom:67px}.footer-hint{display:none}.canvas-footer{font-size:9px}.search-panel{top:67px;right:15px;width:min(340px,calc(100vw - 30px))}.person-dialog{position:fixed;top:auto;bottom:0;margin:0;width:100%;max-width:none;max-height:75dvh;border-radius:23px 23px 0 0;padding:32px 27px max(26px,env(safe-area-inset-bottom))}.person-dialog h2{font-size:24px}.sheet-handle{display:block;width:35px;height:4px;background:#dce1d5;border-radius:4px;position:absolute;top:10px;left:calc(50% - 17px)}.detail-avatar{width:60px;height:60px;margin-bottom:18px}.close-detail{top:24px;right:20px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Person profile: centered portrait, with the family mark in the footer. */
+.detail-avatar{margin-left:auto;margin-right:auto}
+.person-dialog h2{text-align:center}
+.profile-status{display:flex;align-items:center;justify-content:center;gap:9px;font-size:11px;color:#8b9483;margin-bottom:20px}
+.profile-status .living-label{margin:0}
+.detail-footer{justify-content:space-between;gap:16px}
+.detail-footer .eyebrow{margin:0}
+.date-note{font-size:10px;line-height:1.6;color:#8b9483;margin-top:20px}
+.legend-line.divorced{background:repeating-linear-gradient(to right,#a3afa1 0 4px,transparent 4px 8px);position:relative;margin-left:12px}
+.legend-line.divorced:after{content:'×';position:absolute;left:9px;top:-7px;background:#f8f9f6;color:#b77366;font-size:12px;line-height:14px}
+
+.connections .sibling-caption{font:11px "DM Sans",sans-serif;fill:#82907f;stroke:none}
+
+/* Relationship colors are semantic, with line patterns as a second cue. */
+:root {
+  --parent-link: #3779b5;
+  --marriage-link: #238478;
+  --divorce-link: #b65e36;
+  --sibling-link: #8262ac;
+}
+.connections path {
+  stroke-width: 2.2;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.connections .parent-child-connection path { stroke: var(--parent-link); }
+.connections .parent-child-connection circle { fill: var(--parent-link); }
+.connections .married path, .connections .partner path { stroke: var(--marriage-link); }
+.connections .divorced path { stroke: var(--divorce-link); stroke-dasharray: 7 5; }
+.connections .divorced text { fill: var(--divorce-link); font-weight: 600; }
+.connections .sibling-connection path { stroke: var(--sibling-link); stroke-dasharray: 3 5; }
+.connections .sibling-caption { fill: #6b498f; font-size: 13px; font-weight: 600; }
+.person-card {
+  border-color: #b9c6bb;
+  box-shadow: 0 3px 8px #29383108, 0 8px 24px #29383108;
+}
+.person-copy > span { color: #687463; }
+.focus-person { border: 2px solid var(--marriage-link); background: #f3faf7; }
+.you-label { color: #216e64; background: #e1f1ea; border-color: #7db5a8; font-size: 10px; }
+.canvas-footer { color: #526052; gap: 22px; }
+.legend-item { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+.legend-line { display: inline-block; width: 24px; height: 0; border-top: 2px solid; background: none; }
+.legend-line.parent-child { border-color: var(--parent-link); }
+.legend-line.married { border-color: var(--marriage-link); }
+.legend-line.divorced { border-color: var(--divorce-link); border-top-style: dashed; background: none; margin: 0; }
+.legend-line.divorced:after { color: var(--divorce-link); top: -8px; }
+.legend-line.siblings { border-color: var(--sibling-link); border-top-style: dotted; }
+@media (max-width: 1100px) { .footer-hint { display: none; } }
+@media (max-width: 640px) {
+  .canvas-footer { gap: 12px; padding: 0 8px; }
+  .legend-item { gap: 5px; }
+  .legend-line { width: 17px; }
+  .legend-line.divorced:after { left: 5px; }
+}
+@media (max-width: 360px) {
+  .canvas-footer { gap: 8px; font-size: 8px; }
+  .legend-line { width: 14px; }
+}
+
+.connections .family-caption {
+  fill: var(--parent-link);
+  stroke: #f8f9f6;
+  stroke-width: 6px;
+  font: 600 15px "DM Sans", sans-serif;
+  paint-order: stroke;
+}
+.detail-footer { justify-content: flex-end; }
+.detail-section .sibling-type { display: block; color: #526052; margin-top: 4px; }
+
+:root{--parent-link:#727e88;--marriage-link:#78967b;--divorce-link:#ae7565;--sibling-link:#727e88}
+.person-card{width:292px;height:104px;padding:18px;box-shadow:0 3px 12px #29383106}.person-copy strong{font-size:15px}.person-copy>span{font-size:12px}.person-card[data-related=false]{opacity:.65}.person-card[data-related=true],.person-card[data-highlighted=true]{border-color:#6c957d;background:#f0f7ef}.connection-edge{transition:opacity .15s}.connections .connection-edge path{stroke:#727e88;stroke-width:1.7}.connections .married path,.connections .partner path{stroke:#78967b}.connections .divorced path{stroke:#ae7565;stroke-dasharray:6 5}.connections .siblings path{stroke-dasharray:3 5}.connections circle{fill:#727e88}.relative-link{background:none;padding:4px 0;text-align:left;color:#426e55;text-decoration:underline;text-underline-offset:3px}.avatar img,.detail-avatar img,.result-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}.tree-world{transition:transform .3s ease}.dragging .tree-world{transition:none}.relationship-info{position:absolute;bottom:24px;left:24px;z-index:4}.relationship-info summary{list-style:none;cursor:pointer;border:1px solid #d6ddcf;border-radius:50%;width:32px;height:32px;display:grid;place-items:center;background:#fffefa}.relationship-legend{position:absolute;bottom:42px;left:0;display:grid;gap:14px;width:250px;padding:20px;background:#fffefa;border:1px solid #d6ddcf;border-radius:10px;font-size:11px}.footer-hint{display:none}.canvas-controls{bottom:24px}.person-dialog::backdrop{backdrop-filter:blur(1px);background:#25342920}@media(max-width:640px){.person-dialog{max-height:60dvh}.canvas-controls{bottom:24px}.relationship-info{bottom:24px;left:18px}}
+
+/* Shared sibling bars use dots; their drops into cards stay solid. */
+.connections .siblings path{stroke-dasharray:1 5;stroke-linecap:round}

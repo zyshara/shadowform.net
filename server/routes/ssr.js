@@ -11,6 +11,7 @@ import { registerRedspearSsr } from "#apps/redspear/registerSsr.js";
 import { registerLowPolySsr } from "#apps/low-poly/registerSsr.js";
 import { registerDomeOfDoomSsr } from "#apps/domeofdoom/registerSsr.js";
 import { registerShadowformSsr } from "#apps/shadowform/registerSsr.js";
+import { registerFamilyTreeSsr } from "#apps/familytree/registerSsr.js";
 
 export function registerSsrRoutes(app) {
   // Shared static assets (served at root)
@@ -19,5 +20,6 @@ export function registerSsrRoutes(app) {
   registerRedspearSsr(app);
   registerLowPolySsr(app);
   registerDomeOfDoomSsr(app);
+  registerFamilyTreeSsr(app);
   registerShadowformSsr(app);
 }

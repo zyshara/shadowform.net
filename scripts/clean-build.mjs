@@ -2,7 +2,7 @@ import { rm } from "node:fs/promises";
 
 // Clear only these apps' generated output, including legacy Webpack bundles.
 // Other archived apps in dist are outside this build's ownership.
-const apps = ["redspear", "low-poly", "domeofdoom", "shadowform"];
+const apps = ["redspear", "low-poly", "domeofdoom", "shadowform", "familytree"];
 await Promise.all(apps.map((app) =>
   rm(new URL(`../dist/${app}/`, import.meta.url), { recursive: true, force: true })
 ));

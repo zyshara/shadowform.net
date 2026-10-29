@@ -1,0 +1,165 @@
+{
+  "name": "Decker",
+  "focusPersonId": "jennifer",
+  "people": [
+    {
+      "id": "beverley",
+      "name": "Beverly Anne Berger",
+      "birth": {
+        "month": 2,
+        "day": 16,
+        "year": 1933
+      },
+      "living": false,
+      "parentIds": [],
+      "photo": "/photos/beverly-profile.webp"
+    },
+    {
+      "id": "bernard",
+      "name": "Bernard Berger",
+      "birth": {
+        "month": 11,
+        "day": null,
+        "year": 1927
+      },
+      "death": {
+        "month": 4,
+        "day": null,
+        "year": 2022
+      },
+      "ageAtDeath": 94,
+      "living": false,
+      "parentIds": [],
+      "biography": "Bernard practiced medicine in Pinole before retiring to Hawaii. He loved gardening, reading, and spending time with his family."
+    },
+    {
+      "id": "elizabeth",
+      "name": "Elizabeth Clemens Berger",
+      "birth": {
+        "month": 2,
+        "day": 17,
+        "year": 1936
+      },
+      "death": {
+        "month": 10,
+        "day": 25,
+        "year": 2026
+      },
+      "living": false,
+      "parentIds": []
+    },
+    {
+      "id": "barbara",
+      "name": "Barbara Guiduli",
+      "birth": null,
+      "living": true,
+      "parentIds": []
+    },
+    {
+      "id": "elaine",
+      "name": "Elaine",
+      "birth": null,
+      "living": false,
+      "parentIds": []
+    },
+    {
+      "id": "richard",
+      "name": "Richard Alan Decker",
+      "birth": {
+        "month": 9,
+        "day": 30,
+        "year": 1944
+      },
+      "parentIds": [],
+      "living": true
+    },
+    {
+      "id": "amy",
+      "name": "Amy Leah Decker",
+      "birth": {
+        "month": 11,
+        "day": 4,
+        "year": 1959
+      },
+      "parentIds": [
+        "beverley",
+        "bernard"
+      ],
+      "living": true
+    },
+    {
+      "id": "timothy",
+      "name": "Timothy Berger",
+      "birth": null,
+      "living": true,
+      "parentIds": [
+        "beverley",
+        "bernard"
+      ]
+    },
+    {
+      "id": "shelley",
+      "name": "Shelley Berger",
+      "living": false,
+      "parentIds": [
+        "beverley",
+        "bernard"
+      ]
+    },
+    {
+      "id": "jonathan",
+      "name": "Jonathan Berger",
+      "birth": null,
+      "living": true,
+      "parentIds": [
+        "bernard",
+        "elizabeth"
+      ]
+    },
+    {
+      "id": "jennifer",
+      "name": "Jennifer Lynn Decker",
+      "birth": {
+        "month": 10,
+        "day": 18,
+        "year": 1994
+      },
+      "parentIds": [
+        "richard",
+        "amy"
+      ],
+      "living": true,
+      "photo": "/photos/jennifer.webp"
+    }
+  ],
+  "relationships": [
+    {
+      "personIds": [
+        "richard",
+        "amy"
+      ],
+      "type": "married"
+    },
+    {
+      "personIds": [
+        "beverley",
+        "bernard"
+      ],
+      "type": "divorced"
+    },
+    {
+      "personIds": [
+        "bernard",
+        "elizabeth"
+      ],
+      "type": "married"
+    }
+  ],
+  "siblingGroups": [
+    [
+      "barbara",
+      "elaine",
+      "richard"
+    ]
+  ]
+}

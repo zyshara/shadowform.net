@@ -1,0 +1,103 @@
+/* Compact old-web person record; the tree and lightbox keep their own styles. */
+.person-dialog.person-record {
+  width: min(360px, calc(100vw - 32px));
+  max-width: none;
+  max-height: min(82dvh, 760px);
+  padding: 0;
+  border: 1px solid #9c80ac;
+  border-radius: 0;
+  background: #201d2b;
+  color: #f1e6f2;
+  box-shadow: 0 12px 40px #0005;
+  overflow: hidden;
+}
+.person-record[open] { display: flex; flex-direction: column; }
+.record-titlebar {
+  flex: 0 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 7px 0 12px;
+  margin: 3px 3px 0;
+  background: #ad88b6;
+  color: #211a2c;
+  font: 10px Silkscreen, monospace;
+  letter-spacing: .05em;
+}
+.record-close {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  width: 23px;
+  height: 23px;
+  border: 1px solid #42314c;
+  border-radius: 0;
+  background: transparent;
+  color: #211a2c;
+}
+.record-close:hover { background: #c7a7cf; }
+.record-close svg { width: 15px; height: 15px; }
+.record-close:focus-visible { outline: 2px solid #211a2c; outline-offset: 1px; }
+.record-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 20px 22px; scrollbar-width: thin; scrollbar-color: #827393 #201d2b; }
+.record-head { display: flex; gap: 14px; align-items: center; margin-bottom: 22px; }
+.person-record .detail-avatar { flex: 0 0 48px; width: 48px; height: 48px; font-size: 16px; margin: 0; }
+.record-identity { min-width: 0; }
+.person-record h2 { font: 400 14px/1.45 'DM Mono', monospace; text-align: left; margin: 0 0 6px; overflow-wrap: anywhere; }
+.person-record .profile-status { justify-content: flex-start; flex-wrap: wrap; gap: 5px 8px; margin: 0; font: 10px/1.5 'DM Sans', sans-serif; color: #c2abc9; }
+.person-record .living-label { padding: 0; background: transparent; color: #c2abc9; font-size: 10px; }
+.person-record .detail-section { border-color: #5c4d68; margin-top: 15px; padding-top: 13px; }
+.person-record .detail-section>span { color: #c2abc9; font: 9px Silkscreen, monospace; letter-spacing: .04em; }
+.person-record .detail-section p { font-size: 12px; line-height: 1.6; margin: 8px 0; }
+.person-record .date-note { line-height: 1.6; }
+.person-record .detail-footer { margin-top: 16px; }
+.record-corner { position: absolute; z-index: 2; width: 18px; height: 18px; pointer-events: none; background: url('./assets/record-corner.svg') center/contain no-repeat; }
+.record-corner--tl { top: 0; left: 0; }
+.record-corner--tr { top: 0; right: 0; transform: rotate(90deg); }
+.record-corner--br { bottom: 0; right: 0; transform: rotate(180deg); }
+.record-corner--bl { bottom: 0; left: 0; transform: rotate(270deg); }
+@media(max-width:640px) {
+  .person-dialog.person-record { position: fixed; top: auto; bottom: 0; margin: 0 auto; left: 0; right: 0; width: 100%; max-height: 65dvh; }
+  .record-titlebar { flex-basis: 44px; }
+  .record-close { width: 36px; height: 36px; }
+  .record-content { padding: 18px 22px max(18px, env(safe-area-inset-bottom)); }
+}
+/* Persistent compact header and tabs, with only the active panel scrolling. */
+.person-dialog.record-tabbed{width:min(430px,calc(100vw - 32px));max-height:min(84dvh,780px)}
+.record-tabbed>.record-head{flex:none;margin:0;padding:20px 22px 18px;gap:16px}.record-tabbed .detail-avatar{flex-basis:58px;width:58px;height:58px;font-size:20px}
+.record-tabbed h2{font-size:15px;line-height:1.5}.record-lifespan{font:11px/1.5 'DM Mono',monospace;color:#c2abc9;margin:0 0 8px}
+.record-badge{display:inline-block;padding:3px 7px;border:1px solid;border-radius:3px;font:10px/1.4 'DM Sans',sans-serif}
+.record-badge--living{color:#b6ceb9;background:#607c6230;border-color:#78967b88}.record-badge--deceased{color:#c8bad3;background:#82739324;border-color:#82739388}.record-badge--partner{color:#d0b6dd;background:#9775ac22;border-color:#9775ac77}.record-badge--former{color:#d9b0bd;background:#ac758a22;border-color:#ac758a77}
+.record-tabs{flex:none;display:flex;margin:0 16px;border-bottom:1px solid #5c4d68;border-top:1px solid #5c4d68}
+.record-tabs button{display:flex;align-items:center;justify-content:center;gap:8px;flex:1;min-height:42px;background:transparent;color:#b9a1c7;border-bottom:2px solid transparent;font:10px 'DM Mono',monospace;text-transform:uppercase;letter-spacing:.03em}.record-tabs button[aria-selected=true]{color:#f1e6f2;border-bottom-color:#dba5c9}.record-tabs button>span{font-size:17px}.record-tabs small{font-size:10px}
+.record-tabbed .record-content{padding:8px 22px 20px;flex:0 1 auto}.record-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}.record-columns>.record-section:only-child{grid-column:1/-1}
+.record-section{padding:13px 0;border-bottom:1px solid #5c4d6855;min-width:0}.record-section h3{font:9px Silkscreen,monospace;color:#c2abc9;letter-spacing:.03em;margin:0 0 8px}.record-section p{font-size:12px;line-height:1.6;margin:4px 0;overflow-wrap:anywhere}.record-section .relative-link{font-size:12px;line-height:1.5}.record-partner{margin-bottom:10px}.record-partner:last-child{margin-bottom:0}.record-partner small{display:block;color:#c2abc9;font-size:10px;margin-top:5px}.record-partner .record-badge{font-size:9px;padding:2px 5px}
+.record-tabbed .photo-gallery{border-top:0;margin-top:0;padding-top:10px}.record-all-photos{font-size:11px;margin-top:8px}.photo-thumbnails--full{grid-template-columns:repeat(3,minmax(0,1fr))}.record-empty{font-size:12px;line-height:1.6;color:#c2abc9;padding:16px 0;margin:0}.record-section .sibling-type{display:block;font-size:10px;color:#b9a1c7}
+@media(max-width:640px){.person-dialog.record-tabbed{width:100%;max-height:78dvh}.record-tabbed>.record-head{padding:16px 20px}.record-tabs button{min-height:46px}.record-tabbed .record-content{padding-bottom:max(20px,env(safe-area-inset-bottom))}.record-section .relative-link{min-height:36px}}
+@media(max-width:360px){.record-columns{grid-template-columns:1fr}.record-tabbed h2{font-size:14px}.record-tabbed>.record-head{gap:12px}}
+/* Stable top edge; panel height remains driven by the active content. */
+.person-dialog.record-tabbed{width:min(410px,calc(100vw - 32px));top:8dvh;bottom:auto;margin:0 auto;max-height:84dvh}
+.record-tabbed .record-section{border-bottom:0;padding:12px 0}.record-tabbed .record-columns{gap:0 20px}.record-tabbed .record-content{padding-top:8px}.record-tabbed .photo-gallery{border-top:1px solid #5c4d6855;margin-top:10px;padding-top:12px}
+.record-badge--living{background:#263B35;border-color:#638B79;color:#ADD8BF}
+.record-badge--deceased{background:#36303F;border-color:#8A7896;color:#D2C0DA}
+.record-badge--married{background:#382A46;border-color:#A67BC1;color:#E5C3F2}
+.record-badge--former{background:#422A35;border-color:#C47D91;color:#F0B8C7}
+.record-badge--partner{background:#263842;border-color:#6F9FAE;color:#B9DEE8}
+.record-badge--widowed{background:#30313E;border-color:#777E99;color:#CBD0E1}
+.gallery-heading-action{padding:5px 0;background:transparent;color:inherit;font:inherit;text-transform:inherit;letter-spacing:inherit;text-decoration:underline;text-underline-offset:4px}
+@media(max-width:640px){.person-dialog.record-tabbed{top:auto;bottom:0;width:100%;max-height:78dvh}.gallery-heading-action{min-height:36px}}
+/* Final person-record polish, scoped away from the archive and tree. */
+.person-dialog.record-tabbed{position:fixed;inset:7dvh 0 auto;margin:0 auto;width:min(432px,calc(100vw - 24px));max-height:86dvh}
+.record-tabbed>.record-head{padding:18px 20px 16px}.record-tabbed .record-content{padding:8px 20px 20px}.record-tabbed .record-columns{gap:2px 20px;align-items:start}.record-tabbed .record-section{padding:11px 0}.record-tabbed .record-section h3{line-height:1.5;margin-bottom:7px}.record-tabbed .record-section p{line-height:1.65}
+.record-content--overview .photo-gallery{border:0;margin-top:12px;padding-top:0}.record-content--overview .photo-thumbnails{gap:9px}.record-tabbed .photo-thumbnails button{border-radius:3px;border-color:#82739399}.record-tabbed .photo-thumbnails button:hover{border-color:#dba5c9}.record-tabbed .photo-thumbnails button:focus-visible{outline:2px solid #dba5c9;outline-offset:3px}
+.record-tabbed .thumbnail-caption{position:absolute;bottom:0;left:0;right:0;padding:6px;background:#171521dd;color:#eee7f3;font:10px/1.4 'DM Sans',sans-serif;text-align:left;opacity:0;pointer-events:none}.record-tabbed .photo-thumbnails button:hover .thumbnail-caption,.record-tabbed .photo-thumbnails button:focus-visible .thumbnail-caption{opacity:1}
+.record-tabs button[aria-selected=true]{outline:none;box-shadow:none;background:transparent;border-bottom:2px solid #dba5c9}.record-tabs button:focus-visible{outline:2px solid #dba5c9;outline-offset:-4px}.record-tabs button{border-radius:0;line-height:1.5}.record-tabbed .record-partner{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-bottom:12px}.record-tabbed .record-partner p{margin:0}.record-tabbed .record-badge{border-radius:3px;padding:3px 7px;font-size:10px}.record-content--family .record-section{border-bottom:1px solid #5c4d6833;padding-bottom:14px}
+@media(max-width:640px){.person-dialog.record-tabbed{inset:16dvh 0 auto;margin:0 auto;width:calc(100vw - 16px);max-height:calc(84dvh - max(8px,env(safe-area-inset-bottom)))}.record-tabbed>.record-head{padding:16px 18px}.record-tabbed .record-content{padding:8px 18px max(18px,env(safe-area-inset-bottom))}.record-tabbed .record-columns{gap:0 16px}}
+/* All relationships share one compact Family section. */
+.record-content--family .record-partners-section{grid-column:1/-1}
+.record-partners-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px}
+.record-partners-grid>.record-partner:only-child{grid-column:1/-1}
+.record-tabbed .record-partners-grid .record-partner{flex-direction:row;align-items:baseline;flex-wrap:wrap;gap:4px 7px;margin:0;min-width:0}
+.record-partners-grid .record-partner p{min-width:0}
+.record-partners-grid .record-partner .record-badge{flex-shrink:0}
+.record-partners-grid .record-partner small{flex-basis:100%;margin-top:0}
+@media(max-width:640px){.record-partners-grid{grid-template-columns:1fr;gap:12px}}

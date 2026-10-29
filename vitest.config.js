@@ -15,6 +15,6 @@ const project = (name, app, include) => ({
 });
 
 export default defineConfig({ test: { projects: [
-  project("main", "domeofdoom", ["server/**/*.test.js", "src/{domeofdoom,redspear,low-poly}/**/*.test.{js,jsx}"]),
+  project("main", "domeofdoom", ["server/**/*.test.js", "src/{domeofdoom,redspear,low-poly,familytree}/**/*.test.{js,jsx}"]),
   project("shadowform", "shadowform", ["src/shadowform/**/*.test.{js,jsx}"]),
 ] } });

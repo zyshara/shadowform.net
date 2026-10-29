@@ -1,0 +1,17 @@
+import { useEffect, useId, useRef, useState } from 'react';
+import { Link, useLocation } from 'react-router';
+import CelestialStar from './CelestialStar.jsx';
+import SiteNavigation from './SiteNavigation.jsx';
+export default function ArchiveHeader({ mode='people', query, onQuery, results, count, onSelect, selectedPeople = [], onRemovePerson }) {
+ const [open,setOpen]=useState(false),[active,setActive]=useState(0);
+ const ref=useRef(null),input=useRef(null),trigger=useRef(null);const id=useId();const location=useLocation();
+ const close=()=>{setOpen(false);trigger.current?.focus();};
+ useEffect(()=>{setOpen(false);setActive(0);},[location.pathname]);
+ useEffect(()=>setActive(0),[query]);
+ useEffect(()=>{if(!open)return;input.current?.focus();const outside=e=>{if(!ref.current?.contains(e.target))setOpen(false);};document.addEventListener('pointerdown',outside);return()=>document.removeEventListener('pointerdown',outside);},[open]);
+ const select=result=>{onSelect(result);if(onRemovePerson){setActive(0);input.current?.focus();}else close();};
+ return <header className="app-header"><Link className="brand" to="/" aria-label="Family Tree home"><CelestialStar/><span>Family Tree</span></Link><SiteNavigation/><div ref={ref} className="header-search">
+ <button ref={trigger} className="search-toggle" aria-label={mode==='people'?'Find a person':'Find photographs'} aria-expanded={open} aria-controls={id} onClick={()=>setOpen(!open)}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><span>{mode==='people'?'Find a person':'Find photographs'}</span><span className="people-count">{count}</span></button>
+ {open&&<div id={id} className="search-panel" onKeyDown={e=>{if(e.key==='Escape'){e.preventDefault();close();}}}><label htmlFor={`${id}-input`}>{mode==='people'?'Find someone in the family':'Find photos by people'}</label>{selectedPeople.length > 0 && <div className="selected-photo-people">{selectedPeople.map(person=><button key={person.id} onClick={()=>onRemovePerson(person.id)} aria-label={`Remove ${person.name} from photo filter`}>{person.name} ×</button>)}<small>Showing photographs with everyone selected.</small></div>}<input ref={input} id={`${id}-input`} type="search" role="combobox" aria-expanded="true" aria-controls={`${id}-results`} aria-activedescendant={results[active]?`${id}-result-${active}`:undefined} value={query} placeholder={mode==='people'?'Search by name…':'Search people by name…'} onChange={e=>onQuery(e.target.value)} onKeyDown={e=>{if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();setActive(i=>results.length?(i+(e.key==='ArrowDown'?1:-1)+results.length)%results.length:0);}if(e.key==='Enter'&&results[active]){e.preventDefault();select(results[active]);}}}/>{query&&<button className="search-clear" onClick={()=>{onQuery('');input.current?.focus();}}>Clear search</button>}<div id={`${id}-results`} role="listbox" className="search-results">{results.map((result,index)=><button id={`${id}-result-${index}`} role="option" aria-selected={active===index} key={result.id} onMouseEnter={()=>setActive(index)} onClick={()=>select(result)}><span className="result-avatar">{result.image?<img src={result.image} alt=""/>:result.initials||'✧'}</span>{result.label}</button>)}{!results.length&&<p>No matches found.</p>}</div></div>}
+ </div></header>;
+}

@@ -28,12 +28,13 @@
     "#apps/domeofdoom/*": "./server/apps/domeofdoom/*",
     "#apps/shadowform/*": "./server/apps/shadowform/*",
     "#apps/redspear/*": "./server/apps/redspear/*",
-    "#apps/low-poly/*": "./server/apps/low-poly/*"
+    "#apps/low-poly/*": "./server/apps/low-poly/*",
+    "#apps/familytree/*": "./server/apps/familytree/*"
   },
   "scripts": {
     "build": "npm run build:ssr && node scripts/generate-sitemap.mjs",
     "clean": "node scripts/clean-build.mjs",
-    "build:ssr": "npm run clean && react-router build src/redspear && react-router build src/low-poly && react-router build src/domeofdoom && react-router build src/shadowform",
+    "build:ssr": "npm run clean && react-router build src/redspear && react-router build src/low-poly && react-router build src/domeofdoom && react-router build src/shadowform && react-router build src/familytree",
     "start": "node server.js",
     "dev": "nodemon --exec \"node --conditions=development\" server.js",
     "test": "vitest run",

@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400&family=Fraunces:wght@400;500&family=Silkscreen&display=swap');
+
+/* Astral Archive: a visual layer over the existing tree and controls. */
+:root {
+  color-scheme: dark;
+  --sky: #11121c;
+  --panel: #1c1b29;
+  --raised: #282436;
+  --border: #827393;
+  --text: #eee7f3;
+  --muted: #bdb1cb;
+  --accent: #dba5c9;
+  --parent-link: #a196bc;
+  --marriage-link: #92b6a5;
+  --divorce-link: #dc909c;
+  --sibling-link: #a196bc;
+  background: var(--sky);
+  color: var(--text);
+}
+.family-app { background: var(--sky); }
+.app-header { background: var(--sky); border-color: #bca3d518; }
+.brand { font-family: Fraunces, Georgia, serif; font-weight: 400; letter-spacing: .02em; }
+.leaf { color: #b698c5; }
+.header-divider { background: #82739355; }
+.family-name { color: var(--muted); }
+.tree-viewport {
+  background-color: var(--sky);
+  background-image: radial-gradient(circle at 12% 17%, #b8a1c32e 0 1px, transparent 1.4px), radial-gradient(circle at 78% 38%, #7e85b12b 0 1px, transparent 1.4px), radial-gradient(circle at 35% 79%, #8c759f26 0 1px, transparent 1.4px);
+  background-size: 273px 237px, 367px 293px, 413px 379px;
+}
+.person-card { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; color: var(--text); box-shadow: 0 2px 10px #0002; }
+.person-card:hover { border-color: #c4add6; box-shadow: 0 2px 10px #0002; }
+.person-copy > span { color: var(--muted); }
+.avatar, .result-avatar, .detail-avatar { background: #302a3d; border-color: #a48bb5; color: #e3c3dd; font-family: 'DM Mono', monospace; }
+.focus-person { background: var(--panel); border-color: var(--accent); }
+.person-card[data-related=true], .person-card[data-highlighted=true] { background: #302536; border-color: var(--accent); }
+.you-label { color: #201925; background: #dba5c9; border-color: #e8bddb; border-radius: 2px; }
+.connections .connection-edge path { stroke: var(--parent-link); }
+.connections .married path, .connections .partner path { stroke: var(--marriage-link); }
+.connections .divorced path { stroke: var(--divorce-link); }
+.connections circle { fill: var(--parent-link); }
+.connections text { fill: var(--divorce-link); stroke: var(--sky); }
+.search-toggle, .zoom-buttons button, .fit-button, .relationship-info summary { background: var(--panel); border-color: var(--border); color: var(--text); }
+.people-count { color: var(--muted); border-color: #82739366; }
+.zoom-buttons { border-color: var(--border); border-radius: 4px; }
+.zoom-buttons button + button { border-color: #82739366; }
+.zoom-buttons button:hover, .fit-button:hover { background: var(--raised); }
+.fit-button { border-radius: 4px; }
+.zoom-level { color: var(--muted); }
+.search-panel, .relationship-legend { background: var(--panel); color: var(--text); border-color: var(--border); border-radius: 5px; box-shadow: 0 12px 40px #0004; }
+.search-panel input { background: var(--sky); color: var(--text); border-color: var(--border); }
+.search-panel input::placeholder { color: var(--muted); }
+.search-results button { color: var(--text); }
+.search-results button:hover { background: var(--raised); }
+.search-results p { color: var(--muted); }
+.legend-line.divorced:after { background: var(--panel); color: var(--divorce-link); }
+.person-dialog { background: var(--panel); color: var(--text); border-color: var(--border); border-radius: 5px; box-shadow: 0 18px 55px #0005; }
+.person-dialog::backdrop { background: #07081375; backdrop-filter: blur(2px); }
+.person-dialog h2 { font-family: Fraunces, Georgia, serif; font-weight: 400; }
+.detail-section { border-color: #82739366; }
+.detail-section > span { font-family: Silkscreen, monospace; font-size: 9px; letter-spacing: .02em; color: var(--muted); }
+.detail-section small, .detail-section .sibling-type, .date-note, .profile-status { color: var(--muted); }
+.living-label { background: #353040; color: #dec5e2; }
+.relative-link { color: #d9bcdf; }
+.relative-link:hover { color: #f0d5ee; }
+.icon-button { color: var(--muted); }
+.icon-button:hover { background: var(--raised); }
+.sheet-handle { background: #827393; }
+.astral-corner { position: absolute; width: 25px; height: 25px; color: var(--accent); pointer-events: none; }
+.astral-corner--tl { left: 1px; top: 1px; }
+.astral-corner--tr { right: 1px; top: 1px; transform: rotate(90deg); }
+.astral-corner--br { right: 1px; bottom: 1px; transform: rotate(180deg); }
+.astral-corner--bl { left: 1px; bottom: 1px; transform: rotate(270deg); }
+button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+@media(max-width:640px) {
+  .person-dialog { border-radius: 16px 16px 0 0; }
+  .close-detail, .search-toggle { min-width: 44px; min-height: 44px; }
+}
+@media(prefers-reduced-motion:reduce) { .family-app *, .family-app *::before, .family-app *::after { animation: none !important; transition: none !important; } }
+
+/* The compact relationship key is always visible. */
+.relationship-info { bottom: 24px; left: 24px; }
+.relationship-legend { position: static; width: auto; padding: 14px 17px; gap: 10px; }
+@media(max-width:640px) {
+  .relationship-info { bottom: 20px; left: 16px; }
+  .relationship-legend { padding: 11px 13px; font-size: 10px; gap: 8px; }
+}
+
+.celestial-star{width:40px;height:44px;flex-shrink:0}
+.celestial-star.small{width:29px;height:32px}
+@media(max-width:640px){.brand .celestial-star{width:32px;height:35px}}

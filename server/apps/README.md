@@ -19,6 +19,8 @@ Nothing in here is imported by another app — cross-app code (currently
 - `redspear/` and `low-poly/` — React Router SSR apps mounted through
   `server/lib/registerSsrApp.js`. Their `/epk` loaders share
   `server/lib/epk.js` and `server/models/epk.js`; neither registers API routes.
+- `familytree/` — read-only family tree mounted through the same SSR adapter.
+  People and relationships live in `src/familytree/data/family.json`.
 
 Apps with data services expose `data.js`; apps with public write endpoints keep
 handlers in `routes/` and mount them through `registerApi.js`. Each write route
