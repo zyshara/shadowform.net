@@ -35,7 +35,7 @@ const Layout = () => {
               style={{ background: "#07060e", borderColor: "#1c1428" }}
             >
               <AnimatePresence mode="wait">
-                <PageTransition key={location.pathname}>
+                <PageTransition key={location.pathname} scrollRef={contentRef}>
                   {outlet}
                 </PageTransition>
               </AnimatePresence>

@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import { motion } from "framer-motion";
-import { useLocation } from "react-router";
 
-const PageTransition = ({ children }) => {
-  const { pathname } = useLocation();
+const PageTransition = ({ children, scrollRef }) => {
+  useLayoutEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  }, [scrollRef]);
 
   return (
     <motion.div

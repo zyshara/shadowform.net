@@ -1,7 +1,6 @@
 // src/shadowform/components/Scrollbar.jsx
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router";
 
 const MIN_THUMB_HEIGHT = 24;
 
@@ -9,7 +8,6 @@ const Scrollbar = ({ targetRef }) => {
   const trackRef = useRef(null);
   const dragRef = useRef(null);
   const [thumb, setThumb] = useState({ top: 0, height: 0, scrollable: false });
-  const { pathname } = useLocation();
 
   const recalc = useCallback(() => {
     const el = targetRef.current;
@@ -91,18 +89,6 @@ const Scrollbar = ({ targetRef }) => {
       if (rafId !== null) cancelAnimationFrame(rafId);
     };
   }, [targetRef, recalc]);
-
-  useEffect(() => {
-    const el = targetRef.current;
-    if (!el) return;
-
-    // el itself keeps a fixed height across routes, so neither the scroll
-    // listener nor the ResizeObserver above fires when navigating to a page
-    // whose content is a different length — recalc explicitly, and start
-    // the new page scrolled to the top rather than at the old page's offset.
-    el.scrollTop = 0;
-    recalc();
-  }, [pathname, targetRef, recalc]);
 
   const onThumbMouseDown = (e) => {
     e.preventDefault();
