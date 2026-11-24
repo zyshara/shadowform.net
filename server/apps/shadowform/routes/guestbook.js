@@ -110,7 +110,7 @@ export function registerGuestbookRoutes(app) {
       // Re-fetch entry to get populated tags + drawing url
       const full = await strapiGet(`/api/guestbook-entries/${documentId}`, {
         "populate[guestbook_tags]":   "*",
-        "populate[drawing]": "*",
+        "populate[drawing][fields][0]": "url",
       });
       const fullEntry = normalizeEntry(full.data ?? full);
 

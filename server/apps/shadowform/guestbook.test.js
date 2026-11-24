@@ -75,6 +75,10 @@ it("accepts a drawing larger than 100KB and connects the uploaded media to the e
   expect(strapi.strapiUploadMedia).toHaveBeenCalledWith(expect.any(Buffer), expect.stringMatching(/\.png$/));
   expect(strapi.strapiPost).toHaveBeenCalledWith("/api/guestbook-entries", { data: expect.objectContaining({ drawing: 42 }) });
   expect(response.body.entry.drawing).toBe("https://example.com/drawing.png");
+  expect(strapi.strapiGet).toHaveBeenCalledWith("/api/guestbook-entries/test-entry", {
+    "populate[guestbook_tags]": "*",
+    "populate[drawing][fields][0]": "url",
+  });
   expect(strapi.invalidateCache.mock.calls).toEqual([["/api/guestbook"], ["/api/guestbook-entries"]]);
 });
 

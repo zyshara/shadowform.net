@@ -13,7 +13,7 @@ import FadeIn from "@/components/FadeIn";
 const DrawModal = ({ onClose, onAttach }) => {
   const canvasRef  = useRef(null);
   const atrRef     = useRef(null);
-  const strokesRef = useRef([]);      // for undo
+  const undoRef    = useRef([]);
   const [color,    setColorState]  = useState("#f4a7c3");
   const [weight,   setWeightState] = useState(3);
   const [mode,     setModeState]   = useState("draw"); // "draw" | "erase"
@@ -33,13 +33,14 @@ const DrawModal = ({ onClose, onAttach }) => {
         smoothing:      0.85,
         adaptiveStroke: true,
       });
-      atr.recordStrokes = true;
       atrRef.current = atr;
 
-      // track strokes for undo
-      atr.addEventListener("strokerecorded", ({ stroke }) => {
-        if (atr.recordPaused) return;
-        strokesRef.current = [...strokesRef.current, stroke];
+      // Capture the pixels before each stroke so undo restores the exact
+      // drawing, including erasing and pressure-sensitive strokes.
+      atr.addEventListener("pointerdown", () => {
+        const ctx = cvs.getContext("2d");
+        if (!ctx) return;
+        undoRef.current = [...undoRef.current.slice(-29), ctx.getImageData(0, 0, cvs.width, cvs.height)];
         setCanUndo(true);
       });
     })();
@@ -63,52 +64,17 @@ const DrawModal = ({ onClose, onAttach }) => {
     setModeState(next);
   };
 
-const replayStrokes = (strokes, currentMode, currentColor, currentWeight) => {
-  const atr = atrRef.current;
-  const ctx = canvasRef.current?.getContext("2d");
-  if (!atr || !ctx) return;
-
-  ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-  atr.recordPaused = true;
-
-  for (const stroke of strokes) {
-    atr.mode           = stroke.mode;
-    atr.weight         = stroke.weight;
-    atr.smoothing      = stroke.smoothing;
-    atr.color          = stroke.color;
-    atr.adaptiveStroke = stroke.adaptiveStroke;
-
-    const segments   = stroke.segments.slice();
-    const firstPoint = segments.shift().point;
-    atr.beginStroke(firstPoint.x, firstPoint.y);
-    let prevPoint = firstPoint;
-
-    while (segments.length > 0) {
-      const point     = segments.shift().point;
-      const { x, y } = atr.draw(point.x, point.y, prevPoint.x, prevPoint.y);
-      prevPoint       = { x, y };
-    }
-
-    atr.endStroke(prevPoint.x, prevPoint.y);
-  }
-
-  atr.recordPaused  = false;
-  atr.mode          = currentMode;
-  atr.color         = currentColor;
-  atr.weight        = currentWeight;
-};
-
-const undo = () => {
-  const next = strokesRef.current.slice(0, -1);
-  strokesRef.current = next;
-  setCanUndo(next.length > 0);
-  replayStrokes(next, mode, color, weight);
-};
+  const undo = () => {
+    const snapshot = undoRef.current.pop();
+    const ctx = canvasRef.current?.getContext("2d");
+    if (snapshot && ctx) ctx.putImageData(snapshot, 0, 0);
+    setCanUndo(undoRef.current.length > 0);
+  };
 
   const clear = () => {
     const ctx = canvasRef.current?.getContext("2d");
     if (ctx) ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    strokesRef.current = [];
+    undoRef.current = [];
     setCanUndo(false);
   };
 
@@ -224,7 +190,6 @@ const Guestbook = ({ initialData }) => {
       setTimeout(() => setSubmitted(false), 3000);
     } catch (e) {
       setSubmitErr(e.message);
-      setTimeout(() => setSubmitErr(null), 5000);
     } finally {
       setSubmitting(false);
     }
