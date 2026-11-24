@@ -50,6 +50,21 @@ body,
   min-height: 100%;
 }
 
+@keyframes initial-load-fade {
+  from { opacity: 1; visibility: visible; }
+  to { opacity: 0; visibility: hidden; }
+}
+
+.initial-load-overlay {
+  animation: initial-load-fade 700ms ease-out 100ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .initial-load-overlay {
+    display: none;
+  }
+}
+
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-100%); }

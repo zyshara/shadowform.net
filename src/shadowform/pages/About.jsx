@@ -161,13 +161,21 @@ const CatCarousel = () => {
   );
 };
 
+export const PROFILE_IMAGE = "https://res.cloudinary.com/dfeyhbxeg/image/upload/f_auto,q_auto,w_400/v1785122578/IMG_2755_51b12be6aa.jpg";
+
 const About = ({ latestEntry }) => {
   return (
     <FadeIn className="flex flex-col w-full">
         <div className="flex flex-col justify-center items-center md:items-start md:flex-row gap-7 pb-8">
           <VoidFrame size={180}>
             <img
-              src="https://res.cloudinary.com/dfeyhbxeg/image/upload/v1785122578/IMG_2755_51b12be6aa.jpg"
+              src={PROFILE_IMAGE}
+              fetchPriority="high"
+              onLoad={(event) => {
+                if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                  event.currentTarget.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 350, easing: "ease-out" });
+                }
+              }}
               alt="Hi I'm Jennifer!"
               className="rotate-90 -scale-y-100"
               style={{ objectPosition: "-20px center" }}

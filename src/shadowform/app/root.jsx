@@ -19,7 +19,7 @@ export function Layout({ children }) {
   return <html lang="en"><head>
     <meta charSet="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/png" href="/shared/favicon.png" /><Meta /><Links />
-  </head><body>{children}<ScrollRestoration /><Scripts /></body></html>;
+  </head><body><div aria-hidden="true" className="initial-load-overlay fixed inset-0 z-[9999] pointer-events-none bg-white" />{children}<ScrollRestoration /><Scripts /></body></html>;
 }
 export default function Root() {
   useEffect(() => {

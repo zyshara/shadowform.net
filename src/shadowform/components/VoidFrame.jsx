@@ -146,12 +146,14 @@ const VoidFrame = ({ size = 180, children }) => {
       rafId = requestAnimationFrame(frame);
     };
     frame();
-
-    console.log("[void-frame smoke] WebGL2 initialized OK, rendering.");
+    canvas.classList.add("is-ready");
 
     return () => {
       cancelAnimationFrame(rafId);
+      canvas.classList.remove("is-ready");
       gl.deleteProgram(program);
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
     };
   }, []);
 
@@ -191,7 +193,11 @@ const VoidFrame = ({ size = 180, children }) => {
 
         .void-frame .smoke-canvas {
           position: absolute; inset: 0; z-index: 5; width: 100%; height: 100%;
-          opacity: 0.6; pointer-events: none;
+          opacity: 0; pointer-events: none; transition: opacity 350ms ease-out;
+        }
+        .void-frame .smoke-canvas.is-ready { opacity: 0.6; }
+        @media (prefers-reduced-motion: reduce) {
+          .void-frame .smoke-canvas { transition: none; }
         }
 
         .void-frame .gl-debug {
