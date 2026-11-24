@@ -60,7 +60,7 @@ const ArchiveEntry = ({ project, index }) => {
       {/* description */}
       {project.description && (
         <p
-          className="font-fell italic text-[12px] leading-[1.7] mt-2 pl-10"
+          className="font-fell italic text-[14px] leading-[1.7] mt-2 pl-10"
           style={{ color: "var(--text-body)" }}
         >
           {project.description}
