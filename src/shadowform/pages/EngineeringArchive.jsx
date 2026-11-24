@@ -1,7 +1,6 @@
 // src/shadowform/pages/EngineeringArchive.jsx
 import React from "react";
 import Tag from "@/components/Tag";
-import Header from "@/components/Header";
 import Ornament from "@/components/Ornament";
 import FadeIn from "@/components/FadeIn";
 import { useCardInView } from "@/hooks/useCardInView";
@@ -25,7 +24,7 @@ const ArchiveEntry = ({ project, index }) => {
       {project.year && (
         <div className="flex justify-end mb-1">
           <span
-            className="font-alkhemikal text-[10px] tracking-[0.15em] uppercase"
+            className="font-alkhemikal text-[12px] tracking-[0.15em] uppercase"
             style={{ color: "var(--text-nav-inactive)" }}
           >
             {project.year}
@@ -99,7 +98,6 @@ const ArchiveEntry = ({ project, index }) => {
 // ── Archive page ──────────────────────────────────────────────────────────────
 
 const EngineeringArchive = ({ apiData }) => {
-  const header  = apiData?.data?.header;
   const entries = apiData?.data?.entries ?? [];
 
   return (
@@ -135,32 +133,6 @@ const EngineeringArchive = ({ apiData }) => {
       `}</style>
 
       <div className="flex flex-col w-full mx-auto">
-        {/* header */}
-        <div className="mb-6">
-          {header ? (
-              <Header
-                eyebrow={header?.eyebrow}
-                title={header?.heading}
-                description={header?.description}
-              />
-            ) : (
-              <>
-                <p
-                  className="font-alkhemikal text-[9px] tracking-[0.2em] uppercase mb-2"
-                  style={{ color: "var(--text-nav-inactive)" }}
-                >
-                  // Development
-                </p>
-                <h1
-                  className="font-alagard tracking-[1px]"
-                  style={{ fontSize: 28, color: "var(--text-heading)" }}
-                >
-                  The Archive
-                </h1>
-              </>
-            )}
-        </div>
-
         {/* divider */}
         <div style={{ borderTop: "1px solid var(--border)", marginBottom: 0 }} />
 
