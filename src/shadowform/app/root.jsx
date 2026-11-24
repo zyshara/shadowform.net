@@ -23,7 +23,7 @@ export function Layout({ children }) {
 }
 export default function Root() {
   useEffect(() => {
-    const timer = swapTitleEmojis("🖤", "🩷", 500);
+    const timer = swapTitleEmojis("🖤", "💖", 500);
     return () => clearInterval(timer);
   }, []);
   return <Outlet />;

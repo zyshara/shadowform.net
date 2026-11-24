@@ -212,9 +212,9 @@ const About = ({ latestEntry }) => {
           </span>
           <Button variant="secondary" corners className="w-full h-[30px] sm:w-auto justify-center text-[10px]" href="/guestbook">
             <div className="flex flex-row justify-center items-center">
-              <div className="inline-flex guestbook-heart mr-[5px]">🩷</div>
+              <div className="inline-flex font-noto-emoji guestbook-heart mr-[5px]">🩷</div>
               <p className="text-wrap text-center">Sign My Guestbook!!!</p>
-              <div className="inline-flex guestbook-heart ml-[5px]">🩷</div>
+              <div className="inline-flex font-noto-emoji guestbook-heart ml-[5px]">🩷</div>
             </div>
           </Button>
         </div>

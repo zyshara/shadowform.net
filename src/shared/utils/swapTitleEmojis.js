@@ -1,4 +1,4 @@
-export function swapTitleEmojis(emojiA = "🖤", emojiB = "🩷", interval = 500) {
+export function swapTitleEmojis(emojiA = "🖤", emojiB = "💖", interval = 500) {
   return setInterval(() => {
     const title = document.title;
 
