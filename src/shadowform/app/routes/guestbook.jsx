@@ -1,8 +1,9 @@
 import Page from "../../pages/Guestbook";
+import useRetainedLoaderData from "../../hooks/useRetainedLoaderData";
 import { servicesContext } from "../context";
 import { pageMeta } from "../pageMeta";
 export const meta = pageMeta("Guestbook");
 export async function loader({ context, params }) {
   return { initialData: await context.get(servicesContext).getGuestbookData() };
 }
-export default function Route({ loaderData }) { return <Page {...loaderData} />; }
+export default function Route({ loaderData }) { return <Page {...useRetainedLoaderData(loaderData)} />; }

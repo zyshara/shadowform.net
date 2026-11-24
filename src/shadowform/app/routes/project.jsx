@@ -1,4 +1,5 @@
 import Page from "../../pages/EngineeringWebArchiveProject";
+import useRetainedLoaderData from "../../hooks/useRetainedLoaderData";
 import { servicesContext } from "../context";
 import { pageMeta } from "../pageMeta";
 export const meta = pageMeta("Archive Project");
@@ -7,4 +8,4 @@ export async function loader({ context, params }) {
   if (!project) throw new Response("Project not found", { status: 404 });
   return { apiData: { data: project }, pageTitle: project.eyebrow || project.title || "Archive Project" };
 }
-export default function Route({ loaderData }) { return <Page {...loaderData} />; }
+export default function Route({ loaderData }) { return <Page {...useRetainedLoaderData(loaderData)} />; }
