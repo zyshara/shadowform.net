@@ -50,7 +50,7 @@ const ArchiveEntry = ({ project, index }) => {
           {project.topTags?.length > 0 && (
             <div className="flex gap-1 flex-wrap justify-end flex-shrink-0">
               {project.topTags.map(t => (
-                <Tag key={t.label} theme={t.theme} size="xxs" variant="lit">{t.label}</Tag>
+                <Tag key={t.label} theme={t.theme} size="xs" variant="lit">{t.label}</Tag>
               ))}
             </div>
           )}
@@ -71,7 +71,7 @@ const ArchiveEntry = ({ project, index }) => {
       {sortedTags.length > 0 && (
         <div className="dev-bottom-tags flex gap-1 flex-wrap mt-2 pl-10">
           {sortedTags.map(t => (
-            <Tag key={t.label} theme={t.theme} variant="dim">{t.label}</Tag>
+            <Tag key={t.label} theme={t.theme} size="md" variant="dim">{t.label}</Tag>
           ))}
         </div>
       )}
